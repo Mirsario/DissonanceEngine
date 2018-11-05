@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{A7E44EF9-187F-4718-8FEC-871F99BD27F9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>GameEngine</RootNamespace>
+    <AssemblyName>GameEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\References\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\NVorbis.dll</HintPath>
+    </Reference>
+    <Reference Include="BulletSharp">
+      <HintPath>..\References\BulletSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SmartMeshLibrary">
+      <HintPath>..\References\SmartMeshLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\Audio.cs" />
+    <Compile Include="Audio\AudioClip.cs" />
+    <Compile Include="Audio\Components\AudioListener.cs" />
+    <Compile Include="Audio\Components\AudioSource.cs" />
+    <Compile Include="Components\Attributes\AllowOnlyOneInWorld.cs" />
+    <Compile Include="Components\Attributes\AllowOnlyOnePerObject.cs" />
+    <Compile Include="Components\Attributes\ComponentAttribute.cs" />
+    <Compile Include="Components\Component.cs" />
+    <Compile Include="Components\Attributes\ComponentParameters.cs" />
+    <Compile Include="Core\Debug.cs" />
+    <Compile Include="Core\DebugInternal.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Graphics\Rendering\Utils\GLUtils.cs" />
+    <Compile Include="ImportExport\Resources.Functions.cs" />
+    <Compile Include="Structures\Bounds.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Enums.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCellular.Cells.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCellular.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCubic.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoisePerlin.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseValue.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Hashing.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseWhite.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseSimplex.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.cs" />
+    <Compile Include="Graphics\Components\Renderers\MeshLOD.cs" />
+    <Compile Include="Graphics\Enums\BlendingFactor.cs" />
+    <Compile Include="Graphics\Enums\PolygonMode.cs" />
+    <Compile Include="Graphics\Objects\VertexAttributes\NormalAttribute.cs" />
+    <Compile Include="Graphics\Objects\VertexAttributes\VertexAttribute.cs" />
+    <Compile Include="Graphics\Objects\Shader\Shader.UniformSetters.cs" />
+    <Compile Include="Graphics\Enums\ShaderCombination.cs" />
+    <Compile Include="Graphics\Enums\ShaderType.cs" />
+    <Compile Include="Graphics\Enums\ShaderUniform.cs" />
+    <Compile Include="Graphics\Components\Light2D.cs" />
+    <Compile Include="Graphics\Enums\FramebufferAttachment.cs" />
+    <Compile Include="Extensions\PixelExtensions.cs" />
+    <Compile Include="Extensions\IOExtensions.cs" />
+    <Compile Include="Core\Game.cs" />
+    <Compile Include="Core\GameObject.cs" />
+    <Compile Include="Graphics\Animation\AnimationBone.cs" />
+    <Compile Include="Graphics\Animation\AnimationSkeleton.cs" />
+    <Compile Include="Graphics\Enums\FilterMode.cs" />
+    <Compile Include="Graphics\Objects\Material.cs" />
+    <Compile Include="Graphics\Objects\Pixel.cs" />
+    <Compile Include="Graphics\Objects\Mesh\PrimitiveMeshes.cs" />
+    <Compile Include="Graphics\Objects\RenderTexture.cs" />
+    <Compile Include="Graphics\Objects\Shader\Shader.cs" />
+    <Compile Include="Graphics\Objects\Shader\ShaderUniforms.cs" />
+    <Compile Include="Graphics\Objects\Texture.cs" />
+    <Compile Include="Graphics\Enums\RenderbufferStorage.cs" />
+    <Compile Include="Graphics\Enums\TextureWrapMode.cs" />
+    <Compile Include="Graphics\Components\Camera.cs" />
+    <Compile Include="Graphics\Components\Light.cs" />
+    <Compile Include="Graphics\Collections\MaterialCollection.cs" />
+    <Compile Include="Graphics\Components\Renderers\MeshRenderer.cs" />
+    <Compile Include="Graphics\Components\Renderers\Renderer.cs" />
+    <Compile Include="Graphics\Components\Renderers\SkinnedMeshRenderer.cs" />
+    <Compile Include="Graphics\Components\Sprite.cs" />
+    <Compile Include="Graphics\DrawUtils.cs" />
+    <Compile Include="Graphics\GLDraw.cs" />
+    <Compile Include="Graphics\Rendering.cs" />
+    <Compile Include="Graphics\GUI\Font.cs" />
+    <Compile Include="Graphics\GUI\GUI.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipelines\JSON_RenderSettings.cs" />
+    <Compile Include="Graphics\Rendering.Utils.cs" />
+    <Compile Include="Graphics\Rendering\Enums\AttributeId.cs" />
+    <Compile Include="Graphics\Rendering\Enums\CullMode.cs" />
+    <Compile Include="Graphics\Rendering\Enums\TextureAttachmentType.cs" />
+    <Compile Include="Graphics\Rendering\Enums\TextureFormat.cs" />
+    <Compile Include="Graphics\Rendering\Framebuffer.cs" />
+    <Compile Include="Graphics\Rendering\Renderbuffer.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipeline.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipelines\DeferredRendering.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipelines\ForwardRendering.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipelines\JSONRenderingPipeline.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\GUIPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\Light2DPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\DeferredLightingPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\GeometryPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\PostProcessPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\RenderPass.cs" />
+    <Compile Include="Graphics\Rendering\RenderPassInfoAttribute.cs" />
+    <Compile Include="Graphics\Screen.cs" />
+    <Compile Include="ImportExport\Asset.cs" />
+    <Compile Include="ImportExport\AssetManager.cs" />
+    <Compile Include="ImportExport\Audio\OggManager.cs" />
+    <Compile Include="ImportExport\Audio\WavManager.cs" />
+    <Compile Include="ImportExport\Resources.cs" />
+    <Compile Include="ImportExport\Graphics\MaterialManager.cs" />
+    <Compile Include="ImportExport\Graphics\Meshes\FbxManager.cs" />
+    <Compile Include="ImportExport\Graphics\Meshes\MeshManager.cs" />
+    <Compile Include="ImportExport\Graphics\Meshes\ObjManager.cs" />
+    <Compile Include="ImportExport\Graphics\Meshes\SmartMeshManager.cs" />
+    <Compile Include="ImportExport\Graphics\ShaderManager.cs" />
+    <Compile Include="ImportExport\Graphics\Textures\BasicImageManager.cs" />
+    <Compile Include="ImportExport\Graphics\Textures\DDSManager.cs" />
+    <Compile Include="ImportExport\Other\BytesManager.cs" />
+    <Compile Include="ImportExport\Other\TextManager.cs" />
+    <Compile Include="ImportExport\Physics\ConvexCollisionMeshManager.cs" />
+    <Compile Include="Input\Input.cs" />
+    <Compile Include="Input\InputBinding.cs" />
+    <Compile Include="Input\SingletonInputTrigger.cs" />
+    <Compile Include="Input\InputTrigger.cs" />
+    <Compile Include="Input\InputVariables.cs" />
+    <Compile Include="Input\Keys.cs" />
+    <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Core\Mathf.cs" />
+    <Compile Include="Graphics\Objects\Mesh\Mesh.cs" />
+    <Compile Include="Physics\Collision\Collision.cs" />
+    <Compile Include="Physics\Collision\Collision2D.cs" />
+    <Compile Include="Physics\Collision\ConcaveCollisionMesh.cs" />
+    <Compile Include="Physics\Collision\ConvexCollisionMesh.cs" />
+    <Compile Include="Physics\Collision\CollisionMesh.cs" />
+    <Compile Include="Physics\Components\CharacterController.cs" />
+    <Compile Include="Physics\Components\Colliders\Collider.cs" />
+    <Compile Include="Physics\Components\Colliders\Box2DCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\BoxCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\CapsuleCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\CylinderCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\MeshCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\SphereCollider.cs" />
+    <Compile Include="Physics\Components\PhysicsComponent.cs" />
+    <Compile Include="Physics\Components\Rigidbody.cs" />
+    <Compile Include="Physics\Components\Rigidbody2D.cs" />
+    <Compile Include="Physics\Components\RigidbodyBase.cs" />
+    <Compile Include="Physics\Collision\ContactPoint.cs" />
+    <Compile Include="Physics\Collision\ContactPoint2D.cs" />
+    <Compile Include="Physics\Enums\RigidbodyType.cs" />
+    <Compile Include="Physics\Layers.cs" />
+    <Compile Include="Physics\PhysicsEngine.cs" />
+    <Compile Include="Physics\RaycastHit.cs" />
+    <Compile Include="Physics\RigidbodyInternal.cs" />
+    <Compile Include="Core\ProgrammableEntity.cs" />
+    <Compile Include="Core\ProgrammableEntityHooks.cs" />
+    <Compile Include="Core\ProgrammableEntityTypeInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Random.cs" />
+    <Compile Include="Core\ReflectionCache.cs" />
+    <Compile Include="Core\RegexCache.cs" />
+    <Compile Include="Structures\Matrix4x4.cs" />
+    <Compile Include="Structures\MeshInfo.cs" />
+    <Compile Include="Structures\Quaternion.cs" />
+    <Compile Include="Structures\RectFloat.cs" />
+    <Compile Include="Structures\RectInt.cs" />
+    <Compile Include="Structures\RectOffset.cs" />
+    <Compile Include="Structures\Vector2.cs" />
+    <Compile Include="Structures\Vector2CrossOperators.cs" />
+    <Compile Include="Structures\Vector2Int.cs" />
+    <Compile Include="Structures\Vector2UShort.cs" />
+    <Compile Include="Structures\Vector3.cs" />
+    <Compile Include="Structures\Vector3Int.cs" />
+    <Compile Include="Structures\Vector4.cs" />
+    <Compile Include="Structures\Vector4Int.cs" />
+    <Compile Include="Core\Time.cs" />
+    <Compile Include="Core\Transform.cs" />
+    <Compile Include="Utils\ArrayUtils.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Decimal2.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Decimal3.cs" />
+    <Compile Include="Utils\InternalUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="DefaultResources.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
