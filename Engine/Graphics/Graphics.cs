@@ -117,7 +117,7 @@ namespace GameEngine
 		#region Hardcoded
 		//TODO: Fix this badcode
 		private static Shader _guiShader;
-		public static Shader GUIShader		=> _guiShader ?? (_guiShader = Resources.Find<Shader>("GUI"));
+		public static Shader GUIShader => _guiShader ?? (_guiShader = Resources.Find<Shader>("GUI"));
 		internal static int textBufferId = -1;
 		internal static DrawBuffersEnum[] nullDrawBuffers = { DrawBuffersEnum.ColorAttachment0 };
 		public static int defaultStencil = 0;

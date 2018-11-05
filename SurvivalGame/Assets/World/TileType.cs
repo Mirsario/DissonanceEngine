@@ -44,10 +44,8 @@ namespace Game
 		}
 
 		public virtual void OnInit() {}
-		public virtual void ModifyGrassMesh(Chunk chunk,Tile tile,Vector2Int tilePos,Vector3 localPos,Vector3 tileNormal,MeshInfo mesh)
-			=> throw new NotImplementedException();
-		public virtual PhysicMaterial GetMaterial(Vector3? atPoint = null)
-			=> throw new NotImplementedException();
+		public virtual void ModifyGrassMesh(Chunk chunk,Tile tile,Vector2Int tilePos,Vector3 localPos,Vector3 tileNormal,MeshInfo mesh) => throw new NotImplementedException();
+		public virtual PhysicMaterial GetMaterial(Vector3? atPoint = null) => throw new NotImplementedException();
 
 		public static void Initialize()
 		{

@@ -80,10 +80,10 @@ namespace GameEngine
 		private Material[] array;
 		internal Renderer renderer;
 
-		public int Count			=> array.Length;
-		public object SyncRoot		=> array.SyncRoot;
-		public bool IsReadOnly		=> array.IsSynchronized;
-		public bool IsSynchronized	=> array.IsSynchronized;
+		public int Count => array.Length;
+		public object SyncRoot => array.SyncRoot;
+		public bool IsReadOnly => array.IsSynchronized;
+		public bool IsSynchronized => array.IsSynchronized;
 
 		public Material this[int index] {
 			get => array[index];
@@ -109,15 +109,15 @@ namespace GameEngine
 			this.array = array;
 		}
 
-		public bool Contains(Material material)						=> array.Contains(material);
-		public void Add(Material material)							=> throw new NotSupportedException();
-		public bool Remove(Material material)						=> throw new NotSupportedException();
-		public void Clear()											=> throw new NotSupportedException();
-		public void CopyTo(Array arr,int index)						=> array.CopyTo(arr,index);
-		public void CopyTo(Material[] arr,int index)				=> array.CopyTo(arr,index);
-		public IEnumerator GetEnumerator()							=> array.GetEnumerator();
-		IEnumerator<Material> IEnumerable<Material>.GetEnumerator()	=> (IEnumerator<Material>)array.GetEnumerator();
+		public bool Contains(Material material) => array.Contains(material);
+		public void Add(Material material) => throw new NotSupportedException();
+		public bool Remove(Material material) => throw new NotSupportedException();
+		public void Clear() => throw new NotSupportedException();
+		public void CopyTo(Array arr,int index) => array.CopyTo(arr,index);
+		public void CopyTo(Material[] arr,int index) => array.CopyTo(arr,index);
+		public IEnumerator GetEnumerator() => array.GetEnumerator();
+		IEnumerator<Material> IEnumerable<Material>.GetEnumerator() => (IEnumerator<Material>)array.GetEnumerator();
 
-		public static implicit operator MaterialCollection(Material[] array)	=> new MaterialCollection(array);
+		public static implicit operator MaterialCollection(Material[] array) => new MaterialCollection(array);
 	}
 }

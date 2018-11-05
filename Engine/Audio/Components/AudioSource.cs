@@ -36,7 +36,7 @@ namespace GameEngine
 				}
 			}
 		}
-		public bool IsPlaying	=> AL.GetSourceState(sourceId)==ALSourceState.Playing;
+		public bool IsPlaying => AL.GetSourceState(sourceId)==ALSourceState.Playing;
 		public bool Loop {
 			get {
 				AL.GetSource(sourceId,ALSourceb.Looping,out bool val);

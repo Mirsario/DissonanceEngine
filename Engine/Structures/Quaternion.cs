@@ -47,9 +47,9 @@ namespace GameEngine
 				}
 			}
 		}
-		public static Quaternion Identity	=> new Quaternion(0f,0f,0f,1f);
-		public float Magnitude				=> Mathf.Sqrt(w*w+x*x+y*y+z*z);
-		public float SqrMagnitude			=> w*w+x*x+y*y+z*z;
+		public static Quaternion Identity => new Quaternion(0f,0f,0f,1f);
+		public float Magnitude => Mathf.Sqrt(w*w+x*x+y*y+z*z);
+		public float SqrMagnitude => w*w+x*x+y*y+z*z;
 		public Quaternion Normalized {
 			get {
 				var quaternion = this;

@@ -78,7 +78,7 @@ namespace Game
 		public static bool enableMusic = false;
 
 		//Input
-		public static Vector2 MoveInput	=> new Vector2(
+		public static Vector2 MoveInput => new Vector2(
 			(Input.GetKey(Keys.D) ? 1f : 0f)-(Input.GetKey(Keys.A) ? 1f : 0f),
 			(Input.GetKey(Keys.W) ? 1f : 0f)-(Input.GetKey(Keys.S) ? 1f : 0f)
 		);

@@ -16,7 +16,7 @@ namespace Game
 		public const float tileSize = 2f;
 		public const float tileSizeHalf = tileSize*0.5f;
 
-		public Vector2Int TilePoint	=> position*chunkSize;
+		public Vector2Int TilePoint => position*chunkSize;
 		public Vector3 WorldPoint => new Vector3(position.x,0f,position.y)*chunkSize*tileSize;
 
 		public readonly World world;				//THEEE WOOOOOOOOORLD!!! ..that this chunks belongs to

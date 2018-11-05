@@ -122,16 +122,11 @@ namespace GameEngine
 			return obj;
 		}
 		
-		public static GameObject Instantiate(string name,Vector3 position,Quaternion rotation)
-			=> new GameObject(name,position,rotation);
-		public static GameObject Instantiate(string name,Vector3 position,Vector3 rotation)
-			=> new GameObject(name,position,rotation);
-		public static GameObject Instantiate(string name,Vector3 position)
-			=> new GameObject(name,position);
-		public static GameObject Instantiate(string name)
-			=> new GameObject(name);
-		public static GameObject Instantiate()
-			=> new GameObject();
+		public static GameObject Instantiate(string name,Vector3 position,Quaternion rotation) => new GameObject(name,position,rotation);
+		public static GameObject Instantiate(string name,Vector3 position,Vector3 rotation) => new GameObject(name,position,rotation);
+		public static GameObject Instantiate(string name,Vector3 position) => new GameObject(name,position);
+		public static GameObject Instantiate(string name) => new GameObject(name);
+		public static GameObject Instantiate() => new GameObject();
 		#endregion
 
 		internal void InternalInitBegin()

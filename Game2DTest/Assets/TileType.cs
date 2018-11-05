@@ -25,8 +25,8 @@ namespace Game
 		public Vector4[] variantUVs;
 		public ushort id;
 
-		protected virtual string[] Variants			=> throw new NotImplementedException();
-		public virtual byte GetVariant(int x,int y)	=> (byte)Rand.Next(numVariants);//(byte)(((y*y)+(x*x*y))%numVariants);
+		protected virtual string[] Variants => throw new NotImplementedException();
+		public virtual byte GetVariant(int x,int y) => (byte)Rand.Next(numVariants);//(byte)(((y*y)+(x*x*y))%numVariants);
 
 		public TileType()
 		{
@@ -95,7 +95,7 @@ namespace Game
 			tileAtlas.Save("tileBatch.png");
 		}
 
-		public static T GetType<T>() where T : TileType			=> (T)byType[typeof(T)];
-		public static ushort GetTypeId<T>() where T : TileType	=> byType[typeof(T)].id;
+		public static T GetType<T>() where T : TileType => (T)byType[typeof(T)];
+		public static ushort GetTypeId<T>() where T : TileType => byType[typeof(T)].id;
 	}
 }

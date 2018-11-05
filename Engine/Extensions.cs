@@ -12,9 +12,9 @@ namespace GameEngine
 	#region JSON
 	public class JsonObjectToStringConverter : JsonConverter
 	{
-		public override bool CanRead						=> true;
-		public override bool CanWrite						=> false;
-		public override bool CanConvert(Type objectType)	=> objectType==typeof(JTokenType);
+		public override bool CanRead => true;
+		public override bool CanWrite => false;
+		public override bool CanConvert(Type objectType) => objectType==typeof(JTokenType);
 
 		public override object ReadJson(JsonReader reader,Type objectType,object existingValue,JsonSerializer serializer)
 		{
@@ -170,7 +170,7 @@ namespace GameEngine
 
 		//Other
 		#region Strings
-		public static int SizeInBytes(this string str)		=> Encoding.ASCII.GetByteCount(str);
+		public static int SizeInBytes(this string str) => Encoding.ASCII.GetByteCount(str);
 		public static bool IsEmptyOrNull(this string str) => str==null || str==string.Empty;
 
 		public static string ReplaceCaseInsensitive(this string str,string oldValue,string newValue)

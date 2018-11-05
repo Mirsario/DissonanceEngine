@@ -27,8 +27,8 @@ namespace GameEngine
 			#pragma warning restore 649
 		}
 
-		public override string[] Extensions			=> new [] { ".material" };
-		public override bool Autoload(string file)	=> true;
+		public override string[] Extensions => new [] { ".material" };
+		public override bool Autoload(string file) => true;
 
 		public override Material Import(Stream stream,string fileName)
 		{

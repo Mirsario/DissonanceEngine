@@ -42,9 +42,9 @@ namespace GameEngine
 		internal static float RenderDeltaTime		{ private set; get; }
 
 		//Main
-		public static float GameTime	=> Game.fixedUpdate ? FixedTime : RenderTime;
-		public static float GlobalTime	=> Game.fixedUpdate ? FixedTimeReal : RenderTimeReal;
-		public static float DeltaTime	=> Game.fixedUpdate ? FixedDeltaTime : RenderDeltaTime;
+		public static float GameTime => Game.fixedUpdate ? FixedTime : RenderTime;
+		public static float GlobalTime => Game.fixedUpdate ? FixedTimeReal : RenderTimeReal;
+		public static float DeltaTime => Game.fixedUpdate ? FixedDeltaTime : RenderDeltaTime;
 
 		internal static float _timeScale = 1f;
 		public static float TimeScale {

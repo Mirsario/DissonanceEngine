@@ -224,21 +224,21 @@ namespace GameEngine
 			return (a-b).SqrMagnitude;
 		}
 		
-		public static Vector3 operator*(Vector3 a,Vector3 b)	=> new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);	//Vector3
-		public static Vector3 operator/(Vector3 a,Vector3 b)	=> new Vector3(a.x/b.x,a.y/b.y,a.z/b.z);
-		public static Vector3 operator+(Vector3 a,Vector3 b)	=> new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
-		public static Vector3 operator-(Vector3 a,Vector3 b)	=> new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);
-		public static Vector3 operator-(Vector3 a)				=> new Vector3(-a.x,-a.y,-a.z);
-		public static bool operator==(Vector3 a,Vector3 b)		=> (a-b).SqrMagnitude<9.99999944E-11f;
-		public static bool operator!=(Vector3 a,Vector3 b)		=> (a-b).SqrMagnitude>=9.99999944E-11f;
-		public static Vector3 operator*(Vector3 a,float d)		=> new Vector3(a.x*d,a.y*d,a.z*d);			//Float
-		public static Vector3 operator*(float d,Vector3 a)		=> new Vector3(a.x*d,a.y*d,a.z*d);
-		public static Vector3 operator/(Vector3 a,float d)		=> new Vector3(a.x/d,a.y/d,a.z/d);
+		public static Vector3 operator*(Vector3 a,Vector3 b) => new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);	//Vector3
+		public static Vector3 operator/(Vector3 a,Vector3 b) => new Vector3(a.x/b.x,a.y/b.y,a.z/b.z);
+		public static Vector3 operator+(Vector3 a,Vector3 b) => new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
+		public static Vector3 operator-(Vector3 a,Vector3 b) => new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);
+		public static Vector3 operator-(Vector3 a) => new Vector3(-a.x,-a.y,-a.z);
+		public static bool operator==(Vector3 a,Vector3 b) => (a-b).SqrMagnitude<9.99999944E-11f;
+		public static bool operator!=(Vector3 a,Vector3 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
+		public static Vector3 operator*(Vector3 a,float d) => new Vector3(a.x*d,a.y*d,a.z*d);			//Float
+		public static Vector3 operator*(float d,Vector3 a) => new Vector3(a.x*d,a.y*d,a.z*d);
+		public static Vector3 operator/(Vector3 a,float d) => new Vector3(a.x/d,a.y/d,a.z/d);
 		
-		public static implicit operator OpenTK.Vector3(Vector3 value)		=> new OpenTK.Vector3(value.x,value.y,value.z);
-		public static implicit operator Vector3(OpenTK.Vector3 value)		=> new Vector3(value.X,value.Y,value.Z);
-		public static implicit operator BulletSharp.Vector3(Vector3 value)	=> new BulletSharp.Vector3(value.x,value.y,value.z);
-		public static implicit operator Vector3(BulletSharp.Vector3 value)	=> new Vector3(value.X,value.Y,value.Z);
+		public static implicit operator OpenTK.Vector3(Vector3 value) => new OpenTK.Vector3(value.x,value.y,value.z);
+		public static implicit operator Vector3(OpenTK.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
+		public static implicit operator BulletSharp.Vector3(Vector3 value) => new BulletSharp.Vector3(value.x,value.y,value.z);
+		public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
 
 		public override int GetHashCode()
 		{

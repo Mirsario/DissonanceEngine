@@ -9,11 +9,14 @@ using OpenTK.Input;
 
 namespace GameEngine
 {
-	public class GameProperties
-	{
-		public bool enableRendering = true;
-		public bool enablePhysics = true;
-	}
+	//TODO: Finish .smartmesh format
+	//TODO: Add animations
+	//TODO: Add submeshes
+	//TODO: Add proper built-in skybox rendering
+	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
+	//TODO: Add occlusion culling
+	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
+	//TODO: Fix issues with window resizing
 	public class Game : IDisposable
 	{
 		//Debug
@@ -85,6 +88,10 @@ namespace GameEngine
 		internal void Init()
 		{
 			Debug.Log("Loading engine...");
+
+			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'");
+			//AppDomain.CurrentDomain.AppendPrivatePath("References");
+			AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
 
 			logicStopwatch = new Stopwatch();
 			renderStopwatch = new Stopwatch();

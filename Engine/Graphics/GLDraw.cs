@@ -56,8 +56,7 @@ namespace GameEngine
 		public static void End() => GL.End();
 
 		//uniforms
-		public static void Uniform4(string uniformName,Vector4[] array)
-			=> GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),array.Length,array.SelectMany(v => v.ToArray()).ToArray());
+		public static void Uniform4(string uniformName,Vector4[] array) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),array.Length,array.SelectMany(v => v.ToArray()).ToArray());
 
 		public static void Clear(ClearMask mask) => GL.Clear((ClearBufferMask)mask);
 		public static void ClearColor(Vector4 color) => GL.ClearColor(color.x,color.y,color.z,color.w);

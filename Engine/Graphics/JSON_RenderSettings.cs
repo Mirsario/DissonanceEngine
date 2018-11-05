@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GameEngine {
+namespace GameEngine
+{
+	//...is making so temporary classes a good idea?
 	[JsonObject]
 	public class JSON_RenderSettings
 	{

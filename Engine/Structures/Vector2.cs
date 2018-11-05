@@ -16,9 +16,9 @@ namespace GameEngine
 		public static readonly Vector2 down = new Vector2( 0f,-1f);
 		public static readonly Vector2 left = new Vector2(-1f,0f);
 		public static readonly Vector2 right = new Vector2( 1f,0f);
-		public Vector2 Normalized	=> Normalize(this);
-		public float Magnitude		=> Mathf.Sqrt(x*x+y*y);
-		public float SqrMagnitude	=> x*x+y*y;
+		public Vector2 Normalized => Normalize(this);
+		public float Magnitude => Mathf.Sqrt(x*x+y*y);
+		public float SqrMagnitude => x*x+y*y;
 		public float x;
 		public float y;
 

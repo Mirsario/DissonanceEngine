@@ -94,3 +94,11 @@ SurvivalGame/obj/x64/Release/SurvivalGame.csproj.FileListAbsolute.txt
 SurvivalGame/obj/x64/Release/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
 SurvivalGame/obj/x64/Release/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
 SurvivalGame/obj/x64/Release/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+SurvivalGame/obj/
+packages/
+MeshLibrary/bin/
+MeshLibrary/obj/
+Game2DTest/bin/
+Game2DTest/obj/
+Engine/bin/
+Engine/obj/

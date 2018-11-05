@@ -29,15 +29,15 @@ namespace GameEngine
 		}
 		internal static InputVariables fixedTimeVars;
 		internal static InputVariables renderTimeVars;
-		internal static InputVariables Vars		=> Game.fixedUpdate ? fixedTimeVars : renderTimeVars;
+		internal static InputVariables Vars => Game.fixedUpdate ? fixedTimeVars : renderTimeVars;
 
 		//Mouse
-		public static Vector2 MouseDelta		=> Vars.mouseDelta;
-		public static Vector2 MousePosition		=> Vars.mousePosition;
-		public static int MouseWheel			=> Vars.mouseWheel;
+		public static Vector2 MouseDelta => Vars.mouseDelta;
+		public static Vector2 MousePosition => Vars.mousePosition;
+		public static int MouseWheel => Vars.mouseWheel;
 
 		//Keyboard
-		public static string InputString		=> Vars.inputString;
+		public static string InputString => Vars.inputString;
 
 		#region Initialization
 		internal static void Init()
@@ -47,10 +47,10 @@ namespace GameEngine
 		}
 		#endregion
 		#region Update
-		internal static void FixedUpdate()		=> Update();
-		internal static void RenderUpdate()		=> Update();
-		internal static void LateFixedUpdate()	=> LateUpdate();
-		internal static void LateRenderUpdate()	=> LateUpdate();
+		internal static void FixedUpdate() => Update();
+		internal static void RenderUpdate() => Update();
+		internal static void LateFixedUpdate() => LateUpdate();
+		internal static void LateRenderUpdate() => LateUpdate();
 		private static void Update()
 		{
 			var vars = Vars;
@@ -106,12 +106,12 @@ namespace GameEngine
 				(GetKey(up) ? 1f : 0f)-(GetKey(down) ? 1f : 0f)
 			);
 		}
-		public static bool GetKey(Keys key)					=> Vars.pressedKeys.Contains(key);
-		public static bool GetKeyDown(Keys key)				=> Vars.pressedKeys.Contains(key) && !Vars.pressedKeysPrev.Contains(key);
-		public static bool GetKeyUp(Keys key)				=> !Vars.pressedKeys.Contains(key) && Vars.pressedKeysPrev.Contains(key);
-		public static bool GetMouseButton(int button)		=> Vars.mouseButtons[button];
-		public static bool GetMouseButtonDown(int button)	=> Vars.mouseButtons[button] && !Vars.mouseButtonsPrev[button];
-		public static bool GetMouseButtonUp(int button)		=> !Vars.mouseButtons[button] && Vars.mouseButtonsPrev[button];
+		public static bool GetKey(Keys key) => Vars.pressedKeys.Contains(key);
+		public static bool GetKeyDown(Keys key) => Vars.pressedKeys.Contains(key) && !Vars.pressedKeysPrev.Contains(key);
+		public static bool GetKeyUp(Keys key) => !Vars.pressedKeys.Contains(key) && Vars.pressedKeysPrev.Contains(key);
+		public static bool GetMouseButton(int button) => Vars.mouseButtons[button];
+		public static bool GetMouseButtonDown(int button) => Vars.mouseButtons[button] && !Vars.mouseButtonsPrev[button];
+		public static bool GetMouseButtonUp(int button) => !Vars.mouseButtons[button] && Vars.mouseButtonsPrev[button];
 		#endregion
 
 		#region Callbacks

@@ -19,19 +19,19 @@ namespace GameEngine
 			return "X: "+x.ToString()+",Y: "+y.ToString()+",Z: "+z.ToString();
 		}
 
-		public static explicit operator Vector3(Vector3Int value)	=> new Vector3(value.x,value.y,value.z);
-		public static explicit operator Vector3Int(Vector3 value)	=> new Vector3Int((int)value.x,(int)value.y,(int)value.z);
+		public static explicit operator Vector3(Vector3Int value) => new Vector3(value.x,value.y,value.z);
+		public static explicit operator Vector3Int(Vector3 value) => new Vector3Int((int)value.x,(int)value.y,(int)value.z);
 
-		public static Vector3Int operator+(Vector3Int a,Vector3Int b)		=> new Vector3Int(a.x+b.x,a.y+b.y,a.z+b.z);
-		public static Vector3Int operator-(Vector3Int a,Vector3Int b)		=> new Vector3Int(a.x-b.x,a.y-b.y,a.z+b.z);
-		public static Vector3Int operator-(Vector3Int a)				=> new Vector3Int(-a.x,-a.y,-a.z);
-		public static Vector3Int operator*(Vector3Int a,int d)			=> new Vector3Int(a.x*d,a.y*d,a.z*d);
-		public static Vector3Int operator*(int d,Vector3Int a)			=> new Vector3Int(a.x*d,a.y*d,a.z*d);
-		public static Vector3Int operator/(Vector3Int a,int d)			=> new Vector3Int(a.x/d,a.y/d,a.z/d);
-		public static Vector3 operator*(Vector3Int a,float d)		=> new Vector3(a.x*d,a.y*d,a.z*d);
-		public static Vector3 operator/(Vector3Int a,float d)		=> new Vector3(a.x/d,a.y/d,a.z/d);
-		public static bool operator==(Vector3Int a,Vector3Int b)		=> a.x==b.x && a.y==b.y && a.z==b.z;
-		public static bool operator!=(Vector3Int a,Vector3Int b)		=> a.x!=b.x || a.y!=b.y || a.z!=b.z;
+		public static Vector3Int operator+(Vector3Int a,Vector3Int b) => new Vector3Int(a.x+b.x,a.y+b.y,a.z+b.z);
+		public static Vector3Int operator-(Vector3Int a,Vector3Int b) => new Vector3Int(a.x-b.x,a.y-b.y,a.z+b.z);
+		public static Vector3Int operator-(Vector3Int a) => new Vector3Int(-a.x,-a.y,-a.z);
+		public static Vector3Int operator*(Vector3Int a,int d) => new Vector3Int(a.x*d,a.y*d,a.z*d);
+		public static Vector3Int operator*(int d,Vector3Int a) => new Vector3Int(a.x*d,a.y*d,a.z*d);
+		public static Vector3Int operator/(Vector3Int a,int d) => new Vector3Int(a.x/d,a.y/d,a.z/d);
+		public static Vector3 operator*(Vector3Int a,float d) => new Vector3(a.x*d,a.y*d,a.z*d);
+		public static Vector3 operator/(Vector3Int a,float d) => new Vector3(a.x/d,a.y/d,a.z/d);
+		public static bool operator==(Vector3Int a,Vector3Int b) => a.x==b.x && a.y==b.y && a.z==b.z;
+		public static bool operator!=(Vector3Int a,Vector3Int b) => a.x!=b.x || a.y!=b.y || a.z!=b.z;
 
 		public override int GetHashCode()
 		{

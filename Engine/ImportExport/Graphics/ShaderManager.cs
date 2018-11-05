@@ -37,8 +37,8 @@ namespace GameEngine
 			#pragma warning restore 649
 		}
 
-		public override string[] Extensions			=> new [] { ".program" };
-		public override bool Autoload(string file)	=> true;
+		public override string[] Extensions => new [] { ".program" };
+		public override bool Autoload(string file) => true;
 
 		public override Shader[] Import(Stream stream,string fileName)
 		{
