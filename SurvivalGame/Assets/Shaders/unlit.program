@@ -1,0 +1,6 @@
+{
+	"Unlit": {
+		"vertexShader":		"BuiltInAssets/Shaders/default.vert",
+		"fragmentShader":	"unlit.frag"
+	}
+}

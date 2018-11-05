@@ -1,0 +1,7 @@
+{
+	"name": "$FileName$",
+	"shader": "Transparent/Cutout/DiffuseDualSided",
+	"textures": {
+		"mainTex": "$FileName$.png"
+	}
+}

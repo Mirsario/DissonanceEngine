@@ -1,0 +1,8 @@
+{
+	"pipeline": {
+		"geometry": {
+			"type":			"geometry",
+			"framebuffer":	"none"
+		}
+	}
+}

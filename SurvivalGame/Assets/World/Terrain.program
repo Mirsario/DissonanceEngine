@@ -1,0 +1,12 @@
+{
+	"TerrainBatch": {	//Diffuse
+		"vertexShader":		"Terrain.vert",
+		"fragmentShader":	"Terrain.frag",
+		"shaderDefines":	["BATCH"],
+	},
+	"TerrainTest": {	//Diffuse
+		"vertexShader":		"BuiltInAssets/Shaders/default.vert",
+		"fragmentShader":	"Terrain.frag",
+		"shaderDefines":	["BATCH","TEST"],
+	},
+}
