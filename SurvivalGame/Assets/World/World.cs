@@ -135,6 +135,34 @@ namespace Game
 				LineLoop(posA,posB,pos => this[pos.x,pos.y].type = dirt);
 				LineLoop(posA+new Vector2Int(1,0),posB+new Vector2Int(1,0),pos => this[pos.x,pos.y].type = dirt);
 			}*/
+
+			(int maxRand,Action<Tile,int,int,Vector3> action)[] genRoaster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
+				(25,(t,x,y,spawnPos) => {
+					Instantiate<Spruce>(spawnPos);
+					t.type = dirt;
+				}),
+				(60,(t,x,y,spawnPos) => {
+					Instantiate<Boulder>(spawnPos);
+					for(int i=0;i<20;i++) {
+						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = dirt;
+					}
+				}),
+				(300,(t,x,y,spawnPos) => {
+					Instantiate<BerryBush>(spawnPos);
+					for(int i=0;i<20;i++) {
+						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = grassFlowers;
+					}
+					t.type = dirt;
+				}),
+				(600,(t,x,y,spawnPos) => {
+					Instantiate<Campfire>(spawnPos);
+					t.type = dirt;
+					for(int i = 0;i<3;i++) {
+						Instantiate<StoneHatchet>(spawnPos+new Vector3(Rand.Range(-2f,2f),Rand.Range(5f,7f),Rand.Range(-2f,2f)));
+					}
+				}),
+			};
+
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
 					tile = this[x,y];
@@ -146,18 +174,11 @@ namespace Game
 						tile.type = maxHeightDiff>=4.35f ? stone : dirt;
 						continue;
 					}
-					var spawnPos = new Vector3(x*Chunk.tileSize+Chunk.tileSizeHalf,0f,y*Chunk.tileSize+Chunk.tileSizeHalf);
-					spawnPos.y = HeightAt(spawnPos,false);
-					if(Rand.Next(50)==0) {
-						Instantiate<Spruce>(spawnPos);
-						//tile.type = dirt;
-					}else if(Rand.Next(300)==0) {
-						Instantiate<Boulder>(spawnPos);
-						//for(int i=0;i<20;i++) {
-							//this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = dirt;
-						//}
-					}else if(Rand.Next(400)==0) {
-						Instantiate<BerryBush>(spawnPos);
+					var (maxRand,action)= genRoaster[Rand.Next(genRoaster.Length)];
+					if(Rand.Next(maxRand)==0) {
+						var spawnPos = new Vector3(x*Chunk.tileSize+Chunk.tileSizeHalf,0f,y*Chunk.tileSize+Chunk.tileSizeHalf);
+						spawnPos.y = HeightAt(spawnPos,false);
+						action(tile,x,y,spawnPos);
 					}
 				}
 			}

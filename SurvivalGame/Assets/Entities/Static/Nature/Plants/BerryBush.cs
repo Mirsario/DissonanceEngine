@@ -20,6 +20,26 @@ namespace Game
 				new MeshLOD(Resources.Get<Mesh>("BerryBush.obj"),96f),
 				new MeshLOD(Resources.Get<Mesh>("BerryBushLOD2.obj"),384f),
 			};
+			//TEST
+			/*if(!changedNormals) {
+				var mesh1 = renderer.LODMeshes[0].mesh;
+				var normals1 = new Vector3[mesh1.vertexCount];
+				for(int i = 0;i<normals1.Length;i++) {
+					normals1[1] = Vector3.up*0.5f;
+				}
+				mesh1.normals = normals1;
+				mesh1.Apply();
+
+				var mesh2 = renderer.LODMeshes[1].mesh;
+				var normals2 = new Vector3[mesh2.vertexCount];
+				for(int i = 0;i<normals2.Length;i++) {
+					normals2[1] = Vector3.up*0.5f;
+				}
+				mesh2.normals = normals2;
+				mesh2.Apply();
+				
+				changedNormals = true;
+			}*/
 			renderer.Material = Resources.Find<Material>($"{GetType().Name}");
 		}
 		//private float soundPlayDelay;

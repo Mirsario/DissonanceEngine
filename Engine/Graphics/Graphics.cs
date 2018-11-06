@@ -12,9 +12,10 @@ using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace GameEngine
 {
+	//TODO: Add submeshes to Mesh.cs
+	//TODO: Add some way to sort objects in a way that'd let the engine skip boxinfrustum checks for objects which are in non-visible chunks.
 	public static class Graphics
 	{
-		//TODO: Add submeshes to Mesh.cs
 		#region PixelFormats
 		public static Dictionary<TextureFormat,(PixelFormat formatGeneral,PixelInternalFormat formatInternal,PixelType pixelType,Type dataType)> textureFormatInfo = new Dictionary<TextureFormat,(PixelFormat,PixelInternalFormat,PixelType,Type)> {
 			#region A
@@ -135,8 +136,7 @@ namespace GameEngine
 			CheckGLErrors();
 
 			#region FontImport
-			//TODO: Make fonts be properly imported like content.
-			//Currently this is some hardcoded shitcode.
+			//TODO: Add AssetManager for fonts and remove this hardcode
 			var tex = Resources.Import<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
 			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~",tex,new Vector2(12f,16f),0) { size = 16 };
 			#endregion
