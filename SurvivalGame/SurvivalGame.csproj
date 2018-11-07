@@ -69,6 +69,7 @@
     <Compile Include="Assets\Main.cs" />
     <Compile Include="Assets\Netplay.cs" />
     <Compile Include="Assets\SoundInstance.cs" />
+    <Compile Include="Assets\World\AtmosphereSystem.cs" />
     <Compile Include="Assets\World\Chunk.cs" />
     <Compile Include="Assets\World\Tile.cs" />
     <Compile Include="Assets\World\Tiles\Dirt.cs" />

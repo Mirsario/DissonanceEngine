@@ -105,6 +105,12 @@ namespace GameEngine
 		public static int ScreenHeight => window.Height;
 		public static Vector2 ScreenCenter => new Vector2(window.Width*0.5f,window.Height*0.5f);
 		public static Vector2 WindowCenter => new Vector2(window.Location.X+window.Width*0.5f,window.Location.Y+window.Height*0.5f);
+		public static bool Fullscreen {
+			get => window.WindowState==WindowState.Fullscreen;
+			set {
+				window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
+			}
+		}
 
 		internal static GameWindow window;
 		internal static List<Camera> cameraList;

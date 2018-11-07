@@ -81,32 +81,37 @@ namespace GameEngine
 							true
 						);
 
+						//TODO: Get rid of GetUniformLocation somehow?
 						if(lightType!=LightType.Directional) {
-							GL.Uniform1(GL.GetUniformLocation(activeShader.program,"lightRange"),	light.range);
+							GL.Uniform1(GL.GetUniformLocation(activeShader.program,"lightRange"),light.range);
 							GL.Uniform3(GL.GetUniformLocation(activeShader.program,"lightPosition"),light.Transform.Position);
 						}
 						if(lightType!=LightType.Point) {
 							GL.Uniform3(GL.GetUniformLocation(activeShader.program,"lightDirection"),light.Transform.Forward);
 						}
-						GL.Uniform3(GL.GetUniformLocation(activeShader.program,"lightColor"),		new Vector3(light.color.x,light.color.y,light.color.z));
+						GL.Uniform1(GL.GetUniformLocation(activeShader.program,"lightIntensity"),light.intensity);
+						GL.Uniform3(GL.GetUniformLocation(activeShader.program,"lightColor"),new Vector3(light.color.x,light.color.y,light.color.z));
 
-						if(lightType==LightType.Point) {
-							GL.BindBuffer(BufferTarget.ArrayBuffer,PrimitiveMeshes.icoSphere.vertexBufferId);
-							GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,PrimitiveMeshes.icoSphere.vertexSize,(IntPtr)0);
-							GL.BindBuffer(BufferTarget.ElementArrayBuffer,PrimitiveMeshes.icoSphere.indexBufferId);
-							GL.DrawElements(PrimitiveTypeGL.Triangles,PrimitiveMeshes.icoSphere.indexLength,DrawElementsType.UnsignedInt,0);
-						}else if(lightType==LightType.Directional) {
-							//TODO: Draw like this should be made into a function
-							GL.Begin(PrimitiveTypeGL.Quads);
+						switch(lightType) {
+							case LightType.Point:
+								GL.BindBuffer(BufferTarget.ArrayBuffer,PrimitiveMeshes.icoSphere.vertexBufferId);
+								GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,PrimitiveMeshes.icoSphere.vertexSize,(IntPtr)0);
+								GL.BindBuffer(BufferTarget.ElementArrayBuffer,PrimitiveMeshes.icoSphere.indexBufferId);
+								GL.DrawElements(PrimitiveTypeGL.Triangles,PrimitiveMeshes.icoSphere.indexLength,DrawElementsType.UnsignedInt,0);
+								break;
+							case LightType.Directional:
+								//TODO: Draw like this should be made into a function
+								GL.Begin(PrimitiveTypeGL.Quads);
 								GL.Vertex2(	-1.0f,-1.0f);
-									GL.TexCoord2(0.0f,0.0f);
+								GL.TexCoord2(0.0f,0.0f);
 								GL.Vertex2(	-1.0f,1.0f);
-									GL.TexCoord2(0.0f,1.0f);
+								GL.TexCoord2(0.0f,1.0f);
 								GL.Vertex2(	1.0f,1.0f);
-									GL.TexCoord2(1.0f,1.0f);
+								GL.TexCoord2(1.0f,1.0f);
 								GL.Vertex2(	1.0f,-1.0f);
-									GL.TexCoord2(1.0f,0.0f);
-							GL.End();
+								GL.TexCoord2(1.0f,0.0f);
+								GL.End();
+								break;
 						}
 					}
 				}

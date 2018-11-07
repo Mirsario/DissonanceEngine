@@ -7,11 +7,14 @@ namespace Game
 	public class SoundInstance : GameObject
 	{
 		public AudioSource source;
-		private string sound;
+		//private string sound;
 
-		public SoundInstance(string sound,Vector3 position,float volume = 1f,float range = 1f) : base("SoundInstance_"+sound)
+		public SoundInstance(string sound,Vector3 position,float volume = 1f,Transform attachTo = null) : base("SoundInstance_"+sound)
 		{
-			this.sound = sound;
+			//this.sound = sound;
+			if(attachTo!=null) {
+				Transform.parent = attachTo;
+			}
 			Transform.Position = position;
 			source = AddComponent<AudioSource>();
 			source.Clip = Resources.Get<AudioClip>(sound);

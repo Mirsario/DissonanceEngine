@@ -67,11 +67,10 @@ namespace GameEngine
 				rigidbody.gameObject.transform.updatePhysics = false;
 			}
 			//fixedStep = true;
-			world.StepSimulation(Time.FixedDeltaTime,1);	//TODO: figure stuff out.
+			world.StepSimulation(Time.fixedDeltaTime);
 		}
 		public static void UpdateRender()
 		{
-			if(!enabled) {}
 			//world.StepSimulation(Time.renderDeltaTime,1,0f);
 			//fixedStep = false;
 		}
@@ -296,7 +295,7 @@ namespace GameEngine
 				var rbInternal = bulletBody.UserObject as RigidbodyInternal;
 				ulong objLayerMask = Layers.GetLayerMask(rbInternal.gameObject.layer);
 				if(rbInternal!=null) {
-					var resultOverride = customFilter==null ? null : customFilter(rbInternal.gameObject);
+					var resultOverride = customFilter?.Invoke(rbInternal.gameObject);
 					if(resultOverride!=null) {
 						return resultOverride.Value;
 					}

@@ -17,7 +17,7 @@ namespace Game
 	}
 	public class World : GameObject
 	{
-		public static readonly char[] fileHeader = new[] { 'I','n','c','a','r','n','a','t','e',' ','W','o','r','l','d',' '};
+		public static readonly char[] fileHeader = { 'I','n','c','a','r','n','a','t','e',' ','W','o','r','l','d',' '};
 		
 		public readonly string worldName;
 		public readonly string worldDisplayName;
@@ -136,7 +136,7 @@ namespace Game
 				LineLoop(posA+new Vector2Int(1,0),posB+new Vector2Int(1,0),pos => this[pos.x,pos.y].type = dirt);
 			}*/
 
-			(int maxRand,Action<Tile,int,int,Vector3> action)[] genRoaster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
+			var genRoaster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
 					Instantiate<Spruce>(spawnPos);
 					t.type = dirt;
@@ -263,43 +263,72 @@ namespace Game
 			//rewrite copypasta
 			var pos = pointA;
 			var size = pointB-pointA;
-			int dx1 = 0,dy1 = 0,dx2 = 0,dy2 = 0 ;
-			if (size.x<0) dx1 = -1 ; else if (size.x>0) dx1 = 1 ;
-			if (size.y<0) dy1 = -1 ; else if (size.y>0) dy1 = 1 ;
-			if (size.x<0) dx2 = -1 ; else if (size.x>0) dx2 = 1 ;
-			int longest = Math.Abs(size.x) ;
-			int shortest = Math.Abs(size.y) ;
-			if (!(longest>shortest)) {
-				longest = Math.Abs(size.y) ;
-				shortest = Math.Abs(size.x) ;
-				if (size.y<0) dy2 = -1 ; else if (size.y>0) dy2 = 1 ;
-				dx2 = 0 ;            
+			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+			if(size.x<0) {
+				x1 = -1;
+			}else if(size.x>0) {
+				x1 = 1;
 			}
-			int numerator = longest >> 1 ;
-			for (int i = 0;i<=longest;i++) {
+			if(size.y<0) {
+				y1 = -1;
+			}else if(size.y>0) {
+				y1 = 1;
+			}
+			if(size.x<0) {
+				x2 = -1;
+			}else if(size.x>0) {
+				x2 = 1;
+			}
+			int longest = Math.Abs(size.x);
+			int shortest = Math.Abs(size.y);
+			if(!(longest>shortest)) {
+				longest = Math.Abs(size.y);
+				shortest = Math.Abs(size.x);
+				if(size.y<0) {
+					y2 = -1;
+				}else if(size.y>0) {
+					y2 = 1;
+				}
+				x2 = 0;
+			}
+			int numerator = longest >> 1;
+			for(int i = 0;i<=longest;i++) {
 				action(pos);
-				numerator += shortest ;
-				if (!(numerator<longest)) {
-					numerator -= longest ;
-					pos.x += dx1 ;
-					pos.y += dy1 ;
+				numerator += shortest;
+				if(numerator>=longest) {
+					numerator -= longest;
+					pos.x += x1;
+					pos.y += y1;
 				} else {
-					pos.x += dx2 ;
-					pos.y += dy2 ;
+					pos.x += x2;
+					pos.y += y2;
 				}
 			}
 		}
 		public void RepeatTilePos(ref int x,ref int y)
 		{
+			//bad
 			if(x<0) {
-				do { x += xSize; } while(x<0);
+				do {
+					x += xSize;
+				}
+				while(x<0);
 			}else if(x>=xSize) {
-				do { x -= xSize; } while(x>=xSize);
+				do {
+					x -= xSize;
+				}
+				while(x>=xSize);
 			}
 			if(y<0) {
-				do { y += ySize; } while(y<0);
+				do {
+					y += ySize;
+				}
+				while(y<0);
 			}else if(y>=ySize) {
-				do { y -= ySize; } while(y>=ySize);
+				do {
+					y -= ySize;
+				}
+				while(y>=ySize);
 			}
 		}
 		public float HeightAt(Vector3 position,bool tileSpace) => HeightAt(position.x,position.z,tileSpace);

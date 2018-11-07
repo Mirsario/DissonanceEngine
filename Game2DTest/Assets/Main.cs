@@ -72,6 +72,7 @@ namespace Game
 		{
 			int y = 8;
 			GUI.DrawText(new Rect(8,y,128,8),"Welcome to weird stuff"); y += 16;
+			GUI.DrawText(new Rect(8,y,128,8),"Check 'SurvivalGame' project instead"); y += 16;
 			GUI.DrawText(new Rect(8,y,128,8),$"Render FPS: {renderFPS}"); y += 16;
 			GUI.DrawText(new Rect(8,y,128,8),$"Render MS:  {renderMs.ToString("0.00")}"); y += 16;
 			GUI.DrawText(new Rect(8,y,128,8),$"Logic FPS:  {logicFPS}"); y += 16;

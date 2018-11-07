@@ -93,7 +93,7 @@ namespace GameEngine
 		#region Textures
 		public static void CopyPixels(this Pixel[,] from,Rect? sourceRect,Pixel[,] to,Vector2Int destPoint)
 		{
-			var srcRect = sourceRect!=null ? sourceRect.Value : new Rect(0,0,from.GetLength(0),from.GetLength(1));
+			var srcRect = sourceRect ?? new Rect(0,0,@from.GetLength(0),@from.GetLength(1));
 			int xLength1 = from.GetLength(0);
 			int yLength1 = from.GetLength(1);
 			int xLength2 = to.GetLength(0);

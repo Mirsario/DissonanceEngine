@@ -78,6 +78,7 @@ namespace GameEngine
 				}
 				vars.mouseDelta = Vector2.zero;
 			}
+			CheckSpecialCombinations();
 		}
 		private static void LateUpdate()
 		{
@@ -85,6 +86,12 @@ namespace GameEngine
 			vars.pressedKeysPrev.Clear();
 			vars.pressedKeysPrev.AddRange(vars.pressedKeys);
 			vars.inputString = "";
+		}
+		private static void CheckSpecialCombinations()
+		{
+			if(GetKeyDown(Keys.Enter) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
+				Graphics.Fullscreen = !Graphics.Fullscreen;
+			}
 		}
 		#endregion
 		#region Dispose

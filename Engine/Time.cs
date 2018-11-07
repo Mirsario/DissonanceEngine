@@ -6,45 +6,43 @@ namespace GameEngine
 {
 	public static class Time
 	{
-		private static int _updateFrames;
-		public static int UpdateFrames {
-			get {
-				return _updateFrames;
-			}
+		internal static uint targetUpdateCount;
+		public static uint TargetUpdateCount {
+			get => targetUpdateCount;
 			set {
 				Game.window.TargetUpdateFrequency = value;
-				_updateFrames = (int)Game.window.TargetUpdateFrequency;
+				targetUpdateCount = (uint)Game.window.TargetUpdateFrequency;
 			}
 		}
-		private static int _renderFrames;
-		public static int RenderFrames {
-			get {
-				return _renderFrames;
-			}
+		internal static uint targetRenderCount;
+		public static uint TargetRenderCount {
+			get => targetRenderCount;
 			set {
 				Game.window.TargetRenderFrequency = value;
-				_renderFrames = (int)Game.window.TargetUpdateFrequency;
+				targetRenderCount = (uint)Game.window.TargetRenderFrequency;
 			}
 		}
 		
 		//Fixed time
-		internal static float FixedTime				{ private set; get; }
-		internal static float FixedTimePrev			{ private set; get; }
-		internal static float FixedTimeReal			{ private set; get; }
-		internal static float FixedTimeRealPrev		{ private set; get; }
-		internal static float FixedDeltaTime		{ private set; get; }
+		internal static float fixedTime;
+		internal static float fixedTimePrev;
+		internal static float fixedTimeReal;
+		internal static float fixedTimeRealPrev;
+		internal static float fixedDeltaTime;
+		internal static uint fixedUpdateCount;
 
 		//Render time
-		internal static float RenderTime			{ private set; get; }
-		internal static float RenderTimePrev		{ private set; get; }
-		internal static float RenderTimeReal		{ private set; get; }
-		internal static float RenderTimeRealPrev	{ private set; get; }
-		internal static float RenderDeltaTime		{ private set; get; }
+		internal static float renderTime;
+		internal static float renderTimePrev;
+		internal static float renderTimeReal;
+		internal static float renderTimeRealPrev;
+		internal static float renderDeltaTime;
 
 		//Main
-		public static float GameTime => Game.fixedUpdate ? FixedTime : RenderTime;
-		public static float GlobalTime => Game.fixedUpdate ? FixedTimeReal : RenderTimeReal;
-		public static float DeltaTime => Game.fixedUpdate ? FixedDeltaTime : RenderDeltaTime;
+		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
+		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
+		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
+		public static uint FixedUpdateCount => fixedUpdateCount;
 
 		internal static float _timeScale = 1f;
 		public static float TimeScale {
@@ -57,31 +55,36 @@ namespace GameEngine
 			}
 		}
 		
+		internal static void PreInit()
+		{
+			targetRenderCount = 0;
+			targetUpdateCount = 60;
+		}
 		internal static void Init()
 		{
 			
 		}
 		internal static void UpdateFixed(double newDelta)
 		{
-			newDelta = 1.0/Game.targetUpdates;
-			
-			FixedTimePrev = FixedTime;
-			FixedTimeRealPrev = FixedTimeReal;
+			fixedTimePrev = fixedTime;
+			fixedTimeRealPrev = fixedTimeReal;
 
-			FixedDeltaTime = (float)newDelta;
-			FixedTimeReal += FixedDeltaTime;
-			FixedDeltaTime *= TimeScale;
-			FixedTime += FixedDeltaTime;
+			fixedDeltaTime = (float)newDelta;
+			fixedTimeReal += fixedDeltaTime;
+			fixedDeltaTime *= TimeScale;
+			fixedTime += fixedDeltaTime;
+
+			fixedUpdateCount++;
 		}
 		internal static void UpdateRender(double newDelta)
 		{
-			RenderTimePrev = RenderTime;
-			RenderTimeRealPrev = RenderTimeReal;
+			renderTimePrev = renderTime;
+			renderTimeRealPrev = renderTimeReal;
 
-			RenderDeltaTime = (float)newDelta;
-			RenderTimeReal += RenderDeltaTime;
-			RenderDeltaTime *= TimeScale;
-			RenderTime += RenderDeltaTime;
+			renderDeltaTime = (float)newDelta;
+			renderTimeReal += renderDeltaTime;
+			renderDeltaTime *= TimeScale;
+			renderTime += renderDeltaTime;
 		}
 	}
 }

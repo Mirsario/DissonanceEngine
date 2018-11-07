@@ -67,30 +67,12 @@ namespace GameEngine
 		}
 
 		#region VirtualMethods
-		protected virtual void OnInit()
-		{
-			
-		}
-		protected virtual void OnEnable()
-		{
-			
-		}
-		protected virtual void OnDisable()
-		{
-			
-		}
-		protected virtual void OnDispose()
-		{
-			
-		}
-		public virtual void FixedUpdate()
-		{
-			
-		}
-		public virtual void RenderUpdate()
-		{
-			
-		}
+		protected virtual void OnInit() {}
+		protected virtual void OnEnable() {}
+		protected virtual void OnDisable() {}
+		protected virtual void OnDispose() {}
+		public virtual void FixedUpdate() {}
+		public virtual void RenderUpdate() {}
 		#endregion
 
 		public void Dispose()

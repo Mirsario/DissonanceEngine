@@ -65,6 +65,7 @@ namespace GameEngine
 
 			Layers.Init();
 			//... Load gameconfig.json here
+			Time.PreInit();
 			PreInit();
 			preInitDone = true;
 
@@ -82,7 +83,7 @@ namespace GameEngine
 			window.KeyDown += Input.KeyDown;
 			window.MouseMove += Input.MouseMove;
 			window.FocusedChanged += OnFocusChange;
-			window.Run(targetUpdates,targetFPS);
+			window.Run(Time.targetUpdateCount,Time.targetRenderCount);
 		}
 
 		internal void Init()
@@ -160,7 +161,7 @@ namespace GameEngine
 			}
             window.CursorVisible = showCursor || !window.Focused;
 
-			Time.UpdateFixed(1f/targetUpdates);
+			Time.UpdateFixed(1.0/targetUpdates);
 			Input.FixedUpdate();
 			
 			Physics.Update();
@@ -182,7 +183,7 @@ namespace GameEngine
 			Input.LateFixedUpdate();
 			Audio.FixedUpdate();
 
-			MeasureFPS(ref logicFPS,ref logicFrame,Time.FixedTime,Time.FixedTimePrev,logicStopwatch,ref logicMs,ref logicMsTemp);
+			MeasureFPS(ref logicFPS,ref logicFrame,Time.fixedTime,Time.fixedTimePrev,logicStopwatch,ref logicMs,ref logicMsTemp);
 		}
 		internal void RenderUpdateInternal(object sender,FrameEventArgs e)
 		{
@@ -211,7 +212,7 @@ namespace GameEngine
 			Graphics.Render();
 			Input.LateRenderUpdate();
 
-			MeasureFPS(ref renderFPS,ref renderFrame,Time.RenderTime,Time.RenderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
+			MeasureFPS(ref renderFPS,ref renderFrame,Time.renderTime,Time.renderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
 		}
 		
 		public void Dispose()

@@ -21,6 +21,7 @@ namespace Game
 		public float lastLand;
 		public float walkTime;
 		public float jumpPress;
+		public bool enableStrafeJumping;
 
 		public bool IsSprinting => Input.GetKey(Keys.LShift);
 		public float MoveSpeed => IsSprinting ? 12f : 7.5f;
@@ -115,6 +116,9 @@ namespace Game
 					Instantiate<TexTest>(hit.point+new Vector3(0f,15f,0f));
 					//Instantiate<CubeObj>(hit.point+new Vector3(0f,15f,0f));
 				}
+				if(Input.GetKeyDown(Keys.U)) {
+					enableStrafeJumping = !enableStrafeJumping;
+				}
 			}
 		}
 		public override void OnGUI()
@@ -122,18 +126,8 @@ namespace Game
 			var tempVec = velocity;
 			tempVec.y = 0f;
 			int i = 4;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"Player speed:   "+tempVec.Magnitude.ToString("0.00"));
-			i++;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"W: "+(Input.GetKey(Keys.W) ? "true" : "false"));
-			i++;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"S: "+(Input.GetKey(Keys.S) ? "true" : "false"));
-			i++;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"A: "+(Input.GetKey(Keys.A) ? "true" : "false"));
-			i++;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"D: "+(Input.GetKey(Keys.D) ? "true" : "false"));
-			i++;
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),"OnGround: "+OnGround);
-			i++;
+			GUI.DrawText(new Rect(8,8+((i++)*16),128,8),"Player speed:   "+tempVec.Magnitude.ToString("0.00"));
+			GUI.DrawText(new Rect(8,8+((i++)*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
 			//GUI.DrawTexture(new Rect(32,32,64,64),TileEntity.tileTexture);	//This was... weirdly moving???
 		}
 
@@ -152,7 +146,7 @@ namespace Game
 		{
 			velocity = rigidbody.Velocity;
 
-			var direction = ((Transform.Right*Main.MoveInput.x)+(Transform.Forward*Main.MoveInput.y)).RotatedBy(0f,Main.camera.Transform.EulerRot.y,0f).Normalized;
+			//var direction = ((Transform.Right*Main.MoveInput.x)+(Transform.Forward*Main.MoveInput.y)).RotatedBy(0f,Main.camera.Transform.EulerRot.y,0f).Normalized;
 
 			if(OnGround && forceAirMove<=0f) {
 				if(Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D)!=Vector2.zero) {
@@ -200,8 +194,6 @@ namespace Game
 			var right = Main.camera.Transform.Right;
 			forward.y = 0f;
 			right.y = 0f;
-			/*PM_ClipVelocity (pml.forward,pml.groundTrace.plane.normal,pml.forward,OVERCLIP );	//project the forward and right directions onto the ground plane
-			PM_ClipVelocity (pml.right,pml.groundTrace.plane.normal,pml.right,OVERCLIP );*/
 			forward.Normalize();
 			right.Normalize();
 
@@ -220,8 +212,6 @@ namespace Game
 			var right = Main.camera.Transform.Right;
 			forward.y = 0f;
 			right.y = 0f;
-			/*PM_ClipVelocity (pml.forward,pml.groundTrace.plane.normal,pml.forward,OVERCLIP );	//project the forward and right directions onto the ground plane
-			PM_ClipVelocity (pml.right,pml.groundTrace.plane.normal,pml.right,OVERCLIP );*/
 			forward.Normalize();
 			right.Normalize();
 
@@ -242,13 +232,11 @@ namespace Game
 		public void Movement_Friction()
 		{
 			var tempVec = velocity;
-			tempVec.y = 0f; //if ( pml.walking ) {
+			tempVec.y = 0f;
 			float speed = tempVec.Magnitude;
-			float control = 0f;
 			float drop = 0f;
 			if(OnGround) {
-				control = speed<stopSpeed ? stopSpeed : speed;
-				drop = control*friction*Time.DeltaTime;
+				drop = (speed<stopSpeed ? stopSpeed : speed)*friction*Time.DeltaTime;
 			}
 			float newSpeed = speed-drop;
 			if(newSpeed<0) {
@@ -264,27 +252,27 @@ namespace Game
 		public void Movement_Acceleration(Vector3 wishDirection,float wishSpeed,float acceleration)
 		{
 			//Acceleration with strafejumping
-			float currentSpeed = Vector3.Dot(velocity,wishDirection);
-			float addSpeed = wishSpeed-currentSpeed;
-			if(addSpeed<=0f) {
-				return;
+			if(enableStrafeJumping) {
+				float currentSpeed = Vector3.Dot(velocity,wishDirection);
+				float addSpeed = wishSpeed-currentSpeed;
+				if(addSpeed<=0f) {
+					return;
+				}
+				float accelSpeed = acceleration*wishSpeed*Time.DeltaTime;
+				if(accelSpeed>addSpeed) {
+					accelSpeed = addSpeed;
+				}
+				velocity += wishDirection*accelSpeed;
+			}else{
+				var wishVelocity = wishDirection*wishSpeed;
+				var pushDirection = wishVelocity-velocity;
+				pushDirection.Normalize(out float pushLength);
+				float accelSpeed = acceleration*wishSpeed*Time.DeltaTime;
+				if(accelSpeed>pushLength) {
+					accelSpeed = pushLength;
+				}
+				velocity += pushDirection*accelSpeed;
 			}
-			float accelSpeed = acceleration*wishSpeed*Time.DeltaTime;
-			if(accelSpeed>addSpeed) {
-				accelSpeed = addSpeed;
-			}
-			velocity += wishDirection*accelSpeed;
-
-			//Acceleration without strafejumping
-			/*Vector3 wishVelocity = wishDirection*wishSpeed;
-			Vector3 pushDirection = wishVelocity-velocity;
-			float pushLength;
-			pushDirection.Normalize(out pushLength);
-			float canPush = acceleration*wishSpeed*Time.fixedDeltaTime;
-			if(canPush>pushLength) {
-				canPush = pushLength;
-			}
-			velocity += pushDirection*canPush;*/
 		}
 		#endregion
 
@@ -299,11 +287,12 @@ namespace Game
 		public void Footstep(string actionType,float volume)
 		{
 			var atPoint = Transform.Position;
+			// ReSharper disable once SuspiciousTypeConversion.Global
 			var providers = rigidbody.Collisions.SelectIgnoreNull(c => c.gameObject as IFootstepProvider ?? ((c.gameObject as IHasMaterial)?.GetMaterial(atPoint))).ToArray();
 			if(providers.Length>0) {
 				var provider = providers[0];
 				provider.GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);
-				new SoundInstance($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint,volume);
+				new SoundInstance($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform);
 			}
 		}
 

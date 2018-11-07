@@ -13,6 +13,7 @@ namespace Game
 		public MeshCollider collider;
 		public Light light;
 		public AudioSource audioSource;
+		private float lightScale;
 		
 		public override void OnInit()
 		{
@@ -31,22 +32,27 @@ namespace Game
 
 				light = Instantiate<LightObj>().GetComponent<Light>();
 				light.color = new Vector3(1f,0.8f,0f);
+				light.intensity = 2f;
 				light.Transform.parent = Transform;
 				light.Transform.LocalPosition = new Vector3(0f,1f,0f);
 
 				audioSource = AddComponent<AudioSource>();
 				audioSource.Clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
 				audioSource.Loop = true;
+				audioSource.Volume = 0.3f;
 				audioSource.Play();
 			}
 		}
 		public override void FixedUpdate()
 		{
-			
+			if(Time.FixedUpdateCount%(Time.TargetUpdateCount/6)==0) {
+				lightScale = Rand.Range(0f,1f);
+			}
 		}
 		public override void RenderUpdate()
 		{
-			light.range = Rand.Range(11f,17f);
+			light.range = Mathf.Lerp(light.range,Mathf.Lerp(10f,15f,lightScale),Time.DeltaTime*4f);
+			light.intensity = Mathf.Lerp(light.intensity,Mathf.Lerp(0.75f,1.75f,lightScale),Time.DeltaTime*4f);
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<WoodPhysicMaterial>();

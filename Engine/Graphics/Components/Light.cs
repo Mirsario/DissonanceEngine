@@ -14,19 +14,11 @@ namespace GameEngine
 		public LightType type = LightType.Point;
 		public Vector3 color = Vector3.one;
 		public float range = 16f;
+		public float intensity = 1f;
 		
-		protected override void OnEnable()
-		{
-			Graphics.lightList.Add(this);
-		}
-		protected override void OnDisable()
-		{
-			Graphics.lightList.Remove(this);
-		}
-		protected override void OnDispose()
-		{
-			Graphics.lightList.Remove(this);
-		}
+		protected override void OnEnable() => Graphics.lightList.Add(this);
+		protected override void OnDisable() => Graphics.lightList.Remove(this);
+		protected override void OnDispose() => Graphics.lightList.Remove(this);
 		public override void FixedUpdate()
 		{
 			

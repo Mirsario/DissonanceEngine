@@ -12,15 +12,15 @@ namespace GameEngine
 		public float width;
 		public float height;
 		
-		public float Left	{get{return x;}}
-		public float Top	{get{return y;}}
-		public float Right	{get{return x+width;}}
-		public float Bottom	{get{return y+height;}}
-		public int X		{get{return(int)x;}}
-		public int Y		{get{return(int)y;}}
-		public int Width	{get{return(int)width;}}
-		public int Height	{get{return(int)height;}}
-		
+		public float Left => x;
+		public float Top => y;
+		public float Right => x+width;
+		public float Bottom => y+height;
+		public int X => (int)x;
+		public int Y => (int)y;
+		public int Width => (int)width;
+		public int Height => (int)height;
+
 		public Rect(float X,float Y,float Z,float W,bool fromPoints = false)
 		{
 			x = X;

@@ -9,6 +9,7 @@ namespace GameEngine
 	{
 		internal uint sourceId;
 		
+		//TODO: Document these properties, got a little bit confusing after some absence.
 		private bool _is2D;
 		public bool Is2D {
 			get => _is2D;
@@ -23,16 +24,14 @@ namespace GameEngine
 		}
 		internal AudioClip _clip;
 		public AudioClip Clip {
-			get {
-				return _clip;
-			}
+			get => _clip;
 			set {
 				if(_clip!=value) {
 					if(IsPlaying) {
 						Stop();
 					}
 					_clip = value;
-					AL.Source(sourceId,ALSourcei.Buffer,_clip!=null ? _clip.bufferId :-1);
+					AL.Source(sourceId,ALSourcei.Buffer,_clip?.bufferId ?? -1);
 				}
 			}
 		}
@@ -42,36 +41,28 @@ namespace GameEngine
 				AL.GetSource(sourceId,ALSourceb.Looping,out bool val);
 				return val;
 			}
-			set {
-				AL.Source(sourceId,ALSourceb.Looping,value);
-			}
+			set => AL.Source(sourceId,ALSourceb.Looping,value);
 		}
 		public float RefDistance {
 			get {
 				AL.GetSource(sourceId,ALSourcef.ReferenceDistance,out float val);
 				return val;
 			}
-			set {
-				AL.Source(sourceId,ALSourcef.ReferenceDistance,value);
-			}
+			set => AL.Source(sourceId,ALSourcef.ReferenceDistance,value);
 		}
 		private float MaxDistance {
 			get {
 				AL.GetSource(sourceId,ALSourcef.MaxDistance,out float val);
 				return val;
 			}
-			set {
-				AL.Source(sourceId,ALSourcef.MaxDistance,value);
-			}
+			set => AL.Source(sourceId,ALSourcef.MaxDistance,value);
 		}
 		public float Volume {
 			get {
 				AL.GetSource(sourceId,ALSourcef.Gain,out float val);
 				return val;
 			}
-			set {
-				AL.Source(sourceId,ALSourcef.Gain,value);
-			}
+			set => AL.Source(sourceId,ALSourcef.Gain,value);
 		}
 		
 		protected override void OnInit()

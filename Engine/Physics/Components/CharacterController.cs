@@ -24,8 +24,8 @@ namespace GameEngine
 			charController.SetJumpSpeed(1f);
 			charController.SetUpAxis(1);
 			charController.SetWalkDirection(offset);
-			charController.SetVelocityForTimeInterval(offset,Time.FixedDeltaTime);
-			charController.PlayerStep(Physics.world,Time.FixedDeltaTime);
+			charController.SetVelocityForTimeInterval(offset,Time.fixedDeltaTime);
+			charController.PlayerStep(Physics.world,Time.fixedDeltaTime);
 		}
 		public override void FixedUpdate()
 		{

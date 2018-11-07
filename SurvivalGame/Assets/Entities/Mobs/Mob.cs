@@ -5,11 +5,9 @@ using GameEngine;
 
 namespace Game
 {
+	//test quality code
 	public class Mob : Entity
 	{
-		//TODO: Fix dumb testing design and remove "headRotation" & "cameraXBonus".
-
-		public Vector3 headRotation;
 		public bool OnGround {
 			get {
 				//TODO: Get BoxCollider offsets to work right, oof.
@@ -49,6 +47,7 @@ namespace Game
 			}
 		}
 
+		//Probably shouldn't be here
 		public override void UpdateCamera()
 		{
 			var cameraRotation = Main.cameraRotation;
@@ -59,8 +58,8 @@ namespace Game
 			Main.camera.Transform.LocalPosition = new Vector3(0f,2f,0f).RotatedBy(0,0f,cameraRotation.z*2f).RotatedBy(0f,cameraRotation.y,0f);
 			
 			Main.cameraRotation = cameraRotation;
-			cameraXBonus = Mathf.Lerp(cameraXBonus,localVelocity.y*0.5f,Time.DeltaTime*5f)+(localVelocity.z*0.025f);
-			cameraRotation.x += cameraXBonus;
+			//cameraXBonus = Mathf.Lerp(cameraXBonus,localVelocity.y*0.5f,Time.DeltaTime*5f)+(localVelocity.z*0.025f);
+			//cameraRotation.x += cameraXBonus;
 			Main.camera.Transform.EulerRot = cameraRotation;
 		}
 	}
