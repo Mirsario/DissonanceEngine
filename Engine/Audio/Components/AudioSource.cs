@@ -64,6 +64,13 @@ namespace GameEngine
 			}
 			set => AL.Source(sourceId,ALSourcef.Gain,value);
 		}
+		public float PlaybackOffset {
+			get {
+				AL.GetSource(sourceId,ALSourcef.SecOffset,out float val);
+				return val;
+			}
+			set => AL.Source(sourceId,ALSourcef.SecOffset,value);
+		}
 		
 		protected override void OnInit()
 		{

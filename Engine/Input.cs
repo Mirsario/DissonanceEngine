@@ -89,7 +89,9 @@ namespace GameEngine
 		}
 		private static void CheckSpecialCombinations()
 		{
-			if(GetKeyDown(Keys.Enter) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
+			if(GetKeyDown(Keys.F4) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
+				Game.Quit();
+			}else if(GetKeyDown(Keys.Enter) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
 				Graphics.Fullscreen = !Graphics.Fullscreen;
 			}
 		}

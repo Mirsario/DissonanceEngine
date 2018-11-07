@@ -37,7 +37,9 @@ namespace Game
 				light.Transform.LocalPosition = new Vector3(0f,1f,0f);
 
 				audioSource = AddComponent<AudioSource>();
-				audioSource.Clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
+				var clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
+				audioSource.Clip = clip;
+				audioSource.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
 				audioSource.Loop = true;
 				audioSource.Volume = 0.3f;
 				audioSource.Play();

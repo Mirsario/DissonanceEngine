@@ -50,8 +50,8 @@ namespace GameEngine
 
 		public static IEnumerable<TResult> SelectIgnoreNull<TSource,TResult>(this IEnumerable<TSource> source,Func<TSource,TResult> selector)
 		{
-			if(source==null)	{ throw new ArgumentNullException ("source"); }
-			if(selector==null)	{ throw new ArgumentNullException ("selector"); }
+			if(source==null)	{ throw new ArgumentNullException (nameof(source)); }
+			if(selector==null)	{ throw new ArgumentNullException (nameof(selector)); }
 			return SelectIgnoreNullIterator(source,selector);
 		}
 		private static IEnumerable<TResult> SelectIgnoreNullIterator<TSource,TResult>(IEnumerable<TSource> source,Func<TSource,TResult> selector)

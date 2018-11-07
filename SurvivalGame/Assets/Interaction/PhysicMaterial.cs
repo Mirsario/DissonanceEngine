@@ -37,7 +37,7 @@ namespace Game
 		public static PhysicMaterial GetMaterial(Type type)
 		{
 			if(!typeof(PhysicMaterial).IsAssignableFrom(type)) {
-				throw new ArgumentException("Type is not a PhysicMaterial","type");
+				throw new ArgumentException("Type is not a PhysicMaterial",nameof(type));
 			}
 			if(materials.TryGetValue(type,out var material)) {
 				return material;

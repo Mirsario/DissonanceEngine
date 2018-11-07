@@ -117,12 +117,11 @@ namespace Game
 			ushort dirt = TileType.byName["Dirt"].type;
 			ushort stone = TileType.byName["Stone"].type;
 
-			Tile tile;
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
 					ushort type = Rand.Next(3)==0 ? grassFlowers : grass;
 					float height = noise.GetValue(x*divX,0.0,y*divY)*60f;
-					tile = new Tile {
+					Tile tile = new Tile {
 						type = Rand.Next(3)==0 ? grassFlowers : grass,
 						height = height
 					};
@@ -165,7 +164,7 @@ namespace Game
 
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
-					tile = this[x,y];
+					Tile tile = this[x,y];
 					if(tile.type==dirt) {
 						continue;
 					}
@@ -174,12 +173,21 @@ namespace Game
 						tile.type = maxHeightDiff>=4.35f ? stone : dirt;
 						continue;
 					}
-					var (maxRand,action)= genRoaster[Rand.Next(genRoaster.Length)];
+					(int maxRand, var action) = genRoaster[Rand.Next(genRoaster.Length)];
 					if(Rand.Next(maxRand)==0) {
 						var spawnPos = new Vector3(x*Chunk.tileSize+Chunk.tileSizeHalf,0f,y*Chunk.tileSize+Chunk.tileSizeHalf);
 						spawnPos.y = HeightAt(spawnPos,false);
 						action(tile,x,y,spawnPos);
 					}
+				}
+			}
+			for(int i = 0;i<1000;i++) {
+				int x = Rand.Range(1,xSize-1);
+				int y = Rand.Range(1,ySize-1);
+				Tile tile = tiles[x,y];
+				if(tile.type==dirt || tile.type==stone) {
+					tile.height += Rand.Range(-1f,4.75f);
+					tiles[x-1,y].type = tiles[x,y-1].type = tiles[x-1,y-1].type = tile.type = stone;
 				}
 			}
 			

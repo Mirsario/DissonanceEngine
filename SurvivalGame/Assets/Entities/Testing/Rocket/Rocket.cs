@@ -40,23 +40,25 @@ namespace Game
 			var deltaVelocity = velocity*Time.DeltaTime;
 			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
 				Transform.Position = hit.point;
-				new SoundInstance("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
+				var instance = new SoundInstance("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
 				float maxDistance = 10f;
-				float power = 3000f;
+				const float power = 3000f;
 
-				foreach(Rigidbody body in Physics.ActiveRigidbodies) {
-					var direction = body.Transform.Position-Transform.Position;
-					if(direction==Vector3.zero) {
-						continue;
+				foreach(var rigidbodyBase in Physics.ActiveRigidbodies) {
+					if(rigidbodyBase is Rigidbody body) {
+						var direction = body.Transform.Position-Transform.Position;
+						if(direction==Vector3.zero) {
+							continue;
+						}
+						float distance = direction.Magnitude;
+						direction.Normalize();
+						float powerScale = distance/maxDistance;
+						if(powerScale>=1f) {
+							continue;
+						}
+						powerScale = 1f-powerScale;
+						body.ApplyForce(direction*power*powerScale,Vector3.zero);
 					}
-					float distance = direction.Magnitude;
-					direction.Normalize();
-					float powerScale = distance/maxDistance;
-					if(powerScale>=1f) {
-						continue;
-					}
-					powerScale = 1f-powerScale;
-					body.ApplyForce(direction*power*powerScale,Vector3.zero);
 				}
 
 				audioSource.Stop();

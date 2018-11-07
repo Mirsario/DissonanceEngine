@@ -406,16 +406,16 @@ namespace GameEngine
 		{
 			//No difference between LH and RH here
 			if(fovY<=0 || fovY>Math.PI) {
-				throw new ArgumentOutOfRangeException("fovY");
+				throw new ArgumentOutOfRangeException(nameof(fovY));
 			}
 			if(aspect<=0) {
-				throw new ArgumentOutOfRangeException("aspect");
+				throw new ArgumentOutOfRangeException(nameof(aspect));
 			}
 			if(zNear<=0) {
-				throw new ArgumentOutOfRangeException("zNear");
+				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 			if(zFar<=0) {
-				throw new ArgumentOutOfRangeException("zFar");
+				throw new ArgumentOutOfRangeException(nameof(zFar));
 			}
 			float yMax = zNear*(float)Math.Tan(0.5f*fovY);
 			float yMin = -yMax;
@@ -427,13 +427,13 @@ namespace GameEngine
 		{
 			var result = identity;
 			if(zNear<=0) {
-				throw new ArgumentOutOfRangeException("zNear");
+				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 			if(zFar<=0) {
-				throw new ArgumentOutOfRangeException("zFar");
+				throw new ArgumentOutOfRangeException(nameof(zFar));
 			}
 			if(zNear>=zFar) {
-				throw new ArgumentOutOfRangeException("zNear");
+				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 			float x = 2f*zNear/(right-left);
 			float y = 2f*zNear/(top-bottom);
