@@ -9,27 +9,6 @@ using Newtonsoft.Json.Linq;
 
 namespace GameEngine
 {
-	#region JSON
-	public class JsonObjectToStringConverter : JsonConverter
-	{
-		public override bool CanRead => true;
-		public override bool CanWrite => false;
-		public override bool CanConvert(Type objectType) => objectType==typeof(JTokenType);
-
-		public override object ReadJson(JsonReader reader,Type objectType,object existingValue,JsonSerializer serializer)
-		{
-			var token = JToken.Load(reader);
-            if(token.Type==	JTokenType.Object)  {
-                return token.ToString();
-            }
-            return null;
-		}
-		public override void WriteJson(JsonWriter writer,object value,JsonSerializer serializer)
-		{
-			throw new NotImplementedException();
-		}
-	}
-	#endregion
 	public static class Extensions
 	{
 		public static CultureInfo customCulture;
@@ -130,7 +109,7 @@ namespace GameEngine
 		{
 			var result = new bool[8];
 			for(int i=0;i<8;i++) {
-				result[i] = (b & 1 << i)==0 ? false : true;
+				result[i] = (b & 1 << i)!=0;
 			}
 			return result;
 		}
@@ -153,7 +132,7 @@ namespace GameEngine
 		{
 			var result = new bool[64];
 			for(int i=0;i<64;i++) {
-				result[i] = (b & (ulong)1 << i)==0 ? false : true;
+				result[i] = (b & (ulong)1 << i)!=0;
 			}
 			return result;
 		}
@@ -171,7 +150,7 @@ namespace GameEngine
 		//Other
 		#region Strings
 		public static int SizeInBytes(this string str) => Encoding.ASCII.GetByteCount(str);
-		public static bool IsEmptyOrNull(this string str) => str==null || str==string.Empty;
+		public static bool IsEmptyOrNull(this string str) => string.IsNullOrEmpty(str);
 
 		public static string ReplaceCaseInsensitive(this string str,string oldValue,string newValue)
 		{
@@ -180,7 +159,7 @@ namespace GameEngine
 		public static string ReplaceCaseInsensitive(this string str,params (string oldValue,string newValue)[] replacements)
 		{
 			for(int i=0;i<replacements.Length;i++) {
-				var (oldValue,newValue)=	replacements[i];
+				(string oldValue,string newValue) = replacements[i];
 				str = str.ReplaceCaseInsensitive(oldValue,newValue);
 			}
 			return str;
@@ -214,49 +193,10 @@ namespace GameEngine
 			writer.Write(q.w);
 		}
 		//BinaryReader
-		public static Vector2 ReadVector2(this BinaryReader reader)
-		{
-			return new Vector2(reader.ReadSingle(),reader.ReadSingle());
-		}
-		public static Vector3 ReadVector3(this BinaryReader reader)
-		{
-			return new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
-		}
-		public static Vector4 ReadVector4(this BinaryReader reader)
-		{
-			return new Vector4(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
-		}
-		public static Quaternion ReadQuaternion(this BinaryReader reader)
-		{
-			return new Quaternion(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
-		}
-		#endregion
-		#region Unsorted
-		//Vector transformations
-		public static Vector3 MidPoint(Vector3 a,Vector3 b)
-        {
-            float nx = (a.x+b.x)/2;
-            float ny = (a.y+b.y)/2;
-            float nz = (a.z+b.z)/2;
-            float R = Mathf.Sqrt(nx*nx+ny*ny+nz*nz);
-            return new Vector3(nx/R,ny/R,nz/R);
-        }
-        public static Vector3 CentralP(Vector3 a,Vector3 b,Vector3 c)
-        {
-            float x = (a.x+b.x+c.x)/3;
-            float y = (a.y+b.y+c.y)/3;
-            float z = (a.z+b.z+c.z)/3;
-            float rad = Mathf.Sqrt(x*x+y*y+z*z);
-            return new Vector3(x/rad,y/rad,z/rad);
-        }
-        public static float Distance(Vector3 a,Vector3 b)
-        {
-            return Mathf.Sqrt(Mathf.Pow(b.x-a.x,2)+Mathf.Pow(b.y-a.y,2)+Mathf.Pow(b.z-a.z,2));
-        }
-        public static float Distance(Vector3 a)
-        {
-            return Mathf.Sqrt(Mathf.Pow(a.x,2)+Mathf.Pow(a.y,2)+Mathf.Pow(a.z,2));
-        }
+		public static Vector2 ReadVector2(this BinaryReader reader) => new Vector2(reader.ReadSingle(),reader.ReadSingle());
+		public static Vector3 ReadVector3(this BinaryReader reader) => new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
+		public static Vector4 ReadVector4(this BinaryReader reader) => new Vector4(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
+		public static Quaternion ReadQuaternion(this BinaryReader reader) => new Quaternion(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());
 		#endregion
 	}
 }
