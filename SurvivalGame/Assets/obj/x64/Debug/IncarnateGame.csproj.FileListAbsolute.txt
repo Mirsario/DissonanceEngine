@@ -1,2 +1,0 @@
-D:\Workspace\0-CSharp\GameEngineGL\Assets\obj\x64\Debug\IncarnateGame.csprojResolveAssemblyReference.cache
-D:\Workspace\0-CSharp\GameEngineGL\Assets\obj\x64\Debug\IncarnateGame.csproj.CoreCompileInputs.cache
