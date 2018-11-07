@@ -61,7 +61,11 @@ namespace Game
 		public override void FixedUpdate()
 		{
 			if(Input.GetKeyDown(Keys.Escape)) {
-				Quit();
+				if(lockCursor) {
+					lockCursor = false;
+				}else{
+					Quit();
+				}
 			}
 			/*float time = Time.GameTime;
 			if(Mathf.FloorToInt(time)!=Mathf.FloorToInt(time-Time.DeltaTime)) {

@@ -35,15 +35,15 @@ namespace GameEngine
 		{
 			double result = 0.0;
 			double pers = 1.0;
-			double nX,nY,nZ;
 			//int seedCurrent;
 			x *= frequency;
 			y *= frequency;
 			z *= frequency;
-			for(var i=0;i<Octaves;i++) {
-				nX = MakeInt32Range(x);
-				nY = MakeInt32Range(y);
-				nZ = MakeInt32Range(z);
+
+			for(int i=0;i<Octaves;i++) {
+				double nX = MakeInt32Range(x);
+				double nY = MakeInt32Range(y);
+				double nZ = MakeInt32Range(z);
 				
 				result += pers*CoherentNoise(nX,nY,nZ,(int)(seed+i&0xffffffff),quality);
 				x *= lacunarity;
@@ -55,12 +55,12 @@ namespace GameEngine
 		}
 		internal static double CoherentNoise(double x,double y,double z,int seed,QualityMode quality)
 		{
-			var x0 = x>0.0 ? (int)x : (int)x-1;
-			var x1 = x0+1;
-			var y0 = y>0.0 ? (int)y : (int)y-1;
-			var y1 = y0+1;
-			var z0 = z>0.0 ? (int)z : (int)z-1;
-			var z1 = z0+1;
+			int x0 = x>0.0 ? (int)x : (int)x-1;
+			int x1 = x0+1;
+			int y0 = y>0.0 ? (int)y : (int)y-1;
+			int y1 = y0+1;
+			int z0 = z>0.0 ? (int)z : (int)z-1;
+			int z1 = z0+1;
 			
 			double xs = 0;
 			double ys = 0;
@@ -85,30 +85,26 @@ namespace GameEngine
 					break;
 				}
 			}
-			var n0 = Noise(x,y,z,x0,y0,z0,seed);
-			var n1 = Noise(x,y,z,x1,y0,z0,seed);
-			var ix0 = InterpolateLinear(n0,n1,xs);
+			double n0 = Noise(x,y,z,x0,y0,z0,seed);
+			double n1 = Noise(x,y,z,x1,y0,z0,seed);
+			double ix0 = InterpolateLinear(n0,n1,xs);
 			n0 = Noise(x,y,z,x0,y1,z0,seed);
 			n1 = Noise(x,y,z,x1,y1,z0,seed);
-			var ix1 = InterpolateLinear(n0,n1,xs);
-			var iy0 = InterpolateLinear(ix0,ix1,ys);
+			double ix1 = InterpolateLinear(n0,n1,xs);
+			double iy0 = InterpolateLinear(ix0,ix1,ys);
 			n0 = Noise(x,y,z,x0,y0,z1,seed);
 			n1 = Noise(x,y,z,x1,y0,z1,seed);
 			ix0 = InterpolateLinear(n0,n1,xs);
 			n0 = Noise(x,y,z,x0,y1,z1,seed);
 			n1 = Noise(x,y,z,x1,y1,z1,seed);
 			ix1 = InterpolateLinear(n0,n1,xs);
-			var iy1 = InterpolateLinear(ix0,ix1,ys);
+			double iy1 = InterpolateLinear(ix0,ix1,ys);
 			return InterpolateLinear(iy0,iy1,zs);
 		}
 		internal static double Noise(double fx,double fy,double fz,int ix,int iy,int iz,int seed)
 		{
-			int i = (int)(1619*ix
-				+31337*iy
-				+6971*iz
-				+1013*seed
-			&0xffffffff);
-			i^=	i>>8;
+			int i = (int)(1619*ix+31337*iy+6971*iz+1013*seed&0xffffffff);
+			i ^= i>>8;
 			i &= 0xff;
 			double xvg = randomValues[i<<2];
 			double yvg = randomValues[(i<<2)+1];
@@ -124,9 +120,9 @@ namespace GameEngine
 		}
 		internal static double MapQuinticSCurve(double value)
 		{
-			var a3 = value*value*value;
-			var a4 = a3*value;
-			var a5 = a4*value;
+			double a3 = value*value*value;
+			double a4 = a3*value;
+			double a5 = a4*value;
 			return 6.0*a5-15.0*a4+10.0*a3;
 		}
 		internal static double InterpolateLinear(double a,double b,double pos)
@@ -143,8 +139,10 @@ namespace GameEngine
 			}
 			return value;
 		}
-		internal static readonly double[] randomValues=
-		{
+
+		//Giant array of pre-made noise that the Noise method will use
+		//I'm not entirely sure if this is a good idea.
+		internal static readonly double[] randomValues = {
 			-0.763874,	-0.596439,	-0.246489,	0.0,	0.396055,	0.904518,	-0.158073,	0.0,
 			-0.499004,	-0.8665,	-0.0131631,	0.0,	0.468724,	-0.824756,	0.316346,	0.0,
 			0.829598,	0.43195,	0.353816,	0.0,	-0.454473,	0.629497,	-0.630228,	0.0,
@@ -161,14 +159,14 @@ namespace GameEngine
 			-0.665651,	0.626724,	0.405124,	0.0,	0.595914,	-0.674582,	0.43569,	0.0,
 			0.171025,	-0.509292,	0.843428,	0.0,	0.78605,	0.536414,	-0.307222,	0.0,
 			0.18905,	-0.791613,	0.581042,	0.0,	-0.294916,	0.844994,	0.446105,	0.0,
-			0.342031,	-0.58736,	-0.7335,	0.0,	0.57155,	0.7869,	0.232635,	0.0,
+			0.342031,	-0.58736,	-0.7335,	0.0,	0.57155,	0.7869,		0.232635,	0.0,
 			0.885026,	-0.408223,	0.223791,	0.0,	-0.789518,	0.571645,	0.223347,	0.0,
 			0.774571,	0.31566,	0.548087,	0.0,	-0.79695,	-0.0433603,	-0.602487,	0.0,
 			-0.142425,	-0.473249,	-0.869339,	0.0,	-0.0698838,	0.170442,	0.982886,	0.0,
 			0.687815,	-0.484748,	0.540306,	0.0,	0.543703,	-0.534446,	-0.647112,	0.0,
 			0.97186,	0.184391,	-0.146588,	0.0,	0.707084,	0.485713,	-0.513921,	0.0,
 			0.942302,	0.331945,	0.043348,	0.0,	0.499084,	0.599922,	0.625307,	0.0,
-			-0.289203,	0.211107,	0.9337,	0.0,	0.412433,	-0.71667,	-0.56239,	0.0,
+			-0.289203,	0.211107,	0.9337,		0.0,	0.412433,	-0.71667,	-0.56239,	0.0,
 			0.87721,	-0.082816,	0.47291,	0.0,	-0.420685,	-0.214278,	0.881538,	0.0,
 			0.752558,	-0.0391579,	0.657361,	0.0,	0.0765725,	-0.996789,	0.0234082,	0.0,
 			-0.544312,	-0.309435,	-0.779727,	0.0,	-0.455358,	-0.415572,	0.787368,	0.0,
@@ -198,7 +196,7 @@ namespace GameEngine
 			0.61598,	-0.178669,	0.767232,	0.0,	0.0112967,	0.932256,	-0.361623,	0.0,
 			-0.793031,	0.258012,	0.551845,	0.0,	0.421933,	0.454311,	0.784585,	0.0,
 			-0.319993,	0.0401618,	-0.946568,	0.0,	-0.81571,	0.551307,	-0.175151,	0.0,
-			-0.377644,	0.00322313,0.925945,	0.0,	0.129759,	-0.666581,	-0.734052,	0.0,
+			-0.377644,	0.00322313,	0.925945,	0.0,	0.129759,	-0.666581,	-0.734052,	0.0,
 			0.601901,	-0.654237,	-0.457919,	0.0,	-0.927463,	-0.0343576,	-0.372334,	0.0,
 			-0.438663,	-0.868301,	-0.231578,	0.0,	-0.648845,	-0.749138,	-0.133387,	0.0,
 			0.507393,	-0.588294,	0.629653,	0.0,	0.726958,	0.623665,	0.287358,	0.0,
@@ -223,7 +221,7 @@ namespace GameEngine
 			0.690982,	0.174003,	0.701617,	0.0,	-0.866701,	0.0118182,	0.498689,	0.0,
 			-0.482876,	0.727143,	0.487949,	0.0,	-0.577567,	0.682593,	-0.447752,	0.0,
 			0.373768,	0.0982991,	0.922299,	0.0,	0.170744,	0.964243,	-0.202687,	0.0,
-			0.993654,	-0.035791,	-0.106632,	0.0,	0.587065,	0.4143,	-0.695493,	0.0,
+			0.993654,	-0.035791,	-0.106632,	0.0,	0.587065,	0.4143,		-0.695493,	0.0,
 			-0.396509,	0.26509,	-0.878924,	0.0,	-0.0866853,	0.83553,	-0.542563,	0.0,
 			0.923193,	0.133398,	-0.360443,	0.0,	0.00379108,-0.258618,	0.965972,	0.0,
 			0.239144,	0.245154,	-0.939526,	0.0,	0.758731,	-0.555871,	0.33961,	0.0,
@@ -260,7 +258,7 @@ namespace GameEngine
 			-0.305847,	0.542333,	-0.782517,	0.0,	0.26658,	-0.902905,	-0.337191,	0.0,
 			0.0275773,	0.322158,	-0.946284,	0.0,	0.0185422,	0.716349,	0.697496,	0.0,
 			-0.20483,	0.978416,	0.0273371,	0.0,	-0.898276,	0.373969,	0.230752,	0.0,
-			-0.00909378,0.546594,	0.837349,	0.0,	0.6602,	-0.751089,	0.000959236,0.0,
+			-0.00909378,0.546594,	0.837349,	0.0,	0.6602,		-0.751089,	0.000959236,0.0,
 			0.855301,	-0.303056,	0.420259,	0.0,	0.797138,	0.0623013,	-0.600574,	0.0,
 			0.48947,	-0.866813,	0.0951509,	0.0,	0.251142,	0.674531,	0.694216,	0.0,
 			-0.578422,	-0.737373,	-0.348867,	0.0,	-0.254689,	-0.514807,	0.818601,	0.0,

@@ -44,10 +44,10 @@ namespace GameEngine
 				stopwatch[name].RemoveAt(i);
 			}
 		}
-		public static void Log(object message,bool showTrace = false,string uniqueId = "",int stackframeOffset = 1)
+		public static void Log(object message,bool showTrace = false,string uniqueId = null,int stackframeOffset = 1)
 		{
 			string text = message.ToString();
-			if(uniqueId!="") {
+			if(uniqueId!=null) {
 				int j = 0;
 				for(int i=0;i<lines.Count;i++) {
 					if(lines[i].id==uniqueId) {
@@ -61,7 +61,7 @@ namespace GameEngine
 			}
 			var stackTrace = new StackTrace(true);
 			var stackFrames = stackTrace.GetFrames();
-			text = "["+Path.GetFileName(stackFrames[stackframeOffset].GetFileName())+",line "+stackFrames[stackframeOffset].GetFileLineNumber()+"] "+text;
+			text = "["+Path.GetFileName(stackFrames[stackframeOffset].GetFileName())+", line "+stackFrames[stackframeOffset].GetFileLineNumber()+"] "+text;
 			SplitWrite(text);
 			lines.Add(new LineInfo(text,uniqueId));
 			if(showTrace) {

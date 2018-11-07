@@ -78,7 +78,7 @@ namespace GameEngine
 		{
 			direction.Normalize();
 
-			var layerMask = ulong.MaxValue;
+			ulong layerMask = ulong.MaxValue;
 			if(mask!=null) {
 				layerMask = mask(layerMask);
 			}

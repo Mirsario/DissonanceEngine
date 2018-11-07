@@ -4,7 +4,6 @@ using OpenTK.Audio.OpenAL;
 
 namespace GameEngine
 {
-	//[AllowOnlyOnePerObject]
 	public class AudioSource : Component
 	{
 		internal uint sourceId;
@@ -58,11 +57,24 @@ namespace GameEngine
 			set => AL.Source(sourceId,ALSourcef.MaxDistance,value);
 		}
 		public float Volume {
+			//Quite weird? For some reason setting ALSourcef.Gain to values lower than 1.0 is the same as setting it to 1.0.
 			get {
-				AL.GetSource(sourceId,ALSourcef.Gain,out float val);
-				return val;
+				AL.GetSource(sourceId,ALSourcef.MaxGain,out float maxGain);
+				if(maxGain<1f) {
+					return maxGain;
+				}
+				AL.GetSource(sourceId,ALSourcef.Gain,out float gain);
+				return gain;
 			}
-			set => AL.Source(sourceId,ALSourcef.Gain,value);
+			set {
+				if(value<1f) {
+					AL.Source(sourceId,ALSourcef.Gain,1f);
+					AL.Source(sourceId,ALSourcef.MaxGain,Math.Max(0f,value));
+				}else{
+					AL.Source(sourceId,ALSourcef.Gain,value);
+					AL.Source(sourceId,ALSourcef.MaxGain,1f);
+				}
+			}
 		}
 		public float PlaybackOffset {
 			get {
@@ -81,28 +93,12 @@ namespace GameEngine
 			Volume = 1f;
 			FixedUpdate();
 		}
-		protected override void OnEnable()
-		{
-			
-		}
-		protected override void OnDisable()
-		{
-			
-		}
 		protected override void OnDispose()
 		{
 			AL.DeleteSource(ref sourceId);
 		}
 		public override void FixedUpdate()
 		{
-			/*if(loop) {
-				bool playing = isPlaying;
-				if(wasPlaying && !playing) {
-					Play();
-				}
-				wasPlaying = playing;
-			}*/
-
 			if(!_is2D) {
 				OpenTK.Vector3 pos = Transform.Position;
 				AL.Source(sourceId,ALSource3f.Position,ref pos);

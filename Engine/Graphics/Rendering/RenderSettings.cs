@@ -46,6 +46,7 @@ namespace GameEngine
 							noWrite = true;
 							break;
 						case TextureAttachmentType.DepthStencil: {
+							//TODO: Ew
 							uint renderBufferId = (uint)GL.GenRenderbuffer();
 							GL.BindRenderbuffer(RenderbufferTarget.RenderbufferExt,renderBufferId);
 							GL.RenderbufferStorage(RenderbufferTarget.RenderbufferExt,RenderbufferStorage.Depth24Stencil8,Graphics.ScreenWidth,Graphics.ScreenHeight);
@@ -55,7 +56,7 @@ namespace GameEngine
 							renderBuffers.Add(new RenderBuffer(renderBufferId,texName));
 							continue;
 						}
-						default: //if(tex.type==TextureAttachmentType.Stencil) {
+						default:
 							throw new NotImplementedException();
 					}
 					if(!noWrite) {

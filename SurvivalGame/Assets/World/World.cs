@@ -191,7 +191,7 @@ namespace Game
 				}
 			}
 			
-			Main.LocalEntity = new Human();//Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
+			Main.LocalEntity = new Human(); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
 			playerPos.y = HeightAt(playerPos,false);
 			Main.LocalEntity.Transform.Position = playerPos;
@@ -199,6 +199,7 @@ namespace Game
 			//Instantiate<CubeObj>(null,new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
 
 			//new LightObj().transform.parent = Main.camera.transform;
+			Instantiate<AtmosphereSystem>();
 
 			var sun = new Sun();
 			var skybox = new Skybox();

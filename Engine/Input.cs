@@ -27,8 +27,11 @@ namespace GameEngine
 			public List<Keys> pressedKeysPrev = new List<Keys>();
 			public string inputString = "";
 		}
+		#region Fields
 		internal static InputVariables fixedTimeVars;
 		internal static InputVariables renderTimeVars;
+		#endregion
+		#region Properties
 		internal static InputVariables Vars => Game.fixedUpdate ? fixedTimeVars : renderTimeVars;
 
 		//Mouse
@@ -38,6 +41,7 @@ namespace GameEngine
 
 		//Keyboard
 		public static string InputString => Vars.inputString;
+		#endregion
 
 		#region Initialization
 		internal static void Init()

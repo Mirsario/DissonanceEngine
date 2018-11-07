@@ -7,8 +7,10 @@ using GameEngine;
 #pragma warning disable 219
 namespace Game
 {
-	public static class Program {
-		public static void Main() {
+	public static class Program
+	{
+		public static void Main()
+		{
 			var main = new Main();
 			main.Run();
 		}
@@ -109,13 +111,16 @@ namespace Game
 			Directory.CreateDirectory(builtPath);
 
 			Console.BufferHeight = short.MaxValue-1;
-			
-			//World.NewWorld("Test",128,128); //Skips menu
 		}
 		public override void FixedUpdate()
 		{
 			if(Input.GetKeyDown(Keys.Escape)) {
-				Quit();
+				if(lockCursor || !showCursor) {
+					lockCursor = false;
+					showCursor = true;
+				}else{
+					Quit();
+				}
 			}
 			//Physics.gravity = new Vector3(0f,Mathf.Sin(Time.fixedTime*2f)*5f,0f);
 		}

@@ -32,6 +32,12 @@ namespace Game
 			collider.Mesh = barkMesh;
 			collider.Convex = false;
 		}
+		public override void FixedUpdate()
+		{
+			if(Rand.Next(10000)==0) {
+				new SoundInstance($"Sounds/Atmosphere/Nature/Birds/Bird{Rand.Range(1,10)}.ogg",Transform.Position);
+			}
+		}
 		/*private float soundPlayDelay;
 		public override void FixedUpdate()
 		{

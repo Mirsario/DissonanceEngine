@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GameEngine
 {
+	//TODO: Move regions into their own extension classes
 	public static class Extensions
 	{
 		public static CultureInfo customCulture;
@@ -77,12 +78,14 @@ namespace GameEngine
 			int yLength1 = from.GetLength(1);
 			int xLength2 = to.GetLength(0);
 			int yLength2 = to.GetLength(1);
+
 			for(int y=0;y<srcRect.Height;y++) {
 				for(int x=0;x<srcRect.Width;x++) {
 					int X1 = srcRect.X+x;
 					int Y1 = srcRect.Y+y;
 					int X2 = destPoint.x+x;
 					int Y2 = destPoint.y+y;
+
 					if(X1>=0 && Y1>=0 && X2>=0 && Y2>=0 && X1<xLength1 && Y1<yLength1 && X2<xLength2 && Y2<yLength2) {
 						to[X2,Y2] = from[X1,Y1];
 					}
@@ -97,6 +100,7 @@ namespace GameEngine
 			if(array.Length>8) {
 				throw new ArgumentException("Array's length shouldn't be bigger than 8. Use ToShort() or ToInt() instead");
 			}
+
 			byte result = 0;
 			for(int i=0;i<array.Length;i++) {
 				if(array[i]) {
@@ -120,6 +124,7 @@ namespace GameEngine
 			if(array.Length!=64) {
 				throw new ArgumentException("Array's length must be exactly 64");
 			}
+
 			ulong result = 0;
 			for(int i=0;i<64;i++) {
 				if(array[i]) {
@@ -153,9 +158,7 @@ namespace GameEngine
 		public static bool IsEmptyOrNull(this string str) => string.IsNullOrEmpty(str);
 
 		public static string ReplaceCaseInsensitive(this string str,string oldValue,string newValue)
-		{
-			return Regex.Replace(str,Regex.Escape(oldValue),newValue.Replace("$","$$"),RegexOptions.IgnoreCase);
-		}
+			=> Regex.Replace(str,Regex.Escape(oldValue),newValue.Replace("$","$$"),RegexOptions.IgnoreCase);
 		public static string ReplaceCaseInsensitive(this string str,params (string oldValue,string newValue)[] replacements)
 		{
 			for(int i=0;i<replacements.Length;i++) {
