@@ -13,8 +13,7 @@ namespace Game
 
 		public override void RenderUpdate()
 		{
-			var localMob = Main.LocalEntity as Mob;
-			if(localMob==null) {
+			if(!(Main.LocalMob is Mob localMob)) {
 				return;
 			}
 

@@ -39,34 +39,20 @@ namespace Game
 		}
 		public override void FixedUpdate()
 		{
-			/*if(Input.GetKeyDown(Keys.C)) {	//Sound test
+			if(Input.GetKeyDown(Keys.C)) {	//Sound test
 				Debug.Log("HONK!");
 				PlayVoiceClip(Resources.Get<AudioClip>("Sounds/honk.wav"));
-				transform.position = new Vector3(transform.position.x,transform.position.y+1f,transform.position.z);
-			}*/
-			/*if(Input.GetKeyDown(Keys.B)) {	//Place block
-				Vector3Int pos = (Vector3Int)((rayTestObj.transform.position-(Main.camera.transform.forward*0.1f))/Chunk.tileSize);
-				Main.world[pos.x,pos.y,pos.z] = new Tile(new string[] { "Lattice","TileFloor" },new byte[] { 0,TileSide.Front });
-			}*/
+			}
 			if(Input.GetKeyDown(Keys.K)) {  //Add light
-				new LightObj {
-					Transform = {
-						Position = Main.camera.Transform.Position
-					}
-				};
+				Instantiate<LightObj>(world,position:Main.camera.Transform.Position);
 			}
 
 			base.FixedUpdate();
 			if(Input.GetMouseButtonDown(0)) {
-				new Rocket {
-					Transform = {
-						Position = Main.camera.Transform.Position+Main.camera.Transform.Forward
-					},
-					velocity = Main.camera.Transform.Forward*25f,
-					owner = this
-				};
-				//rocket.transform.eulerRot = Vector3.DirectionToEuler(Main.camera.transform.forward);
-				new SoundInstance("Sounds/rocketFire.wav",Main.camera.Transform.Position);
+				Rocket rocket = Instantiate<Rocket>(world,position:Main.camera.Transform.Position+Main.camera.Transform.Forward);
+				rocket.velocity = Main.camera.Transform.Forward*25f;
+				rocket.owner = this;
+				SoundInstance.Create("Sounds/rocketFire.wav",Main.camera.Transform.Position);
 			}
 
 			if(Input.GetKeyDown(Keys.Space) || Input.GetMouseButton(1)) {
@@ -82,39 +68,23 @@ namespace Game
 			if(tempPos.y+2f<Main.world.HeightAt(Transform.Position.XZ,false)) {
 				tempPos.y += 5f;
 			}
+
 			if(Transform.Position!=tempPos) {
 				Transform.Position = tempPos;
 			}
 
-			//position += force*Time.fixedDeltaTime;
-
-			//transform.position = position;
-			//Debug.Log(headRotation,false,"rot");
-
 			if(Physics.Raycast(Main.camera.Transform.Position,Main.camera.Transform.Forward,out var hit,mask: q => Layers.GetLayerMask("World"))) {
-				//rayTestObj.transform.position = hit.point;
 				if(Input.GetKeyDown(Keys.X)) { //Teleport
 					Transform.Position = hit.point+Vector3.up;
-					/*var atP = atPoint.Value;
-					var tempVec = new Vector2(atP.x,atP.z)/Chunk.tileSize;
-					var tilePoint = new Vector2Int(Mathf.RoundToInt(tempVec.x),Mathf.RoundToInt(tempVec.y));
-					Tile tile = Main.world[tilePoint.x,tilePoint.y];
-					TileType type = TileType.byId[tile.type];
-					var mat = type.GetMaterial(atPoint);*/
 				}
 				if(Input.GetKeyDown(Keys.V)) {
-					Instantiate<Robot>(hit.point);
-					//Instantiate<Campfire>(hit.point);
+					Instantiate<Robot>(world,position:hit.point);
 				}
 				if(Input.GetKeyDown(Keys.B)) {
-					Instantiate<StoneHatchet>(hit.point+new Vector3(0f,15f,0f));
-				}
-				if(Input.GetKeyDown(Keys.M)) {
-					//Instantiate<TestSphere>(hit.point+new Vector3(0f,10f,0f));
+					Instantiate<StoneHatchet>(world,position:hit.point+new Vector3(0f,15f,0f));
 				}
 				if(Input.GetKeyDown(Keys.N)) {
-					Instantiate<TexTest>(hit.point+new Vector3(0f,15f,0f));
-					//Instantiate<CubeObj>(hit.point+new Vector3(0f,15f,0f));
+					Instantiate<TexTest>(world,position:hit.point+new Vector3(0f,15f,0f));
 				}
 				if(Input.GetKeyDown(Keys.U)) {
 					enableStrafeJumping = !enableStrafeJumping;
@@ -125,9 +95,9 @@ namespace Game
 		{
 			var tempVec = velocity;
 			tempVec.y = 0f;
-			int i = 4;
-			GUI.DrawText(new Rect(8,8+((i++)*16),128,8),"Player speed:   "+tempVec.Magnitude.ToString("0.00"));
-			GUI.DrawText(new Rect(8,8+((i++)*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
+			int i = 5;
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),"Player speed: "+tempVec.Magnitude.ToString("0.00"));
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
 			//GUI.DrawTexture(new Rect(32,32,64,64),TileEntity.tileTexture);	//This was... weirdly moving???
 		}
 
@@ -181,7 +151,7 @@ namespace Game
 		{
 			if(Movement_CheckJump()) {
 				//PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
-				//new SoundInstance("Land.ogg",transform.position);
+				//SoundInstance.Create("Land.ogg",transform.position);
 				Movement_AirMove();
 				forceAirMove = 0.1f;
 				return;
@@ -292,7 +262,7 @@ namespace Game
 			if(providers.Length>0) {
 				var provider = providers[0];
 				provider.GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);
-				new SoundInstance($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform);
+				SoundInstance.Create($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform);
 			}
 		}
 

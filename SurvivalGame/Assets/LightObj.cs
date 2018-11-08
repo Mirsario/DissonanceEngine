@@ -4,7 +4,7 @@ using GameEngine;
 
 namespace Game
 {
-	public class LightObj : GameObject
+	public class LightObj : Entity
 	{
 		public Light light;
 		public override void OnInit()

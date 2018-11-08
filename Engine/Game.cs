@@ -21,8 +21,8 @@ namespace GameEngine
 	{
 		//Debug
 		private const bool bigScreen = true;
-		private const int defaultWidth = bigScreen ? 1600 : 960; //1600;	
-		private const int defaultHeight = bigScreen ? 960 : 540; //960;	
+		private const int defaultWidth = bigScreen ? 1280 : 960; //1600;	
+		private const int defaultHeight = bigScreen ? 720 : 540; //960;	
 		
 		internal static Game instance;
 		internal static bool shouldQuit;
@@ -69,7 +69,7 @@ namespace GameEngine
 			PreInit();
 			preInitDone = true;
 
-			window = new GameWindow(defaultWidth,defaultHeight,GraphicsMode.Default,displayName);
+			window = new GameWindow(defaultWidth,defaultHeight,GraphicsMode.Default,displayName,GameWindowFlags.FixedWindow);
 			Graphics.window = window;
 			
 			window.VSync = VSyncMode.Off;
@@ -105,7 +105,7 @@ namespace GameEngine
 			ReflectionCache.Init();
 			RenderPass.Init();
 			Rand.Init();
-			GameObject.Init();
+			GameObject.StaticInit();
 
 			
 			if(!Directory.Exists("Assets")) {
@@ -194,7 +194,7 @@ namespace GameEngine
 			Time.UpdateRender(e.Time);
 			Input.RenderUpdate();
 
-			FixedUpdate();
+			RenderUpdate();
 			if(shouldQuit) { return; }
 			
 			for(int i=0;i<GameObject.gameObjects.Count;i++) {

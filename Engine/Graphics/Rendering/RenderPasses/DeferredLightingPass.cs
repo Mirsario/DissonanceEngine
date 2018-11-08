@@ -25,7 +25,7 @@ namespace GameEngine
 			if(framebuffer!=null) {
 				GL.DrawBuffers(framebuffer.drawBuffers.Length,framebuffer.drawBuffers);
 			}else{
-				GL.DrawBuffers(1,Graphics.nullDrawBuffers);
+				//GL.DrawBuffers(1,Graphics.nullDrawBuffers);
 			}
 
 			GL.Enable(EnableCap.Blend);

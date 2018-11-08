@@ -69,12 +69,7 @@ namespace GameEngine
 		#region Textures
 		public static void SetRenderTarget(RenderTexture rt)
 		{
-			if(rt!=null) {
-				Framebuffer.Bind(rt.framebuffer);
-				GL.DrawBuffers(1,Graphics.nullDrawBuffers);
-			}else{
-				Framebuffer.Bind(null);
-			}
+			Framebuffer.Bind(rt?.framebuffer);
 		}
 		public static void SetTextures(Texture[] textures)
 		{

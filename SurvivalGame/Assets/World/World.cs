@@ -19,16 +19,16 @@ namespace Game
 	{
 		public static readonly char[] fileHeader = { 'I','n','c','a','r','n','a','t','e',' ','W','o','r','l','d',' '};
 		
-		public readonly string worldName;
-		public readonly string worldDisplayName;
-		public readonly string path;
-		public readonly int xSize;
-		public readonly int ySize;
-		public readonly int xSizeInChunks;
-		public readonly int ySizeInChunks;
-		public readonly float xSizeInUnits;
-		public readonly float ySizeInUnits;
-		public readonly Tile[,] tiles;	//Multiplayer non-host clients store tile arrays in Chunks instead.
+		public string worldName;
+		public string worldDisplayName;
+		public string path;
+		public int xSize;
+		public int ySize;
+		public int xSizeInChunks;
+		public int ySizeInChunks;
+		public float xSizeInUnits;
+		public float ySizeInUnits;
+		public Tile[,] tiles; //Multiplayer non-host clients store tile arrays in Chunks instead.
 		public Chunk[,] chunks;
 
 		public bool IsReady { protected set; get; }
@@ -44,15 +44,12 @@ namespace Game
 				var chunkPoint = new Vector2Int(x/Chunk.chunkSize,y/Chunk.chunkSize);
 				var relativePos = new Vector2Int(x-(chunkPoint.x*Chunk.chunkSize),y-(chunkPoint.y*Chunk.chunkSize));
 				var chunk = chunks[x/Chunk.chunkSize,y/Chunk.chunkSize];
-				if(chunk!=null) {
-					return chunk.tiles[relativePos.x,relativePos.y];
-				}
-				return null;
+				return chunk?.tiles[relativePos.x,relativePos.y];
 			}
 			set {
 				RepeatTilePos(ref x,ref y);
 				var chunkPoint = new Vector2Int(x/Chunk.chunkSize,y/Chunk.chunkSize);
-				Chunk chunk = Netplay.isHost ? null : (chunks[chunkPoint.x,chunkPoint.y] ?? (chunks[chunkPoint.x,chunkPoint.y] = chunk = new Chunk(this,chunkPoint.x,chunkPoint.y)));
+				Chunk chunk = Netplay.isHost ? null : (chunks[chunkPoint.x,chunkPoint.y] ?? (chunks[chunkPoint.x,chunkPoint.y] = chunk = Chunk.Create(this,chunkPoint.x,chunkPoint.y)));
 				if(Netplay.isHost) {
 					tiles[x,y]?.Dispose();
 					tiles[x,y] = value;
@@ -70,18 +67,14 @@ namespace Game
 			}
 		}
 
-		public World(string name,int xSize,int ySize,string path = null) : base("")
+		//public World(string name,int xSize,int ySize,string path = null) : base("") {}
+		public override void OnInit()
 		{
 			Debug.Log("Constructor called!");
 			if(xSize<=0 || ySize<=0 || xSize%Chunk.chunkSize!=0 || ySize%Chunk.chunkSize!=0) {
 				throw new ArgumentException($"World size must be multiple of chunks' size ({Chunk.chunkSize})");
 			}
-			worldDisplayName = name;
-			worldName = new string(worldDisplayName.Select(c => char.IsWhiteSpace(c) ? '_' : c).ToArray());
-			this.Name = "World_"+worldName;
-			this.path = path ?? Main.savePath+worldName+".wld";
-			this.xSize = xSize;
-			this.ySize = ySize;
+			Name = "World_"+worldName;
 			xSizeInChunks = xSize/Chunk.chunkSize;
 			ySizeInChunks = ySize/Chunk.chunkSize;
 			xSizeInUnits = xSize*Chunk.tileSize;
@@ -93,9 +86,7 @@ namespace Game
 			if(Netplay.isHost) {
 				tiles = new Tile[xSize,ySize];
 			}
-		}
-		public override void OnInit()
-		{
+			
 			if(!TileType.initialized) {
 				TileType.Initialize();
 			}
@@ -108,7 +99,7 @@ namespace Game
 		}
 		public void Generate()
 		{
-			var noise = new PerlinNoise(0,frequency:xSize/64);
+			var noise = new PerlinNoise(0,frequency:xSize/64.0);
 			double divX = 1.0/xSize;
 			double divY = 1.0/ySize;
 
@@ -137,27 +128,27 @@ namespace Game
 
 			var genRoaster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
-					Instantiate<Spruce>(spawnPos);
+					Entity.Instantiate<Spruce>(this,position:spawnPos);
 					t.type = dirt;
 				}),
 				(60,(t,x,y,spawnPos) => {
-					Instantiate<Boulder>(spawnPos);
+					Entity.Instantiate<Boulder>(this,position:spawnPos);
 					for(int i=0;i<20;i++) {
 						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = dirt;
 					}
 				}),
 				(300,(t,x,y,spawnPos) => {
-					Instantiate<BerryBush>(spawnPos);
+					Entity.Instantiate<BerryBush>(this,position:spawnPos);
 					for(int i=0;i<20;i++) {
 						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = grassFlowers;
 					}
 					t.type = dirt;
 				}),
 				(600,(t,x,y,spawnPos) => {
-					Instantiate<Campfire>(spawnPos);
+					Entity.Instantiate<Campfire>(this,position:spawnPos);
 					t.type = dirt;
 					for(int i = 0;i<3;i++) {
-						Instantiate<StoneHatchet>(spawnPos+new Vector3(Rand.Range(-2f,2f),Rand.Range(5f,7f),Rand.Range(-2f,2f)));
+						Entity.Instantiate<StoneHatchet>(this,position:spawnPos+new Vector3(Rand.Range(-2f,2f),Rand.Range(5f,7f),Rand.Range(-2f,2f)));
 					}
 				}),
 			};
@@ -190,19 +181,14 @@ namespace Game
 					tiles[x-1,y].type = tiles[x,y-1].type = tiles[x-1,y-1].type = tile.type = stone;
 				}
 			}
-			
-			Main.LocalEntity = new Human(); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
 			playerPos.y = HeightAt(playerPos,false);
-			Main.LocalEntity.Transform.Position = playerPos;
-			Instantiate<StoneHatchet>(new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
-			//Instantiate<CubeObj>(null,new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
-
-			//new LightObj().transform.parent = Main.camera.transform;
+			Main.LocalMob = Entity.Instantiate<Human>(this,position:playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
+			Entity.Instantiate<StoneHatchet>(this,position:new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
 			Instantiate<AtmosphereSystem>();
 
-			var sun = new Sun();
-			var skybox = new Skybox();
+			Instantiate<Sun>();
+			Instantiate<Skybox>(); //TODO: Implement a skybox inside the engine
 
 			IsReady = true;
 		}
@@ -210,63 +196,11 @@ namespace Game
 		{
 			for(int y=0;y<ySizeInChunks;y++) {
 				for(int x=0;x<xSizeInChunks;x++) {
-					chunks[x,y] = new Chunk(this,x,y);
+					chunks[x,y] = Chunk.Create(this,x,y);
 				}
 			}
 		}
 		
-		public static World NewWorld(string name,int xSize,int ySize)
-		{
-			var w = new World(name,xSize,ySize);
-			w.Generate();
-			w.InitChunks();
-			Main.MainMenu = false;
-			return (Main.world = w);
-		}
-		public static void SaveWorld(World w,string path)
-		{
-			using(var stream = File.OpenWrite(path)) {
-				using(var writer = new BinaryWriter(stream)) {
-					writer.Write(fileHeader);
-					writer.Write(w.worldName);
-					writer.Write(w.worldDisplayName);
-					writer.Write(w.xSize);
-					writer.Write(w.ySize);
-
-					//Make a (chunkId > dataPos) map here
-				
-					for(int y=0;y<w.ySizeInChunks;y++) {
-						for(int x=0;x<w.xSizeInChunks;x++) {
-							w.chunks[x,y].Save(writer);
-						}
-					}
-				}
-			}
-		}
-		public static World LoadWorld(string path)
-		{
-			World w;
-			using(var stream = File.OpenRead(path)) {
-				using(var reader = new BinaryReader(stream)) {
-					if(!ReadInfoHeader(reader,out var info)) {
-						throw new IOException("World is corrupt.");
-					}
-					w = new World(info.displayName,info.xSize,info.ySize,path);
-
-					//Make a (chunkId > dataIOPosition) map here?
-
-					for(int y=0;y<w.ySizeInChunks;y++) {
-						for(int x=0;x<w.xSizeInChunks;x++) {
-							var chunk = w.chunks[x,y] = new Chunk(w,x,y);
-							chunk.Load(reader);
-						}
-					}
-				}
-			}
-			w.IsReady = true;
-			Main.MainMenu = false;
-			return null;
-		}
 		public void LineLoop(Vector2Int pointA,Vector2Int pointB,Action<Vector2Int> action)
 		{
 			//rewrite copypasta
@@ -322,22 +256,16 @@ namespace Game
 					x += xSize;
 				}
 				while(x<0);
-			}else if(x>=xSize) {
-				do {
-					x -= xSize;
-				}
-				while(x>=xSize);
+			}else while(x>=xSize) {
+				x -= xSize;
 			}
 			if(y<0) {
 				do {
 					y += ySize;
 				}
 				while(y<0);
-			}else if(y>=ySize) {
-				do {
-					y -= ySize;
-				}
-				while(y>=ySize);
+			}else while(y>=ySize) {
+				y -= ySize;
 			}
 		}
 		public float HeightAt(Vector3 position,bool tileSpace) => HeightAt(position.x,position.z,tileSpace);
@@ -348,6 +276,7 @@ namespace Game
 				x /= Chunk.tileSize;
 				y /= Chunk.tileSize;
 			}
+
 			int X1 = Mathf.FloorToInt(x);
 			int Y1 = Mathf.FloorToInt(y);
 			int X2 = X1+1;
@@ -359,6 +288,80 @@ namespace Game
 				Mathf.Lerp(this[X1,Y2].height,this[X2,Y2].height,x),
 				y
 			);
+		}
+		
+		public static World Instantiate(string name,int xSize,int ySize,string path = null)
+		{
+			var world = Instantiate<World>(init:false);
+			world.worldDisplayName = name;
+			world.worldName = new string(name.Select(c => char.IsWhiteSpace(c) ? '_' : c).ToArray());
+			world.xSize = xSize;
+			world.ySize = ySize;
+			world.path = path ?? Main.savePath+world.worldName+".wld";
+			world.Init();
+			return world;
+		}
+		public static World NewWorld(string name,int xSize,int ySize,string path = null)
+		{
+			var world = Instantiate(name,xSize,ySize,path);
+
+			world.Generate();
+			world.InitChunks();
+			Main.MainMenu = false;
+			return world;
+		}
+		public static void SaveWorld(World w,string path)
+		{
+			//WIP
+			using(var stream = File.OpenWrite(path)) {
+				using(var writer = new BinaryWriter(stream)) {
+					writer.Write(fileHeader);
+					writer.Write(w.worldName);
+					writer.Write(w.worldDisplayName);
+					writer.Write(w.xSize);
+					writer.Write(w.ySize);
+
+					//Make a (chunkId > dataPos) map here
+				
+					for(int y=0;y<w.ySizeInChunks;y++) {
+						for(int x=0;x<w.xSizeInChunks;x++) {
+							w.chunks[x,y].Save(writer);
+						}
+					}
+				}
+			}
+		}
+		public static World LoadWorld(string path)
+		{
+			//WIP
+			World w;
+			using(var stream = File.OpenRead(path)) {
+				using(var reader = new BinaryReader(stream)) {
+					if(!ReadInfoHeader(reader,out var info)) {
+						throw new IOException("World is corrupt.");
+					}
+					w = Instantiate(info.displayName,info.xSize,info.ySize,path);
+
+					//Make a (chunkId > dataIOPosition) map here?
+
+					for(int y=0;y<w.ySizeInChunks;y++) {
+						for(int x=0;x<w.xSizeInChunks;x++) {
+							var chunk = w.chunks[x,y] = Chunk.Create(w,x,y);
+							chunk.Load(reader);
+						}
+					}
+				}
+			}
+			w.IsReady = true;
+			Main.MainMenu = false;
+			return null;
+		}
+
+		public Chunk GetChunkAt(float x,float y)
+		{
+			int X = Mathf.FloorToInt(Mathf.Repeat(x*Chunk.chunkWorldSizeDiv,xSizeInChunks));
+			int Y = Mathf.FloorToInt(Mathf.Repeat(y*Chunk.chunkWorldSizeDiv,ySizeInChunks));
+			return chunks[X,Y];
 		}
 
 		public static bool ReadInfoHeader(BinaryReader reader,out WorldInfo info)

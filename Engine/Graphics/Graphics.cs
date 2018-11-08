@@ -107,16 +107,14 @@ namespace GameEngine
 		public static Vector2 WindowCenter => new Vector2(window.Location.X+window.Width*0.5f,window.Location.Y+window.Height*0.5f);
 		public static bool Fullscreen {
 			get => window.WindowState==WindowState.Fullscreen;
-			set {
-				window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
-			}
+			set => window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
 		}
 
 		internal static GameWindow window;
 		internal static List<Camera> cameraList;
 		internal static List<Renderer> rendererList;
 		internal static List<Light> lightList;
-		internal static RenderSettings renderSettings;
+		public static RenderSettings renderSettings;
 		
 		//TODO: Move this
 		internal static Texture whiteTexture;
@@ -201,8 +199,11 @@ namespace GameEngine
 			//Render passes
 			//GL.StencilFunc(StencilFunction.Always,0,0);
 			for(int i=0;i<renderSettings.renderPasses.Length;i++) {
-				renderSettings.renderPasses[i].Render();
-				CheckGLErrors();
+				var pass = renderSettings.renderPasses[i];
+				if(pass.enabled) {
+					pass.Render();
+					CheckGLErrors();
+				}
 			}
 			//GL.Disable(EnableCap.StencilTest);
 

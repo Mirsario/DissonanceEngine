@@ -34,7 +34,9 @@ namespace GameEngine
 				}
 			}
 		}
+		///<summary>Indicates whether or not the source is currently playing.</summary>
 		public bool IsPlaying => AL.GetSourceState(sourceId)==ALSourceState.Playing;
+		///<summary>Indicates whether the Source is looping. Type: bool Range: [True, False] Default: False.</summary>
 		public bool Loop {
 			get {
 				AL.GetSource(sourceId,ALSourceb.Looping,out bool val);
@@ -42,6 +44,7 @@ namespace GameEngine
 			}
 			set => AL.Source(sourceId,ALSourceb.Looping,value);
 		}
+		///<summary>Source specific reference distance. Type: float Range: [0.0f - float.PositiveInfinity] At 0.0f, no distance attenuation occurs. Type: float Default: 1.0f.</summary>
 		public float RefDistance {
 			get {
 				AL.GetSource(sourceId,ALSourcef.ReferenceDistance,out float val);
@@ -49,6 +52,7 @@ namespace GameEngine
 			}
 			set => AL.Source(sourceId,ALSourcef.ReferenceDistance,value);
 		}
+		///<summary>Indicate distance above which Sources are not attenuated using the inverse clamped distance model. Default: float.PositiveInfinity Type: float Range: [0.0f - float.PositiveInfinity]</summary>
 		private float MaxDistance {
 			get {
 				AL.GetSource(sourceId,ALSourcef.MaxDistance,out float val);
@@ -56,8 +60,9 @@ namespace GameEngine
 			}
 			set => AL.Source(sourceId,ALSourcef.MaxDistance,value);
 		}
+		///<summary>Indicate the gain (volume amplification) applied. Type: float. Range: [0.0f - ? ] A value of 1.0 means un-attenuated/unchanged. Each division by 2 equals an attenuation of -6dB. Each multiplicaton with 2 equals an amplification of +6dB. A value of 0.0f is meaningless with respect to a logarithmic scale; it is interpreted as zero volume - the channel is effectively disabled.</summary>
 		public float Volume {
-			//Quite weird? For some reason setting ALSourcef.Gain to values lower than 1.0 is the same as setting it to 1.0.
+	    //Quite weird? For some reason setting ALSourcef.Gain to values lower than 1.0 is the same as setting it to 1.0.
 			get {
 				AL.GetSource(sourceId,ALSourcef.MaxGain,out float maxGain);
 				if(maxGain<1f) {
@@ -76,6 +81,7 @@ namespace GameEngine
 				}
 			}
 		}
+		///<summary>The playback position, expressed in seconds.</summary>
 		public float PlaybackOffset {
 			get {
 				AL.GetSource(sourceId,ALSourcef.SecOffset,out float val);

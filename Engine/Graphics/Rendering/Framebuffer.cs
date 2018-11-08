@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine
 {
-	internal class Framebuffer : IDisposable
+	public class Framebuffer : IDisposable
 	{
 		public static Framebuffer activeBuffer;
 		

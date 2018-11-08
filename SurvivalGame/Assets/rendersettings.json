@@ -3,23 +3,23 @@
 		"mainBuffer": {
 			"textures": {
 				"colorBuffer": {
-					"type":	  "Color",
+					"type": "Color",
 					"format": "RGBA32f"
 				},
 				"normalBuffer": {
-					"type":	  "Color",
+					"type": "Color",
 					"format": "RGBA32f"
 				},
 				"positionBuffer": {
-					"type":	  "Color",
+					"type": "Color",
 					"format": "RGB32f"
 				},
 				"emissionBuffer": {
-					"type":	  "Color",
+					"type": "Color",
 					"format": "RGB32f"
 				},
 				"depthBuffer": {
-					"type":	  "DepthStencil",
+					"type": "DepthStencil",
 					"format": "Depth24Stencil8"
 				}
 			}
@@ -27,7 +27,7 @@
 		"lightingBuffer": { 
 			"textures": {
 				"lightingBuffer": {
-					"type":	  "Color",
+					"type": "Color",
 					"format": "RGBA32f"
 				}
 			}
@@ -35,27 +35,35 @@
 	},
 	"pipeline": {
 		"geometry": {
-			"type":			"geometry",
-			"framebuffer":	"mainBuffer"
+			"type": "geometry",
+			"framebuffer": "mainBuffer"
 		},
 		"lighting": {
-			"type":			"lighting",
-			"framebuffer":	"lightingBuffer",
+			"type": "lighting",
+			"framebuffer": "lightingBuffer",
 			"passedTextures": {
 				"mainBuffer": ["normalBuffer","positionBuffer","emissionBuffer"]
 			},
 			"shaders": {
-				"point":		"LightingPoint",
-				"directional":	"LightingDirectional",
-				"spot":			null
+				"point": "LightingPoint",
+				"directional": "LightingDirectional",
+				"spot": null
 			}
 		},
-		"composite": {
-			"type":			"postprocess",
-			"framebuffer":	"none",
+		"fxaa": {
+			"type": "postprocess",
+			"framebuffer": "mainBuffer",
 			"passedTextures": {
-				"mainBuffer": 		["colorBuffer","emissionBuffer"],
-				"lightingBuffer":	["lightingBuffer"]
+				"mainBuffer": ["colorBuffer","normalBuffer","positionBuffer","emissionBuffer"]
+			},
+			"shader": "FXAA"
+		},
+		"composite": {
+			"type": "postprocess",
+			"framebuffer": "none",
+			"passedTextures": {
+				"mainBuffer": ["colorBuffer","emissionBuffer"],
+				"lightingBuffer": ["lightingBuffer"]
 			},
 			"shader": "Composite"
 		}

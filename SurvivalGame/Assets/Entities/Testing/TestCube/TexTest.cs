@@ -4,7 +4,7 @@ using GameEngine;
 
 namespace Game
 {
-	public class TexTest : GameObject,IHasMaterial
+	public class TexTest : Entity, IHasMaterial
 	{
 		public MeshRenderer renderer;
 		public BoxCollider collider;

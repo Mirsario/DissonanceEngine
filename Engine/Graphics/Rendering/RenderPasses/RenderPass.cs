@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 namespace GameEngine
 {
-	internal abstract class RenderPass : IDisposable
+	public abstract class RenderPass : IDisposable
 	{
 		internal static Dictionary<string,Type> idToType;
 		internal static Dictionary<string,RenderPass> idToInstance;
 		
 		public string name;
+		public bool enabled = true;
 		public Framebuffer framebuffer;
 		public RenderTexture[] textures;
 		public RenderBuffer[] renderBuffers;

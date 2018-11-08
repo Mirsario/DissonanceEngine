@@ -7,7 +7,7 @@ using GameEngine;
 
 namespace Game
 {
-	public class Campfire : StaticEntity,IHasMaterial
+	public class Campfire : StaticEntity, IHasMaterial
 	{
 		public MeshRenderer renderer;
 		public MeshCollider collider;
@@ -30,18 +30,18 @@ namespace Game
 				renderer.Mesh = mesh;
 				renderer.Material = Resources.Find<Material>($"{GetType().Name}");
 
-				light = Instantiate<LightObj>().GetComponent<Light>();
+				light = Instantiate<LightObj>(world).GetComponent<Light>();
 				light.color = new Vector3(1f,0.8f,0f);
 				light.intensity = 2f;
 				light.Transform.parent = Transform;
-				light.Transform.LocalPosition = new Vector3(0f,1f,0f);
+				light.Transform.LocalPosition = new Vector3(0f,1.25f,0f);
 
 				audioSource = AddComponent<AudioSource>();
 				var clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
 				audioSource.Clip = clip;
 				audioSource.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
 				audioSource.Loop = true;
-				audioSource.Volume = 0.3f;
+				audioSource.RefDistance = 0.1f;
 				audioSource.Play();
 			}
 		}

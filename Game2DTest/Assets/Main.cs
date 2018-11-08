@@ -37,7 +37,7 @@ namespace Game
 
 			TileType.Initialize();
 
-			camera = GameObject.Instantiate("Camera",new Vector3(0f,0f,10f)).AddComponent<Camera>();
+			camera = GameObject.Instantiate<GameObject>("Camera",new Vector3(0f,0f,10f)).AddComponent<Camera>();
 			camera.orthographic = true;
 			camera.orthographicSize = Math.Max(Graphics.ScreenWidth,Graphics.ScreenHeight)/32f;
 
@@ -74,13 +74,13 @@ namespace Game
 		}
 		public override void OnGUI()
 		{
-			int y = 8;
-			GUI.DrawText(new Rect(8,y,128,8),"Welcome to weird stuff"); y += 16;
-			GUI.DrawText(new Rect(8,y,128,8),"Check 'SurvivalGame' project instead"); y += 16;
-			GUI.DrawText(new Rect(8,y,128,8),$"Render FPS: {renderFPS}"); y += 16;
-			GUI.DrawText(new Rect(8,y,128,8),$"Render MS:  {renderMs.ToString("0.00")}"); y += 16;
-			GUI.DrawText(new Rect(8,y,128,8),$"Logic FPS:  {logicFPS}"); y += 16;
-			GUI.DrawText(new Rect(8,y,128,8),$"Logic MS:   {logicMs.ToString("0.00")}"); y += 16;
+			float y = 0.5f;
+			GUI.DrawText(new Rect(8,y++*16,128,8),"This test is unfinished");
+			GUI.DrawText(new Rect(8,y++*16,128,8),"Check 'SurvivalGame' project instead.");
+			GUI.DrawText(new Rect(8,y++*16,128,8),$"Render FPS: { renderFPS}");
+			GUI.DrawText(new Rect(8,y++*16,128,8),$"Render MS: { renderMs.ToString("0.00")}");
+			GUI.DrawText(new Rect(8,y++*16,128,8),$"Logic FPS: { logicFPS}");
+			GUI.DrawText(new Rect(8,y++*16,128,8),$"Logic MS: { logicMs.ToString("0.00")}");
 		}
 	}
 }

@@ -1,6 +1,6 @@
 namespace GameEngine
 {
-	internal class RenderBuffer
+	public class RenderBuffer
 	{
 		public uint id;
 		public string name;

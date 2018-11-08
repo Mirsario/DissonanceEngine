@@ -13,21 +13,26 @@ namespace Game
 	public class Chunk : GameObject,IHasMaterial
 	{
 		public const int chunkSize = 16;
+		public const float chunkSizeDiv = 1f/chunkSize;
+		public const float chunkWorldSize = chunkSize*tileSize;
+		public const float chunkWorldSizeDiv = 1f/(chunkSize*tileSize);
 		public const float tileSize = 2f;
+		public const float tileSizeDiv = 1f/tileSize;
 		public const float tileSizeHalf = tileSize*0.5f;
 
 		public Vector2Int TilePoint => position*chunkSize;
 		public Vector3 WorldPoint => new Vector3(position.x,0f,position.y)*chunkSize*tileSize;
 
-		public readonly World world;				//THEEE WOOOOOOOOORLD!!! ..that this chunks belongs to
-		public readonly Vector2Int position;		//Position of this chunk in World.chunks array
-		public readonly Vector2Int positionInTiles;	//Position of this chunk in World.chunks array,but multiplied by chunkSize.
-		public readonly int posId;					//Position,as if World.chunks array was 1-dimensional
-		public readonly Tile[,] tiles;				//Only used by multiplayer clients.
+		public World world;				//THEEE WOOOOOOOOORLD!!! ..that this chunks belongs to
+		public Vector2Int position;		//Position of this chunk in World.chunks array
+		public Vector2Int positionInTiles;	//Position of this chunk in World.chunks array,but multiplied by chunkSize.
+		public int posId;					//Position as if World.chunks array was 1-dimensional
+		public Tile[,] tiles;				//Only used by multiplayer clients.
 		public Mesh mesh;
 		public bool updateMesh;
 		public bool updateCollisionMesh;
 		public bool updateHeights;
+		public List<StaticEntity> staticEntities;
 
 		public MeshRenderer renderer;
 		public MeshRenderer[] grassRenderers;
@@ -60,7 +65,7 @@ namespace Game
 			set => world[positionInTiles.x+x,positionInTiles.y+y] = value;
 		}
 
-		public Chunk(World world,int x,int y) : base("Chunk_"+x+"_"+y)
+		public override void OnInit()
 		{
 			collider = AddComponent<MeshCollider>();
 			collider.Convex = false;
@@ -72,13 +77,12 @@ namespace Game
 			}
 			updateMesh = true;
 			updateCollisionMesh = true;
+			staticEntities = new List<StaticEntity>();
 
 			layer = Layers.GetLayerIndex("World");
-			this.world = world;
-			position = new Vector2Int(x,y);
 			positionInTiles = position*chunkSize;
 			Transform.Position = new Vector3(position.x*chunkSize*tileSize,0f,position.y*chunkSize*tileSize);
-			posId = (y*(world.xSize/chunkSize))+x;
+			posId = (position.y*(world.xSize/chunkSize))+position.x;
 
 			if(!Netplay.isHost) {
 				tiles = new Tile[chunkSize,chunkSize];
@@ -361,6 +365,16 @@ namespace Game
 				GetComponent<MeshRenderer>().Material.SetTexture("mainTex",rtTexture);
 			}));
 			#endregion
+		}
+
+		public static Chunk Create(World world,int x,int y)
+		{
+			//var w = new World(name,xSize,ySize);
+			var chunk = Instantiate<Chunk>(init:false);
+			chunk.world = world;
+			chunk.position = new Vector2Int(x,y);
+			chunk.Init();
+			return chunk;
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint)

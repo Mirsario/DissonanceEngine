@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine
 {
-	internal class RenderSettings
+	public class RenderSettings
 	{
 		public Framebuffer[] framebuffers;
 		public RenderPass[] renderPasses;

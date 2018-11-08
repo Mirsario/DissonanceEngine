@@ -4,7 +4,7 @@ using GameEngine;
 
 namespace Game
 {
-	public class Rocket : GameObject
+	public class Rocket : Entity
 	{
 		public MeshRenderer renderer;
 		public AudioSource audioSource;
@@ -40,7 +40,7 @@ namespace Game
 			var deltaVelocity = velocity*Time.DeltaTime;
 			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
 				Transform.Position = hit.point;
-				var instance = new SoundInstance("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
+				var instance = SoundInstance.Create("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
 				float maxDistance = 10f;
 				const float power = 3000f;
 

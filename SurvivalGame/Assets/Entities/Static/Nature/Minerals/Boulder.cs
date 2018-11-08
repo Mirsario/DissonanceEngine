@@ -7,7 +7,7 @@ using GameEngine;
 
 namespace Game
 {
-	public class Boulder : StaticEntity,IHasMaterial
+	public class Boulder : StaticEntity, IHasMaterial
 	{
 		public MeshRenderer renderer;
 		public MeshCollider collider;

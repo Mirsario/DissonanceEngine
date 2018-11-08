@@ -18,18 +18,18 @@ namespace GameEngine
 		
 		public override void Render()
 		{
+			//TODO: Make this apply uniforms properly
 			GL.Viewport(0,0,Graphics.ScreenWidth,Graphics.ScreenHeight);
 			Framebuffer.Bind(framebuffer);
 			if(framebuffer!=null) {
 				GL.DrawBuffers(framebuffer.drawBuffers.Length,framebuffer.drawBuffers);
-			}//else{
-			//GL.DrawBuffers(1,nullDrawBuffers);
-			//GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
-			//}
+			}
 
-			Shader.SetShader(passShader);//Render composite
+			Shader.SetShader(passShader);
 			OpenTK.Vector3 ambientCol = Graphics.ambientColor;
-			GL.Uniform3(GL.GetUniformLocation(passShader.program,"ambientColor"),ref ambientCol);
+			GL.Uniform3(GL.GetUniformLocation(passShader.program,"ambientColor"),ref ambientCol); //code to replace
+			GL.Uniform1(GL.GetUniformLocation(passShader.program,"screenWidth"),Graphics.ScreenWidth);
+			GL.Uniform1(GL.GetUniformLocation(passShader.program,"screenHeight"),Graphics.ScreenHeight);
 			
 			for(int i=0;i<textures.Length;i++) {
 				GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+i));

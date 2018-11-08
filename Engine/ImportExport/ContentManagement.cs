@@ -213,13 +213,13 @@ namespace GameEngine
 					for(int k=0;k<fileList.Count;k++) {
 						//TODO: This is badddd
 						try {
-						var method = typeof(Resources).GetMethod("Import",BindingFlags.Public | BindingFlags.Static);
-						var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
-						if(tType==null) { continue; }
-						method.MakeGenericMethod(tType).Invoke(manager,new object[] { fileList[k],true,manager,true });
+							var method = typeof(Resources).GetMethod("Import",BindingFlags.Public | BindingFlags.Static);
+							var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
+							if(tType==null) { continue; }
+							method.MakeGenericMethod(tType).Invoke(manager,new object[] { fileList[k],true,manager,true });
 						}
-						catch(Exception e) {
-							throw e;
+						catch(TargetInvocationException e) {
+							throw e.InnerException;
 						}
 					}
 				}

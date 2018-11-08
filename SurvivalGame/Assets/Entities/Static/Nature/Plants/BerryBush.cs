@@ -50,7 +50,7 @@ namespace Game
 			}else{
 				if(GetGameObjects().FirstOrDefault(g => g.Name=="Human" && Vector3.Distance(Transform.Position,g.Transform.Position) < 2f) is Human human && human.velocity.Magnitude>1f) {
 					soundPlayDelay = 0.3f;
-					new SoundInstance($"LeavesThrough{Rand.Range(1,8)}.ogg",Transform.Position,Math.Min(1f,(human.velocity.Magnitude-1f)*0.1f));
+					SoundInstance.Create($"LeavesThrough{Rand.Range(1,8)}.ogg",Transform.Position,Math.Min(1f,(human.velocity.Magnitude-1f)*0.1f));
 				}
 			}
 		}*/

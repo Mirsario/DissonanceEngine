@@ -25,10 +25,6 @@ namespace GameEngine
 			if(framebuffer!=null) {
 				GL.DrawBuffers(framebuffer.drawBuffers.Length,framebuffer.drawBuffers);
 			}
-			/*else{
-				GL.DrawBuffers(1,nullDrawBuffers);
-				GL.DrawBuffers(0,(DrawBuffersEnum[])null);
-			}*/
 
 			//if(drawOutlines) {
 			//	GL.PolygonMode(MaterialFace.Front,PolygonMode.Line);

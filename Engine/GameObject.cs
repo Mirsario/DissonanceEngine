@@ -22,135 +22,34 @@ namespace GameEngine
 		internal static List<GameObject> gameObjects;
 		internal Dictionary<string,List<Component>> components;
 		internal RigidbodyInternal rigidbodyInternal;
-		
-		#region Constructors
-		protected GameObject(string name,Vector3 position,Quaternion rotation)
-		{
-			Name = name ?? GetType().Name;
-			transform = new Transform(this);
-			if(position!=default) {
-				transform.Position = position;
-			}
-			if(rotation!=Quaternion.Identity) {
-				transform.Rotation = rotation;
-			}
-			components = new Dictionary<string,List<Component>>();
-			gameObjects.Add(this);
-			OnInit(); //TODO: hhhhhhhh
-		}
-		protected GameObject(string name,Vector3 position,Vector3 rotation)
-			: this(name,position,Quaternion.FromEuler(rotation)) {}
-		protected GameObject(string name,Vector3 position)
-			: this(name,position,Quaternion.Identity) {}
-		protected GameObject(string name)
-			: this(name,default,Quaternion.Identity) {}
-		protected GameObject()
-			: this(null,default,Quaternion.Identity) {}
-		#endregion
-		#region Instantiate
-		public static T Instantiate<T>(string name,Vector3 position,Quaternion rotation) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = name ?? typeof(T).Name;
-			obj.transform.Position = position;
-			obj.transform.Rotation = rotation;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(string name,Vector3 position,Vector3 eulerRot) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = name ?? typeof(T).Name;
-			obj.transform.Position = position;
-			obj.transform.EulerRot = eulerRot;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(string name,Vector3 position) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = name ?? typeof(T).Name;
-			obj.transform.Position = position;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(string name) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = name ?? typeof(T).Name;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>() where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(Vector3 position,Quaternion rotation) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = typeof(T).Name;
-			obj.transform.Position = position;
-			obj.transform.Rotation = rotation;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(Vector3 position,Vector3 eulerRot) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = typeof(T).Name;
-			obj.transform.Position = position;
-			obj.transform.EulerRot = eulerRot;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		public static T Instantiate<T>(Vector3 position) where T : GameObject
-		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
-			obj.InternalInitBegin();
-			obj.Name = typeof(T).Name;
-			obj.transform.Position = position;
-			obj.InternalInitEnd();
-			return obj;
-		}
-		
-		public static GameObject Instantiate(string name,Vector3 position,Quaternion rotation) => new GameObject(name,position,rotation);
-		public static GameObject Instantiate(string name,Vector3 position,Vector3 rotation) => new GameObject(name,position,rotation);
-		public static GameObject Instantiate(string name,Vector3 position) => new GameObject(name,position);
-		public static GameObject Instantiate(string name) => new GameObject(name);
-		public static GameObject Instantiate() => new GameObject();
-		#endregion
+		internal bool initialized;
 
-		internal void InternalInitBegin()
-		{
-			transform = new Transform(this);
-			components = new Dictionary<string,List<Component>>();
-		}
-		internal void InternalInitEnd()
-		{
-			gameObjects.Add(this);
-			OnInit();
-		}
-		internal static void Init()
+		internal static void StaticInit()
 		{
 			gameObjects = new List<GameObject>();
 		}
 
-		#region VirtualMethods
 		public virtual void OnInit() {}
 		public virtual void FixedUpdate() {}
 		public virtual void RenderUpdate() {}
 		public virtual void OnGUI() {}
 		public virtual void OnDispose() {}
-		#endregion
+		
+		internal void PreInit()
+		{
+			Name = GetType().Name;
+			transform = new Transform(this);
+			components = new Dictionary<string,List<Component>>();
+		}
+		public void Init()
+		{
+			if(initialized) {
+				return;
+			}
+			gameObjects.Add(this);
+			OnInit();
+			initialized = true;
+		}
 		public void Dispose()
 		{
 			OnDispose();
@@ -239,6 +138,28 @@ namespace GameEngine
 			}
 			return count;
 		}
+
+		#region Instantiate
+		public static T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,bool init = true) where T : GameObject
+		{
+			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
+			obj.PreInit();
+			if(name!=default) {
+				obj.Name = name;
+			}
+			if(position!=default) {
+				obj.transform.Position = position;
+			}
+			if(rotation!=default) {
+				obj.transform.Rotation = rotation;
+			}
+			if(init) {
+				obj.Init();
+			}
+			return obj;
+		}
+		#endregion
+
 		public static GameObject[] GetGameObjects() => gameObjects.ToArray();
 	}
 }
