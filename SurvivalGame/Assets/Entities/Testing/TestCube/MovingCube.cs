@@ -45,7 +45,7 @@ namespace Game
 		}
 		public override void RenderUpdate()
 		{
-			Transform.LocalScale = Vector3.one*(1.5f+Mathf.Sin01(Time.GameTime));
+			Transform.LocalScale = Vector3.one*(1.5f+Mathf.Sin(Time.GameTime*Mathf.PI));
 		}
 	}
 }

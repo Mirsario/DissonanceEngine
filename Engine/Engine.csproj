@@ -121,7 +121,8 @@
     <Compile Include="Input.cs" />
     <Compile Include="Mathf.cs" />
     <Compile Include="Mesh.cs" />
-    <Compile Include="PerlinNoise.cs" />
+    <Compile Include="PerlinNoiseDouble.cs" />
+    <Compile Include="PerlinNoiseFloat.cs" />
     <Compile Include="Physics\Collision2D.cs" />
     <Compile Include="Physics\Collision.cs" />
     <Compile Include="Physics\Components\Colliders2D\Box2DCollider.cs" />

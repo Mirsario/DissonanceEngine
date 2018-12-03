@@ -54,7 +54,7 @@ namespace GameEngine
 		{
 			var error = AL.GetError();
 			if(error!=ALError.NoError) {
-				throw new Exception("ALError: "+error.ToString());
+				throw new Exception("ALError: "+error);
 			}
 		}
 	}

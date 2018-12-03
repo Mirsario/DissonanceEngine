@@ -21,6 +21,7 @@ namespace GameEngine
 				this.transform = transform;
 			}
 		}
+
 		//private readonly MotionStateInternal motionState;
 		internal RigidBody btRigidbody;
 		internal CollisionShape collisionShape;
@@ -172,7 +173,6 @@ namespace GameEngine
 				summOffset += (OpenTK.Vector3)collider.offset;*/
 			}else{
 				//CompoundShape
-				//Debug.Log("Creating compound shape");
 				var compoundShape = new CompoundShape();
 				for(int i=0;i<colliders.Length;i++) {
 					var collShape = colliders[i].collShape;
@@ -184,7 +184,6 @@ namespace GameEngine
 				collisionShape = compoundShape;
 			}
 			float tempMass = MassFiltered;
-			//Debug.Log(gameObject.name+": offset is "+summOffset);
 			var localInertia = MassFiltered<=0f ? BulletSharp.Vector3.Zero : collisionShape.CalculateLocalInertia(tempMass);
 			btRigidbody.CollisionShape = collisionShape;
 			btRigidbody.SetMassProps(tempMass,localInertia);
@@ -200,21 +199,10 @@ namespace GameEngine
 			if(tempMass!=0f && collisionShape!=null) {
 				localInertia = collisionShape.CalculateLocalInertia(tempMass);
 			}
-			//Debug.Log("setting to-"+tempMass);
 			btRigidbody.SetMassProps(tempMass,localInertia);
 			
 			Physics.world.AddRigidBody(btRigidbody);
-
-			//Debug.Log("mass check-"+rigidbody.InvMass);
 		}
-		/*public void Enable()
-		{
-			Physics.rigidbodies.Add(this);
-		}
-		public void Disable()
-		{
-			Physics.rigidbodies.Remove(this);
-		}*/
 		public void ApplyForce(Vector3 force,Vector3 relativePos)
 		{
 			if(!btRigidbody.IsActive) {

@@ -60,7 +60,7 @@ namespace GameEngine
 
 		public override string ToString()
 		{
-			return "X: "+x.ToString()+",Y: "+y.ToString();
+			return "X: "+x+",Y: "+y;
 		}
 		public override int GetHashCode()
 		{

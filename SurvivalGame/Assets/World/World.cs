@@ -99,9 +99,9 @@ namespace Game
 		}
 		public void Generate()
 		{
-			var noise = new PerlinNoise(0,frequency:xSize/64.0);
-			double divX = 1.0/xSize;
-			double divY = 1.0/ySize;
+			var noise = new PerlinNoiseFloat(Rand.Next(10000),frequency:xSize/64f);
+			float divX = 1f/xSize;
+			float divY = 1f/ySize;
 
 			ushort grass = TileType.byName["Grass"].type;
 			ushort grassFlowers = TileType.byName["GrassFlowers"].type;
@@ -111,7 +111,7 @@ namespace Game
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
 					ushort type = Rand.Next(3)==0 ? grassFlowers : grass;
-					float height = noise.GetValue(x*divX,0.0,y*divY)*60f;
+					float height = noise.GetValue(x*divX,0f,y*divY)*60f;
 					Tile tile = new Tile {
 						type = Rand.Next(3)==0 ? grassFlowers : grass,
 						height = height
@@ -126,7 +126,7 @@ namespace Game
 				LineLoop(posA+new Vector2Int(1,0),posB+new Vector2Int(1,0),pos => this[pos.x,pos.y].type = dirt);
 			}*/
 
-			var genRoaster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
+			var genRoster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
 					Entity.Instantiate<Spruce>(this,position:spawnPos);
 					t.type = dirt;
@@ -164,7 +164,7 @@ namespace Game
 						tile.type = maxHeightDiff>=4.35f ? stone : dirt;
 						continue;
 					}
-					(int maxRand, var action) = genRoaster[Rand.Next(genRoaster.Length)];
+					(int maxRand, var action) = genRoster[Rand.Next(genRoster.Length)];
 					if(Rand.Next(maxRand)==0) {
 						var spawnPos = new Vector3(x*Chunk.tileSize+Chunk.tileSizeHalf,0f,y*Chunk.tileSize+Chunk.tileSizeHalf);
 						spawnPos.y = HeightAt(spawnPos,false);

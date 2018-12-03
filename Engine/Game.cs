@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
@@ -83,6 +84,7 @@ namespace GameEngine
 			window.KeyDown += Input.KeyDown;
 			window.MouseMove += Input.MouseMove;
 			window.FocusedChanged += OnFocusChange;
+			window.Closing += ApplicationQuit;
 			window.Run(Time.targetUpdateCount,Time.targetRenderCount);
 		}
 
@@ -214,7 +216,11 @@ namespace GameEngine
 
 			MeasureFPS(ref renderFPS,ref renderFrame,Time.renderTime,Time.renderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
 		}
-		
+		internal void ApplicationQuit(object sender,CancelEventArgs e)
+		{
+			shouldQuit = true;
+			instance.Dispose();
+		}
 		public void Dispose()
 		{
 			Graphics.Dispose();
@@ -227,9 +233,11 @@ namespace GameEngine
 		public virtual void FixedUpdate() {}
 		public virtual void RenderUpdate() {}
 		public virtual void OnGUI() {}
+		public virtual void OnApplicationQuit() {}
 		#endregion
 
 		#region StaticMethods
+		//Move this somewhere
 		internal static void MeasureFPS(ref int fps,ref int frames,float time,float timePrev,Stopwatch stopwatch,ref float ms,ref float msTemp)
 		{
 			msTemp += stopwatch.ElapsedMilliseconds;
@@ -241,10 +249,7 @@ namespace GameEngine
 				msTemp = 0f;
 			}
 		}
-		private static void OnFocusChange(object sender,EventArgs e)
-		{
-			HasFocus = window.Focused;
-		}
+		//Move this somewhere
 		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e)
 		{
 			var exception = (Exception)e.ExceptionObject;
@@ -252,12 +257,12 @@ namespace GameEngine
 			Quit();	
 		}
 
-		public static void Quit()
+		private static void OnFocusChange(object sender,EventArgs e)
 		{
-			shouldQuit = true;
-			window.Exit();
-			instance.Dispose();
+			HasFocus = window.Focused;
 		}
+
+		public static void Quit() => window.Exit();
 		#endregion
 	}
 }

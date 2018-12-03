@@ -16,7 +16,7 @@ namespace GameEngine
 		}
 		public override string ToString()
 		{
-			return "X: "+x.ToString()+",Y: "+y.ToString()+",Z: "+z.ToString();
+			return "X: "+x+",Y: "+y+",Z: "+z;
 		}
 
 		public static explicit operator Vector3(Vector3Int value) => new Vector3(value.x,value.y,value.z);

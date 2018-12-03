@@ -20,6 +20,7 @@ namespace GameEngine
 		{
 			bufferId = AL.GenBuffer();
 		}
+
 		internal void SetData(byte[] data,int channelsNum,int bitsPerSample,int sampleRate)
 		{
 			if(data==null) {

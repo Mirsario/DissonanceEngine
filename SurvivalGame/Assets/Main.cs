@@ -199,7 +199,6 @@ namespace Game
 						}
 						bool active=	!string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new Rect(Graphics.ScreenWidth*0.5f,Graphics.ScreenHeight/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							//world = World.NewWorld(worldName,1024,1024);
 							world = World.NewWorld(worldNameString,256,256);
 							setMenuState = MenuState.Main;
 						}

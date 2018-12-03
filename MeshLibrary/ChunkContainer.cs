@@ -31,7 +31,7 @@ namespace SmartMeshLibrary
 
 		public bool GetChunk(string name,out SmartMeshChunk result)
 		{
-			result = chunks.Where(c => c.name==name).FirstOrDefault();
+			result = chunks.FirstOrDefault(c => c.name==name);
 			return result!=null;
 		}
 		public bool GetChunks(string name,out SmartMeshChunk[] result)
@@ -39,7 +39,7 @@ namespace SmartMeshLibrary
 			result = chunks.Where(c => c.name==name).ToArray();
 			return result!=null && result.Length>0;
 		}
-		public SmartMeshChunk GetChunk(string name) => chunks.Where(c => c.name==name).FirstOrDefault();
+		public SmartMeshChunk GetChunk(string name) => chunks.FirstOrDefault(c => c.name==name);
 		public SmartMeshChunk[] GetChunks(string name) => chunks.Where(c => c.name==name).ToArray();
 
 		public TResult TryReadChunk<TResult>(string chunkName,Func<BinaryReader,TResult> func)

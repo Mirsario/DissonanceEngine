@@ -30,7 +30,8 @@ namespace GameEngine
 			return val;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Repeat(float t,float length) => t-Floor(t/length)*length;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin01(float f) => Sin(f*PI);
+
+		#region Trigonometry
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin(float f) => (float)Math.Sin(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Cos(float f) => (float)Math.Cos(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Tan(float f) => (float)Math.Tan(f);
@@ -38,6 +39,8 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Acos(float f) => (float)Math.Acos(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Atan(float f) => (float)Math.Atan(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Atan2(float y,float x) => (float)Math.Atan2(y,x);
+		#endregion
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin01(float f) => Sin(f*PI);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sqrt(float f) => (float)Math.Sqrt(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float SqrtReciprocal(float f) => 1f/Sqrt(f); //TODO: This could be sped up?
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Abs(float f) => Math.Abs(f);

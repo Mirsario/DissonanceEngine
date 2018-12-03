@@ -30,7 +30,7 @@ namespace Game
 			}
 		}
 		public static bool isClient = true;	//Does this instance of the game need to do rendering & audio?
-		public static bool isHost = true;	//Does this instance of the game own the currently loaded worlds?
-		public static bool isMultiplayer = false;	//Does this instance of the game have to deal with networking?
+		public static bool isHost = true; //Does this instance of the game own the currently loaded worlds?
+		public static bool isMultiplayer; //Does this instance of the game have to deal with networking?
 	}
 }

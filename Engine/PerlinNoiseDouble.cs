@@ -2,7 +2,7 @@ using System;
 
 namespace GameEngine
 {
-	public class PerlinNoise
+	public class PerlinNoiseDouble
 	{
 		public enum QualityMode
 		{
@@ -23,7 +23,7 @@ namespace GameEngine
 		}
 		public int seed;
 		
-		public PerlinNoise(int seed = 0,int octaves = 6,double frequency = 1.0,double persistence = 0.5,double lacunarity = 2.0,QualityMode quality = QualityMode.Low)
+		public PerlinNoiseDouble(int seed = 0,int octaves = 6,double frequency = 1.0,double persistence = 0.5,double lacunarity = 2.0,QualityMode quality = QualityMode.Low)
 		{
 			Octaves = octaves;
 			this.seed = seed;

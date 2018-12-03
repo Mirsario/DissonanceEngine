@@ -94,7 +94,7 @@ namespace GameEngine
 		}
 		public override string ToString()
 		{
-			return "X: "+x.ToString()+",Y: "+y.ToString()+",Z: "+z.ToString()+",W: "+w.ToString();
+			return "X: "+x+",Y: "+y+",Z: "+z+",W: "+w;
 		}
 		public void Normalize()
 		{

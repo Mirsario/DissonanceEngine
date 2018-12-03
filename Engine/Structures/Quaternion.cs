@@ -248,7 +248,7 @@ namespace GameEngine
 		}
 		public override string ToString()
 		{
-			return "["+x.ToString()+","+y.ToString()+","+z.ToString()+","+w.ToString()+"]";
+			return "["+x+","+y+","+z+","+w+"]";
 		}
 		
 		public static Vector3 operator*(Quaternion rotation,Vector3 point)
