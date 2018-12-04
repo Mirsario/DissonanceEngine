@@ -131,7 +131,7 @@ namespace GameEngine
 		public Vector3 RotatedBy(float x,float y,float z)
 		{
 			//TODO: Test if this should have all axes reversed or just Y
-			return Matrix4x4.CreateRotation(-x,-y,-z)*this;
+			return Matrix4x4.CreateRotation(-x,y,-z)*this;
 		}
 		
 		public static Vector3 StepTowards(Vector3 val,Vector3 goal,float step)
@@ -145,13 +145,26 @@ namespace GameEngine
 		public static Vector3 EulerToDirection(Vector3 euler)
 		{
 			euler *= Mathf.Deg2Rad;
-			float cX = Mathf.Cos(euler.x);
-			float sX = Mathf.Sin(euler.x);
-			float cY = Mathf.Cos(euler.y);
-			float sY = Mathf.Sin(euler.y);
+
+			float cX = Mathf.Cos(-euler.x);
+			float sX = Mathf.Sin(-euler.x);
+			float cY = Mathf.Cos(-euler.y);
+			float sY = Mathf.Sin(-euler.y);
+			float cZ = Mathf.Cos(euler.z);
+			float sZ = Mathf.Sin(euler.z); 
+			return new Vector3(
+				-cX*sY,
+				sX,
+				cX*cY
+			);
+			//euler *= Mathf.Deg2Rad;
+			//float cX = Mathf.Cos(euler.x);
+			//float sX = Mathf.Sin(euler.x);
+			//float cY = Mathf.Cos(euler.y);
+			//float sY = Mathf.Sin(euler.y);
 			//float cZ = Mathf.Cos(euler.z);
 			//float sZ = Mathf.Sin(euler.z);
-			return-(new Vector3(-cX*sY,sX,cX*cY)*Mathf.Rad2Deg);
+			//return-(new Vector3(-cX*sY,sX,cX*cY)*Mathf.Rad2Deg);
 			//return (new Vector3(cY*cX,sY*cX,sX)*Mathf.Rad2Deg);
 		}
 		public static Vector3 DirectionToEuler(Vector3 direction)

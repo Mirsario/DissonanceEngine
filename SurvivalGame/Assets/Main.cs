@@ -37,9 +37,14 @@ namespace Game
 		public static Camera camera;
 		public static Vector3 cameraRotation;
 		public static World world;
-		public static bool enableMusic = false; //shouldn't be here 
 		public static bool shouldLockCursor;
 		private static Func<bool?,string> dynamicMenuSetup;
+
+		#region ToMove
+		public static bool enableMusic = false; //shouldn't be here 
+		public static Texture whiteTexture; //this too
+		public static float mouseSensitivity = 1f/15f;
+		#endregion
 
 		private WorldInfo[] worldList;
 		private string worldNameString = "";
@@ -57,22 +62,26 @@ namespace Game
 				_mainMenu = value;
 			}
 		}
-		private static Mob localMob;
-		public static Mob LocalMob {
-			get => localMob;
+		private static Entity localEntity;
+		public static Entity LocalEntity {
+			get => localEntity;
 			set {
-				var oldEntity = localMob;
-				localMob = value;
-				if(camera==null) {
-					camera = Entity.Instantiate<Entity>(localMob.world,"Camera").AddComponent<Camera>();
-					camera.fov = 110f;
-					camera.GameObject.AddComponent<AudioListener>();
+				if(localEntity==value) {
+					return;
 				}
-				camera.Transform.parent = localMob?.Transform;
-				localMob?.UpdateCamera();
+				camera?.GameObject.Dispose();
+				var controllerType = value.CameraControllerType;
+				if(controllerType==null || !typeof(CameraController).IsAssignableFrom(controllerType)) {
+					throw new Exception($"Invalid CameraControllerType return value, '{controllerType?.ToString() ?? "null"}' does not derive from CameraController class.");
+				}
+				var controller = (CameraController)GameObject.Instantiate(controllerType,init:false);
+				controller.camera = camera = InstantiateCamera(controller);
+				controller.entity = value;
+				controller.Init();
 
-				oldEntity?.UpdateIsPlayer(false);
-				localMob?.UpdateIsPlayer(true);
+				localEntity?.UpdateIsPlayer(false);
+				value.UpdateIsPlayer(true);
+				localEntity = value;
 			}
 		}
 		public static bool EnableFXAA { //Test
@@ -109,6 +118,8 @@ namespace Game
 			Directory.CreateDirectory(modsPath);
 			Directory.CreateDirectory(sourcesPath);
 			Directory.CreateDirectory(builtPath);
+
+			whiteTexture = new Texture(1,1);
 
 			Console.BufferHeight = short.MaxValue-1;
 		}
@@ -158,7 +169,7 @@ namespace Game
 						if(GUI.Button(new Rect(64,Graphics.ScreenHeight-192,256,64),"Back")) {
 							setMenuState = MenuState.Main;
 						}
-						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-272,Graphics.ScreenWidth,32),"Worlds",TextAlignment.MiddleCenter);
+						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-272,Graphics.ScreenWidth,32),"Worlds",alignment:TextAlignment.MiddleCenter);
 						for(int i=0;i<worldList.Length;i++) {
 							if(GUI.Button(new Rect((Graphics.ScreenWidth*0.5f)-256,256+(i*64),448,64),worldList[i].displayName)) {
 								World.LoadWorld(worldList[i].localPath);
@@ -184,7 +195,7 @@ namespace Game
 						if(worldNameString==null || prevMenuState!=menuState) {
 							worldNameString = "";
 						}
-						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-24,Graphics.ScreenWidth,32),"Enter World Name:",TextAlignment.MiddleCenter);
+						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-24,Graphics.ScreenWidth,32),"Enter World Name:",alignment:TextAlignment.MiddleCenter);
 						if(!string.IsNullOrEmpty(Input.InputString)) {
 							worldNameString += Input.InputString;
 						}
@@ -192,7 +203,7 @@ namespace Game
 							worldNameString = worldNameString.Remove(worldNameString.Length-1,1);
 						}
 						bool showLine = Mathf.FloorToInt(Time.GlobalTime*2f)%2==0;
-						GUI.DrawText(new Rect((showLine && worldNameString.Length>0) ? 6 : 0,Graphics.ScreenHeight*0.5f,Graphics.ScreenWidth,32),worldNameString+(showLine ? "_" : ""),TextAlignment.MiddleCenter);
+						GUI.DrawText(new Rect((showLine && worldNameString.Length>0) ? 6 : 0,Graphics.ScreenHeight*0.5f,Graphics.ScreenWidth,32),worldNameString+(showLine ? "_" : ""),alignment:TextAlignment.MiddleCenter);
 
 						if(GUI.Button(new Rect(Graphics.ScreenWidth/2-128,Graphics.ScreenHeight/2+32,128,64),"Back")) {
 							setMenuState = MenuState.WorldSelect;
@@ -213,7 +224,7 @@ namespace Game
 							result = false;
 						}
 						string text = dynamicMenuSetup(result);
-						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-16,Graphics.ScreenWidth,32),text,TextAlignment.MiddleCenter);
+						GUI.DrawText(new Rect(0,Graphics.ScreenHeight/2-16,Graphics.ScreenWidth,32),text,alignment:TextAlignment.MiddleCenter);
 						break;
 					}
 				}
@@ -265,6 +276,13 @@ namespace Game
 			//});
 		}
 
+		public static Camera InstantiateCamera(CameraController controller)
+		{
+			var newCamera = controller.AddComponent<Camera>();
+			newCamera.fov = 110f;
+			controller.AddComponent<AudioListener>();
+			return newCamera;
+		}
 		public static void UpdateCursor()
 		{
 			lockCursor = shouldLockCursor;

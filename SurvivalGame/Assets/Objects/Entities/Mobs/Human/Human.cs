@@ -13,46 +13,55 @@ namespace Game
 		public const float jumpSpeed = 7.5f;
 		public const float stopSpeed = 1f;
 		public const float friction = 4.5f;
-
-		public Light light;
-		public AudioSource audioSource;
+		
 		public bool wasOnGround;
 		public float forceAirMove;
 		public float lastLand;
 		public float walkTime;
 		public float jumpPress;
 		public bool enableStrafeJumping;
+		public AudioSource audioSource;
+		public float screenFlash;
 
 		public bool IsSprinting => Input.GetKey(Keys.LShift);
 		public float MoveSpeed => IsSprinting ? 12f : 7.5f;
 		public float Acceleration => 4.25f;
 
+		public override Type CameraControllerType => typeof(FirstPersonCamera);
+
 		public override void OnInit()
 		{
-			size = new Vector3(0.99f,1.98f,0.99f);
+			size = new Vector3(1f,1.95f,1f); //JoJo height.
+
 			base.OnInit();
+
 			rigidbody.UseGravity = false;
 			rigidbody.Friction = 0f;
 			rigidbody.Drag = 0f;
+
+			//var box = AddComponent<MeshRenderer>();
+			//box.Mesh = PrimitiveMeshes.Cube;
+			//box.Material = Resources.Get<Material>("TestCube.material");
 
 			audioSource = AddComponent<AudioSource>();
 		}
 		public override void FixedUpdate()
 		{
+			var camera = Main.camera;
 			if(Input.GetKeyDown(Keys.C)) {	//Sound test
 				Debug.Log("HONK!");
 				PlayVoiceClip(Resources.Get<AudioClip>("Sounds/honk.wav"));
 			}
 			if(Input.GetKeyDown(Keys.K)) {  //Add light
-				Instantiate<LightObj>(world,position:Main.camera.Transform.Position);
+				Instantiate<LightObj>(world,position:camera.Transform.Position);
 			}
 
 			base.FixedUpdate();
 			if(Input.GetMouseButtonDown(0)) {
-				Rocket rocket = Instantiate<Rocket>(world,position:Main.camera.Transform.Position+Main.camera.Transform.Forward);
-				rocket.velocity = Main.camera.Transform.Forward*25f;
+				Rocket rocket = Instantiate<Rocket>(world,position:camera.Transform.Position+camera.Transform.Forward);
+				rocket.velocity = camera.Transform.Forward*25f;
 				rocket.owner = this;
-				SoundInstance.Create("Sounds/rocketFire.wav",Main.camera.Transform.Position);
+				SoundInstance.Create("Sounds/rocketFire.wav",camera.Transform.Position);
 			}
 
 			if(Input.GetKeyDown(Keys.Space) || Input.GetMouseButton(1)) {
@@ -73,9 +82,17 @@ namespace Game
 				Transform.Position = tempPos;
 			}
 
-			if(Physics.Raycast(Main.camera.Transform.Position,Main.camera.Transform.Forward,out var hit,mask: q => Layers.GetLayerMask("World"))) {
+			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => obj==this ? false : (bool?)null)) {
+				if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(2)) {
+					Main.LocalEntity = entity;
+					screenFlash = 0.5f;
+					SoundInstance.Create($"Magic.ogg",entity.Transform.Position);
+				}
 				if(Input.GetKeyDown(Keys.X)) { //Teleport
 					Transform.Position = hit.point+Vector3.up;
+				}
+				if(Input.GetKeyDown(Keys.J)) {
+					Instantiate<RaisingPlatform>(world,position:hit.point);
 				}
 				if(Input.GetKeyDown(Keys.V)) {
 					Instantiate<Robot>(world,position:hit.point);
@@ -91,13 +108,22 @@ namespace Game
 				}
 			}
 		}
+		public override void RenderUpdate()
+		{
+			base.RenderUpdate();
+			if(screenFlash>0f) {
+				screenFlash = Mathf.StepTowards(screenFlash,0f,Time.DeltaTime);
+			}
+		}
 		public override void OnGUI()
 		{
-			var tempVec = velocity;
-			tempVec.y = 0f;
 			int i = 5;
-			GUI.DrawText(new Rect(8,8+(i++*16),128,8),"Player speed: "+tempVec.Magnitude.ToString("0.00"));
-			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Player Speed - XZ:{new Vector3(velocity.x,0f,velocity.z).Magnitude.ToString("0.00")} Y: {velocity.y.ToString("0.00")}");
+			GUI.DrawText(new Rect(8,8+(i*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
+
+			if(screenFlash>0f) {
+				GUI.DrawTexture(Graphics.ScreenRect,Main.whiteTexture,new Vector4(0.75f,0f,0f,screenFlash));
+			}
 			//GUI.DrawTexture(new Rect(32,32,64,64),TileEntity.tileTexture);	//This was... weirdly moving???
 		}
 
@@ -128,22 +154,35 @@ namespace Game
 				} else {
 					walkTime = 0f;
 				}
+
 				Movement_WalkMove();
+
 				if(!wasOnGround) {
 					Footstep("Land",0.8f);
+					float magnitude = prevVelocity.Magnitude-velocity.Magnitude;
+					const float minSpeed = 8.5f;
+					if(magnitude>minSpeed) {
+						float power = Mathf.Lerp(0f,1f,(magnitude-minSpeed)*0.2f);
+						screenFlash = power*0.5f;
+						SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.DeltaTime),power);
+						screenShake += power*0.4f;
+					}
 				}
+
 				lastLand = Time.DeltaTime;
 				wasOnGround = true;
 			} else {
 				walkTime = 0f;
+
 				if(forceAirMove>0f) {
 					forceAirMove = Math.Max(0f,forceAirMove-Time.DeltaTime);
 				}
+
 				Movement_AirMove();
 				wasOnGround = false;
 			}
 
-			velocity.y -= 18f*Time.DeltaTime;//TEMPORARY GRAVITY
+			velocity.y -= 18f*Time.DeltaTime; //Temporary implementation, doing gravity through the physics engine would probably be better. 
 			rigidbody.Velocity = velocity;
 			prevVelocity = velocity;
 		}
@@ -160,8 +199,9 @@ namespace Game
 			Movement_Friction();
 
 			var moveInput = Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D);
-			var forward = Main.camera.Transform.Forward;
-			var right = Main.camera.Transform.Right;
+			var cameraTransform = Main.camera.Transform;
+			var forward = cameraTransform.Forward;
+			var right = cameraTransform.Right;
 			forward.y = 0f;
 			right.y = 0f;
 			forward.Normalize();
@@ -178,8 +218,9 @@ namespace Game
 			Movement_Friction();
 
 			var moveInput = Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D);
-			var forward = Main.camera.Transform.Forward;
-			var right = Main.camera.Transform.Right;
+			var cameraTransform = Main.camera.Transform;
+			var forward = cameraTransform.Forward;
+			var right = cameraTransform.Right;
 			forward.y = 0f;
 			right.y = 0f;
 			forward.Normalize();
@@ -196,7 +237,11 @@ namespace Game
 			if(jumpPress<=0f) {
 				return false;
 			}
-			velocity.y = jumpSpeed;
+			if(velocity.y<0f) {
+				velocity.y = jumpSpeed;
+			}else{
+				velocity.y += jumpSpeed;
+			}
 			return true;
 		}
 		public void Movement_Friction()

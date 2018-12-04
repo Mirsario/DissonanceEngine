@@ -51,7 +51,7 @@ namespace GameEngine
 			}*/
 			//Debug.Log("camera amount: "+cameraList.Count);
 
-			var uniformComputed = new bool[ShaderUniforms.count];
+			var uniformComputed = new bool[DefaultShaderUniforms.Count];
 			Matrix4x4 world = default, worldInverse = default,
 			worldView = default, worldViewInverse = default,
 			worldViewProj = default, worldViewProjInverse = default;
@@ -129,7 +129,7 @@ namespace GameEngine
 								continue;
 							}
 							//Mark matrices for recalculation
-							for(int k=ShaderUniforms.world;k<=ShaderUniforms.projInverse;k++) {
+							for(int k=DefaultShaderUniforms.World;k<=DefaultShaderUniforms.ProjInverse;k++) {
 								uniformComputed[k] = false;
 							}
 

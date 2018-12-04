@@ -11,35 +11,6 @@ using Newtonsoft.Json;
 
 namespace GameEngine
 {
-	internal class ShaderUniforms
-	{
-		//Bad looking internal code,all for the sake of performance
-		public static string[] names = {
-			//Matrices
-			"world",			"worldInverse",
-			"worldView",		"worldViewInverse",
-			"worldViewProj",	"worldViewProjInverse",
-			"view",				"viewInverse",
-			"proj",				"projInverse",
-			//Camera
-			"nearClip",			"farClip",
-			"screenWidth",		"screenHeight",
-			"cameraPosition"
-		};
-		public const int
-			//Matrices
-			world = 0,			worldInverse = 1,
-			worldView = 2,		worldViewInverse = 3,
-			worldViewProj = 4,	worldViewProjInverse = 5,
-			view = 6,			viewInverse = 7,
-			proj = 8,			projInverse = 9,
-			//Camera
-			nearClip = 10,		farClip = 11,
-			screenWidth = 12,	screenHeight = 13,
-			cameraPosition = 14,
-			//
-			count = 15;
-	}
 	internal class ShaderUniform
 	{
 		public string name;
@@ -85,8 +56,8 @@ namespace GameEngine
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
 		internal Dictionary<string,ShaderUniform> uniforms = new Dictionary<string,ShaderUniform>();
-		internal bool[] hasDefaultUniform = new bool[ShaderUniforms.count];
-		internal int[] defaultUniformIndex = new int[ShaderUniforms.count];
+		internal bool[] hasDefaultUniform = new bool[DefaultShaderUniforms.Count];
+		internal int[] defaultUniformIndex = new int[DefaultShaderUniforms.Count];
 		internal List<Material> materialAttachments = new List<Material>();
 
 		public readonly string name;
@@ -116,6 +87,8 @@ namespace GameEngine
 			shadersByName[name] = this;
 			shaders.Add(this);
 
+			Graphics.CheckGLErrors();
+
 			//Set uniform locations
 			var keys = uniforms.Keys.ToArray();
 			for(int i=0;i<keys.Length;i++) {
@@ -123,15 +96,17 @@ namespace GameEngine
 				var uniform = uniforms[key];
 				if(uniform.location<0) {
 					int location = GL.GetUniformLocation(program,uniform.name);
+					Graphics.CheckGLErrors();
 					uniform.location = location;
 					//Optimization for engine's uniforms
-					int indexOf = Array.IndexOf(ShaderUniforms.names,uniform.name);
+					int indexOf = Array.IndexOf(DefaultShaderUniforms.names,uniform.name);
 					if(indexOf>=0) {
 						hasDefaultUniform[indexOf] = true;
 						defaultUniformIndex[indexOf] = location;
 					}
 				}
 			}
+			Graphics.CheckGLErrors();
 		}
 		internal void SetupUniformsCached(ref Camera camera,ref Vector3 cameraPos,Transform transform,bool[] uniformComputed,
 			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
@@ -143,56 +118,56 @@ namespace GameEngine
 			//Heavily optimized shitcode below
 			//forgiv mi future me
 			//no
-			if(hasDefaultUniform[ShaderUniforms.nearClip]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.nearClip],camera.nearClip); }
-			if(hasDefaultUniform[ShaderUniforms.farClip]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.farClip],camera.farClip); }
-			if(hasDefaultUniform[ShaderUniforms.screenWidth]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.screenWidth],Graphics.ScreenWidth); }
-			if(hasDefaultUniform[ShaderUniforms.screenHeight]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.screenHeight],Graphics.ScreenHeight); }
-			if(hasDefaultUniform[ShaderUniforms.cameraPosition]) { GL.Uniform3(defaultUniformIndex[ShaderUniforms.cameraPosition],cameraPos); }
+			if(hasDefaultUniform[DefaultShaderUniforms.NearClip]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.NearClip],camera.nearClip); }
+			if(hasDefaultUniform[DefaultShaderUniforms.FarClip]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.FarClip],camera.farClip); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ScreenWidth]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.ScreenWidth],Graphics.ScreenWidth); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ScreenHeight]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.ScreenHeight],Graphics.ScreenHeight); }
+			if(hasDefaultUniform[DefaultShaderUniforms.CameraPosition]) { GL.Uniform3(defaultUniformIndex[DefaultShaderUniforms.CameraPosition],cameraPos); }
 
 			#region World
 			//bool needsWorld;
-			if(hasDefaultUniform[ShaderUniforms.world] || hasDefaultUniform[ShaderUniforms.worldInverse] || hasDefaultUniform[ShaderUniforms.worldView] || hasDefaultUniform[ShaderUniforms.worldViewInverse] || hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+			if(hasDefaultUniform[DefaultShaderUniforms.World] || hasDefaultUniform[DefaultShaderUniforms.WorldInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldView] || hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 				//Check
-				if(!uniformComputed[ShaderUniforms.world]) { world = transform.WorldMatrix; uniformComputed[ShaderUniforms.world] = true; }
+				if(!uniformComputed[DefaultShaderUniforms.World]) { world = transform.WorldMatrix; uniformComputed[DefaultShaderUniforms.World] = true; }
 
-				if(hasDefaultUniform[ShaderUniforms.world]) {
+				if(hasDefaultUniform[DefaultShaderUniforms.World]) {
 					//Assign
-					UniformMatrix4(defaultUniformIndex[ShaderUniforms.world],ref world);
+					UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.World],ref world);
 				}
-				if(hasDefaultUniform[ShaderUniforms.worldInverse]) {
+				if(hasDefaultUniform[DefaultShaderUniforms.WorldInverse]) {
 					//Check, Assign
-					if(!uniformComputed[ShaderUniforms.worldInverse]) { worldInverse = world.Inverted; uniformComputed[ShaderUniforms.worldInverse] = true; }
-					UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldInverse],ref worldInverse);
+					if(!uniformComputed[DefaultShaderUniforms.WorldInverse]) { worldInverse = world.Inverted; uniformComputed[DefaultShaderUniforms.WorldInverse] = true; }
+					UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldInverse],ref worldInverse);
 				}
 
 				#region WorldView
-				if(hasDefaultUniform[ShaderUniforms.worldView] || hasDefaultUniform[ShaderUniforms.worldViewInverse] || hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+				if(hasDefaultUniform[DefaultShaderUniforms.WorldView] || hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 					//Check
-					if(!uniformComputed[ShaderUniforms.worldView]) { worldView = world*camera.matrix_view; uniformComputed[ShaderUniforms.worldView] = true; }
+					if(!uniformComputed[DefaultShaderUniforms.WorldView]) { worldView = world*camera.matrix_view; uniformComputed[DefaultShaderUniforms.WorldView] = true; }
 
-					if(hasDefaultUniform[ShaderUniforms.worldView]) {
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldView]) {
 						//Assign
-						UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldView],ref worldView);
+						UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldView],ref worldView);
 					}
-					if(hasDefaultUniform[ShaderUniforms.worldViewInverse]) {
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse]) {
 						//Check, Assign
-						if(!uniformComputed[ShaderUniforms.worldViewInverse]) { worldViewInverse = worldView.Inverted; uniformComputed[ShaderUniforms.worldViewInverse] = true; }
-						UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewInverse],ref worldViewInverse);
+						if(!uniformComputed[DefaultShaderUniforms.WorldViewInverse]) { worldViewInverse = worldView.Inverted; uniformComputed[DefaultShaderUniforms.WorldViewInverse] = true; }
+						UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewInverse],ref worldViewInverse);
 					}
 
 					#region WorldViewProj
-					if(hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 						//Check
-						if(!uniformComputed[ShaderUniforms.worldViewProj]) { worldViewProj = worldView*camera.matrix_proj; uniformComputed[ShaderUniforms.worldViewProj] = true; }
+						if(!uniformComputed[DefaultShaderUniforms.WorldViewProj]) { worldViewProj = worldView*camera.matrix_proj; uniformComputed[DefaultShaderUniforms.WorldViewProj] = true; }
 
-						if(hasDefaultUniform[ShaderUniforms.worldViewProj]) {
+						if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProj]) {
 							//Assign
-							UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewProj],ref worldViewProj);
+							UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewProj],ref worldViewProj);
 						}
-						if(hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+						if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 							//Check, Assign
-							if(!uniformComputed[ShaderUniforms.worldViewProjInverse]) { worldViewProjInverse = worldViewProj.Inverted; uniformComputed[ShaderUniforms.worldViewProjInverse] = true; }
-							UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewProjInverse],ref worldViewProjInverse);
+							if(!uniformComputed[DefaultShaderUniforms.WorldViewProjInverse]) { worldViewProjInverse = worldViewProj.Inverted; uniformComputed[DefaultShaderUniforms.WorldViewProjInverse] = true; }
+							UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewProjInverse],ref worldViewProjInverse);
 						}
 					}
 					#endregion
@@ -201,12 +176,12 @@ namespace GameEngine
 			}
 			#endregion
 			#region View
-			if(hasDefaultUniform[ShaderUniforms.view])			{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.view],			ref view); }
-			if(hasDefaultUniform[ShaderUniforms.viewInverse])	{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.viewInverse],	ref viewInverse); }
+			if(hasDefaultUniform[DefaultShaderUniforms.View])			{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.View],			ref view); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ViewInverse])	{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.ViewInverse],	ref viewInverse); }
 			#endregion
 			#region Proj
-			if(hasDefaultUniform[ShaderUniforms.proj])			{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.proj],			ref proj); }
-			if(hasDefaultUniform[ShaderUniforms.projInverse])	{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.projInverse],	ref projInverse); }
+			if(hasDefaultUniform[DefaultShaderUniforms.Proj])			{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.Proj],			ref proj); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ProjInverse])	{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.ProjInverse],	ref projInverse); }
 			#endregion
 		}
 		public void SetupUniforms(ref Camera camera,ref Vector3 cameraPos,Transform transform,
@@ -220,49 +195,49 @@ namespace GameEngine
 			//Heavily optimized shitcode below
 			//forgiv mi future me
 			//again, no.
-			if(hasDefaultUniform[ShaderUniforms.nearClip]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.nearClip],camera.nearClip); }
-			if(hasDefaultUniform[ShaderUniforms.farClip]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.farClip],camera.farClip); }
-			if(hasDefaultUniform[ShaderUniforms.screenWidth]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.screenWidth],Graphics.ScreenWidth); }
-			if(hasDefaultUniform[ShaderUniforms.screenHeight]) { GL.Uniform1(defaultUniformIndex[ShaderUniforms.screenHeight],Graphics.ScreenHeight); }
-			if(hasDefaultUniform[ShaderUniforms.cameraPosition]) { GL.Uniform3(defaultUniformIndex[ShaderUniforms.cameraPosition],cameraPos); }
+			if(hasDefaultUniform[DefaultShaderUniforms.NearClip]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.NearClip],camera.nearClip); }
+			if(hasDefaultUniform[DefaultShaderUniforms.FarClip]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.FarClip],camera.farClip); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ScreenWidth]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.ScreenWidth],Graphics.ScreenWidth); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ScreenHeight]) { GL.Uniform1(defaultUniformIndex[DefaultShaderUniforms.ScreenHeight],Graphics.ScreenHeight); }
+			if(hasDefaultUniform[DefaultShaderUniforms.CameraPosition]) { GL.Uniform3(defaultUniformIndex[DefaultShaderUniforms.CameraPosition],cameraPos); }
 
 			#region World
 			//bool needsWorld;
-			if(hasDefaultUniform[ShaderUniforms.world] || hasDefaultUniform[ShaderUniforms.worldInverse] || hasDefaultUniform[ShaderUniforms.worldView] || hasDefaultUniform[ShaderUniforms.worldViewInverse] || hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+			if(hasDefaultUniform[DefaultShaderUniforms.World] || hasDefaultUniform[DefaultShaderUniforms.WorldInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldView] || hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 				if(!dontCalculateWorld) {
 					world = transform.WorldMatrix;
 				}
 
-				if(hasDefaultUniform[ShaderUniforms.world]) {
-					UniformMatrix4(defaultUniformIndex[ShaderUniforms.world],ref world);
+				if(hasDefaultUniform[DefaultShaderUniforms.World]) {
+					UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.World],ref world);
 				}
-				if(hasDefaultUniform[ShaderUniforms.worldInverse]) {
+				if(hasDefaultUniform[DefaultShaderUniforms.WorldInverse]) {
 					worldInverse = world.Inverted;
-					UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldInverse],ref worldInverse);
+					UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldInverse],ref worldInverse);
 				}
 
 				#region WorldView
-				if(hasDefaultUniform[ShaderUniforms.worldView] || hasDefaultUniform[ShaderUniforms.worldViewInverse] || hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+				if(hasDefaultUniform[DefaultShaderUniforms.WorldView] || hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 					worldView = world*camera.matrix_view;
 
-					if(hasDefaultUniform[ShaderUniforms.worldView]) {
-						UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldView],ref worldView);
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldView]) {
+						UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldView],ref worldView);
 					}
-					if(hasDefaultUniform[ShaderUniforms.worldViewInverse]) {
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldViewInverse]) {
 						worldViewInverse = worldView.Inverted;
-						UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewInverse],ref worldViewInverse);
+						UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewInverse],ref worldViewInverse);
 					}
 
 					#region WorldViewProj
-					if(hasDefaultUniform[ShaderUniforms.worldViewProj] || hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+					if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProj] || hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 						worldViewProj = worldView*camera.matrix_proj;
 
-						if(hasDefaultUniform[ShaderUniforms.worldViewProj]) {
-							UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewProj],ref worldViewProj);
+						if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProj]) {
+							UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewProj],ref worldViewProj);
 						}
-						if(hasDefaultUniform[ShaderUniforms.worldViewProjInverse]) {
+						if(hasDefaultUniform[DefaultShaderUniforms.WorldViewProjInverse]) {
 							worldViewProjInverse = worldViewProj.Inverted;
-							UniformMatrix4(defaultUniformIndex[ShaderUniforms.worldViewProjInverse],ref worldViewProjInverse);
+							UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.WorldViewProjInverse],ref worldViewProjInverse);
 						}
 					}
 					#endregion
@@ -271,12 +246,12 @@ namespace GameEngine
 			}
 			#endregion
 			#region View
-			if(hasDefaultUniform[ShaderUniforms.view])			{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.view],			ref view); }
-			if(hasDefaultUniform[ShaderUniforms.viewInverse])	{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.viewInverse],	ref viewInverse); }
+			if(hasDefaultUniform[DefaultShaderUniforms.View])			{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.View],			ref view); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ViewInverse])	{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.ViewInverse],	ref viewInverse); }
 			#endregion
 			#region Proj
-			if(hasDefaultUniform[ShaderUniforms.proj])			{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.proj],			ref proj); }
-			if(hasDefaultUniform[ShaderUniforms.projInverse])	{ UniformMatrix4(defaultUniformIndex[ShaderUniforms.projInverse],	ref projInverse); }
+			if(hasDefaultUniform[DefaultShaderUniforms.Proj])			{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.Proj],			ref proj); }
+			if(hasDefaultUniform[DefaultShaderUniforms.ProjInverse])	{ UniformMatrix4(defaultUniformIndex[DefaultShaderUniforms.ProjInverse],	ref projInverse); }
 			#endregion
 		}
 
@@ -336,7 +311,7 @@ namespace GameEngine
 					return;
 				}
 				s.CompileShader(shaderType,code,name);
-				//\bworld\b
+				
 				var matches = Regex.Matches(code,@"uniform\s+?(\S+?)\s+?(\S+?)\s*?\;");
 				foreach(Match match in matches) {
 					if(!match.Success) {
@@ -351,19 +326,18 @@ namespace GameEngine
 			CompileCode(shader,ShaderType.Fragment,fragmentCode);
 			CompileCode(shader,ShaderType.Geometry,geometryCode);
 
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Vertex,		"vertex");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Normal,		"normal");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Tangent,		"tangent");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Color,		"color");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneIndices,	"boneIndices");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneWeights,	"boneWeights");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Uv0,			"uv0");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.Vertex,"vertex");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.Normal,"normal");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.Tangent,"tangent");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.Color,"color");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneIndices,"boneIndices");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneWeights,"boneWeights");
+			GL.BindAttribLocation(shader.program,(int)AttributeId.Uv0,"uv0");
 			Graphics.CheckGLErrors();
 			
 			GL.LinkProgram(shader.program);
 			Graphics.CheckGLErrors();
 			shader.Init();
-			Graphics.CheckGLErrors();
 			return shader;
 		}
 		internal void CompileShader(ShaderType type,string code,string shaderName = "")

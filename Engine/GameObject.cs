@@ -141,8 +141,14 @@ namespace GameEngine
 
 		#region Instantiate
 		public static T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,bool init = true) where T : GameObject
+			=> (T)Instantiate(typeof(T),name,position,rotation,init);
+
+		public static GameObject Instantiate(Type type,string name = default,Vector3 position = default,Quaternion rotation = default,bool init = true)
 		{
-			var obj = (T)FormatterServices.GetUninitializedObject(typeof(T));
+			if(!typeof(GameObject).IsAssignableFrom(type)) {
+				throw new ArgumentException("'type' must derive from GameObject class.");
+			}
+			var obj = (GameObject)FormatterServices.GetUninitializedObject(type);
 			obj.PreInit();
 			if(name!=default) {
 				obj.Name = name;

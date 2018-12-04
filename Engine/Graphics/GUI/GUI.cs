@@ -17,6 +17,7 @@ namespace GameEngine
 		public RectOffset border;
 		public TextAlignment textAlignment;
 		public int fontSize = 16;
+
 		public GUIStyle()
 		{
 			texInactive = GUI.texDefaultInactive;
@@ -75,41 +76,41 @@ namespace GameEngine
 			
 		}
 		
-		public static void Box(Rect rect)
+		public static void Box(Rect rect,Vector4? color)
 		{
-			Draw(rect,skin.boxStyle.texNormal,skin.boxStyle);
+			Draw(rect,skin.boxStyle.texNormal,color,skin.boxStyle);
 		}
-		public static bool Button(Rect rect,string text = null,bool active = true)
+		public static bool Button(Rect rect,string text = null,bool active = true,Vector4? color = null)
 		{
 			bool hover = rect.Contains(Input.MousePosition,true);
 			bool anyPress = Input.GetMouseButton(0);
 			var style = skin.buttonStyle;
 			var tex = active ? hover ? anyPress ? style.texActive : style.texHover : style.texNormal : style.texInactive;
-			Draw(rect,tex,style);
-			if(text!=null && text.Length>0) {
+			Draw(rect,tex,color,style);
+			if(!String.IsNullOrEmpty(text)) {
 				var textRect = new Rect(
 					rect.x+style.border.left,
 					rect.y+style.border.top,
 					rect.width-style.border.left-style.border.right,
 					rect.height-style.border.top-style.border.bottom
 				);
-				Graphics.DrawString(font,style.fontSize,textRect,text,style.textAlignment);
+				DrawString(font,style.fontSize,textRect,text,alignment:style.textAlignment);
 			}
 			
 			return active && hover && Input.GetMouseButtonUp(0) && rect.Contains(Input.MousePosition,true);
 		}
-		public static void DrawText(Rect rect,string text,TextAlignment alignment = TextAlignment.UpperLeft,float fontSize = -1)
+		public static void DrawText(Rect rect,string text,Vector4? color = null,TextAlignment alignment = TextAlignment.UpperLeft,float fontSize = -1)
 		{
 			if(fontSize==-1) {
 				fontSize = font.size;
 			}
-			Graphics.DrawString(font,fontSize,rect,text,alignment);
+			DrawString(font,fontSize,rect,text,color,alignment);
 		}
-		public static void DrawTexture(Rect rect,Texture texture)
+		public static void DrawTexture(Rect rect,Texture texture,Vector4? color = null)
 		{
-			Draw(rect,texture,null);
+			Draw(rect,texture,color);
 		}
-		internal static void Draw(Rect rect,Texture texture,GUIStyle style = null)
+		internal static void Draw(Rect rect,Texture texture,Vector4? color = null,GUIStyle style = null)
 		{
 			var vector = new Vector4(
 				rect.x/Graphics.ScreenWidth,
@@ -117,22 +118,25 @@ namespace GameEngine
 				(rect.x+rect.width)/Graphics.ScreenWidth,
 				(rect.y+rect.height)/Graphics.ScreenHeight
 			);
+			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+				var col = color ?? Vector4.one;
+				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
+			}
 			
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
-			GL.Uniform1(GL.GetUniformLocation(Graphics.GUIShader.program,"mainTex2"),0);
 			
-			int index = GL.GetAttribLocation(Graphics.GUIShader.program,"uv");
+			int index = GL.GetAttribLocation(Shader.activeShader.program,"uv");
 			if(style==null || style.border.left==0) {
 				GL.Begin(PrimitiveTypeGL.Quads);
 					GL.Vertex2(vector.x,1f-vector.y);
-					GL.VertexAttrib2(index,0.0f,0.0f);//1
+					GL.VertexAttrib2(index,0.0f,0.0f); //1
 					GL.Vertex2(vector.x,1f-vector.w);
-					GL.VertexAttrib2(index,0.0f,1.0f);//2
+					GL.VertexAttrib2(index,0.0f,1.0f); //2
 					GL.Vertex2(vector.z,1f-vector.w);
-					GL.VertexAttrib2(index,1.0f,1.0f);//3
+					GL.VertexAttrib2(index,1.0f,1.0f); //3
 					GL.Vertex2(vector.z,1f-vector.y);
-					GL.VertexAttrib2(index,1.0f,0.0f);//4
+					GL.VertexAttrib2(index,1.0f,0.0f); //4
 				GL.End();
 			}else{
 				var textureSize = new Vector2(texture.Width,texture.Height);
@@ -171,6 +175,51 @@ namespace GameEngine
 				}
 				GL.End();
 			}
+		}
+		//TODO: Move this
+		internal static void DrawString(Font font,float fontSize,Rect rect,string text,Vector4? color = null,TextAlignment alignment = TextAlignment.UpperLeft)
+		{
+			if(string.IsNullOrEmpty(text)) {
+				return;
+			}
+			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+				var col = color ?? Vector4.one;
+				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
+			}
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D,font.texture.Id);
+			GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,"mainTex"),0);
+			
+			float scale = fontSize/font.charSize.y;
+			var position = new Vector2(rect.x,rect.y);
+			if(alignment==TextAlignment.UpperCenter || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.LowerCenter) {
+				position.x += rect.width/2f-font.charSize.x*scale*text.Length/2f;
+			}
+			if(alignment==TextAlignment.MiddleLeft || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.MiddleRight) {
+				position.y += rect.height/2f-fontSize/2f;
+			}
+			
+			float xPos = position.x/Graphics.ScreenWidth;
+			float yPos = position.y/Graphics.ScreenHeight;
+			float width = font.charSize.x/Graphics.ScreenWidth*scale;
+			float height = font.charSize.y/Graphics.ScreenHeight*scale;
+			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.program,"uv");
+			GL.Begin(PrimitiveTypeGL.Quads);
+			for(int i=0;i<text.Length;i++) {
+				char c = text[i];
+				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
+					GL.VertexAttrib2(uvAttrib,uvs[0]);
+					GL.Vertex2(xPos,1f-yPos);
+					GL.VertexAttrib2(uvAttrib,uvs[1]);
+					GL.Vertex2(xPos+width,1f-yPos);
+					GL.VertexAttrib2(uvAttrib,uvs[2]);
+					GL.Vertex2(xPos+width,1f-yPos-height);
+					GL.VertexAttrib2(uvAttrib,uvs[3]);
+					GL.Vertex2(xPos,1f-yPos-height);
+				}
+				xPos += width;
+			}
+			GL.End();
 		}
 	}
 }

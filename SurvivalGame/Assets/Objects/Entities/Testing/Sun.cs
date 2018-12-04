@@ -24,8 +24,9 @@ namespace Game
 		public override void RenderUpdate()
 		{
 			Transform.EulerRot = new Vector3(-60f,0f,0f);
-			if(Main.camera!=null) {
-				Transform.Position = Main.camera.Transform.Position+new Vector3(20f,40f,10f);
+			var camera = Main.camera;
+			if(camera!=null) {
+				Transform.Position = camera.Transform.Position+new Vector3(20f,40f,10f);
 			}
 			Transform.LocalScale = Vector3.one*10f;
 		}

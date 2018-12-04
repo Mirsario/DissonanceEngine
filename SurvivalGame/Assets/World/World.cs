@@ -183,7 +183,7 @@ namespace Game
 			}
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
 			playerPos.y = HeightAt(playerPos,false);
-			Main.LocalMob = Entity.Instantiate<Human>(this,position:playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
+			Main.LocalEntity = Entity.Instantiate<Human>(this,position:playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
 			Entity.Instantiate<StoneHatchet>(this,position:new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
 			Instantiate<AtmosphereSystem>();
 

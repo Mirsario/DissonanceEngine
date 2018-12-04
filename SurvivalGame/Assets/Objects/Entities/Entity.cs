@@ -4,15 +4,19 @@ using GameEngine;
 
 namespace Game
 {
-	//A GameObject that's bind to a World
-	public class Entity : GameObject
+	//A GameObject that's bind to a World and is possibly controllable by players (possessing tables is ok!)
+	public abstract class Entity : GameObject
 	{
 		public World world;
-		
+
+		public virtual Type CameraControllerType => typeof(BasicThirdPersonCamera);
+
 		public override void OnInit()
 		{
 			layer = Layers.GetLayerIndex("Entity");
 		}
+
+		public virtual void UpdateIsPlayer(bool isPlayer) {}
 
 		public static T Instantiate<T>(World world,string name = default,Vector3 position = default,Quaternion rotation = default,bool init = true) where T : Entity
 		{

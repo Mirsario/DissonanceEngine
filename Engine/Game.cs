@@ -18,6 +18,8 @@ namespace GameEngine
 	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	//TODO: Fix issues with window resizing
+
+
 	public class Game : IDisposable
 	{
 		//Debug
@@ -45,6 +47,7 @@ namespace GameEngine
 		public static GameWindow window;
 
 		//FPS counter
+		//TODO: Move FPS counting to Time.cs?
 		private static Stopwatch logicStopwatch;
 		public static int logicFrame;
 		public static int logicFPS;

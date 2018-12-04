@@ -13,7 +13,7 @@ using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 namespace GameEngine
 {
 	//TODO: Add submeshes to Mesh.cs
-	//TODO: Add some way to sort objects in a way that'd let the engine skip boxinfrustum checks for objects which are in non-visible chunks.
+	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	public static class Graphics
 	{
 		#region PixelFormats
@@ -97,6 +97,24 @@ namespace GameEngine
 		};
 		#endregion
 
+		internal static GameWindow window;
+		internal static List<Camera> cameraList;
+		internal static List<Renderer> rendererList;
+		internal static List<Light> lightList;
+		internal static Texture whiteTexture; //TODO: Move this
+		public static RenderSettings renderSettings;
+		
+		#region Hardcoded
+		internal static int textBufferId = -1;
+		internal static DrawBuffersEnum[] nullDrawBuffers = { DrawBuffersEnum.ColorAttachment0 };
+		public static int defaultStencil = 0;
+		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);//new Vector3(0.5f,0.5f,0.5f);
+
+		//TODO: Soften this
+		private static Shader _guiShader;
+		public static Shader GUIShader => _guiShader ?? (_guiShader = Resources.Find<Shader>("GUI"));
+		#endregion
+
 		//Screen
 		//TODO: Avoid extra math by changing this to automatic properties, updated somewhere.
 		public static int ScreenX => window.Location.X;
@@ -105,29 +123,11 @@ namespace GameEngine
 		public static int ScreenHeight => window.Height;
 		public static Vector2 ScreenCenter => new Vector2(window.Width*0.5f,window.Height*0.5f);
 		public static Vector2 WindowCenter => new Vector2(window.Location.X+window.Width*0.5f,window.Location.Y+window.Height*0.5f);
+		public static Rect ScreenRect => new Rect(0f,0f,window.Width,window.Height);
 		public static bool Fullscreen {
 			get => window.WindowState==WindowState.Fullscreen;
 			set => window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
 		}
-
-		internal static GameWindow window;
-		internal static List<Camera> cameraList;
-		internal static List<Renderer> rendererList;
-		internal static List<Light> lightList;
-		public static RenderSettings renderSettings;
-		
-		//TODO: Move this
-		internal static Texture whiteTexture;
-
-		#region Hardcoded
-		//TODO: Fix this badcode
-		private static Shader _guiShader;
-		public static Shader GUIShader => _guiShader ?? (_guiShader = Resources.Find<Shader>("GUI"));
-		internal static int textBufferId = -1;
-		internal static DrawBuffersEnum[] nullDrawBuffers = { DrawBuffersEnum.ColorAttachment0 };
-		public static int defaultStencil = 0;
-		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);//new Vector3(0.5f,0.5f,0.5f);
-		#endregion
 
 		#region Initialization
 		internal static void Init()
@@ -259,20 +259,15 @@ namespace GameEngine
 		}
 		internal static void GUIPass()
 		{
-			CheckGLErrors();
 			Framebuffer.Bind(null);
 			
-			CheckGLErrors();
 			Shader.SetShader(GUIShader);
 			
-			CheckGLErrors();
 			GL.Enable(EnableCap.Blend);
 			GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
 			
 			GUI.canDraw = true;
-			CheckGLErrors();
-			Game.instance.OnGUI();	//<<<
-			CheckGLErrors();
+			Game.instance.OnGUI();
 			for(int i=0;i<GameObject.gameObjects.Count;i++) {
 				var gameObject = GameObject.gameObjects[i];
 				gameObject.OnGUI();
@@ -357,47 +352,6 @@ namespace GameEngine
 		}
 		#endregion
 		
-		//TODO: Move this
-		internal static void DrawString(Font font,float fontSize,Rect rect,string text,TextAlignment alignment = TextAlignment.UpperLeft)
-		{
-			if(string.IsNullOrEmpty(text)) {
-				return;
-			}
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,font.texture.Id);
-			GL.Uniform1(GL.GetUniformLocation(GUIShader.program,"mainTex"),0);
-			
-			float scale = fontSize/font.charSize.y;
-			var position = new Vector2(rect.x,rect.y);
-			if(alignment==TextAlignment.UpperCenter || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.LowerCenter) {
-				position.x += rect.width/2f-font.charSize.x*scale*text.Length/2f;
-			}
-			if(alignment==TextAlignment.MiddleLeft || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.MiddleRight) {
-				position.y += rect.height/2f-fontSize/2f;
-			}
-			
-			float xPos = position.x/ScreenWidth;
-			float yPos = position.y/ScreenHeight;
-			float width = font.charSize.x/ScreenWidth*scale;
-			float height = font.charSize.y/ScreenHeight*scale;
-			int uvAttrib = GL.GetAttribLocation(GUIShader.program,"uv");
-			GL.Begin(PrimitiveTypeGL.Quads);
-			for(int i=0;i<text.Length;i++) {
-				char c = text[i];
-				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
-					GL.VertexAttrib2(uvAttrib,uvs[0]);
-					GL.Vertex2(xPos,1f-yPos);
-					GL.VertexAttrib2(uvAttrib,uvs[1]);
-					GL.Vertex2(xPos+width,1f-yPos);
-					GL.VertexAttrib2(uvAttrib,uvs[2]);
-					GL.Vertex2(xPos+width,1f-yPos-height);
-					GL.VertexAttrib2(uvAttrib,uvs[3]);
-					GL.Vertex2(xPos,1f-yPos-height);
-				}
-				xPos += width;
-			}
-			GL.End();
-		}
 		//TODO: Actually make window resizing a thing.
 		internal static void Resize(object sender,EventArgs e) {}
 		

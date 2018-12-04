@@ -9,6 +9,8 @@ namespace GameEngine
 		public Vector3 point;
 		public Vector3 normal;
 		public int triangleIndex;
+		public Collider collider;
+		public GameObject gameObject;
 	}
 	public static class Physics
 	{
@@ -86,19 +88,20 @@ namespace GameEngine
 			BulletSharp.Vector3 rayEnd = origin+direction*range;
 			BulletSharp.Vector3 origin2 = origin;
 			var callback = new RaycastCallback(ref origin2,ref rayEnd,layerMask,customFilter);
-			//LocalRayResult result = new LocalRayResult(callback.CollisionObject,
-			//callback.AddSingleResult(
 			world.RayTest(origin,rayEnd,callback);
-			//Debug.Log(callback.triangleIndex);
 
-			hit = new RaycastHit {
-				triangleIndex = -1
-			};
 			if(!callback.HasHit) {
+				hit = new RaycastHit {
+					triangleIndex = -1,
+				};
 				return false;
 			}
-			hit.point = callback.HitPointWorld;
-			hit.triangleIndex = callback.triangleIndex;
+			hit = new RaycastHit {
+				point = callback.HitPointWorld,
+				triangleIndex = callback.triangleIndex,
+				collider = callback.collider,
+				gameObject = callback.collider?.gameObject
+			};
 			return true;
 		}
 		public static void Dispose()
@@ -263,9 +266,10 @@ namespace GameEngine
 	}
 	internal class RaycastCallback : ClosestRayResultCallback
 	{
+		public Func<GameObject,bool?> customFilter;
 		public int triangleIndex = -1;
 		public ulong layerMask;
-		public Func<GameObject,bool?> customFilter;
+		public Collider collider;
 
 		public RaycastCallback(ref BulletSharp.Vector3 rayFromWorld,ref BulletSharp.Vector3 rayToWorld,ulong layerMask,Func<GameObject,bool?> customFilter) : base(ref rayFromWorld,ref rayToWorld)
 		{
@@ -281,7 +285,11 @@ namespace GameEngine
 					//Debug.Log(shapeInfo.ShapePart);
 					var collShape = Physics.GetSubShape(rb.CollisionShape,shapeInfo.ShapePart);
 					if(collShape!=null) {
-						//Debug.Log(collShape.ShapeType);
+						var userObject = collShape.UserObject;
+						if(userObject!=null && userObject is Collider coll) {
+							collider = coll;
+							//Debug.Log(collider.gameObject.Name);
+						}
 						triangleIndex = shapeInfo.TriangleIndex;
 					}
 				}
