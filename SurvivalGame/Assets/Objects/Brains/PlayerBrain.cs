@@ -14,7 +14,7 @@ namespace Game
 		}
 		public override void RenderUpdate()
 		{
-			Transform.EulerRot = Main.camera.Transform.Rotation.ToEuler();
+			Transform.Rotation = Main.camera.Transform.Rotation;
 			LookDirection = Main.camera.Transform.Forward;
 		}
 	}
