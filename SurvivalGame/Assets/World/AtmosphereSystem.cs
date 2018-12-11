@@ -35,7 +35,7 @@ namespace SurvivalGame
 				goalVolume = Math.Min(1f,(speed-minWindSpeed)/(maxWindSpeed-minWindSpeed));
 			}
 			if(velocityWindSource!=null) {
-				float newVolume = Mathf.StepTowards(velocityWindSource.Volume,goalVolume,Time.DeltaTime*0.75f);
+				float newVolume = Mathf.StepTowards(velocityWindSource.Volume,goalVolume,Time.RenderDeltaTime*0.75f);
 				if(newVolume==0f) {
 					velocityWindSource.Dispose();
 					velocityWindSource = null;

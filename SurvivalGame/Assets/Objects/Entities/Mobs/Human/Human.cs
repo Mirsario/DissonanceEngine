@@ -97,7 +97,7 @@ namespace SurvivalGame
 				SoundInstance.Create("Sounds/rocketFire.wav",camera.Transform.Position);
 			}
 
-			jumpPress = brain.JustActivated(GameInput.jump) ? 0.25f : Math.Max(0f,jumpPress-Time.DeltaTime);
+			jumpPress = brain.JustActivated(GameInput.jump) ? 0.25f : Math.Max(0f,jumpPress-Time.FixedDeltaTime);
 			Movement();
 
 			var tempPos = Transform.Position;
@@ -140,7 +140,7 @@ namespace SurvivalGame
 		public override void RenderUpdate()
 		{
 			if(screenFlash>0f) {
-				screenFlash = Mathf.StepTowards(screenFlash,0f,Time.DeltaTime);
+				screenFlash = Mathf.StepTowards(screenFlash,0f,Time.RenderDeltaTime);
 			}
 		}
 		public override void OnGUI()
@@ -177,7 +177,7 @@ namespace SurvivalGame
 
 			if(onGroundCached && forceAirMove<=0f) {
 				if(moveInput!=default) {
-					walkTime += Time.DeltaTime;
+					walkTime += Time.FixedDeltaTime;
 					if(walkTime>=(isSprinting ? 0.3f : 0.5f)) {
 						Footstep("Walk",0.3f);
 						walkTime = 0f;
@@ -195,18 +195,18 @@ namespace SurvivalGame
 					if(magnitude>minSpeed) {
 						float power = Mathf.Lerp(0f,1f,(magnitude-minSpeed)*0.2f);
 						screenFlash = power*0.5f;
-						SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.DeltaTime),power);
+						SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.FixedDeltaTime),power);
 						ScreenShake.New(power*0.5f,1f,5f,Transform.Position);
 					}
 				}
 
-				lastLand = Time.DeltaTime;
+				lastLand = Time.FixedDeltaTime;
 				wasOnGround = true;
 			} else {
 				walkTime = 0f;
 
 				if(forceAirMove>0f) {
-					forceAirMove = Math.Max(0f,forceAirMove-Time.DeltaTime);
+					forceAirMove = Math.Max(0f,forceAirMove-Time.FixedDeltaTime);
 				}
 
 				Movement_AirMove(forward,right);
@@ -214,7 +214,7 @@ namespace SurvivalGame
 				wasOnGround = false;
 			}
 
-			velocity.y -= 18f*Time.DeltaTime; //Temporary implementation, doing gravity through the physics engine would probably be better. 
+			velocity.y -= 18f*Time.FixedDeltaTime; //Temporary implementation, doing gravity through the physics engine would probably be better. 
 			rigidbody.Velocity = velocity;
 			prevVelocity = velocity;
 		}
@@ -266,7 +266,7 @@ namespace SurvivalGame
 			float speed = tempVec.Magnitude;
 			float drop = 0f;
 			if(onGroundCached) {
-				drop = (speed<stopSpeed ? stopSpeed : speed)*friction*Time.DeltaTime;
+				drop = (speed<stopSpeed ? stopSpeed : speed)*friction*Time.FixedDeltaTime;
 			}
 			float newSpeed = speed-drop;
 			if(newSpeed<0) {
@@ -287,7 +287,7 @@ namespace SurvivalGame
 				if(addSpeed<=0f) {
 					return;
 				}
-				float accelSpeed = acceleration*wishSpeed*Time.DeltaTime;
+				float accelSpeed = acceleration*wishSpeed*Time.FixedDeltaTime;
 				if(accelSpeed>addSpeed) {
 					accelSpeed = addSpeed;
 				}
@@ -296,7 +296,7 @@ namespace SurvivalGame
 				var wishVelocity = wishDirection*wishSpeed;
 				var pushDirection = wishVelocity-velocity;
 				pushDirection.Normalize(out float pushLength);
-				float accelSpeed = acceleration*wishSpeed*Time.DeltaTime;
+				float accelSpeed = acceleration*wishSpeed*Time.FixedDeltaTime;
 				if(accelSpeed>pushLength) {
 					accelSpeed = pushLength;
 				}

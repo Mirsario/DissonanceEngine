@@ -7,7 +7,7 @@ using OpenTK;
 
 namespace GameEngine
 {
-	public class Transform//: MotionState
+	public class Transform
 	{
 		internal Matrix4x4 _matrix = Matrix4x4.identity;
 		public Transform parent = null;

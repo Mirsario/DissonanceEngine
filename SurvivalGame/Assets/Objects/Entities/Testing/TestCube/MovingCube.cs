@@ -27,7 +27,7 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
-			moveProgress = Mathf.StepTowards(moveProgress,moveGoal,Time.DeltaTime*0.2f);
+			moveProgress = Mathf.StepTowards(moveProgress,moveGoal,Time.FixedDeltaTime*0.2f);
 			if(moveProgress==moveGoal) {
 				moveGoal = 1f-moveGoal;
 			}

@@ -32,9 +32,9 @@ namespace SurvivalGame
 			var brain = (Main.LocalEntity as Mob)?.brain;
 			bool controlling = brain==null || brain is PlayerBrain;
 			var delta = (GameEngine.Game.lockCursor && controlling) ? new Vector2(GameInput.lookX.Value,GameInput.lookY.Value) : Vector2.zero;
-			var newRotation = controlling ? rotation : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.DeltaTime*2f);
+			var newRotation = controlling ? rotation : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.RenderDeltaTime*2f);
 			newRotation.y -= delta.x;
-			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.DeltaTime*10f);
+			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.RenderDeltaTime*10f);
 			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,minLockedPitch,maxLockedPitch);
 			newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
 			rotation = newRotation;

@@ -35,7 +35,7 @@ namespace SurvivalGame
 			var direction = ((Vector3.right*((Input.GetKey(Keys.Right) ? 1f : 0f)-(Input.GetKey(Keys.Left) ? 1f : 0f)))+
 								(Vector3.forward*((Input.GetKey(Keys.Up) ? 1f : 0f)-(Input.GetKey(Keys.Down) ? 1f : 0f )))).Normalized;
 			if(direction!=Vector3.zero) {
-				rigidbody.ApplyForce(direction*250f*Time.DeltaTime,Vector3.zero);
+				rigidbody.ApplyForce(direction*250f*Time.FixedDeltaTime,Vector3.zero);
 			}
 		}
 

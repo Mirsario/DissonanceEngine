@@ -19,6 +19,7 @@ namespace GameEngine
 			if(string.IsNullOrWhiteSpace(input)) {
 				throw new Exception("Input name cannot be empty.");
 			}
+
 			bool minus = input[0]=='-';
 			if(minus || input[0]=='+') {
 				if(minus) {
@@ -27,6 +28,7 @@ namespace GameEngine
 				input = input.Substring(1);
 			}
 			inputHash = input.ToLower().GetHashCode();
+
 			this.input = input;
 			this.sensitivity = sensitivity;
 			this.deadZone = deadZone;

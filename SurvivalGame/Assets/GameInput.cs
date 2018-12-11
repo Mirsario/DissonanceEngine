@@ -31,7 +31,6 @@ namespace SurvivalGame
 			secondaryUse = Input.RegisterTrigger("Secondary Use",new[] { MouseButton.Right,new InputBinding("GamePad0 Axis2",deadZone:0.5f) });
 			
 			zoom = Input.RegisterTrigger("Zoom",new InputBinding[] { "-GamePad0 Button12","+GamePad0 Button11","Mouse ScrollWheel" });
-			//zoomOut = Input.RegisterTrigger("Secondary Use",new[] { MouseButton.Right,new InputBinding("GamePad0 Axis2",deadZone:0.5f) });
 		}
 	}
 }

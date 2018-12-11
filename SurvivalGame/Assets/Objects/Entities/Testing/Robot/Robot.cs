@@ -26,10 +26,10 @@ namespace SurvivalGame
 		public override void FixedUpdate()
 		{
 			if(Input.GetKey(Keys.Up)) {
-				Transform.Position += Vector3.up*Time.DeltaTime*4f;
+				Transform.Position += Vector3.up*Time.FixedDeltaTime*4f;
 			}
 			if(Input.GetKey(Keys.Down)) {
-				Transform.Position += Vector3.down*Time.DeltaTime*4f;
+				Transform.Position += Vector3.down*Time.FixedDeltaTime*4f;
 			}
 			if(Input.GetKey(Keys.Right)) {
 				//renderer.skeleton.bonesByName["RightUpperArm"].transform.eulerRot += new Vector3(0f,0f,Time.fixedDeltaTime*30f);

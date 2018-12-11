@@ -25,7 +25,7 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
-			Transform.Position += new Vector3(0f,Mathf.Cos(Time.GameTime)*50f*Time.DeltaTime,0f);
+			Transform.Position += new Vector3(0f,Mathf.Cos(Time.GameTime)*50f*Time.FixedDeltaTime,0f);
 			//rigidbody.AngularFactor = new Vector3(0f,0f,1f);
 			//rigidbody.AngularVelocity = new Vector3(0f,0f,100f);
 		}

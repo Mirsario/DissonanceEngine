@@ -47,7 +47,7 @@ namespace GameEngine
 		public static GameWindow window;
 
 		//FPS counter
-		//TODO: Move FPS counting to Time.cs?
+		//TODO: Move FPS counting to Time.cs
 		private static Stopwatch logicStopwatch;
 		public static int logicFrame;
 		public static int logicFPS;

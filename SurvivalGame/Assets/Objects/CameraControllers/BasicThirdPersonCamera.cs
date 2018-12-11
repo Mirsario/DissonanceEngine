@@ -36,7 +36,7 @@ namespace SurvivalGame
 			if(Game.lockCursor) {
 				distance = Mathf.Max(1f,distance-GameInput.zoom.Value);
 			}
-			distanceSmooth = Mathf.Lerp(distanceSmooth,distance,Time.DeltaTime*4f);
+			distanceSmooth = Mathf.Lerp(distanceSmooth,distance,Time.RenderDeltaTime*4f);
 
 			var newRotation = rotation;
 			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,-89.99f,89.99f);

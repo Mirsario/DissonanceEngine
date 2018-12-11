@@ -37,7 +37,7 @@ namespace SurvivalGame
 			}
 			Transform.Rotation = Quaternion.FromDirection(velocity.Normalized,Vector3.up);
 
-			var deltaVelocity = velocity*Time.DeltaTime;
+			var deltaVelocity = velocity*Time.FixedDeltaTime;
 			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
 				Transform.Position = hit.point;
 				const float maxDistance = 10f;

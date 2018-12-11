@@ -43,6 +43,8 @@ namespace GameEngine
 		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
 		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
 		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
+		public static float FixedDeltaTime => fixedDeltaTime;
+		public static float RenderDeltaTime => renderDeltaTime;
 		public static uint FixedUpdateCount => fixedUpdateCount;
 		public static uint RenderUpdateCount => renderUpdateCount;
 

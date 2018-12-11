@@ -53,8 +53,8 @@ namespace SurvivalGame
 		}
 		public override void RenderUpdate()
 		{
-			light.range = Mathf.Lerp(light.range,Mathf.Lerp(10f,15f,lightScale),Time.DeltaTime*4f);
-			light.intensity = Mathf.Lerp(light.intensity,Mathf.Lerp(0.75f,1.75f,lightScale),Time.DeltaTime*4f);
+			light.range = Mathf.Lerp(light.range,Mathf.Lerp(10f,15f,lightScale),Time.RenderDeltaTime*4f);
+			light.intensity = Mathf.Lerp(light.intensity,Mathf.Lerp(0.75f,1.75f,lightScale),Time.RenderDeltaTime*4f);
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<WoodPhysicMaterial>();

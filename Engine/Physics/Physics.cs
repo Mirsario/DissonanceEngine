@@ -35,7 +35,7 @@ namespace GameEngine
 		public static void Init()
 		{
 			collisionShapes = new List<CollisionShape>();
-			collisionConf = new DefaultCollisionConfiguration();//collision configuration contains default setup for memory,collision setup
+			collisionConf = new DefaultCollisionConfiguration();
 			rigidbodies = new List<RigidbodyInternal>();
 			ActiveRigidbodies = new List<RigidbodyBase>();
 			collidersToUpdate = new List<Collider>();
@@ -62,9 +62,11 @@ namespace GameEngine
 				if(!rigidbody.enabled) {
 					continue;
 				}
+
 				var transform = rigidbody.gameObject.transform;
 				if(transform.updatePhysicsPosition || transform.updatePhysicsScale || transform.updatePhysicsRotation) {
 					Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
+
 					if(transform.updatePhysicsPosition) {
 						matrix.SetTranslation(transform.Position);
 						transform.updatePhysicsPosition = false;
@@ -80,10 +82,10 @@ namespace GameEngine
 						matrix.SetRotation(transform.Rotation);
 						transform.updatePhysicsRotation = false;
 					}
+
 					rigidbody.btRigidbody.WorldTransform = matrix;
 				}
 			}
-			//fixedStep = true;
 			world.StepSimulation(Time.fixedDeltaTime);
 		}
 		public static void UpdateRender()
