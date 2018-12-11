@@ -20,6 +20,7 @@ namespace SurvivalGame
 			this.position = position;
 			this.distance = distance;
 		}
+
 		public void Update()
 		{
 			time -= Time.DeltaTime;
