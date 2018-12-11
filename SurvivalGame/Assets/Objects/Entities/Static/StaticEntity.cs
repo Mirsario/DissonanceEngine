@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	//Entity that's bound to a chunk.
 	public abstract class StaticEntity : Entity

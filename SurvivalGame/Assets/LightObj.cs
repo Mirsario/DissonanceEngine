@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class LightObj : Entity
 	{

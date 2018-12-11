@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace Game2DTest
 {
 	public class CubeObj : GameObject
 	{

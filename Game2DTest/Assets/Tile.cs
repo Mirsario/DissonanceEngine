@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GameEngine;
 
-namespace Game
+namespace Game2DTest
 {
 	public sealed class Tile : IDisposable
 	{

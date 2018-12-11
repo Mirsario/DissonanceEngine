@@ -32,7 +32,7 @@ namespace GameEngine
 			this.deadZone = deadZone;
 		}
 
-		public static implicit operator InputBinding(MouseButton button) => new InputBinding("Mouse"+button);
+		public static implicit operator InputBinding(MouseButton button) => new InputBinding("Mouse "+button);
 		public static implicit operator InputBinding(Keys key) => new InputBinding(key.ToString());
 		public static implicit operator InputBinding(string str) => new InputBinding(str);
 	}

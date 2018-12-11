@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class Human : Mob
 	{
@@ -52,8 +52,8 @@ namespace Game
 			rigidbody.AngularFactor = Vector3.zero;
 			
 			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.Quad;
-			renderer.Material = Resources.Find<Material>("Billboard");
+			renderer.Mesh = Resources.Get<Mesh>("Robot.mesh");
+			renderer.Material = Resources.Get<Material>("Robot.material");
 			//
 
 			rigidbody.UseGravity = false;
@@ -85,6 +85,9 @@ namespace Game
 			}
 
 			base.FixedUpdate();
+
+			var euler = Transform.EulerRot;
+			Transform.EulerRot = new Vector3(euler.x,brain.Transform.EulerRot.y,euler.z);
 			
 			if(brain.JustActivated(GameInput.primaryUse)) {
 				Vector3 direction = brain?.LookDirection ?? Vector3.forward;
@@ -108,7 +111,7 @@ namespace Game
 				Transform.Position = tempPos;
 			}
 
-			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => obj==this ? false : (bool?)null)) {
+			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => Main.LocalEntity==obj ? false : (bool?)null)) {
 				if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(MouseButton.Middle)) {
 					Main.LocalEntity = entity;
 					screenFlash = 0.5f;
@@ -151,6 +154,11 @@ namespace Game
 			if(screenFlash>0f) {
 				GUI.DrawTexture(Graphics.ScreenRect,Main.whiteTexture,new Vector4(0.75f,0f,0f,screenFlash));
 			}
+		}
+		public override void UpdateIsPlayer(bool isPlayer)
+		{
+			base.UpdateIsPlayer(isPlayer);
+			renderer.Enabled = !isPlayer;
 		}
 
 		#region Movement

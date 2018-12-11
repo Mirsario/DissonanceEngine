@@ -5,7 +5,7 @@ using System;
 using GameEngine;
 
 #pragma warning disable 219
-namespace Game
+namespace Game2DTest
 {
 	public static class Program
 	{
@@ -16,7 +16,7 @@ namespace Game
 			}
 		}
 	}
-	public class Main : GameEngine.Game
+	public class Main : Game
 	{
 		public const float unitSizeInPixels = 8f;
 
@@ -51,7 +51,7 @@ namespace Game
 					levelTiles[x,y] = (y>levelSize/2 || (y==levelSize/2 && Rand.Next(10)==0)) ? stone :-1;
 				}
 			}
-			var level = new Level(levelTiles);
+			Level.Create(levelTiles);
 
 			/*GameObject.Instantiate<CubeObj>("Cube1",new Vector3(0f,0f,-1f));
 			GameObject.Instantiate<CubeObj2>("Cube2",new Vector3(0f,3f,-1f));

@@ -12,7 +12,9 @@ namespace GameEngine
 		internal Matrix4x4 _matrix = Matrix4x4.identity;
 		public Transform parent = null;
 		public GameObject gameObject;
-		internal bool updatePhysics = true;
+		internal bool updatePhysicsPosition = true;
+		internal bool updatePhysicsRotation = true;
+		internal bool updatePhysicsScale = true;
 
 		#region Properties
 		public Transform Root => parent==null ? this : GetParents().Last();
@@ -46,32 +48,21 @@ namespace GameEngine
 					m = ToLocalSpace(m);
 				}
 				_matrix.SetTranslation(m.ExtractTranslation());
-				updatePhysics = true;
-				//Debug.Log(gameObject.name+"-Changed transform's position");
+				updatePhysicsPosition = true;
 			}
 		}
 		public Vector3 LocalPosition {
 			get => _matrix.ExtractTranslation();
 			set {
 				_matrix.SetTranslation(value);
-				updatePhysics = true;
+				updatePhysicsPosition = true;
 			}
 		}
-		/*public Vector3 scale {
-			get {
-				return worldMatrix.ExtractScale();
-			}
-			set {
-				Matrix4x4 m = Matrix;
-				m.SetScale(value);
-				updatePhysics = true;
-			}
-		}*/
 		public Vector3 LocalScale {
 			get => _matrix.ExtractScale();
 			set {
 				_matrix.SetScale(value);
-				updatePhysics = true;
+				updatePhysicsScale = true;
 			}
 		}
 		public Quaternion Rotation {
@@ -85,7 +76,7 @@ namespace GameEngine
 				
 				_matrix.SetTranslation(tempPos);
 				_matrix.SetScale(tempScale);
-				updatePhysics = true;
+				updatePhysicsRotation = true;
 			}
 		}
 		public Quaternion LocalRotation {
@@ -96,7 +87,7 @@ namespace GameEngine
 				_matrix = Matrix4x4.CreateRotation(value);
 				LocalPosition = tempPos;
 				LocalScale = tempScale;
-				updatePhysics = true;
+				updatePhysicsRotation = true;
 			}
 		}
 		public Vector3 EulerRot {
@@ -109,7 +100,7 @@ namespace GameEngine
 				
 				_matrix.SetTranslation(tempPos);
 				_matrix.SetScale(tempScale);
-				updatePhysics = true;
+				updatePhysicsRotation = true;
 			}
 		}
 		public Vector3 LocalEulerRot {
@@ -123,21 +114,25 @@ namespace GameEngine
 				
 				_matrix.SetTranslation(tempPos);
 				_matrix.SetScale(tempScale);
-				updatePhysics = true;
+				updatePhysicsRotation = true;
 			}
 		}
 		public Matrix4x4 Matrix {
 			get => _matrix;
 			set {
 				_matrix = value;
-				updatePhysics = true;
+				updatePhysicsPosition = true;
+				updatePhysicsRotation = true;
+				updatePhysicsScale = true;
 			}
 		}
 		public Matrix4x4 WorldMatrix {
 			get => parent==null ? _matrix : ToWorldSpace(_matrix);
 			set {
 				_matrix = parent==null ? value : ToLocalSpace(value);
-				updatePhysics = true;
+				updatePhysicsPosition = true;
+				updatePhysicsRotation = true;
+				updatePhysicsScale = true;
 			}
 		}
 		#endregion

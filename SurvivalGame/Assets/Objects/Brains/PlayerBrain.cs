@@ -1,6 +1,6 @@
 ﻿using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class PlayerBrain : Brain
 	{

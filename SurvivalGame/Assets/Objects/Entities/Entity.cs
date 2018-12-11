@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	//A GameObject that's bind to a World and is possibly controllable by players (possessing tables is ok!)
 	//Brains

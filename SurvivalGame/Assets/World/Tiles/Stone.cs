@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class Stone : TileType
 	{

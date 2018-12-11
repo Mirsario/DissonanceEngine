@@ -11,27 +11,27 @@ namespace GameEngine
 		internal static Dictionary<Type,List<Component>> typeInstances = new Dictionary<Type,List<Component>>();
 
 		protected bool beenEnabledBefore;
-		protected bool _enabled;
+		protected bool enabled;
 		public bool Enabled {
-			get => _enabled;
+			get => enabled;
 			set {
-				if(_enabled==value) {
+				if(enabled==value) {
 					return;
 				}
 				if(value) {
 					var type = GetType();
 					var parameters = typeParameters[type];
-					if(!parameters.allowOnlyOneInWorld || !typeInstances.TryGetValue(type,out var list) || !list.Any(q => q._enabled)) {
+					if(!parameters.allowOnlyOneInWorld || !typeInstances.TryGetValue(type,out var list) || !list.Any(q => q.enabled)) {
 						if(!beenEnabledBefore) {
 							OnInit();
 							beenEnabledBefore = true;
 						}
 						OnEnable();
-						_enabled = true;
+						enabled = true;
 					}
 				}else{
 					OnDisable();
-					_enabled = false;
+					enabled = false;
 				}
 			}
 		}

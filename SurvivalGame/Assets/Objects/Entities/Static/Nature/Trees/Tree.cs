@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public abstract class Tree : StaticEntity, IHasMaterial
 	{
@@ -35,7 +35,7 @@ namespace Game
 		public override void FixedUpdate()
 		{
 			if(Rand.Next(10000)==0) {
-				SoundInstance.Create($"Sounds/Atmosphere/Nature/Birds/Bird{Rand.Range(1,10)}.ogg",Transform.Position);
+				SoundInstance.Create($"Sounds/Atmosphere/Nature/Birds/Bird{Rand.Range(1,10)}.ogg",Transform.Position,2f);
 			}
 		}
 		/*private float soundPlayDelay;

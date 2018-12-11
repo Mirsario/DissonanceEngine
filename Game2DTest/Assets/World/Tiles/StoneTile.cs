@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Game.Tiles
+namespace Game2DTest.Tiles
 {
 	public class Stone : TileType
 	{

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public struct WorldInfo
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using GameEngine;
 
-namespace Game
+namespace Game2DTest
 {
 	public class TileType : ICloneable,IDisposable
 	{

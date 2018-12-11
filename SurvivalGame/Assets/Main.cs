@@ -6,7 +6,7 @@ using System;
 using GameEngine;
 
 #pragma warning disable 219
-namespace Game
+namespace SurvivalGame
 {
 	public static class Program
 	{

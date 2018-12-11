@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using GameEngine;
 using Debug = GameEngine.Debug;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class Chunk : GameObject,IHasMaterial
 	{

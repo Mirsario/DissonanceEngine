@@ -3,22 +3,20 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameEngine;
-using Game.Tiles;
+using Game2DTest.Tiles;
 
-namespace Game
+namespace Game2DTest
 {
 	public class Level : GameObject
 	{
-		private readonly Tile[,] tiles;
+		private Tile[,] tiles;
 		public int width;
 		public int height;
 		public bool updateTexture;
 		public Sprite sprite;
-
-		public Level(int width,int height) : base("Level")
+		
+		public override void OnInit()
 		{
-			this.width = width;
-			this.height = height;
 			tiles = new Tile[width,height];
 			updateTexture = true;
 
@@ -27,18 +25,6 @@ namespace Game
 
 			Transform.LocalScale = new Vector3(width*TileType.tileSize,height*TileType.tileSize,1f);
 		}
-		public Level(int[,] tileTypes) : this(tileTypes.GetLength(0),tileTypes.GetLength(1))
-		{
-			for(int y=0;y<height;y++) {
-				for(int x=0;x<width;x++) {
-					int id = tileTypes[x,y];
-					if(id>=0) {
-						tiles[x,y] = new Tile((ushort)id);
-					}
-				}
-			}
-		}
-
 		public override void RenderUpdate()
 		{
 			if(updateTexture) {
@@ -76,6 +62,31 @@ namespace Game
 			sprite.Material.SetTexture("mainTex",texture);
 
 			updateTexture = false;
+		}
+		
+		public static Level Create(int width,int height)
+		{
+			var level = Instantiate<Level>(init:false);
+			level.width = width;
+			level.height = height;
+			level.Init();
+			return level;
+		}
+		public static Level Create(int[,] tileTypes)
+		{
+			var level = Instantiate<Level>(init:false);
+			level.width = tileTypes.GetLength(0);
+			level.height = tileTypes.GetLength(1);
+			level.Init();
+			for(int y=0;y<level.height;y++) {
+				for(int x=0;x<level.width;x++) {
+					int id = tileTypes[x,y];
+					if(id>=0) {
+						level.tiles[x,y] = new Tile((ushort)id);
+					}
+				}
+			}
+			return level;
 		}
 	}
 }

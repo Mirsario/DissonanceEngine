@@ -1,7 +1,7 @@
 ﻿using GameEngine;
 using System.Linq;
 
-namespace Game
+namespace SurvivalGame
 {
 	public class TestBrain : Brain
 	{
@@ -19,9 +19,9 @@ namespace Game
 			if(Time.FixedUpdateCount%20==0 && Rand.Next(3)==0) {
 				this[GameInput.jump].ActivateFor(1);
 			}
-			if(Time.FixedUpdateCount%60==0 && Rand.Next(3)==0) {
+			/*if(Time.FixedUpdateCount%60==0 && Rand.Next(3)==0) {
 				this[GameInput.sprint].Active = Rand.Next(2)==0;
-			}
+			}*/
 		}
 	}
 }

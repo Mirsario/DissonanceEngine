@@ -102,8 +102,9 @@ namespace GameEngine
 			}else{
 				vars.mouseDelta = Vector2.zero;
 			}
-			TriggerSet(vars.mouseDelta.x,"MouseX",false);
-			TriggerSet(vars.mouseDelta.y,"MouseY",false);
+			TriggerSet(vars.mouseDelta.x,"Mouse X",false);
+			TriggerSet(vars.mouseDelta.y,"Mouse Y",false);
+			TriggerSet(vars.mouseWheel,"Mouse ScrollWheel",false);
 
 			CheckSpecialCombinations();
 		}
@@ -276,51 +277,51 @@ namespace GameEngine
 			switch(e.Button) {
 				case TKMouseButton.Left:
 					index = 0;
-					name = "MouseLeft";
+					name = "Mouse Left";
 					break;
 				case TKMouseButton.Right: //Index 2 -> 1
 					index = 1;
-					name = "MouseRight";
+					name = "Mouse Right";
 					break;
 				case TKMouseButton.Middle: //Index 1 -> 2
 					index = 2;
-					name = "MouseMiddle";
+					name = "Mouse Middle";
 					break;
 				case TKMouseButton.Button1:
 					index = 3;
-					name = "MouseXButton1";
+					name = "Mouse XButton1";
 					break;
 				case TKMouseButton.Button2:
 					index = 4;
-					name = "MouseXButton2";
+					name = "Mouse XButton2";
 					break;
 				case TKMouseButton.Button3:
 					index = 5;
-					name = "MouseXButton3";
+					name = "Mouse XButton3";
 					break;
 				case TKMouseButton.Button4:
 					index = 6;
-					name = "MouseXButton4";
+					name = "Mouse XButton4";
 					break;
 				case TKMouseButton.Button5:
 					index = 7;
-					name = "MouseXButton5";
+					name = "Mouse XButton5";
 					break;
 				case TKMouseButton.Button6:
 					index = 8;
-					name = "MouseXButton6";
+					name = "Mouse XButton6";
 					break;
 				case TKMouseButton.Button7:
 					index = 9;
-					name = "MouseXButton7";
+					name = "Mouse XButton7";
 					break;
 				case TKMouseButton.Button8:
 					index = 10;
-					name = "MouseXButton8";
+					name = "Mouse XButton8";
 					break;
 				case TKMouseButton.Button9:
 					index = 11;
-					name = "MouseXButton9";
+					name = "Mouse XButton9";
 					break;
 				default:
 					return;
@@ -343,51 +344,51 @@ namespace GameEngine
 			switch(e.Button) {
 				case TKMouseButton.Left:
 					index = 0;
-					name = "MouseLeft";
+					name = "Mouse Left";
 					break;
 				case TKMouseButton.Right: //Index 2 -> 1
 					index = 1;
-					name = "MouseRight";
+					name = "Mouse Right";
 					break;
 				case TKMouseButton.Middle: //Index 1 -> 2
 					index = 2;
-					name = "MouseMiddle";
+					name = "Mouse Middle";
 					break;
 				case TKMouseButton.Button1:
 					index = 3;
-					name = "MouseXButton1";
+					name = "Mouse XButton1";
 					break;
 				case TKMouseButton.Button2:
 					index = 4;
-					name = "MouseXButton2";
+					name = "Mouse XButton2";
 					break;
 				case TKMouseButton.Button3:
 					index = 5;
-					name = "MouseXButton3";
+					name = "Mouse XButton3";
 					break;
 				case TKMouseButton.Button4:
 					index = 6;
-					name = "MouseXButton4";
+					name = "Mouse XButton4";
 					break;
 				case TKMouseButton.Button5:
 					index = 7;
-					name = "MouseXButton5";
+					name = "Mouse XButton5";
 					break;
 				case TKMouseButton.Button6:
 					index = 8;
-					name = "MouseXButton6";
+					name = "Mouse XButton6";
 					break;
 				case TKMouseButton.Button7:
 					index = 9;
-					name = "MouseXButton7";
+					name = "Mouse XButton7";
 					break;
 				case TKMouseButton.Button8:
 					index = 10;
-					name = "MouseXButton8";
+					name = "Mouse XButton8";
 					break;
 				case TKMouseButton.Button9:
 					index = 11;
-					name = "MouseXButton9";
+					name = "Mouse XButton9";
 					break;
 				default:
 					return;

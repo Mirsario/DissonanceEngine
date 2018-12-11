@@ -1,7 +1,7 @@
 ﻿using System;
 using GameEngine;
 
-namespace Game
+namespace SurvivalGame
 {
 	public abstract class Brain : GameObject
 	{

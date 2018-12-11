@@ -62,11 +62,26 @@ namespace GameEngine
 				if(!rigidbody.enabled) {
 					continue;
 				}
-				if(rigidbody.gameObject.transform.updatePhysics/*&& !rigidbody.isKinematic*/) {
-					rigidbody.btRigidbody.WorldTransform = rigidbody.gameObject.transform.WorldMatrix;
-					//Debug.Log(rigidbody.gameObject.name+"-Tried to reposition the internal rigidbody");
+				var transform = rigidbody.gameObject.transform;
+				if(transform.updatePhysicsPosition || transform.updatePhysicsScale || transform.updatePhysicsRotation) {
+					Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
+					if(transform.updatePhysicsPosition) {
+						matrix.SetTranslation(transform.Position);
+						transform.updatePhysicsPosition = false;
+					}
+					if(transform.updatePhysicsScale && transform.updatePhysicsRotation) {
+						matrix.SetRotationAndScale(transform.Rotation,transform.LocalScale);
+						transform.updatePhysicsScale = false;
+						transform.updatePhysicsRotation = false;
+					}else if(transform.updatePhysicsScale) {
+						matrix.SetScale(transform.LocalScale);
+						transform.updatePhysicsScale = false;
+					}else if(transform.updatePhysicsRotation) {
+						matrix.SetRotation(transform.Rotation);
+						transform.updatePhysicsRotation = false;
+					}
+					rigidbody.btRigidbody.WorldTransform = matrix;
 				}
-				rigidbody.gameObject.transform.updatePhysics = false;
 			}
 			//fixedStep = true;
 			world.StepSimulation(Time.fixedDeltaTime);

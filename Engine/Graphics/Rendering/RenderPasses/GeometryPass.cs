@@ -114,6 +114,9 @@ namespace GameEngine
 						int rendererCount = material.rendererAttachments.Count;
 						for(int r=0;r<rendererCount;r++) {
 							var renderer = material.rendererAttachments[r];
+							if(!renderer.Enabled) {
+								continue;
+							}
 
 							var meshPos = renderer.Transform.Position;
 							var mesh = renderer.GetRenderMeshInternal(meshPos,cameraPos);

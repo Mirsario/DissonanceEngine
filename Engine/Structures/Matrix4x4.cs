@@ -370,6 +370,26 @@ namespace GameEngine
 			m21 *= scale.z;
 			m22 *= scale.z;
 		}
+		public void SetRotation(Quaternion q) => SetRotationAndScale(q,ExtractScale());
+		public void SetRotationAndScale(Quaternion q,Vector3 scale)
+		{
+			float x = q.x*2f;
+			float y = q.y*2f;
+			float z = q.z*2f;
+			float xx = q.x*x;
+			float yy = q.y*y;
+			float zz = q.z*z;
+			float xy = q.x*y;
+			float xz = q.x*z;
+			float yz = q.y*z;
+			float wx = q.w*x;
+			float wy = q.w*y;
+			float wz = q.w*z;
+
+			m00 = (1f-(yy+zz))*scale.x;	m01 = (xy+wz)*scale.x;		m02 = (xz-wy)*scale.x;
+			m10 = (xy-wz)*scale.y;		m11 = (1f-(xx+zz))*scale.y;	m12 = (yz+wx)*scale.y;
+			m20 = (xz+wy)*scale.z;		m21 = (yz-wx)*scale.z;		m22 = (1f-(xx+yy))*scale.z;
+		}
 		#endregion
 
 		public void Normalize()
