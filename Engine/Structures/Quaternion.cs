@@ -8,46 +8,14 @@ namespace GameEngine
 	public struct Quaternion
 	{
 		public const float kEpsilon = 1E-06f;
+
+		public static readonly Quaternion Identity = new Quaternion(0f,0f,0f,1f);
+
 		public float x;
 		public float y;
 		public float z;
 		public float w;
-		public float this[int index] {
-			get {
-				switch(index) {
-					case 0:
-						return x;
-					case 1:
-						return y;
-					case 2:
-						return z;
-					case 3:
-						return w;
-					default:
-						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3");
-				}
-			}
-			set
-			{
-				switch(index) {
-					case 0:
-						x = value;
-						return;
-					case 1:
-						y = value;
-						return;
-					case 2:
-						z = value;
-						return;
-					case 3:
-						w = value;
-						return;
-					default:
-						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3");
-				}
-			}
-		}
-		public static Quaternion Identity => new Quaternion(0f,0f,0f,1f);
+
 		public float Magnitude => Mathf.Sqrt(w*w+x*x+y*y+z*z);
 		public float SqrMagnitude => w*w+x*x+y*y+z*z;
 		public Quaternion Normalized {
@@ -64,6 +32,29 @@ namespace GameEngine
 				return quaternion;
 			}
 		}
+		
+		public float this[int index] {
+			get {
+				switch(index) {
+					case 0: return x;
+					case 1: return y;
+					case 2: return z;
+					case 3: return w;
+					default:
+						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3");
+				}
+			}
+			set {
+				switch(index) {
+					case 0: x = value; return;
+					case 1: y = value; return;
+					case 2: z = value; return;
+					case 3: w = value; return;
+					default:
+						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3");
+				}
+			}
+		}
 
 		#region Constructors
 		public Quaternion(float X,float Y,float Z,float W)
@@ -77,47 +68,6 @@ namespace GameEngine
 		public static Quaternion FromDirection(Vector3 direction,Vector3 up)
 		{
 			return Matrix4x4.LookAt(Vector3.zero,-direction,up).ExtractQuaternion();
-			/*direction.Normalize();
-			
-			Vector3 vector2 = Vector3.Cross(up,direction).normalized;
-			Vector3 vector3 = Vector3.Cross(direction,vector2);
- 
-			float num8 = (vector2.x+vector3.y)+direction.z;
-			var quaternion = new Quaternion();
-			if(num8>0.0) {
-				var num = Mathf.Sqrt(num8+1f);
-				quaternion.w = num*0.5f;
-				num = 0.5f/num;
-				quaternion.x = (vector3.z-direction.y)*num;
-				quaternion.y = (direction.x-vector2.z)*num;
-				quaternion.z = (vector2.y-vector3.x)*num;
-				return quaternion;
-			}
-			if((vector2.x>=vector3.y)&&(vector2.x>=direction.z)) {
-				var num7 = Mathf.Sqrt(((1f+vector2.x)-vector3.y)-direction.z);
-				var num4 = 0.5f/num7;
-				quaternion.x = 0.5f*num7;
-				quaternion.y = (vector2.y+vector3.x)*num4;
-				quaternion.z = (vector2.z+direction.x)*num4;
-				quaternion.w = (vector3.z-direction.y)*num4;
-				return quaternion;
-			}
-			if(vector3.y>direction.z) {
-				var num6 = Mathf.Sqrt(((1f+vector3.y)-vector2.x)-direction.z);
-				var num3 = 0.5f/num6;
-				quaternion.x = (vector3.x+vector2.y)*num3;
-				quaternion.y = 0.5f*num6;
-				quaternion.z = (direction.y+vector3.z)*num3;
-				quaternion.w = (direction.x-vector2.z)*num3;
-				return quaternion;
-			}
-			var num5 = Mathf.Sqrt(((1f+direction.z)-vector2.x)-vector3.y);
-			var num2 = 0.5f/num5;
-			quaternion.x = (direction.x+vector2.z)*num2;
-			quaternion.y = (direction.y+vector3.z)*num2;
-			quaternion.z = 0.5f*num5;
-			quaternion.w = (vector2.y-vector3.x)*num2;
-			return quaternion;*/
 		}
 		public static Quaternion FromEuler(Vector3 euler)
 		{
@@ -130,12 +80,12 @@ namespace GameEngine
 			float sY = (float)Math.Sin(euler.y);
 			float sZ = (float)Math.Sin(euler.z);
 
-			return new Quaternion(
-				sX*sY*cZ+cX*cY*sZ,
-				sX*cY*cZ+cX*sY*sZ,
-				cX*sY*cZ-sX*cY*sZ,	
-				cX*cY*cZ-sX*sY*sZ
-			);
+			Quaternion result;
+			result.x = sX*sY*cZ+cX*cY*sZ;
+			result.y = sX*cY*cZ+cX*sY*sZ;
+			result.z = cX*sY*cZ-sX*cY*sZ;
+			result.w = cX*cY*cZ-sX*sY*sZ;
+			return result;
 		}
 		#endregion
 
@@ -155,60 +105,28 @@ namespace GameEngine
 		{
 			w = -w;
 		}
-		private bool EqualTest(float a,float b,float tolerance)
-		{
-			return a+tolerance>=b && a-tolerance<=b;
-		}
 		public Vector3 ToEuler()
 		{
-			float sqX = x*x;
-			float sqY = y*y;
-			float sqZ = z*z;
-			float sqW = w*w;
-			float test = 2f*(y*w-x*z);
-			
+			float sqrSumm = x*x+y*y+z*z+w*w;
+			float checkValue = x*w-y*z;
+
 			Vector3 result;
-			if(EqualTest(test,1f,0.000001f)) {
-			//if(test==1f) {
-				result.z = -2f*Mathf.Atan2(x,w);//heading = rotation about z-axis
-				result.x = 0f;//bank = rotation about x-axis
-				result.y = Mathf.PI/2f;//attitude = rotation about y-axis
-			}else if(EqualTest(test,-1f,0.000001f)) {
-			//}else if(test==-1f) {
-				result.z = 2f*Mathf.Atan2(x,w);//heading = rotation about z-axis
-				result.x = 0f;//bank = rotation about x-axis
-				result.y = Mathf.PI/-2f;//attitude = rotation about y-axis
-			}else{
-				result.z = Mathf.Atan2(2f*(x*y+z*w),sqX-sqY-sqZ+sqW);//heading = rotation about z-axis
-				result.x = Mathf.Atan2(2f*(y*z+x*w),-sqX-sqY+sqZ+sqW);//bank = rotation about x-axis
-				result.y = Mathf.Asin(Mathf.Clamp(test,-1f,1f));//attitude = rotation about y-axis
+			if(checkValue>0.4995f*sqrSumm) {
+				result.x = 180f;
+				result.y = Mathf.NormalizeEuler(2f*Mathf.Atan2(y,x)*Mathf.Rad2Deg);
+				result.z = 0f;
+			} else if(checkValue<-0.4995f*sqrSumm) {
+				result.x = 270f;
+				result.y = Mathf.NormalizeEuler(-2f*Mathf.Atan2(y,x)*Mathf.Rad2Deg);
+				result.z = 0f;
+			} else {
+				float asinArg = 2f*(w*x-y*x); //NaN prevention
+				result.x = Mathf.NormalizeEuler((float)Math.Asin(asinArg<-1f ? -1f : (asinArg>1f ? 1f : asinArg))*Mathf.Rad2Deg); // Pitch
+				result.y = Mathf.NormalizeEuler((float)Math.Atan2(2f*w*y+2f*x*x,1-2f*(x*x+y*y))*Mathf.Rad2Deg); // Yaw
+				result.z = Mathf.NormalizeEuler((float)Math.Atan2(2f*w*x+2f*x*y,1-2f*(x*x+x*x))*Mathf.Rad2Deg); // Roll
 			}
-			result *= Mathf.Rad2Deg;
-			result.NormalizeEuler();
-			//result.NormalizeEuler();
 			return result;
 		}
-		/*public Vector3 ToEuler()
-		{
-			Quaternion q = this;
-			Vector3 result;
-			
-			float ysqr = q.y*q.y;
-			float t0 = -2f*(ysqr+q.z*q.z)+1f;
-			float t1 = 2f*(q.x*q.y-q.w*q.z);
-			float t2 = -2f*(q.x*q.z+q.w*q.y);
-			float t3 = 2f*(q.y*q.z-q.w*q.x);
-			float t4 = -2f*(q.x*q.x+ysqr)+1f;
-			
-			t2 = t2 > 1f ? 1f : t2;
-			t2 = t2 <-1f ?-1f : t2;
-			
-			result.x = Mathf.Asin(t2);
-			result.z = Mathf.Atan2(t3,t4);
-			result.y = Mathf.Atan2(t1,t0);
-			
-			return (result*Mathf.Rad2Deg);//*0.9999998f;
-		}*/
 		public void ToAxisAngle(out Vector3 axis,out float angle)
 		{
 			var result = ToAxisAngle();
@@ -217,6 +135,7 @@ namespace GameEngine
 		}
 		public Vector4 ToAxisAngle()
 		{
+			//TODO: Not tested
 			if(Mathf.Abs(w)>1f) {
 				Normalize();
 			}
@@ -280,34 +199,27 @@ namespace GameEngine
 			result.w = other.w*q.w-other.x*q.x-other.y*q.y-other.z*q.z;
 			return result;
 		}
-		public static Quaternion operator*(Quaternion q,float s)
+		public static Quaternion operator *(Quaternion q,float s)
 		{
-			return new Quaternion(s*q.x,s*q.y,s*q.z,s*q.w);
+			q.x = q.x*s;
+			q.y = q.y*s;
+			q.z = q.z*s;
+			q.w = q.w*s;
+			return q;
 		}
-		public static Quaternion operator*(float s,Quaternion q)
+		public static Quaternion operator *(float s,Quaternion q)
 		{
-			return new Quaternion(s*q.x,s*q.y,s*q.z,s*q.w);
+			q.x = q.x*s;
+			q.y = q.y*s;
+			q.z = q.z*s;
+			q.w = q.w*s;
+			return q;
 		}
-		public static bool operator==(Quaternion a,Quaternion b)
-		{
-			return a.x==b.x && a.y==b.y && a.z==b.z && a.w==b.w;
-		}
-		public static bool operator!=(Quaternion a,Quaternion b)
-		{
-			return a.x!=b.x || a.y!=b.y || a.z!=b.z || a.w!=b.w;
-		}
-		public override int GetHashCode()
-		{
-			return x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
-		}
-		public override bool Equals(object other)
-		{
-			if(!(other is Quaternion)) {
-				return false;
-			}
-			var q = (Quaternion)other;
-			return x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
-		}
+		public static bool operator ==(Quaternion a,Quaternion b) => a.x==b.x && a.y==b.y && a.z==b.z && a.w==b.w;
+		public static bool operator !=(Quaternion a,Quaternion b) => a.x!=b.x || a.y!=b.y || a.z!=b.z || a.w!=b.w;
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
+		public bool Equals(Quaternion q) => x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
+		public override bool Equals(object other) => other is Quaternion q && x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
 
 		public static implicit operator OpenTK.Quaternion(Quaternion value)
 		{
@@ -315,7 +227,12 @@ namespace GameEngine
 		}
 		public static implicit operator Quaternion(OpenTK.Quaternion value)
 		{
-			return new Quaternion(value.X,value.Y,value.Z,value.W);
+			Quaternion result;
+			result.x = value.X;
+			result.y = value.Y;
+			result.z = value.Z;
+			result.w = value.W;
+			return result;
 		}
 	}
 }

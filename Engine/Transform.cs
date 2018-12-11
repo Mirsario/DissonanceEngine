@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using BulletSharp;
 using OpenTK;
@@ -14,15 +15,7 @@ namespace GameEngine
 		internal bool updatePhysics = true;
 
 		#region Properties
-		public Transform Root {
-			get {
-				if(parent==null) {
-					return this;
-				}
-				var parents = GetParents();
-				return parents[parents.Length-1];
-			}
-		}
+		public Transform Root => parent==null ? this : GetParents().Last();
 		public Vector3 Forward {
 			get {
 				var m = WorldMatrix;
@@ -49,7 +42,9 @@ namespace GameEngine
 			set {
 				var m = _matrix;
 				m.SetTranslation(value);
-				m = ToLocalSpace(m);
+				if(parent!=null) {
+					m = ToLocalSpace(m);
+				}
 				_matrix.SetTranslation(m.ExtractTranslation());
 				updatePhysics = true;
 				//Debug.Log(gameObject.name+"-Changed transform's position");
@@ -80,9 +75,16 @@ namespace GameEngine
 			}
 		}
 		public Quaternion Rotation {
-			get => LocalRotation;
+			get => WorldMatrix.ExtractQuaternion();
 			set {
-				LocalRotation = value;
+				var tempPos = _matrix.ExtractTranslation();
+				var tempScale = _matrix.ExtractScale();
+				
+				var m = Matrix4x4.CreateRotation(value);
+				_matrix = m;
+				
+				_matrix.SetTranslation(tempPos);
+				_matrix.SetScale(tempScale);
 				updatePhysics = true;
 			}
 		}
@@ -103,8 +105,7 @@ namespace GameEngine
 				var tempPos = _matrix.ExtractTranslation();
 				var tempScale = _matrix.ExtractScale();
 				
-				var m = Matrix4x4.CreateRotation(value);
-				_matrix = ToLocalSpace(m);
+				_matrix = parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
 				
 				_matrix.SetTranslation(tempPos);
 				_matrix.SetScale(tempScale);
@@ -135,7 +136,7 @@ namespace GameEngine
 		public Matrix4x4 WorldMatrix {
 			get => parent==null ? _matrix : ToWorldSpace(_matrix);
 			set {
-				Matrix = ToLocalSpace(value);
+				_matrix = parent==null ? value : ToLocalSpace(value);
 				updatePhysics = true;
 			}
 		}
@@ -145,41 +146,31 @@ namespace GameEngine
 		{
 			this.gameObject = gameObject;
 		}
-		
-		//public override void GetWorldTransform(out BulletSharp.Matrix matrix) => matrix = parent==null ? _matrix : ToWorldSpace(_matrix);
-		//public override void SetWorldTransform(ref BulletSharp.Matrix matrix) => _matrix = parent==null ? matrix : (BulletSharp.Math.Matrix)ToLocalSpace(matrix);
 
-		public Transform[] GetParents()
+		public IEnumerable<Transform> GetParents() => parent==null ? null : GetParentsIterator(this);
+		private static IEnumerable<Transform> GetParentsIterator(Transform transform)
 		{
-			if(parent==null) {
-				return new Transform[0];
-			}
-			var transforms = new List<Transform>();
-			GetParentsLoop(parent,ref transforms);
-			return transforms.ToArray();
-		}
-		internal void GetParentsLoop(Transform transform,ref List<Transform> transforms)
-		{
-			transforms.Add(transform);
-			if(transform.parent!=null) {
-				GetParentsLoop(transform.parent,ref transforms);
+			while(true) {
+				transform = transform.parent;
+				if(transform==null) {
+					break;
+				}
+				yield return transform;
 			}
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToLocalSpace(Matrix4x4 matrix)
 		{
-			var parents = GetParents();
-			for(int i=0;i<parents.Length;i++) {
-				matrix = matrix*parents[i].Matrix.Inverted;
+			foreach(var p in GetParents()) {
+				matrix = matrix*p.Matrix.Inverted;
 			}
 			return matrix;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToWorldSpace(Matrix4x4 matrix)
 		{
-			var parents = GetParents();
-			for(int i=0;i<parents.Length;i++) {
-				matrix = matrix*parents[i].Matrix;
+			foreach(var p in GetParents()) {
+				matrix = matrix*p.Matrix;
 			}
 			return matrix;
 		}

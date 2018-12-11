@@ -166,6 +166,6 @@ namespace GameEngine
 		}
 		#endregion
 
-		public static GameObject[] GetGameObjects() => gameObjects.ToArray();
+		public static IEnumerable<GameObject> GetGameObjects() => gameObjects;
 	}
 }

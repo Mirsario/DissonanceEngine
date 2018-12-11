@@ -23,12 +23,13 @@ namespace GameEngine
 		public static readonly Vector3 forward = new Vector3( 0f,0f,1f);
 		public static readonly Vector3 backward = new Vector3( 0f,0f,-1f);
 
-		public float Magnitude => Mathf.Sqrt(x*x+y*y+z*z);
-		public float SqrMagnitude => x*x+y*y+z*z;
 		public float x;
 		public float y;
 		public float z;
-
+		
+		public float Magnitude => Mathf.Sqrt(x*x+y*y+z*z);
+		public float SqrMagnitude => x*x+y*y+z*z;
+		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
 		public Vector2 XY {
 			get => new Vector2(x,y);
 			set { x = value.x; y = value.y; }
@@ -37,7 +38,6 @@ namespace GameEngine
 			get => new Vector2(x,z);
 			set { x = value.x; z = value.y; }
 		}
-
 		public Vector3 Normalized {
 			get {
 				var vec = new Vector3(x,y,z);
@@ -67,6 +67,7 @@ namespace GameEngine
 				}
 			}
 		}
+
 		public Vector3(float X,float Y,float Z)
 		{
 			x = X;
@@ -128,12 +129,17 @@ namespace GameEngine
 		{
 			return Matrix4x4.CreateRotation(rot)*this;
 		}
+		public Vector3 RotatedBy(Vector3 vec)
+		{
+			//TODO: Test if this should have all axes reversed or just Y
+			return Matrix4x4.CreateRotation(-vec.x,vec.y,-vec.z)*this;
+		}
 		public Vector3 RotatedBy(float x,float y,float z)
 		{
 			//TODO: Test if this should have all axes reversed or just Y
 			return Matrix4x4.CreateRotation(-x,y,-z)*this;
 		}
-		
+
 		public static Vector3 StepTowards(Vector3 val,Vector3 goal,float step)
 		{
 			return new Vector3(
@@ -201,6 +207,15 @@ namespace GameEngine
 		{
 			t = Mathf.Clamp01(t);
 			return new Vector3(from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t,from.z+(to.z-from.z)*t);
+		}
+		public static Vector3 LerpAngle(Vector3 from,Vector3 to,float t)
+		{
+			//Could be sped up.
+			return new Vector3(
+				Mathf.LerpAngle(from.x,to.x,t),
+				Mathf.LerpAngle(from.y,to.y,t),
+				Mathf.LerpAngle(from.z,to.z,t)
+			);
 		}
 		public static void Cross(ref Vector3 left,ref Vector3 right,out Vector3 result)
 		{

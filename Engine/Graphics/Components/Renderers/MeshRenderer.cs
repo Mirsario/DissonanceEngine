@@ -26,6 +26,9 @@ namespace GameEngine
 	}
 	public class MeshRenderer : Renderer
 	{
+		#region Fields
+		private Mesh cachedRenderMesh;
+		#endregion
 		#region Properties
 		internal Mesh _mesh;
 		public virtual Mesh Mesh {
@@ -86,18 +89,21 @@ namespace GameEngine
 		}
 		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
 		{
-			MeshLOD lodTemp;
+			if(cachedRenderMesh!=null && Time.renderUpdateCount%60!=0) {
+				return cachedRenderMesh;
+			}
 			var lods = LODMeshes;
 			if(lods==null) {
 				return null;
 			}
 			if(lods.Length==1) {
-				return lods[0].mesh;
+				return cachedRenderMesh = lods[0].mesh;
 			}
 			float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
 			for(int k=0;k<lods.Length;k++) {
-				if(sqrDist<=(lodTemp = lods[k]).maxDistanceSqr || lodTemp.maxDistance==0f) {
-					return lodTemp.mesh;
+				MeshLOD lodTemp = lods[k];
+				if(sqrDist<=lodTemp.maxDistanceSqr || lodTemp.maxDistance==0f) {
+					return cachedRenderMesh = lodTemp.mesh;
 				}
 			}
 			return null;

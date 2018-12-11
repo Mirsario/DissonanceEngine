@@ -133,7 +133,7 @@ namespace GameEngine
 			//TODO: There's plenty of unneeded vertex repeating, which is only needed on UV seams. Fixing this could increase performance.
 			float xResMultiplier = 1f/xRes;
 			float yResMultiplier = 1f/yRes;
-			float xOffset = Mathf.PI*2f*xResMultiplier;
+			float xOffset = Mathf.TwoPI*xResMultiplier;
 			float yOffset = Mathf.PI*yResMultiplier;
 			int verticeAmount = xRes*yRes*4;
 			var newMesh = new Mesh {

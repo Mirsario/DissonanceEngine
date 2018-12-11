@@ -5,9 +5,12 @@ using GameEngine;
 namespace Game
 {
 	//A GameObject that's bind to a World and is possibly controllable by players (possessing tables is ok!)
+	//Brains
 	public abstract class Entity : GameObject
 	{
 		public World world;
+
+		public bool IsLocal => Main.LocalEntity==this;
 
 		public virtual Type CameraControllerType => typeof(BasicThirdPersonCamera);
 

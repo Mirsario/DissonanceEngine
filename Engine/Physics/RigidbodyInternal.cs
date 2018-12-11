@@ -9,7 +9,7 @@ namespace GameEngine
 	{
 		private class MotionStateInternal : MotionState
 		{
-			public readonly Transform transform;
+			private readonly Transform transform;
 			
 			public override Matrix WorldTransform {
 				get => transform.parent==null ? transform._matrix : transform.ToWorldSpace(transform._matrix);
@@ -159,18 +159,16 @@ namespace GameEngine
 			if(collisionShape!=null && (collisionShape is CompoundShape || collisionShape is EmptyShape)) {
 				collisionShape.Dispose();
 			}
-			var summOffset = Vector3.zero;
+			//var summOffset = Vector3.zero;
 			var colliders = gameObject.GetComponents<Collider>();
 
 			if(colliders.Length==0) {
 				//EmptyShape
 				collisionShape = new EmptyShape();
-				//Debug.Log("Using empty shape");
-			/*}else if(colliders.Length==1) {
-				//Use the shape we have
-				var collider = colliders[0];
-				collisionShape = collider.collShape;
-				summOffset += (OpenTK.Vector3)collider.offset;*/
+			//}else if(colliders.Length==1) {
+			//	//Use the shape we have
+			//	collisionShape = colliders[0].collShape;
+			//	//summOffset += collider.offset;
 			}else{
 				//CompoundShape
 				var compoundShape = new CompoundShape();
@@ -178,7 +176,7 @@ namespace GameEngine
 					var collShape = colliders[i].collShape;
 					if(collShape!=null) {
 						compoundShape.AddChildShape(Matrix4x4.CreateTranslation(colliders[i].offset),collShape);
-						summOffset += colliders[i].offset;
+						//summOffset += colliders[i].offset;
 					}
 				}
 				collisionShape = compoundShape;

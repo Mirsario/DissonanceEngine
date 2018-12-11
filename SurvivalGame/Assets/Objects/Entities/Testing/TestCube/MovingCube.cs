@@ -11,9 +11,8 @@ namespace Game
 		public Rigidbody rigidbody;
 		public Func<Vector3> start;
 		public Func<Vector3> end;
-		public float moveProgress = 0f;
+		public float moveProgress;
 		public float moveGoal = 1f;
-		public AudioSource source;
 
 		public override void OnInit()
 		{
@@ -25,18 +24,9 @@ namespace Game
 			renderer = AddComponent<MeshRenderer>();
 			renderer.Mesh = PrimitiveMeshes.Cube;
 			renderer.Material = Resources.Get<Material>("Entities/Testing/TestCube/TestCube.material");
-
-			source = AddComponent<AudioSource>();
-			source.Clip = Resources.Get<AudioClip>("Sounds/Action2v2.ogg");
-			source.Loop = true;
-			source.Volume = 10f;
-			if(Main.enableMusic) {
-				source.Play();
-			}
 		}
 		public override void FixedUpdate()
 		{
-			//Debug.Log(Vector3.Distance(transform.position,Main.camera.transform.position));
 			moveProgress = Mathf.StepTowards(moveProgress,moveGoal,Time.DeltaTime*0.2f);
 			if(moveProgress==moveGoal) {
 				moveGoal = 1f-moveGoal;

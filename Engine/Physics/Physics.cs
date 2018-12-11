@@ -124,10 +124,10 @@ namespace GameEngine
 		}
 		internal static CollisionShape GetSubShape(CollisionShape shape,int subIndex)
 		{
-			if(!(shape is CompoundShape) || shape==null || subIndex<0) {
-				return shape;
+			if(shape is CompoundShape compoundShape && compoundShape.NumChildShapes>0) {
+				return compoundShape.GetChildShape(subIndex>=0 ? subIndex : 0);
 			}
-			return ((CompoundShape)shape).GetChildShape(subIndex);
+			return shape;
 		}
 
 		#region Callbacks
@@ -164,14 +164,14 @@ namespace GameEngine
 		}
 		internal static void InternalTickCallback(DynamicsWorld world,float timeStep)
 		{
-			var dispatcher = world.Dispatcher;
-			int numManifolds = dispatcher.NumManifolds;
+			var worldDispatcher = world.Dispatcher;
+			int numManifolds = worldDispatcher.NumManifolds;
 			
 			for(int i=0;i<rigidbodies.Count;i++) {
 				rigidbodies[i].collisions.Clear();
 			}
 			for(int i=0;i<numManifolds;i++) {
-				var contactManifold = dispatcher.GetManifoldByIndexInternal(i);
+				var contactManifold = worldDispatcher.GetManifoldByIndexInternal(i);
 				int numContacts = contactManifold.NumContacts;
 				if(numContacts==0) {
 					continue;
@@ -212,55 +212,6 @@ namespace GameEngine
 					}
 				}
 			}
-
-			/*int numManifolds = world->getDispatcher()->getNumManifolds();
-			for (int i = 0; i < numManifolds; i++)
-			{
-				btPersistentManifold*contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
-				const btCollisionObject*obA = contactManifold->getBody0();
-				const btCollisionObject*obB = contactManifold->getBody1();
-
-				int numContacts = contactManifold->getNumContacts();
-				for (int j = 0; j < numContacts; j++)
-				{
-					btManifoldPoint & pt = contactManifold->getContactPoint(j);
-					if (pt.getDistance() < 0.f)
-					{
-						const btVector3 & ptA = pt.getPositionWorldOnA();
-						const btVector3 & ptB = pt.getPositionWorldOnB();
-						const btVector3 & normalOnB = pt.m_normalWorldOnB;
-					}
-				}
-			}*/
-			/*var dispatcher = world.Dispatcher;
-			int numManifolds = dispatcher.NumManifolds;
-			for(int i=0;i<numManifolds;i++) {
-				var contactManifold = dispatcher.GetManifoldByIndexInternal(i);
-				var objA = contactManifold.Body0;
-				var objB = contactManifold.Body1;
-
-				int numContacts = contactManifold.NumContacts;
-			}*/
-
-			/*int numManifolds = world->getDispatcher()->getNumManifolds();
-			for (int i = 0; i < numManifolds; i++)
-			{
-				btPersistentManifold*contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
-				const btCollisionObject*obA = contactManifold->getBody0();
-				const btCollisionObject*obB = contactManifold->getBody1();
-
-				int numContacts = contactManifold->getNumContacts();
-				for (int j = 0; j < numContacts; j++)
-				{
-					btManifoldPoint & pt = contactManifold->getContactPoint(j);
-					if (pt.getDistance() < 0.f)
-					{
-						const btVector3 & ptA = pt.getPositionWorldOnA();
-						const btVector3 & ptB = pt.getPositionWorldOnB();
-						const btVector3 & normalOnB = pt.m_normalWorldOnB;
-					}
-				}
-			}*/
 		}
 		#endregion
 	}
@@ -288,7 +239,6 @@ namespace GameEngine
 						var userObject = collShape.UserObject;
 						if(userObject!=null && userObject is Collider coll) {
 							collider = coll;
-							//Debug.Log(collider.gameObject.Name);
 						}
 						triangleIndex = shapeInfo.TriangleIndex;
 					}

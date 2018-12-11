@@ -20,11 +20,19 @@ namespace Game
 		public float walkTime;
 		public float jumpPress;
 		public bool enableStrafeJumping;
-		public AudioSource audioSource;
 		public float screenFlash;
+		public Vector2 moveInput;
+		public Vector3 size = Vector3.one;
+		public Vector3 prevVelocity;
+		public MeshRenderer renderer;
+		public CylinderCollider collider;
+		public Rigidbody rigidbody;
+		public AudioSource audioSource;
+		public bool isSprinting;
+		public bool onGroundCached;
 
-		public bool IsSprinting => Input.GetKey(Keys.LShift);
-		public float MoveSpeed => IsSprinting ? 12f : 7.5f;
+		public bool OnGround => rigidbody.Collisions.Any(c => c.contacts.Any(p => p.point.y>=Transform.Position.y-0.1f));
+		public float MoveSpeed => (isSprinting && onGroundCached) ? 12f : 7.5f;
 		public float Acceleration => 4.25f;
 
 		public override Type CameraControllerType => typeof(FirstPersonCamera);
@@ -33,7 +41,20 @@ namespace Game
 		{
 			size = new Vector3(1f,1.95f,1f); //JoJo height.
 
-			base.OnInit();
+			//
+			collider = AddComponent<CylinderCollider>(false);
+			collider.size = size;
+			collider.offset = new Vector3(0f,size.y/2f,0f);
+			collider.Enabled = true;
+
+			rigidbody = AddComponent<Rigidbody>();
+			rigidbody.Mass = 1f;
+			rigidbody.AngularFactor = Vector3.zero;
+			
+			renderer = AddComponent<MeshRenderer>();
+			renderer.Mesh = PrimitiveMeshes.Quad;
+			renderer.Material = Resources.Find<Material>("Billboard");
+			//
 
 			rigidbody.UseGravity = false;
 			rigidbody.Friction = 0f;
@@ -48,27 +69,32 @@ namespace Game
 		public override void FixedUpdate()
 		{
 			var camera = Main.camera;
-			if(Input.GetKeyDown(Keys.C)) {	//Sound test
+			if(Input.GetKeyDown(Keys.C)) { //Sound test
 				Debug.Log("HONK!");
 				PlayVoiceClip(Resources.Get<AudioClip>("Sounds/honk.wav"));
 			}
-			if(Input.GetKeyDown(Keys.K)) {  //Add light
+			if(Input.GetKeyDown(Keys.K)) { //Add light
 				Instantiate<LightObj>(world,position:camera.Transform.Position);
 			}
 
+			moveInput = brain.Signal2(GameInput.moveX,GameInput.moveY);
+			if(moveInput.x==0f && moveInput.y<=0f) {
+				isSprinting = false;
+			}else if(brain.JustActivated(GameInput.sprint)) {
+				isSprinting = true;
+			}
+
 			base.FixedUpdate();
-			if(Input.GetMouseButtonDown(0)) {
-				Rocket rocket = Instantiate<Rocket>(world,position:camera.Transform.Position+camera.Transform.Forward);
-				rocket.velocity = camera.Transform.Forward*25f;
+			
+			if(brain.JustActivated(GameInput.primaryUse)) {
+				Vector3 direction = brain?.LookDirection ?? Vector3.forward;
+				Rocket rocket = Instantiate<Rocket>(world,position:camera.Transform.Position+direction);
+				rocket.velocity = direction*25f;
 				rocket.owner = this;
 				SoundInstance.Create("Sounds/rocketFire.wav",camera.Transform.Position);
 			}
 
-			if(Input.GetKeyDown(Keys.Space) || Input.GetMouseButton(1)) {
-				jumpPress = 0.25f;
-			} else {
-				jumpPress = Math.Max(0f,jumpPress-Time.DeltaTime);
-			}
+			jumpPress = brain.JustActivated(GameInput.jump) ? 0.25f : Math.Max(0f,jumpPress-Time.DeltaTime);
 			Movement();
 
 			var tempPos = Transform.Position;
@@ -83,7 +109,7 @@ namespace Game
 			}
 
 			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => obj==this ? false : (bool?)null)) {
-				if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(2)) {
+				if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(MouseButton.Middle)) {
 					Main.LocalEntity = entity;
 					screenFlash = 0.5f;
 					SoundInstance.Create($"Magic.ogg",entity.Transform.Position);
@@ -110,7 +136,6 @@ namespace Game
 		}
 		public override void RenderUpdate()
 		{
-			base.RenderUpdate();
 			if(screenFlash>0f) {
 				screenFlash = Mathf.StepTowards(screenFlash,0f,Time.DeltaTime);
 			}
@@ -118,23 +143,14 @@ namespace Game
 		public override void OnGUI()
 		{
 			int i = 5;
-			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Player Speed - XZ:{new Vector3(velocity.x,0f,velocity.z).Magnitude.ToString("0.00")} Y: {velocity.y.ToString("0.00")}");
-			GUI.DrawText(new Rect(8,8+(i*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Player Speed - XZ:{new Vector3(velocity.x,0f,velocity.z).Magnitude:0.00} Y: {velocity.y:0.00}");
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
+			GUI.DrawText(new Rect(8,8+(i++*16),128,8),$"Input: {moveInput.x:0.00},{moveInput.y:0.00}");
+			GUI.DrawText(new Rect(8,8+(i*16),128,8),$"Sprinting: {isSprinting}");
 
 			if(screenFlash>0f) {
 				GUI.DrawTexture(Graphics.ScreenRect,Main.whiteTexture,new Vector4(0.75f,0f,0f,screenFlash));
 			}
-			//GUI.DrawTexture(new Rect(32,32,64,64),TileEntity.tileTexture);	//This was... weirdly moving???
-		}
-
-		public override void UpdateIsPlayer(bool isPlayer)
-		{
-			/*Camera cameraTop = new GameObject().AddComponent<Camera>();
-			cameraTop.view = new Rect(0.5f,0.5f,0.5f,0.5f);
-			cameraTop.transform.position = transform.position+(Vector3.up*128f);
-			cameraTop.transform.eulerRot = new Vector3(-90f,0f,0f);
-			cameraTop.transform.parent = transform;
-			Debug.Log("spawned new camera");*/
 		}
 
 		#region Movement
@@ -142,12 +158,19 @@ namespace Game
 		{
 			velocity = rigidbody.Velocity;
 
-			//var direction = ((Transform.Right*Main.MoveInput.x)+(Transform.Forward*Main.MoveInput.y)).RotatedBy(0f,Main.camera.Transform.EulerRot.y,0f).Normalized;
+			onGroundCached = OnGround;
 
-			if(OnGround && forceAirMove<=0f) {
-				if(Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D)!=Vector2.zero) {
+			var forward = brain?.Transform.Forward ?? Vector3.forward;
+			var right = brain?.Transform.Right ?? Vector3.right;
+			forward.y = 0f;
+			right.y = 0f;
+			forward.Normalize();
+			right.Normalize();
+
+			if(onGroundCached && forceAirMove<=0f) {
+				if(moveInput!=default) {
 					walkTime += Time.DeltaTime;
-					if(walkTime>=(IsSprinting ? 0.3f : 0.5f)) {
+					if(walkTime>=(isSprinting ? 0.3f : 0.5f)) {
 						Footstep("Walk",0.3f);
 						walkTime = 0f;
 					}
@@ -155,7 +178,7 @@ namespace Game
 					walkTime = 0f;
 				}
 
-				Movement_WalkMove();
+				Movement_WalkMove(forward,right);
 
 				if(!wasOnGround) {
 					Footstep("Land",0.8f);
@@ -165,7 +188,7 @@ namespace Game
 						float power = Mathf.Lerp(0f,1f,(magnitude-minSpeed)*0.2f);
 						screenFlash = power*0.5f;
 						SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.DeltaTime),power);
-						screenShake += power*0.4f;
+						ScreenShake.New(power*0.5f,1f,5f,Transform.Position);
 					}
 				}
 
@@ -178,7 +201,8 @@ namespace Game
 					forceAirMove = Math.Max(0f,forceAirMove-Time.DeltaTime);
 				}
 
-				Movement_AirMove();
+				Movement_AirMove(forward,right);
+
 				wasOnGround = false;
 			}
 
@@ -186,26 +210,18 @@ namespace Game
 			rigidbody.Velocity = velocity;
 			prevVelocity = velocity;
 		}
-		public void Movement_WalkMove()
+		public void Movement_WalkMove(Vector3 forward,Vector3 right)
 		{
 			if(Movement_CheckJump()) {
-				//PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
+				PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
 				//SoundInstance.Create("Land.ogg",transform.position);
-				Movement_AirMove();
+				Movement_AirMove(forward,right);
+
 				forceAirMove = 0.1f;
 				return;
 			}
 
 			Movement_Friction();
-
-			var moveInput = Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D);
-			var cameraTransform = Main.camera.Transform;
-			var forward = cameraTransform.Forward;
-			var right = cameraTransform.Right;
-			forward.y = 0f;
-			right.y = 0f;
-			forward.Normalize();
-			right.Normalize();
 
 			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
 			float wishSpeed = MoveSpeed;
@@ -213,18 +229,9 @@ namespace Game
 
 			Movement_Acceleration(wishDirection,wishSpeed,acceleration);
 		}
-		public void Movement_AirMove()
+		public void Movement_AirMove(Vector3 forward,Vector3 right)
 		{
 			Movement_Friction();
-
-			var moveInput = Input.GetDirection(Keys.W,Keys.S,Keys.A,Keys.D);
-			var cameraTransform = Main.camera.Transform;
-			var forward = cameraTransform.Forward;
-			var right = cameraTransform.Right;
-			forward.y = 0f;
-			right.y = 0f;
-			forward.Normalize();
-			right.Normalize();
 
 			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
 			float wishSpeed = MoveSpeed;
@@ -250,7 +257,7 @@ namespace Game
 			tempVec.y = 0f;
 			float speed = tempVec.Magnitude;
 			float drop = 0f;
-			if(OnGround) {
+			if(onGroundCached) {
 				drop = (speed<stopSpeed ? stopSpeed : speed)*friction*Time.DeltaTime;
 			}
 			float newSpeed = speed-drop;
@@ -260,7 +267,6 @@ namespace Game
 			if(newSpeed!=0f) {
 				newSpeed /= speed;
 			}
-			//velocity *= newSpeed;
 			velocity.x *= newSpeed; //Temporary! Do an air friction method.
 			velocity.z *= newSpeed;
 		}
@@ -310,20 +316,5 @@ namespace Game
 				SoundInstance.Create($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform);
 			}
 		}
-
-		//No strafejumping acceleration
-		/*//proper way (avoids strafe jump maxspeed bug),but feels bad
-		vec3_t		wishVelocity;
-		vec3_t		pushDir;
-		float		pushLen;
-		float		canPush;
-		VectorScale( wishdir,wishspeed,wishVelocity );
-		VectorSubtract( wishVelocity,pm->ps->velocity,pushDir );
-		pushLen = VectorNormalize( pushDir );
-		canPush = accel*pml.frametime*wishspeed;
-		if (canPush > pushLen) {
-			canPush = pushLen;
-		}
-		VectorMA( pm->ps->velocity,canPush,pushDir,pm->ps->velocity );*/
 	}
 }

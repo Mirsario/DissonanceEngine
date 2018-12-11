@@ -35,7 +35,6 @@ namespace Game
 		public static string sourcesPath;
 		public static string builtPath;
 		public static Camera camera;
-		public static Vector3 cameraRotation;
 		public static World world;
 		public static bool shouldLockCursor;
 		private static Func<bool?,string> dynamicMenuSetup;
@@ -43,7 +42,6 @@ namespace Game
 		#region ToMove
 		public static bool enableMusic = false; //shouldn't be here 
 		public static Texture whiteTexture; //this too
-		public static float mouseSensitivity = 1f/15f;
 		#endregion
 
 		private WorldInfo[] worldList;
@@ -122,6 +120,12 @@ namespace Game
 			whiteTexture = new Texture(1,1);
 
 			Console.BufferHeight = short.MaxValue-1;
+
+			GameInput.Initialize();
+		}
+		public override void RenderUpdate()
+		{
+			ScreenShake.StaticRenderUpdate();
 		}
 		public override void FixedUpdate()
 		{
@@ -132,7 +136,7 @@ namespace Game
 				}else{
 					Quit();
 				}
-			}else if(shouldLockCursor && Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
+			}else if(shouldLockCursor && Input.GetMouseButtonDown(MouseButton.Left) || Input.GetMouseButtonDown(MouseButton.Right)) {
 				UpdateCursor();
 			}
 			if(Input.GetKeyDown(Keys.Y)) {

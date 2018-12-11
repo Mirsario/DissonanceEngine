@@ -31,7 +31,7 @@ namespace Game
 		}
 		public override void RenderUpdate()
 		{
-			var delta = GameEngine.Game.lockCursor ? Input.MouseDelta*Main.mouseSensitivity : Vector2.zero;
+			var delta = GameEngine.Game.lockCursor ? new Vector2(GameInput.lookX.Value,GameInput.lookY.Value) : Vector2.zero;
 
 			var newRotation = rotation;
 			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,-89.99f,89.99f);
@@ -40,7 +40,9 @@ namespace Game
 			camera.Transform.EulerRot = rotation = newRotation;
 
 			direction = Vector3.EulerToDirection(newRotation);
-			camera.Transform.Position = entity.Transform.Position-(direction*distance);
+			Vector3 position = entity.Transform.Position-(direction*distance);
+			float shake = ScreenShake.GetPowerAtPoint(position);
+			camera.Transform.Position = position+new Vector3(Rand.Range(-shake,shake),Rand.Range(-shake,shake),Rand.Range(-shake,shake));
 		}
 	}
 }

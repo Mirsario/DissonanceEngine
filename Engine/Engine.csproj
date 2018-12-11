@@ -119,7 +119,12 @@
     <Compile Include="ImportExport\Graphics\Textures\DDSManager.cs" />
     <Compile Include="ImportExport\Other\BytesManager.cs" />
     <Compile Include="ImportExport\Other\TextManager.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="Input\Input.cs" />
+    <Compile Include="Input\InputBinding.cs" />
+    <Compile Include="Input\InputVariables.cs" />
+    <Compile Include="Input\InputTrigger.cs" />
+    <Compile Include="Input\Keys.cs" />
+    <Compile Include="Input\MouseButton.cs" />
     <Compile Include="Mathf.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="PerlinNoiseDouble.cs" />

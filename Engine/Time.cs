@@ -37,12 +37,14 @@ namespace GameEngine
 		internal static float renderTimeReal;
 		internal static float renderTimeRealPrev;
 		internal static float renderDeltaTime;
+		internal static uint renderUpdateCount;
 
 		//Main
 		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
 		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
 		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
 		public static uint FixedUpdateCount => fixedUpdateCount;
+		public static uint RenderUpdateCount => renderUpdateCount;
 
 		internal static float _timeScale = 1f;
 		public static float TimeScale {
@@ -85,6 +87,8 @@ namespace GameEngine
 			renderTimeReal += renderDeltaTime;
 			renderDeltaTime *= TimeScale;
 			renderTime += renderDeltaTime;
+
+			renderUpdateCount++;
 		}
 	}
 }

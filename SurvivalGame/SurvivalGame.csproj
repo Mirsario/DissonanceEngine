@@ -41,10 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GameInput.cs" />
+    <Compile Include="Assets\Objects\Brains\TestBrain.cs" />
+    <Compile Include="Assets\Objects\Brains\PlayerBrain.cs" />
     <Compile Include="Assets\Objects\Brains\Brain.cs" />
     <Compile Include="Assets\Objects\Brains\BrainInput.cs" />
     <Compile Include="Assets\Objects\CameraControllers\FirstPersonCamera.cs" />
     <Compile Include="Assets\Objects\CameraControllers\BasicThirdPersonCamera.cs" />
+    <Compile Include="Assets\Objects\CameraControllers\Screenshakes\ScreenShake.cs" />
     <Compile Include="Assets\Objects\Entities\Entity.cs" />
     <Compile Include="Assets\Objects\Entities\Items\Item.cs" />
     <Compile Include="Assets\Objects\Entities\Items\Tools\StoneHatchet\StoneHatchet.cs" />

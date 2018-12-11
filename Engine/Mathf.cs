@@ -9,11 +9,17 @@ namespace GameEngine
 		//Very aggressive class, be careful
 		public const float NegativeInfinity = float.NegativeInfinity;
 		public const float Infinity = float.PositiveInfinity;
-		public const float PI = 3.14159265358979323846264f;
-		public const float Deg2Rad = 0.01745329251994329576924f;
-		public const float Rad2Deg = 57.2957795130823208768f;
 		public const float Epsilon = 1.401298E-45f;
-		
+
+		public const float FourPI = 12.56637061435917295385f;
+		public const float TwoPI = 6.283185307179586476925f;
+		public const float PI = 3.14159265358979323846264f;
+		public const float HalfPI = 1.570796326794896619231f;
+		public const float QuarterPI = 0.7853981633974483096157f;
+
+		public const float Deg2Rad = PI/180f;
+		public const float Rad2Deg = 180f/PI;
+
 		public static float StepTowards(float val,float goal,float step)
 		{
 			if(goal>val) {
@@ -30,6 +36,19 @@ namespace GameEngine
 			return val;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Repeat(float t,float length) => t-Floor(t/length)*length;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float NormalizeEuler(float angle)
+		{
+			if(angle>360f) {
+				do {
+					angle -= 360f;
+				} while(angle>360f);
+				return angle;
+			}
+			while(angle<0f) {
+				angle += 360f;
+			}
+			return angle;
+		}
 
 		#region Trigonometry
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin(float f) => (float)Math.Sin(f);

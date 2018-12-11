@@ -82,10 +82,13 @@ namespace GameEngine
 			window.Resize += Graphics.Resize;
 			window.UpdateFrame += FixedUpdateInternal;
 			window.RenderFrame += RenderUpdateInternal;
+
 			window.KeyUp += Input.KeyUp;
 			window.KeyPress += Input.KeyPress;
 			window.KeyDown += Input.KeyDown;
-			window.MouseMove += Input.MouseMove;
+			window.MouseUp += Input.MouseUp;
+			window.MouseDown += Input.MouseDown;
+
 			window.FocusedChanged += OnFocusChange;
 			window.Closing += ApplicationQuit;
 			window.Run(Time.targetUpdateCount,Time.targetRenderCount);

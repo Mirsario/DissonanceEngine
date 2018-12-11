@@ -40,9 +40,10 @@ namespace Game
 			var deltaVelocity = velocity*Time.DeltaTime;
 			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
 				Transform.Position = hit.point;
-				var instance = SoundInstance.Create("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
-				float maxDistance = 10f;
+				const float maxDistance = 10f;
 				const float power = 3000f;
+				SoundInstance.Create("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
+				ScreenShake.New(0.3f,1f,maxDistance*5f,Transform.Position);
 
 				foreach(var rigidbodyBase in Physics.ActiveRigidbodies) {
 					if(rigidbodyBase is Rigidbody body) {

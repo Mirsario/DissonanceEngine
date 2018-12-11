@@ -10,6 +10,8 @@ namespace GameEngine
 {
 	public static class Utils
 	{
+		public static StringComparer strComparerInvariantIgnoreCase = StringComparer.InvariantCultureIgnoreCase;
+		
 		public static bool ObjectOrCollectionCall<T>(object obj,Action<T> call,bool throwError = true) where T : class
 		{
 			if(obj is T objT) {

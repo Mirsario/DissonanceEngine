@@ -64,7 +64,7 @@ namespace GameEngine
 					collShape = new ConvexHullShape(tempHull.Vertices);
 				}else{
 					//Concave shapes should only be used for static meshes or kinematic rigidbodies
-					collShape = new BvhTriangleMeshShape(triMesh,true);//concave
+					collShape = new BvhTriangleMeshShape(triMesh,true);
 				}
 			}
 			base.UpdateCollider();
