@@ -65,9 +65,45 @@ namespace GameEngine
 			w = W;
 		}
 		
-		public static Quaternion FromDirection(Vector3 direction,Vector3 up)
+		public static Quaternion FromDirection(Vector3 forward,Vector3 up)
 		{
-			return Matrix4x4.LookAt(Vector3.zero,-direction,up).ExtractQuaternion();
+			forward.Normalize();
+			
+			Vector3 cross1 = Vector3.Normalize(Vector3.Cross(up,forward));
+			Vector3 cross2 = Vector3.Cross(forward,cross1);
+
+			float xyzSumm = cross1.x+cross2.y+forward.z;
+			Quaternion result;
+			if(xyzSumm>0f) {
+				float sqrt = (float)Math.Sqrt(xyzSumm+1f);
+				result.w = sqrt*0.5f;
+				sqrt = 0.5f/sqrt;
+				result.x = (cross2.z-forward.y)*sqrt;
+				result.y = (forward.x-cross1.z)*sqrt;
+				result.z = (cross1.y-cross2.x)*sqrt;
+			}else if(cross1.x>=cross2.y && cross1.x>=forward.z) {
+				float sqrt = (float)Math.Sqrt(1f+cross1.x-cross2.y-forward.z);
+				float num4 = 0.5f/sqrt;
+				result.x = 0.5f*sqrt;
+				result.y = (cross1.y+cross2.x)*num4;
+				result.z = (cross1.z+forward.x)*num4;
+				result.w = (cross2.z-forward.y)*num4;
+			}else if(cross2.y>forward.z) {
+				float sqrt = (float)Math.Sqrt(1f+cross2.y-cross1.x-forward.z);
+				float num3 = 0.5f/sqrt;
+				result.x = (cross2.x+cross1.y)*num3;
+				result.y = 0.5f*sqrt;
+				result.z = (forward.y+cross2.z)*num3;
+				result.w = (forward.x-cross1.z)*num3;
+			}else{
+				float sqrt = (float)Math.Sqrt(1f+forward.z-cross1.x-cross2.y);
+				float num2 = 0.5f/sqrt;
+				result.x = (forward.x+cross1.z)*num2;
+				result.y = (forward.y+cross2.z)*num2;
+				result.z = 0.5f*sqrt;
+				result.w = (cross1.y-cross2.x)*num2;
+			}
+			return result;
 		}
 		public static Quaternion FromEuler(Vector3 euler)
 		{
