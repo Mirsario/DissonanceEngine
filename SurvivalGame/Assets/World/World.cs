@@ -128,11 +128,11 @@ namespace Game
 
 			var genRoster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
-					Entity.Instantiate<Spruce>(this,position:spawnPos);
+					Entity.Instantiate<Spruce>(this,position:spawnPos,rotation:Quaternion.FromEuler(0f,Rand.Range(0f,360f),0f));
 					t.type = dirt;
 				}),
 				(60,(t,x,y,spawnPos) => {
-					Entity.Instantiate<Boulder>(this,position:spawnPos);
+					Entity.Instantiate<Boulder>(this,position:spawnPos,rotation:Quaternion.FromEuler(0f,Rand.Range(0f,360f),0f));
 					for(int i=0;i<20;i++) {
 						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = dirt;
 					}

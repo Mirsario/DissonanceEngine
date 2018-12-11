@@ -26,10 +26,6 @@ namespace Game
 			collider.Mesh = mesh;
 			collider.Convex = false;
 		}
-		public override void FixedUpdate()
-		{
-			Transform.EulerRot = new Vector3(0f,Time.GameTime*45f,0f);
-		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<StonePhysicMaterial>();
 	}

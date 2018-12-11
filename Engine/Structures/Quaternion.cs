@@ -105,22 +105,25 @@ namespace GameEngine
 			}
 			return result;
 		}
-		public static Quaternion FromEuler(Vector3 euler)
+		public static Quaternion FromEuler(Vector3 vec) => FromEuler(vec.x,vec.y,vec.z);
+		public static Quaternion FromEuler(float x,float y,float z)
 		{
-			euler *= 0.5f;
+			x *= Mathf.Deg2Rad*0.5f;
+			y *= Mathf.Deg2Rad*0.5f;
+			z *= Mathf.Deg2Rad*0.5f;
 
-			float cX = (float)Math.Cos(euler.x);
-			float cY = (float)Math.Cos(euler.y);
-			float cZ = (float)Math.Cos(euler.z);
-			float sX = (float)Math.Sin(euler.x);
-			float sY = (float)Math.Sin(euler.y);
-			float sZ = (float)Math.Sin(euler.z);
+			float cX = (float)Math.Cos(x);
+			float cY = (float)Math.Cos(y);
+			float cZ = (float)Math.Cos(z);
+			float sX = (float)Math.Sin(x);
+			float sY = (float)Math.Sin(y);
+			float sZ = (float)Math.Sin(z);
 
 			Quaternion result;
-			result.x = sX*sY*cZ+cX*cY*sZ;
-			result.y = sX*cY*cZ+cX*sY*sZ;
-			result.z = cX*sY*cZ-sX*cY*sZ;
-			result.w = cX*cY*cZ-sX*sY*sZ;
+			result.w = cY*cX*cZ+sY*sX*sZ;
+			result.x = cY*sX*cZ+sY*cX*sZ;
+			result.y = sY*cX*cZ-cY*sX*sZ;
+			result.z = cY*cX*sZ-sY*sX*cZ;
 			return result;
 		}
 		#endregion

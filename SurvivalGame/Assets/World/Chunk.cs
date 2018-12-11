@@ -23,11 +23,11 @@ namespace Game
 		public Vector2Int TilePoint => position*chunkSize;
 		public Vector3 WorldPoint => new Vector3(position.x,0f,position.y)*chunkSize*tileSize;
 
-		public World world;				//THEEE WOOOOOOOOORLD!!! ..that this chunks belongs to
-		public Vector2Int position;		//Position of this chunk in World.chunks array
-		public Vector2Int positionInTiles;	//Position of this chunk in World.chunks array,but multiplied by chunkSize.
-		public int posId;					//Position as if World.chunks array was 1-dimensional
-		public Tile[,] tiles;				//Only used by multiplayer clients.
+		public World world; //THE WOOOOOOOOORLD that this chunks belongs to
+		public Vector2Int position; //Position of this chunk in World.chunks array
+		public Vector2Int positionInTiles; //Position of this chunk in World.chunks array,but multiplied by chunkSize.
+		public int posId; //Position as if World.chunks array was 1-dimensional
+		public Tile[,] tiles; //Only used by multiplayer clients.
 		public Mesh mesh;
 		public bool updateMesh;
 		public bool updateCollisionMesh;
@@ -41,22 +41,22 @@ namespace Game
 		private Texture idTex;
 		private Vector4[] idToUV;
 
-		private float _minHeight;
+		private float minHeight;
 		public float MinHeight {
 			get {
 				if(updateHeights) {
 					UpdateHeights();
 				}
-				return _minHeight;
+				return minHeight;
 			}
 		}
-		private float _maxHeight;
+		private float maxHeight;
 		public float MaxHeight {
 			get {
 				if(updateHeights) {
 					UpdateHeights();
 				}
-				return _maxHeight;
+				return maxHeight;
 			}
 		}
 
@@ -168,8 +168,8 @@ namespace Game
 					}
 				}
 			}
-			_minHeight = minHeight;
-			_maxHeight = maxHeight;
+			this.minHeight = minHeight;
+			this.maxHeight = maxHeight;
 			updateHeights = false;
 		}
 		public Mesh GenerateMesh(int lodLevel,bool setAsCollisionMesh,bool generateGrass)
@@ -379,7 +379,7 @@ namespace Game
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint)
 		{
-			if(atPoint==null) {
+			if(!atPoint.HasValue) {
 				return PhysicMaterial.GetMaterial<StonePhysicMaterial>();
 			}
 			var atP = atPoint.Value;

@@ -161,7 +161,8 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToLocalSpace(Matrix4x4 matrix)
 		{
-			foreach(var p in GetParents()) {
+			Transform p = this;
+			while((p = p.parent)!=null) {
 				matrix = matrix*p.Matrix.Inverted;
 			}
 			return matrix;
@@ -169,7 +170,8 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToWorldSpace(Matrix4x4 matrix)
 		{
-			foreach(var p in GetParents()) {
+			Transform p = this;
+			while((p = p.parent)!=null) {
 				matrix = matrix*p.Matrix;
 			}
 			return matrix;
