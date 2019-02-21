@@ -1,0 +1,63 @@
+{
+	"framebuffers": {
+		"mainBuffer": {
+			"textures": {
+				"colorBuffer": {
+					"type": "Color",
+					"format": "RGBA32f"
+				},
+				"normalBuffer": {
+					"type": "Color",
+					"format": "RGBA32f"
+				},
+				"positionBuffer": {
+					"type": "Color",
+					"format": "RGB32f"
+				},
+				"emissionBuffer": {
+					"type": "Color",
+					"format": "RGB32f"
+				},
+				"depthBuffer": {
+					"type": "DepthStencil",
+					"format": "Depth24Stencil8"
+				}
+			}
+		},
+		"lightingBuffer": { 
+			"textures": {
+				"lightingBuffer": {
+					"type": "Color",
+					"format": "RGBA32f"
+				}
+			}
+		}
+	},
+	"pipeline": {
+		"geometry": {
+			"type": "GameEngine.GeometryPass",
+			"framebuffer": "mainBuffer"
+		},
+		"lighting": {
+			"type": "GameEngine.DeferredLightingPass",
+			"framebuffer": "lightingBuffer",
+			"passedTextures": {
+				"mainBuffer": ["normalBuffer","positionBuffer","emissionBuffer"]
+			},
+			"shaders": {
+				"point": "LightingPoint",
+				"directional": "LightingDirectional",
+				"spot": null
+			}
+		},
+		"composite": {
+			"type": "GameEngine.PostProcessPass",
+			"framebuffer": "none",
+			"passedTextures": {
+				"mainBuffer": ["colorBuffer","emissionBuffer"],
+				"lightingBuffer": ["lightingBuffer"]
+			},
+			"shader": "Composite"
+		}
+	}
+}

@@ -2,5 +2,11 @@
 */bin/*
 *.vs/
 packages/
-SurvivalGame/Assets/bin
-SurvivalGame/Assets/obj
+Projects/GameEngine/bin
+Projects/GameEngine/obj
+Projects/SmartMeshLibrary/bin
+Projects/SmartMeshLibrary/obj
+Projects/AbyssCrusaders/Assets/bin
+Projects/AbyssCrusaders/Assets/obj
+Projects/SurvivalGame/Assets/bin
+Projects/SurvivalGame/Assets/obj

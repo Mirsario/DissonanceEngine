@@ -1,0 +1,27 @@
+{
+	//////////
+	//Normal//
+	//////////
+	"Game/Sprite": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+	},
+	"Game/SpriteColor": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+		"shaderDefines": ["COLOR"],
+	},
+	/////////////
+	//Emmissive//
+	/////////////
+	"EmissiveDiffuse": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+		"shaderDefines": ["EMISSIONMAP"],
+	},
+	"Game/SpriteEmissive": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+		"shaderDefines": ["EMISSIONMAP","COLOR"],
+	},
+}
