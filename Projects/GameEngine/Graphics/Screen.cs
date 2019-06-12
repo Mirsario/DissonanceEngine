@@ -8,6 +8,7 @@ namespace GameEngine
 		internal static int width;
 		internal static int height;
 		internal static Vector2Int size;
+		internal static Vector2 sizeFloat;
 		internal static Vector2 center;
 		internal static RectInt rectangle;
 		internal static int windowX;
@@ -38,6 +39,7 @@ namespace GameEngine
 			width = window.Width;
 			height = window.Height;
 			size = new Vector2Int(width,height);
+			sizeFloat = (Vector2)size;
 			center = new Vector2(width*0.5f,height*0.5f);
 			rectangle = new RectInt(0,0,width,height);
 

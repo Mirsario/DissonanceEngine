@@ -13,15 +13,18 @@ namespace AbyssCrusaders
 
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
+			var resNormal = Screen.Size;
+			var resLighting = Screen.Size/4;
+
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",Screen.Width,Screen.Height),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",Screen.Width,Screen.Height),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("colorBuffer",resNormal.x,resNormal.y),out var colorBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",resLighting.x,resLighting.y),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",Screen.Width,Screen.Height),out var lightingBuffer)
+					.WithRenderTexture(new RenderTexture("lightingBuffer",resLighting.x,resLighting.y),out var lightingBuffer)
 			};
 
 			//RenderPasses
@@ -34,6 +37,7 @@ namespace AbyssCrusaders
 				new Light2DPass("Lighting")
 					.WithFramebuffer(lightingFramebuffer)
 					.WithShaders(Resources.Find<Shader>("Game/Light")),
+
 				//Lighting
 				new PostProcessPass("PostLighting")
 					.WithFramebuffer(lightingFramebuffer)

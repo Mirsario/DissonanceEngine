@@ -22,6 +22,9 @@ namespace GameEngine.Graphics
 			if(passShader.hasDefaultUniform[DefaultShaderUniforms.ScreenHeight]) {
 				GL.Uniform1(passShader.defaultUniformIndex[DefaultShaderUniforms.ScreenHeight],Screen.Height);
 			}
+			if(passShader.hasDefaultUniform[DefaultShaderUniforms.ScreenResolution]) {
+				GL.Uniform2(passShader.defaultUniformIndex[DefaultShaderUniforms.ScreenResolution],Screen.sizeFloat);
+			}
 			
 			if(passedTextures!=null) {
 				for(int i=0;i<passedTextures.Length;i++) {
@@ -36,14 +39,14 @@ namespace GameEngine.Graphics
 			}
 
 			GL.Begin(PrimitiveTypeGL.Quads);
-				GL.Vertex2(	-1.0f,1.0f);
-				GL.TexCoord2(0.0f,1.0f);
-				GL.Vertex2(	-1.0f,-1.0f);
-				GL.TexCoord2(0.0f,0.0f);
-				GL.Vertex2(	1.0f,-1.0f);
-				GL.TexCoord2(1.0f,0.0f);
-				GL.Vertex2(	1.0f,1.0f);
-				GL.TexCoord2(1.0f,1.0f);
+				GL.Vertex2(	 -1f, 1f);
+				GL.TexCoord2( 0f, 1f);
+				GL.Vertex2(	 -1f,-1f);
+				GL.TexCoord2( 0f, 0f);
+				GL.Vertex2(	  1f,-1f);
+				GL.TexCoord2( 1f, 0f);
+				GL.Vertex2(   1f, 1f);
+				GL.TexCoord2( 1f, 1f);
 			GL.End();
 		}
 	}

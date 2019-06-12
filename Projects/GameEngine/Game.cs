@@ -20,13 +20,12 @@ namespace GameEngine
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	//TODO: Fix issues with window resizing
 
-
 	public class Game : IDisposable
 	{
 		//Debug
 		private const bool bigScreen = true;
-		private const int defaultWidth = bigScreen ? 1920 : 960; //1600;	
-		private const int defaultHeight = bigScreen ? 960 : 540; //960;	
+		private const int defaultWidth = bigScreen ? 1600 : 960; //1600;	
+		private const int defaultHeight = bigScreen ? 900 : 540; //960;	
 		
 		internal static Game instance;
 		internal static bool shouldQuit;
@@ -94,6 +93,10 @@ namespace GameEngine
 			
 			window.Load += (obj,e) => Init();
 			window.Resize += Rendering.Resize;
+			window.WindowStateChanged += (sender,e) => {
+				Debug.Log("State changed");
+				Rendering.Resize(sender,e);
+			};
 			window.UpdateFrame += FixedUpdateInternal;
 			window.RenderFrame += RenderUpdateInternal;
 			window.KeyUp += Input.KeyUp;

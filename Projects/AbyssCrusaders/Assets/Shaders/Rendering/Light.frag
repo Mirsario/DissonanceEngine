@@ -18,7 +18,7 @@ out vec4 oLight;
 
 void main()
 {
-	vec3 worldPosSnapped = floor(vWorldPos*gridSnap)/gridSnap;
+	vec3 worldPosSnapped = vWorldPos; //floor(vWorldPos*gridSnap)/gridSnap;
 	
 	float intensity = 1f-distance(worldPosSnapped,lightPosition)/(lightRange*0.5f);
 	//intensity = round(intensity*numColors)/numColors;

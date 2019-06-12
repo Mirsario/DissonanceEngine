@@ -150,7 +150,6 @@ namespace GameEngine.Graphics
 			
 			whiteTexture = new Texture(1,1);
 		}
-		
 		#endregion
 		#region Rendering
 		internal static void Render()
@@ -370,7 +369,13 @@ namespace GameEngine.Graphics
 			renderingPipeline.Init();
 		}
 		//TODO: Actually make window resizing a thing.
-		internal static void Resize(object sender,EventArgs e) {}
+		internal static void Resize(object sender,EventArgs e)
+		{
+			Screen.UpdateValues(window);
+
+			InstantiateRenderingPipeline();
+			//renderingPipeline?.Resize();
+		}
 		internal static void Dispose() {}
 
 		#region Testing
@@ -416,6 +421,5 @@ namespace GameEngine.Graphics
 			GL.End();
 		}*/
 		#endregion
-
 	}
 }

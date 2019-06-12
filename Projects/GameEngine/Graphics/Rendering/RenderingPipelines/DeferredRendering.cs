@@ -10,19 +10,21 @@ namespace GameEngine.Graphics.RenderingPipelines
 		{
 			//Vector2Int ScreenSize() => new Vector2Int(Screen.Width,Screen.Height);
 
+			Debug.Log($"Setting up '{GetType().Name}' rendering pipeline.");
+
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",Screen.Width,Screen.Height,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("normalBuffer",Screen.Width,Screen.Height,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
-					.WithRenderTexture(new RenderTexture("positionBuffer",Screen.Width,Screen.Height,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",Screen.Width,Screen.Height,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("colorBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var colorBuffer)
+					.WithRenderTexture(new RenderTexture("normalBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
+					.WithRenderTexture(new RenderTexture("positionBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",Screen.Width,Screen.Height,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var lightingTexture)
+					.WithRenderTexture(new RenderTexture("lightingBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var lightingTexture)
 			};
 
 			//RenderPasses
@@ -44,17 +46,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 						Resources.Find<Shader>("LightingDirectional"),
 						null
 					),
-				
-				//FXAA test, to be merged with Composite
-				/*new PostProcessPass("FXAA")
-					.WithFramebuffer(mainFramebuffer)
-					.WithPassedTextures(
-						colorBuffer,
-						normalBuffer,
-						positionBuffer,
-						emissionBuffer
-					)
-					.WithShaders(Resources.Find<Shader>("FXAA")),*/
 				
 				//Composite
 				new PostProcessPass("Composite")
@@ -79,6 +70,16 @@ namespace GameEngine.Graphics.RenderingPipelines
 					fb.renderTextures[j].Resize(screenSize.x,screenSize.y);
 				}
 			}*/
+
+			for(int i = 0;i<framebuffers.Length;i++) {
+				var fb = framebuffers[i];
+				for(int j = 0;j<fb.renderTextures.Length;j++) {
+					var rt = fb.renderTextures[j];
+					if(rt.UpdateSize()) {
+						rt.Resize(rt.Width,rt.Height);
+					}
+				}
+			}
 		}
 	}
 }

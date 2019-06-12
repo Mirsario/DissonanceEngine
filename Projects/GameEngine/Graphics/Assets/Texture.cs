@@ -133,8 +133,8 @@ namespace GameEngine.Graphics
 		}
 		internal static void SetupFiltering(FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)
 		{
-			filterMode = filterMode ?? defaultFilterMode;
-			wrapMode = wrapMode ?? defaultWrapMode;
+			filterMode ??= defaultFilterMode;
+			wrapMode ??= defaultWrapMode;
 
 			int magFilter;
 			int minFilter;
@@ -152,6 +152,7 @@ namespace GameEngine.Graphics
 					minFilter = (int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest);
 					break;
 			}
+
 			int wrapModeInt = wrapMode==TextureWrapMode.Repeat ? 10497 : 33071;
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS,wrapModeInt);
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapT,wrapModeInt);

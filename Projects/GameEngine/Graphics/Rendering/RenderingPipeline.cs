@@ -43,13 +43,16 @@ namespace GameEngine.Graphics
 
 		public virtual void Dispose()
 		{
-			if(Framebuffers!=null) {
-				for(int i = 0;i<Framebuffers.Length;i++) {
-					Framebuffers[i].Dispose();
+			var framebuffers = Framebuffers;
+			if(framebuffers!=null) {
+				for(int i = 0;i<framebuffers.Length;i++) {
+					framebuffers[i].Dispose();
 				}
 			}
-			for(int i = 0;i<RenderPasses.Length;i++) {
-				RenderPasses[i].Dispose();
+
+			var renderPasses = RenderPasses;
+			for(int i = 0;i<renderPasses.Length;i++) {
+				renderPasses[i].Dispose();
 			}
 		}
 	}

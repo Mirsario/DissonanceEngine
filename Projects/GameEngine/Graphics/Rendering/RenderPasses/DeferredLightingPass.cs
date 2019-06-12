@@ -42,7 +42,7 @@ namespace GameEngine.Graphics
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
 				var viewRect = camera.ViewPixel;
-				GL.Viewport((int)viewRect.x,(int)viewRect.y,(int)viewRect.width,(int)viewRect.height);
+				GL.Viewport(viewRect.x,viewRect.y,viewRect.width,viewRect.height);
 
 				var cameraPos = camera.Transform.Position;
 
@@ -51,15 +51,18 @@ namespace GameEngine.Graphics
 					if(activeShader==null) {
 						continue;
 					}
+
 					Shader.SetShader(activeShader);
 
 					var lightType = (LightType)j;
 					
 					for(int k=0;k<passedTextures.Length;k++) {
+						var tex = passedTextures[k];
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+k));
-						GL.BindTexture(TextureTarget.Texture2D,passedTextures[k].Id);
+						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
+
 						if(activeShader!=null) {
-							GL.Uniform1(GL.GetUniformLocation(activeShader.program,passedTextures[k].name),k);
+							GL.Uniform1(GL.GetUniformLocation(activeShader.program,tex.name),k);
 						}
 					}
 
@@ -107,14 +110,14 @@ namespace GameEngine.Graphics
 							case LightType.Directional:
 								//TODO: Draw like this should be made into a function
 								GL.Begin(PrimitiveTypeGL.Quads);
-								GL.Vertex2(	-1.0f,-1.0f);
-								GL.TexCoord2(0.0f,0.0f);
-								GL.Vertex2(	-1.0f,1.0f);
-								GL.TexCoord2(0.0f,1.0f);
-								GL.Vertex2(	 1.0f,1.0f);
-								GL.TexCoord2(1.0f,1.0f);
-								GL.Vertex2(	 1.0f,-1.0f);
-								GL.TexCoord2(1.0f,0.0f);
+								GL.Vertex2(	 -1f,-1f);
+								GL.TexCoord2( 0f, 0f);
+								GL.Vertex2(	 -1f, 1f);
+								GL.TexCoord2( 0f, 1f);
+								GL.Vertex2(	  1f, 1f);
+								GL.TexCoord2( 1f, 1f);
+								GL.Vertex2(	  1f,-1f);
+								GL.TexCoord2( 1f, 0f);
 								GL.End();
 								break;
 						}

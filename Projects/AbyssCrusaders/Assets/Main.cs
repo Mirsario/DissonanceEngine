@@ -60,6 +60,8 @@ namespace AbyssCrusaders
 			camera = GameObject.Instantiate<CameraObj>("Camera",new Vector3(0f,0f,10f));
 			var skybox = GameObject.Instantiate<Skybox>();
 
+			Rendering.ambientColor = new Vector3(0f,0f,0f);
+
 			/*var world = World.Create<Overworld>(4096,2048); //World.Create<Overworld>(8192,4096);
 			var player = Entity.Instantiate<Player>(world,"Player",(Vector2)world.spawnPoint);
 			camera = GameObject.Instantiate<CameraObj>("Camera",new Vector3(world.spawnPoint.x,-world.spawnPoint.y,10f));

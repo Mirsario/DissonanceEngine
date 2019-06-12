@@ -20,6 +20,7 @@ namespace GameEngine.Graphics
 			"farClip",
 			"screenWidth",
 			"screenHeight",
+			"screenResolution",
 			"cameraPosition",
 			//Other
 			"color",
@@ -41,11 +42,12 @@ namespace GameEngine.Graphics
 		public const int FarClip = 11;
 		public const int ScreenWidth = 12;
 		public const int ScreenHeight = 13;
-		public const int CameraPosition = 14;
+		public const int ScreenResolution = 14;
+		public const int CameraPosition = 15;
 		//Other
-		public const int Color = 15;
-		public const int MainTex = 16;
+		public const int Color = 16;
+		public const int MainTex = 17;
 		//Count, important
-		public const int Count = 17;
+		public const int Count = 18;
 	}
 }
