@@ -35,7 +35,6 @@ namespace GameEngine
 			assemblies.Remove(engineAssembly);
 			assemblies.Insert(0,engineAssembly);
 
-			int managerAmount = 0;
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
 			foreach(var type in ReflectionCache.engineTypes) {
 				if(!type.IsAbstract && typeof(AssetManager).IsAssignableFrom(type)) {
@@ -45,16 +44,13 @@ namespace GameEngine
 					if(returnType==null) {
 						continue;
 					}
+
 					var realReturnType = returnType.IsArray ? returnType.GetElementType() : returnType;
-					/*if(!typeof(Asset).IsAssignableFrom(realReturnType)) {
-						throw new ArgumentException(type.Name+"'s generic parameter's type ("+realReturnType.Name+") must be derived from ''Asset'' class.");
-					}*/
 					RegisterFormats(realReturnType,manager,manager.Extensions); //Allow overwriting engine's types by games'
+
 					newOrder[0].Add(manager);
-					managerAmount++;
 				}
 			}
-			//Debug.Log("Added "+managerAmount+" content managers");
 			#endregion
 
 			#region SortLoadOrder
@@ -162,14 +158,18 @@ namespace GameEngine
 					engineAssetsByManager.Add(manager,new List<KeyValuePair<string,byte[]>> { pair });
 				}
 			}
+
 			//Enumerate through these assets in loading order
 			for(int i=0;i<autoloadOrder.Length;i++) {
 				var managers = autoloadOrder[i];
+
 				for(int j=0;j<managers.Length;j++) {
 					manager = managers[j];
+					
 					if(!engineAssetsByManager.TryGetValue(manager,out var pairList)) {
 						continue;
 					}
+
 					for(int k=0;k<pairList.Count;k++) {
 						var pair = pairList[k];
 						ImportBuiltInAsset(pair.Key,manager,pair.Value);
@@ -251,45 +251,52 @@ namespace GameEngine
 		internal static T ImportInternal<T>(string filePath,bool addToCache,AssetManager<T> assetManager,bool ntpMultiplePaths) where T : class
 		{
 			ReadyPath(ref filePath);
-			//Debug.Log($"Importing {typeof(T).Name} from "+filePath); 
 
 			if(importingBuiltInAssets || filePath.ToLower().StartsWith(builtInAssetsFolder.ToLower())) {
 				return ImportBuiltInAsset(filePath,assetManager) as T;
 			}
+
 			if(!File.Exists(filePath)) {
 				if(ntpMultiplePaths) {
 					throw new FileNotFoundException($"Couldn't find file '{filePath}' for import. There were multiple path aliases for that filename.");
 				}
 				throw new FileNotFoundException($"Couldn't find file '{filePath}' for import.");
 			}
-            using(var stream = File.OpenRead(filePath)) {
-	            var content = ImportFromStream(stream,assetManager,Path.GetFileName(filePath));
-				cacheByPath[filePath] = content;
-				return content;
-			}
+
+			using var stream = File.OpenRead(filePath);
+			var content = ImportFromStream(stream,assetManager,Path.GetFileName(filePath));
+			cacheByPath[filePath] = content;
+			return content;
 		}
 		internal static object ImportBuiltInAsset(string filePath,AssetManager manager = null,byte[] data = null)
 		{
 			ReadyPath(ref filePath);
+
 			if(data==null) {
 				if(!builtInAssets.TryGetValue(filePath,out data)) {
 					throw new FileNotFoundException("Couldn't find built-in asset at '"+filePath+"'");
 				}
 			}
+
 			if(manager==null) {
 				if(!assetManagers.TryGetValue(Path.GetExtension(filePath).ToLower(),out var list)) {
 					return null;
 				}
 				manager = list[0];
 			}
-			using(var entryStream = new MemoryStream(data)) {
-				var method = typeof(Resources).GetMethod("ImportFromStream",BindingFlags.Public | BindingFlags.Static);
-				var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
-				if(tType==null) { return null; }
-				var result = method.MakeGenericMethod(tType).Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
-				cacheByPath[filePath] = result;
-				return result;
+
+			using var entryStream = new MemoryStream(data);
+
+			var method = typeof(Resources).GetMethod("ImportFromStream",BindingFlags.Public | BindingFlags.Static);
+
+			var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
+			if(tType==null) {
+				return null;
 			}
+
+			var result = method.MakeGenericMethod(tType).Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
+			cacheByPath[filePath] = result;
+			return result;
 		}
 		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string fileName = null) where T : class
 		{
@@ -301,21 +308,20 @@ namespace GameEngine
 						"\nProvide a proper file name, or provide an AssetManager with the ''assetManager'' parameter."
 					);
 				}
+
 				string ext = Path.GetExtension(fileName).ToLower();
 				if(!assetManagers.TryGetValue(ext,out var managers)) {
 					throw new NotImplementedException("Could not find any asset managers for the ''"+ext+"'' extension.");
 				}
+
 				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
 				if(results.Length==0) {
 					throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers which would return a "+type.Name+".");
-					/*throw new NotImplementedException(
-						"Found more than 1 ''"+ext+"'' asset managers which would return a "+type.Name+
-						":\n"+string.Join(",\n",results.Select(q => q.GetType().Name))+
-						"\n\nPlease specify which asset manager should be used via the ''assetManager'' parameter."
-					);*/
 				}
+
 				assetManager = results[0];
 			}
+
 			var output = assetManager.Import(stream,fileName);
 			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.InitAsset(),false);
 			return output;
@@ -328,12 +334,13 @@ namespace GameEngine
 		//Imports and caches files,or gets them from cache, if they have already been loaded.
 		public static T Get<T>(string filePath) where T : class
 		{
-			var type = typeof(T);
 			ReadyPath(ref filePath);
 			NameToPath(ref filePath,out bool ntpMultiplePaths);
+
 			if(cacheByPath.TryGetValue(filePath,out var obj) && obj is T content) {
 				return content;
 			}
+
 			return ImportInternal<T>(filePath,true,null,ntpMultiplePaths);
 		}
 		#endregion
@@ -347,14 +354,17 @@ namespace GameEngine
 		public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
 		{
 			var type = typeof(T);
+
 			if(cacheByName.TryGetValue(type,out var realDict)) {
 				if(realDict.TryGetValue(assetName,out var obj) && obj is T content) {
 					return content;
 				}
 			}
+
 			if(throwOnFail) {
 				throw new Exception($"Couldn't find '{typeof(T).Name}' asset with name '{assetName}'.");
 			}
+
 			return null;
 		}
 		#endregion
@@ -396,6 +406,7 @@ namespace GameEngine
 			if(searchPattern==null) {
 				searchPattern = defaultSearchPattern;
 			}
+
 			var files = new List<string>();
 			void GetFilesRecursion(string currentPath)
 			{
@@ -416,7 +427,9 @@ namespace GameEngine
 					GetFilesRecursion(folderPath);
 				}
 			}
+
 			GetFilesRecursion(path);
+
 			return files.ToArray();
 		}
 
@@ -440,6 +453,7 @@ namespace GameEngine
 				}
 				assetManagers[ext] = list;
 			}
+
 			/*for(int i=0;i<formats.Length;i++) {
 				string format = formats[i];
 				if(!dict.ContainsKey(format) || allowOverwriting) {
@@ -452,9 +466,11 @@ namespace GameEngine
 		public static void SetDefaultManager(string ext,Type type)
 		{
 			ext = ext.ToLower();
+
 			if(!assetManagers.TryGetValue(ext,out var list)) {
 				throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers.");
 			}
+
 			for(int i=0;i<list.Count;i++) {
 				var manager = list[i];
 				var generics = manager.GetType().GetGenericArguments();
@@ -464,12 +480,14 @@ namespace GameEngine
 					return;
 				}
 			}
+
 			throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers which would return a "+type.Name+".");
 		}
 
 		private static void ReadyPath(ref string path)
 		{
 			string lowerPath = path.ToLower();
+
 			if(!Path.IsPathRooted(path)) {
 				if(!lowerPath.StartsWith(builtInAssetsFolder.ToLower()) && !lowerPath.StartsWith("assets/")) {
 					if(importingBuiltInAssets) {
