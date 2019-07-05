@@ -26,11 +26,6 @@ namespace GameEngine
 		private const bool BigScreen = true;
 		private const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
 		private const int DefaultHeight = BigScreen ? 900 : 540; //960;	
-		
-		internal static Game instance;
-		internal static bool shouldQuit;
-		internal static bool preInitDone;
-		internal static bool fixedUpdate;
 
 		public static int targetUpdates = 60;
 		public static int targetFPS = 0;
@@ -39,19 +34,11 @@ namespace GameEngine
 		public static string assetsPath;
 		public static Dictionary<string,string> filePaths;
 		public static GameWindow window;
-
-		//FPS counter
-		//TODO: Move this to Time.cs
-		public static float renderMs;
-		public static float logicMs;
-		public static int renderFrame;
-		public static int logicFrame;
-		public static int renderFPS;
-		public static int logicFPS;
-		private static Stopwatch renderStopwatch;
-		private static Stopwatch logicStopwatch;
-		private static float renderMsTemp;
-		private static float logicMsTemp;
+		
+		internal static Game instance;
+		internal static bool shouldQuit;
+		internal static bool preInitDone;
+		internal static bool fixedUpdate;
 
 		public static bool HasFocus	{ get; internal set; } = true;
 
@@ -118,8 +105,7 @@ namespace GameEngine
 			Debug.Log($"Assets directory is '{assetsPath}'.");
 			AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
 
-			logicStopwatch = new Stopwatch();
-			renderStopwatch = new Stopwatch();
+			Time.Init();
 			Screen.UpdateValues(window);
 			Screen.lockCursor = false;
 			Screen.showCursor = true;
@@ -168,7 +154,6 @@ namespace GameEngine
 			Rendering.Init();
 			GUI.Init();
 			Input.Init();
-			Time.Init();
 			Physics.Init();
 			Audio.Init();
 
@@ -179,8 +164,8 @@ namespace GameEngine
 		internal void FixedUpdateInternal(object sender,FrameEventArgs e)
 		{
 			fixedUpdate = true;
-			logicStopwatch.Restart();
-			
+			Time.PreFixedUpdate();
+
 			if(Screen.lockCursor && window.Focused) {
 				var center = Screen.WindowCenter;
 				Mouse.SetPosition(center.x,center.y);
@@ -209,7 +194,7 @@ namespace GameEngine
 			Input.LateFixedUpdate();
 			Audio.FixedUpdate();
 
-			MeasureFPS(ref logicFPS,ref logicFrame,Time.fixedTime,Time.fixedTimePrev,logicStopwatch,ref logicMs,ref logicMsTemp);
+			Time.PostFixedUpdate();
 		}
 		internal void RenderUpdateInternal(object sender,FrameEventArgs e)
 		{
@@ -219,7 +204,7 @@ namespace GameEngine
 				return;
 			}
 
-			renderStopwatch.Restart();
+			Time.PreRenderUpdate();
 
 			Time.UpdateRender(e.Time);
 			Input.RenderUpdate();
@@ -240,7 +225,7 @@ namespace GameEngine
 			Rendering.Render();
 			Input.LateRenderUpdate();
 
-			MeasureFPS(ref renderFPS,ref renderFrame,Time.renderTime,Time.renderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
+			Time.PostRenderUpdate();
 		}
 		internal void ApplicationQuit(object sender,CancelEventArgs e)
 		{
@@ -256,19 +241,6 @@ namespace GameEngine
 		public virtual void OnApplicationQuit() {}
 
 		public static void Quit() => window.Exit();
-		
-		internal static void MeasureFPS(ref int fps,ref int frames,float time,float timePrev,Stopwatch stopwatch,ref float ms,ref float msTemp) //Move this somewhere
-		{
-			frames++;
-			msTemp += stopwatch.ElapsedMilliseconds;
-
-			if(Mathf.FloorToInt(time)>Mathf.FloorToInt(timePrev)) {
-				fps = frames;
-				frames = 0;
-				ms = msTemp/Math.Max(1,fps);
-				msTemp = 0f;
-			}
-		}
 		
 		private static void OnFocusChange(object sender,EventArgs e) => HasFocus = window.Focused;
 		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
