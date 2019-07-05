@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -8,28 +9,18 @@ namespace GameEngine.Graphics
 {
 	public static partial class Rendering
 	{
+		private static Regex regexGLVersion = new Regex(@".*?([\d.]+).*",RegexOptions.Compiled);
+		
 		public static Version GetOpenGLVersion()
 		{
 			string versionStr = GL.GetString(StringName.Version);
-			var strings = new List<string>();
-			bool recording = false;
-			for(int i=0;i<versionStr.Length;i++) {
-				char c = versionStr[i];
-				if(char.IsDigit(c) || c=='.' && recording) {
-					if(!recording) {
-						strings.Add(char.ToString(c));
-						recording = true;
-					}else{
-						strings[strings.Count-1] += c;
-					}
-				}else{
-					recording = false;
-				}
+			
+			var match = regexGLVersion.Match(versionStr);
+			if(!match.Success) {
+				throw new Exception("Unable to read OpenGL version. This is sad...");
 			}
 
-			var versions = strings.Select(s => new Version(s)).ToArray();
-			var testVer = new Version(6,0);
-			return versions.First(v => v<testVer);
+			return new Version(match.Groups[1].Value);
 		}
 		public static bool CheckGLErrors(bool throwException = true,object prefix = null)
 		{
