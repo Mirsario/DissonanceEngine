@@ -123,7 +123,7 @@ namespace GameEngine.Graphics
 			var glVersion = GetOpenGLVersion();
 			var minVersion = new Version("3.3");
 			if(glVersion<minVersion) {
-				throw new GraphicsException($"Please update your graphics drivers.\nMinimum OpenGL version required to run this application is: {minVersion}\nYour OpenGL version is: {glVersion}");
+				throw new GraphicsException($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
 			CheckGLErrors(); //Do not remove
 
