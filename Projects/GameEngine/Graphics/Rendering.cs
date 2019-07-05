@@ -77,21 +77,6 @@ namespace GameEngine.Graphics
 			{ TextureFormat.Depth32fStencil8,	(PixelFormat.DepthStencil,		PixelInternalFormat.Depth32fStencil8,	PixelType.Float32UnsignedInt248Rev,	typeof(float)) },	//24+8
 			#endregion
 		};
-		public static Dictionary<PixelInternalFormat,PixelFormat> pixelFormatConversion = new Dictionary<PixelInternalFormat,PixelFormat> {
-			{PixelInternalFormat.Rgb16,				PixelFormat.Rgb},
-			{PixelInternalFormat.Rgb16f,			PixelFormat.Rgb},
-			{PixelInternalFormat.Rgb32f,			PixelFormat.Rgb},
-			{PixelInternalFormat.Rgba16,			PixelFormat.Rgba},
-			{PixelInternalFormat.Rgba16f,			PixelFormat.Rgba},
-			{PixelInternalFormat.Rgba32f,			PixelFormat.Rgba},
-			{PixelInternalFormat.DepthComponent16,	PixelFormat.DepthComponent},
-			{PixelInternalFormat.DepthComponent24,	PixelFormat.DepthComponent},
-			{PixelInternalFormat.DepthComponent32,	PixelFormat.DepthComponent},
-			{PixelInternalFormat.DepthComponent32f,	PixelFormat.DepthComponent},
-			{PixelInternalFormat.Depth24Stencil8,	PixelFormat.DepthStencil},
-			{PixelInternalFormat.Depth32fStencil8,	PixelFormat.DepthStencil},
-			{PixelInternalFormat.DepthStencil,		PixelFormat.DepthStencil},
-		};
 		#endregion
 
 		internal static GameWindow window;
@@ -111,7 +96,7 @@ namespace GameEngine.Graphics
 		#region Hardcoded
 		//TODO: To be moved
 		private static Shader guiShader;
-		public static Shader GUIShader => guiShader ?? (guiShader = Resources.Find<Shader>("GUI"));
+		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI");
 		#endregion
 
 		internal static void PreInit()
@@ -125,6 +110,7 @@ namespace GameEngine.Graphics
 			if(glVersion<minVersion) {
 				throw new GraphicsException($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
+
 			CheckGLErrors(); //Do not remove
 
 			#region FontImport
