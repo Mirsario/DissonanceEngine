@@ -50,22 +50,22 @@ namespace GameEngine
 		{
 			//Debug.StartStopwatch("meshApply");
 			if(vertices==null || vertices.Length==0) {
-				throw new Exception("Mesh's vertice array cannot be null or empty");
+				throw new ArgumentException("Mesh's vertice array cannot be null or empty");
 			}
 			if(triangles==null || triangles.Length==0) {
-				throw new Exception("Mesh's triangle array cannot be null or empty");
+				throw new ArgumentException("Mesh's triangle array cannot be null or empty");
 			}
 			if(normals!=null && normals.Length!=vertices.Length) {
-				throw new Exception("Mesh's normals array is supposed to be the same length as vertices or be null");
+				throw new ArgumentException("Mesh's normals array is supposed to be the same length as vertices or be null");
 			}
 			if(tangents!=null && tangents.Length!=vertices.Length) {
-				throw new Exception("Mesh's tangents array is supposed to be the same length as vertices or be null");
+				throw new ArgumentException("Mesh's tangents array is supposed to be the same length as vertices or be null");
 			}
 			if(colors!=null && colors.Length!=vertices.Length) {
-				throw new Exception("Mesh's colors array is supposed to be the same length as vertices or be null");
+				throw new ArgumentException("Mesh's colors array is supposed to be the same length as vertices or be null");
 			}
 			if(uv!=null && uv.Length!=vertices.Length) {
-				throw new Exception("Mesh's uv array is supposed to be the same length as vertices or be null");
+				throw new ArgumentException("Mesh's uv array is supposed to be the same length as vertices or be null");
 			}
 
 			float xMin = 0f; float xMax = 0f;
@@ -76,6 +76,7 @@ namespace GameEngine
 			vertexSize = 3+(uv!=null ? 2 : 0)+(normals!=null ? 3 : 0)+(colors!=null ? 4 : 0)+(tangents!=null ? 4 : 0)+(boneWeights!=null ? 8 : 0);
 			var vertexData = new float[vertexSize*vertices.Length];
 			vertexSize *= sizeof(float);
+
 			int j = 0;
 			for(int i = 0;i<vertices.Length;i++) {
 				//Bounding box stuff
@@ -94,17 +95,20 @@ namespace GameEngine
 				}else if(vertices[i].z<zMin) {
 					zMin = vertices[i].z;
 				}
+
 				//Map all data to 1D array
 				vertexData[j] = vertices[i].x;
 				vertexData[j+1] = vertices[i].y;
 				vertexData[j+2] = vertices[i].z;
 				j += 3;
+
 				if(normals!=null) {
 					vertexData[j] = normals[i].x;
 					vertexData[j+1] = normals[i].y;
 					vertexData[j+2] = normals[i].z;
 					j += 3;
 				}
+
 				if(tangents!=null) {
 					vertexData[j] = tangents[i].x;
 					vertexData[j+1] = tangents[i].y;
@@ -112,6 +116,7 @@ namespace GameEngine
 					vertexData[j+3] = tangents[i].w;
 					j += 4;
 				}
+
 				if(colors!=null) {
 					vertexData[j] = colors[i].x;
 					vertexData[j+1] = colors[i].y;
@@ -119,6 +124,7 @@ namespace GameEngine
 					vertexData[j+3] = colors[i].w;
 					j += 4;
 				}
+
 				if(boneWeights!=null) {
 					vertexData[j] = boneWeights[i].boneIndex0;
 					vertexData[j+1] = boneWeights[i].boneIndex1;
@@ -130,21 +136,25 @@ namespace GameEngine
 					vertexData[j+7] = boneWeights[i].weight3;
 					j += 8;
 				}
+
 				if(uv!=null) {
 					vertexData[j] = uv[i].x;
 					vertexData[j+1] = 1f-uv[i].y;
 					j += 2;
 				}
 			}
+
 			boundsCenter = new Vector3((xMin+xMax)/2f,(yMin+yMax)/2f,(zMin+zMax)/2f);
 			boundsExtent = new Vector3(
 				Mathf.Max(Mathf.Abs(xMin),Mathf.Abs(xMax))-boundsCenter.x,
 				Mathf.Max(Mathf.Abs(yMin),Mathf.Abs(yMax))-boundsCenter.y,
 				Mathf.Max(Mathf.Abs(zMin),Mathf.Abs(zMax))-boundsCenter.z
 			);
+
 			if(vertexBufferId==-1) {
 				vertexBufferId = GL.GenBuffer();
 			}
+
 			GL.BindBuffer(BufferTarget.ArrayBuffer,vertexBufferId);
 			GL.BufferData(BufferTarget.ArrayBuffer,(IntPtr)(sizeof(float)*vertexData.Length),vertexData,BufferUsageHint.StaticDraw);
 			GL.BindBuffer(BufferTarget.ArrayBuffer,0);
@@ -152,10 +162,10 @@ namespace GameEngine
 			if(indexBufferId==-1) {
 				indexBufferId = GL.GenBuffer();
 			}
+
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,indexBufferId);
 			GL.BufferData(BufferTarget.ElementArrayBuffer,(IntPtr)(sizeof(int)*triangles.Length),triangles,BufferUsageHint.StaticDraw);
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,0);
-			//Debug.EndStopwatch("meshApply");
 		}
 		public void RecalculateNormals()
 		{
@@ -168,29 +178,31 @@ namespace GameEngine
 				newNormals[triangles[i*3+1]] -= normal;
 				newNormals[triangles[i*3+2]] -= normal;
 			}
+
 			var zero = Vector3.zero;
 			for(int i=0;i<vertices.Length;i++) {
 				if(newNormals[i]!=zero) {
 					newNormals[i].Normalize();
 				}
 			}
+			
 			normals = newNormals;
 		}
 		public void RecalculateTangents()
 		{
-			//Debug.Log("Recalculating tangents");
 			if(uv==null) {
 				throw new Exception("RecalculateTangents() requires a working UV array");
 			}
 			if(normals==null) {
 				throw new Exception("RecalculateTangents() requires a working array of normals, call RecalculateNormals() first");
 			}
-			int vertexCount = vertices.Length;
+
+			int verticeCount = vertices.Length;
 			int triangleCount = triangles.Length/3;
 
-			tangents = new Vector4[vertexCount];
-			var tan1 = new Vector3[vertexCount];
-			var tan2 = new Vector3[vertexCount];
+			tangents = new Vector4[verticeCount];
+			var tan1 = new Vector3[verticeCount];
+			var tan2 = new Vector3[verticeCount];
 
 			int tri = 0;
 
@@ -233,7 +245,8 @@ namespace GameEngine
 
 				tri += 3;
 			}
-			for(int i=0;i<vertexCount;i++)  {
+
+			for(int i=0;i<verticeCount;i++)  {
 				var n = normals[i];
 				var t = tan1[i];
 

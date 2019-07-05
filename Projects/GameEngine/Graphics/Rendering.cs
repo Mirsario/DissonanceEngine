@@ -109,7 +109,7 @@ namespace GameEngine.Graphics
 		public static RenderingPipeline RenderingPipeline => renderingPipeline;
 		
 		#region Hardcoded
-		//TODO: All this is to be improved
+		//TODO: To be moved
 		private static Shader guiShader;
 		public static Shader GUIShader => guiShader ?? (guiShader = Resources.Find<Shader>("GUI"));
 		#endregion

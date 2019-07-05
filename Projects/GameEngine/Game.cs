@@ -23,18 +23,14 @@ namespace GameEngine
 	public class Game : IDisposable
 	{
 		//Debug
-		private const bool bigScreen = true;
-		private const int defaultWidth = bigScreen ? 1600 : 960; //1600;	
-		private const int defaultHeight = bigScreen ? 900 : 540; //960;	
+		private const bool BigScreen = true;
+		private const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
+		private const int DefaultHeight = BigScreen ? 900 : 540; //960;	
 		
 		internal static Game instance;
 		internal static bool shouldQuit;
 		internal static bool preInitDone;
 		internal static bool fixedUpdate;
-		/*#if DEBUG
-		internal static FileSystemWatcher fileWatcher;
-		internal DateTime lastWriteDate = DateTime.MinValue;
-		#endif*/
 
 		public static int targetUpdates = 60;
 		public static int targetFPS = 0;
@@ -45,18 +41,17 @@ namespace GameEngine
 		public static GameWindow window;
 
 		//FPS counter
-		//TODO: Move FPS counting to Time.cs
-		private static Stopwatch logicStopwatch;
-		public static int logicFrame;
-		public static int logicFPS;
-		public static float logicMs;
-		private static float logicMsTemp;
-		//
-		public static Stopwatch renderStopwatch;
-		public static int renderFrame;
-		public static int renderFPS;
+		//TODO: Move this to Time.cs
 		public static float renderMs;
+		public static float logicMs;
+		public static int renderFrame;
+		public static int logicFrame;
+		public static int renderFPS;
+		public static int logicFPS;
+		private static Stopwatch renderStopwatch;
+		private static Stopwatch logicStopwatch;
 		private static float renderMsTemp;
+		private static float logicMsTemp;
 
 		public static bool HasFocus	{ get; internal set; } = true;
 
@@ -87,7 +82,7 @@ namespace GameEngine
 			PreInit();
 			preInitDone = true;
 
-			Rendering.window = window = new GameWindow(defaultWidth,defaultHeight,GraphicsMode.Default,displayName);
+			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName);
 			
 			window.VSync = VSyncMode.Off;
 			
@@ -108,6 +103,11 @@ namespace GameEngine
 			window.Closing += ApplicationQuit;
 
 			window.Run(Time.targetUpdateCount,Time.targetRenderCount);
+		}
+		public void Dispose()
+		{
+			Rendering.Dispose();
+			Physics.Dispose();
 		}
 
 		internal void Init()
@@ -180,10 +180,12 @@ namespace GameEngine
 		{
 			fixedUpdate = true;
 			logicStopwatch.Restart();
+			
 			if(Screen.lockCursor && window.Focused) {
 				var center = Screen.WindowCenter;
 				Mouse.SetPosition(center.x,center.y);
 			}
+
             window.CursorVisible = Screen.showCursor || !window.Focused;
 			Screen.UpdateValues(window);
 
@@ -193,11 +195,15 @@ namespace GameEngine
 			Physics.Update();
 			FixedUpdate();
 
-			if(shouldQuit) { return; }
+			if(shouldQuit) {
+				return;
+			}
 			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
 
-			if(shouldQuit) { return; }
+			if(shouldQuit) {
+				return;
+			}
 
 			Physics.UpdateFixed();
 			Input.LateFixedUpdate();
@@ -209,7 +215,9 @@ namespace GameEngine
 		{
 			fixedUpdate = false;
 
-			if(shouldQuit) { return; }
+			if(shouldQuit) {
+				return;
+			}
 
 			renderStopwatch.Restart();
 
@@ -218,11 +226,15 @@ namespace GameEngine
 
 			RenderUpdate();
 
-			if(shouldQuit) { return; }
+			if(shouldQuit) {
+				return;
+			}
 			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
 
-			if(shouldQuit) { return; }
+			if(shouldQuit) {
+				return;
+			}
 
 			Physics.UpdateRender();
 			Rendering.Render();
@@ -235,27 +247,21 @@ namespace GameEngine
 			shouldQuit = true;
 			instance.Dispose();
 		}
-		public void Dispose()
-		{
-			Rendering.Dispose();
-			Physics.Dispose();
-		}
 
-		#region VirtualMethods
 		public virtual void PreInit() {}
 		public virtual void Start() {}
 		public virtual void FixedUpdate() {}
 		public virtual void RenderUpdate() {}
 		public virtual void OnGUI() {}
 		public virtual void OnApplicationQuit() {}
-		#endregion
 
-		#region StaticMethods
-		//Move this somewhere
-		internal static void MeasureFPS(ref int fps,ref int frames,float time,float timePrev,Stopwatch stopwatch,ref float ms,ref float msTemp)
+		public static void Quit() => window.Exit();
+		
+		internal static void MeasureFPS(ref int fps,ref int frames,float time,float timePrev,Stopwatch stopwatch,ref float ms,ref float msTemp) //Move this somewhere
 		{
-			msTemp += stopwatch.ElapsedMilliseconds;
 			frames++;
+			msTemp += stopwatch.ElapsedMilliseconds;
+
 			if(Mathf.FloorToInt(time)>Mathf.FloorToInt(timePrev)) {
 				fps = frames;
 				frames = 0;
@@ -263,22 +269,16 @@ namespace GameEngine
 				msTemp = 0f;
 			}
 		}
-		//Move this somewhere
-		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e)
+		
+		private static void OnFocusChange(object sender,EventArgs e) => HasFocus = window.Focused;
+		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
 		{
 			#if WINDOWS
 			var exception = (Exception)e.ExceptionObject;
 			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
 			#endif
+			
 			Quit();	
 		}
-
-		private static void OnFocusChange(object sender,EventArgs e)
-		{
-			HasFocus = window.Focused;
-		}
-
-		public static void Quit() => window.Exit();
-#endregion
 	}
 }
