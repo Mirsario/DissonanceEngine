@@ -84,10 +84,10 @@ namespace AbyssCrusaders
 				menuController.OnGUI();
 			}else{
 				float y = 0.5f;
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render FPS: {renderFPS }");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render MS: {renderMs.ToString("0.00")}");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic FPS: {logicFPS}");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic MS: {logicMs.ToString("0.00")}");
+				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render FPS: {Time.RenderFramerate }");
+				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render MS: {Time.RenderMs:0.00}");
+				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic FPS: {Time.LogicFramerate}");
+				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic MS: {Time.LogicMs:0.00}");
 				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Draw Calls Count: {Rendering.drawCallsCount}");
 			}
 		}
