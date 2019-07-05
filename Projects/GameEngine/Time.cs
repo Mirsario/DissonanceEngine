@@ -54,7 +54,6 @@ namespace GameEngine
 		private static uint renderFrame;
 		private static uint renderFPS;
 
-		//Main
 		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
 		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
 		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
@@ -68,14 +67,14 @@ namespace GameEngine
 		public static uint RenderFramerate => renderFPS;
 		public static float RenderMs => renderMs;
 
-		internal static float _timeScale = 1f;
+		internal static float timeScale = 1f;
 		public static float TimeScale {
-			get => _timeScale;
+			get => timeScale;
 			set {
 				if(value<0f) {
 					throw new Exception("TimeScale cannot be negative.");
 				}
-				_timeScale = value;
+				timeScale = value;
 			}
 		}
 		

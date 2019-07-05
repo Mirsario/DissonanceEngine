@@ -10,7 +10,7 @@ namespace GameEngine.Graphics
 {
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
-	public static class Rendering
+	public static partial class Rendering
 	{
 		#region PixelFormats
 		//Move this
@@ -114,7 +114,6 @@ namespace GameEngine.Graphics
 		public static Shader GUIShader => guiShader ?? (guiShader = Resources.Find<Shader>("GUI"));
 		#endregion
 
-		#region Initialization
 		internal static void PreInit()
 		{
 			renderingPipelineType = typeof(JSONRenderingPipeline);
@@ -150,8 +149,7 @@ namespace GameEngine.Graphics
 			
 			whiteTexture = new Texture(1,1);
 		}
-		#endregion
-		#region Rendering
+
 		internal static void Render()
 		{
 			drawCallsCount = 0;
@@ -171,9 +169,9 @@ namespace GameEngine.Graphics
 				camera.matrix_projInverse = Matrix4x4.Invert(camera.matrix_proj);
 				camera.CalculateFrustum(camera.matrix_view*camera.matrix_proj);
 			}
+
 			//Clear buffers
 			//GL.Enable(EnableCap.StencilTest);
-
 			if(renderingPipeline.Framebuffers!=null) {
 				int length = renderingPipeline.Framebuffers?.Length ?? 0;
 				for(int i=0;i<=length;i++) {
@@ -198,6 +196,7 @@ namespace GameEngine.Graphics
 			}
 
 			Framebuffer.Bind(null);
+
 			//GL.Disable(EnableCap.StencilTest);
 
 			#region RenderTargetDebug
@@ -278,80 +277,6 @@ namespace GameEngine.Graphics
 			GL.BlendFunc(BlendingFactor.One,BlendingFactor.Zero);
 			GL.Disable(EnableCap.Blend);
 		}
-		#endregion
-		#region Utils
-		#region ErrorChecks
-		public static bool CheckGLErrors(bool throwException = true,object prefix = null)
-		{
-			if(prefix==null) {
-				prefix = "";
-			}
-
-			ErrorCode error = GL.GetError();
-			switch(error) {
-				case ErrorCode.NoError:
-					return false;
-				default:
-					if(throwException) {
-						throw new GraphicsException(prefix.ToString()+error);
-					}else{
-						Debug.Log(prefix.ToString()+error,stackframeOffset:2);
-					}
-					return true;
-			}
-		}
-		internal static void CheckFramebufferStatus()
-		{
-			var errorCode = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
-			switch(errorCode) {
-				case FramebufferErrorCode.FramebufferComplete:
-					return;
-				case FramebufferErrorCode.FramebufferIncompleteAttachment:
-					throw new Exception("An attachment could not be bound to frame buffer object!");
-				case FramebufferErrorCode.FramebufferIncompleteMissingAttachment:
-					throw new Exception("Attachments are missing! At least one image (texture) must be bound to the frame buffer object!");
-				case FramebufferErrorCode.FramebufferIncompleteDimensionsExt:
-					throw new Exception("The dimensions of the buffers attached to the currently used frame buffer object do not match!");
-				case FramebufferErrorCode.FramebufferIncompleteFormatsExt:
-					throw new Exception("The formats of the currently used frame buffer object are not supported or do not fit together!");
-				case FramebufferErrorCode.FramebufferIncompleteDrawBuffer:
-					throw new Exception("A Draw buffer is incomplete or undefinied. All draw buffers must specify attachment points that have images attached.");
-				case FramebufferErrorCode.FramebufferIncompleteReadBuffer:
-					throw new Exception("A Read buffer is incomplete or undefinied. All read buffers must specify attachment points that have images attached.");
-				case FramebufferErrorCode.FramebufferIncompleteMultisample:
-					throw new Exception("All images must have the same number of multisample samples.");
-				case FramebufferErrorCode.FramebufferIncompleteLayerTargets :
-					throw new Exception("If a layered image is attached to one attachment,then all attachments must be layered attachments. The attached layers do not have to have the same number of layers,nor do the layers have to come from the same kind of texture.");
-				case FramebufferErrorCode.FramebufferUnsupported:
-					throw new Exception("Attempt to use an unsupported format combinaton!");
-				default:
-					throw new Exception("Unknown error while attempting to create frame buffer object!");
-			}
-		}
-		#endregion
-		public static Version GetOpenGLVersion()
-		{
-			string versionStr = GL.GetString(StringName.Version);
-			var strings = new List<string>();
-			bool recording = false;
-			for(int i=0;i<versionStr.Length;i++) {
-				char c = versionStr[i];
-				if(char.IsDigit(c) || c=='.' && recording) {
-					if(!recording) {
-						strings.Add(char.ToString(c));
-						recording = true;
-					}else{
-						strings[strings.Count-1] += c;
-					}
-				}else{
-					recording = false;
-				}
-			}
-			var versions = strings.Select(s => new Version(s)).ToArray();
-			var testVer = new Version(6,0);
-			return versions.First(v => v<testVer);
-		}
-		#endregion
 		
 		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
 		{
@@ -361,6 +286,7 @@ namespace GameEngine.Graphics
 				InstantiateRenderingPipeline();
 			}
 		}
+
 		internal static void InstantiateRenderingPipeline()
 		{
 			renderingPipeline?.Dispose();
@@ -368,58 +294,12 @@ namespace GameEngine.Graphics
 			renderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
 			renderingPipeline.Init();
 		}
-		//TODO: Actually make window resizing a thing.
 		internal static void Resize(object sender,EventArgs e)
 		{
 			Screen.UpdateValues(window);
 
 			InstantiateRenderingPipeline();
-			//renderingPipeline?.Resize();
 		}
 		internal static void Dispose() {}
-
-		#region Testing
-		/*internal static void TestStencils()
-		{
-			GL.Ext.BindFramebuffer(FramebufferTarget.Framebuffer,1);	
-			GL.Enable(EnableCap.StencilTest);
-			GL.ClearStencil(0);
-			GL.Clear(ClearBufferMask.StencilBufferBit);
-			
-			GL.StencilFunc(StencilFunction.Always,1,1);	//Not testing,but writing
-			GL.StencilOp(StencilOp.Keep,StencilOp.Keep,StencilOp.Replace);//Write options
-			GL.StencilMask(1);
-			TestStencil(0.25f,true,new Vector3(1f,0.8f,0f));
-			
-			GL.Ext.BindFramebuffer(FramebufferTarget.Framebuffer,2);	
-			GL.StencilFunc(StencilFunction.Notequal,1,1);
-			GL.StencilOp(StencilOp.Keep,StencilOp.Keep,StencilOp.Keep);//Write options
-			TestStencil(0.5f);
-			GL.Disable(EnableCap.StencilTest);
-		}*/
-		/*public static void TestStencils2()
-		{
-			GL.StencilFunc(StencilFunction.Notequal,0x01,0x01);
-			TestStencil(1f);
-		}*/
-		/*public static void TestStencil(float s = 1f,bool reset = true,Vector3? col = null)
-		{
-			if(reset) {
-				//GL.Ext.BindFramebuffer(FramebufferTarget.Framebuffer,0);
-				//GL.DrawBuffers(1,nullDrawBuffers);
-				GL.UseProgram(0);
-				GL.ActiveTexture(TextureUnit.Texture0);
-				GL.BindTexture(TextureTarget.Texture2D,0);
-			}
-			Vector3 col2 = col==null ? new Vector3(0f,0f,0.5f) : col.Value;
-			GL.Begin(PrimitiveTypeGL.Quads);
-				GL.Color3(col2.x,col2.y,col2.z);
-				GL.Vertex2(-s,s);	GL.TexCoord2(0,s);
-				GL.Vertex2(-s,-s);	GL.TexCoord2(0,0);
-				GL.Vertex2( s,-s);	GL.TexCoord2(s,0);
-				GL.Vertex2( s,s);	GL.TexCoord2(s,s);
-			GL.End();
-		}*/
-		#endregion
 	}
 }

@@ -105,6 +105,7 @@
     <Compile Include="Graphics\GUI\Font.cs" />
     <Compile Include="Graphics\GUI\GUI.cs" />
     <Compile Include="Graphics\JSON_RenderSettings.cs" />
+    <Compile Include="Graphics\Rendering.Utils.cs" />
     <Compile Include="Graphics\Rendering\Enums\AttributeId.cs" />
     <Compile Include="Graphics\Rendering\Enums\CullMode.cs" />
     <Compile Include="Graphics\Rendering\Enums\TextureAttachmentType.cs" />

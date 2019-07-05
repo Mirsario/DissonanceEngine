@@ -15,8 +15,6 @@ namespace GameEngine.Graphics
 			set => renderPasses = value ?? new RenderPass[0];
 		}
 
-		protected RenderingPipeline() {}
-
 		internal void Init()
 		{
 			Setup(out var tempFramebuffers,out var tempRenderPasses);
@@ -43,14 +41,12 @@ namespace GameEngine.Graphics
 
 		public virtual void Dispose()
 		{
-			var framebuffers = Framebuffers;
 			if(framebuffers!=null) {
 				for(int i = 0;i<framebuffers.Length;i++) {
 					framebuffers[i].Dispose();
 				}
 			}
 
-			var renderPasses = RenderPasses;
 			for(int i = 0;i<renderPasses.Length;i++) {
 				renderPasses[i].Dispose();
 			}
