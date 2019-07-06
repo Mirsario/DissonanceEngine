@@ -216,7 +216,8 @@ namespace GameEngine.Graphics
 					Framebuffer.Bind(framebuffer,Framebuffer.Target.ReadFramebuffer);
 
 					for(int j=0;j<framebuffer.renderTextures.Length;j++) {
-						if(IsDepthTexture(framebuffer.renderTextures[j])) {
+						var tex = framebuffer.renderTextures[j];
+						if(IsDepthTexture(tex)) {
 							continue;
 						}
 						GL.ReadBuffer((ReadBufferMode)((int)ReadBufferMode.ColorAttachment0+j));
@@ -224,8 +225,9 @@ namespace GameEngine.Graphics
 						int wSize = Screen.width/size;
 						int hSize = Screen.height/size;
 						GL.BlitFramebuffer(
-							0,		0,					Screen.Width,Screen.Height,
-							x*wSize,(size-y-1)*hSize,	(x+1)*wSize, (size-y)*hSize,
+							//					//					//					//
+							0,					0,					tex.Width,			tex.Height,
+							x*wSize,			(size-y-1)*hSize,	(x+1)*wSize,		(size-y)*hSize,
 							ClearBufferMask.ColorBufferBit,
 							BlitFramebufferFilter.Nearest
 						);
