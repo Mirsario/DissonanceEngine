@@ -72,8 +72,8 @@ namespace GameEngine
 			PreInit();
 			preInitDone = true;
 
-			var device = DisplayDevice.Default;
-			Rendering.window = window = new GameWindow(device.Width,device.Height,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
+			//var device = DisplayDevice.Default;
+			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
 			
 			window.VSync = VSyncMode.Off;
 			
@@ -167,13 +167,6 @@ namespace GameEngine
 		}
 		internal void FixedUpdateInternal(object sender,FrameEventArgs e)
 		{
-			//TODO: This is a temporary fix for what seems to be an OpenTK bug, which introduces issues with setting GL.Viewport's width & height to values bigger than window's original Width & Height. There must be a better solution.
-			if(!resizedWindow) {
-				window.Location = new System.Drawing.Point((window.Width/2)-(DefaultWidth/2),(window.Height/2)-(DefaultHeight/2));
-				window.Size = new System.Drawing.Size(DefaultWidth,DefaultHeight);
-				resizedWindow = true;
-			}
-			
 			fixedUpdate = true;
 			Time.PreFixedUpdate();
 
@@ -209,6 +202,13 @@ namespace GameEngine
 		}
 		internal void RenderUpdateInternal(object sender,FrameEventArgs e)
 		{
+			/*//TODO: This is a temporary fix for what seems to be an OpenTK bug, which introduces issues with setting GL.Viewport's width & height to values bigger than window's original Width & Height. There must be a better solution.
+			if(!resizedWindow) {
+				window.Location = new System.Drawing.Point((window.Width/2)-(DefaultWidth/2),(window.Height/2)-(DefaultHeight/2));
+				window.Size = new System.Drawing.Size(DefaultWidth,DefaultHeight);
+				Screen.UpdateValues(window);
+				resizedWindow = true;
+			}*/
 			fixedUpdate = false;
 
 			if(shouldQuit) {

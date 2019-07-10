@@ -13,16 +13,14 @@ namespace AbyssCrusaders
 
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
-			var resNormal = Screen.Size;
-			//var resLighting = Screen.Size/4;
-
-			static Vector2Int LightingSize() => new Vector2Int((int)(Screen.Width/(Main.camera?.zoomGoal ?? 1f)),(int)(Screen.Height/(Main.camera?.zoomGoal ?? 1f)));
+			static Vector2Int ScreenSize() => Screen.Size;
+			static Vector2Int LightingSize() => Screen.Size/4; //new Vector2Int((int)(Screen.Width/(Main.camera?.zoomGoal ?? 1f)),(int)(Screen.Height/(Main.camera?.zoomGoal ?? 1f)));
 
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",resNormal.x,resNormal.y),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",resNormal.x,resNormal.y),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("colorBuffer",ScreenSize),out var colorBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
@@ -42,11 +40,12 @@ namespace AbyssCrusaders
 						if(c!=null) {
 							var view = c.ViewPixel;
 							var cam = Main.camera;
-							float zoom = cam.zoom;
-							return new RectInt(
+							float zoom = cam.zoomGoal;
+							var rect = new RectInt(
 								(int)(Math.Floor(view.x/zoom)*zoom),(int)(Math.Floor(view.y/zoom)*zoom),
 								(int)(view.width/zoom),				(int)(view.height/zoom)
 							);
+							return rect;
 						}
 						return Screen.Rectangle;
 					})

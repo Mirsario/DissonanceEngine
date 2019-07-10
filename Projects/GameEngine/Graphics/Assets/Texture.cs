@@ -34,6 +34,10 @@ namespace GameEngine.Graphics
 			Id = GL.GenTexture();
 			Width = width;
 			Height = height;
+
+			this.filterMode = filterMode ?? defaultFilterMode;
+			this.wrapMode = wrapMode ?? defaultWrapMode;
+			this.useMipmaps = useMipmaps;
 			
 			var fillColor = new Pixel(255,255,255,255);
 			int length = width*height;

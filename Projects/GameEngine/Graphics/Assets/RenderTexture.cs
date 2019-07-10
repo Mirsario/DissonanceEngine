@@ -11,31 +11,22 @@ namespace GameEngine.Graphics
 		public readonly Func<Vector2Int> TargetSize;
 		public readonly TextureFormat TextureFormat;
 		
+		public RenderTexture(string name,Func<Vector2Int> targetSize,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true,TextureFormat textureFormat = TextureFormat.RGBA8)
+			: this(name,targetSize().x,targetSize().y,filterMode,wrapMode,useMipmaps,textureFormat)
+		{
+			TargetSize = targetSize;
+		}
 		public RenderTexture(string name,int width,int height,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true,TextureFormat textureFormat = TextureFormat.RGBA8)
 		{
 			Id = GL.GenTexture();
 			Width = width;
 			Height = height;
 			TextureFormat = textureFormat;
+
 			this.name = name;
-
-			var (formatGeneral,formatInternal,_,_) = Rendering.textureFormatInfo[textureFormat];
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,width,height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
-		}
-
-		public RenderTexture(string name,Func<Vector2Int> targetSize,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true,TextureFormat textureFormat = TextureFormat.RGBA8)
-		{
-			Id = GL.GenTexture();
-			TargetSize = targetSize;
-			TextureFormat = textureFormat;
-			this.name = name;
-
-			var size = (targetSize ?? throw new ArgumentNullException(nameof(targetSize)))();
-			Width = size.x;
-			Height = size.y;
+			this.filterMode = filterMode ?? defaultFilterMode;
+			this.wrapMode = wrapMode ?? defaultWrapMode;
+			this.useMipmaps = useMipmaps;
 
 			Debug.Log($"Created [{Width},{Height}] RenderTexture");
 
@@ -94,7 +85,7 @@ namespace GameEngine.Graphics
 			GL.BindTexture(TextureTarget.Texture2D,Id);
 			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,Width,Height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
 
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
+			SetupFiltering(null,null,false);
 		}
 
 		/*public RenderTexture(int width,int height,PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f,PixelFormat pixelFormat = PixelFormat.Rgba,PixelType pixelType = PixelType.UnsignedByte)
