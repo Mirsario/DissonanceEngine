@@ -14,21 +14,23 @@ namespace AbyssCrusaders
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
 			var resNormal = Screen.Size;
-			var resLighting = Screen.Size/4;
+			//var resLighting = Screen.Size/4;
+
+			static Vector2Int LightingSize() => new Vector2Int((int)(Screen.Width/(Main.camera?.zoomGoal ?? 1f)),(int)(Screen.Height/(Main.camera?.zoomGoal ?? 1f)));
 
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
 					.WithRenderTexture(new RenderTexture("colorBuffer",resNormal.x,resNormal.y),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",resLighting.x,resLighting.y),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",resNormal.x,resNormal.y),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",resLighting.x,resLighting.y),out var lightingBuffer)
+					.WithRenderTexture(new RenderTexture("lightingBuffer",LightingSize),out var lightingBuffer)
 			};
 
 			//RenderPasses
-			renderPasses = new RenderPass[] {
+			renderPasses = new[] {
 				//Geometry
 				new GeometryPass("Geometry")
 					.WithFramebuffer(mainFramebuffer),
@@ -36,6 +38,18 @@ namespace AbyssCrusaders
 				//Lighting
 				new Light2DPass("Lighting")
 					.WithFramebuffer(lightingFramebuffer)
+					.WithViewport(c => {
+						if(c!=null) {
+							var view = c.ViewPixel;
+							var cam = Main.camera;
+							float zoom = cam.zoom;
+							return new RectInt(
+								(int)(Math.Floor(view.x/zoom)*zoom),(int)(Math.Floor(view.y/zoom)*zoom),
+								(int)(view.width/zoom),				(int)(view.height/zoom)
+							);
+						}
+						return Screen.Rectangle;
+					})
 					.WithShaders(Resources.Find<Shader>("Game/Light")),
 
 				//Lighting
@@ -56,10 +70,6 @@ namespace AbyssCrusaders
 					)
 					.WithShaders(Resources.Find<Shader>("Game/Composite")),
 			};
-		}
-		public override void Resize()
-		{
-			
 		}
 	}
 }

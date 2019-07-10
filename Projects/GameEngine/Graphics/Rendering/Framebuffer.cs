@@ -25,6 +25,8 @@ namespace GameEngine.Graphics
 		public DrawBuffersEnum[] drawBuffers;
 
 		internal FramebufferAttachment nextDefaultAttachment = FramebufferAttachment.ColorAttachment0;
+		internal int maxTextureWidth;
+		internal int maxTextureHeight;
 
 		public Framebuffer(string name)
 		{
@@ -62,6 +64,9 @@ namespace GameEngine.Graphics
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
 				InternalUtils.ArrayAdd(ref drawBuffers,drawBuffersEnum);
 			}
+
+			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
+			maxTextureHeight = Math.Max(maxTextureHeight,texture.Height);
 		}
 
 		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
@@ -86,6 +91,16 @@ namespace GameEngine.Graphics
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
 				InternalUtils.ArrayAdd(ref drawBuffers,drawBuffersEnum);
+			}
+		}
+
+		public void PrepareAttachments()
+		{
+			if(renderTextures!=null) {
+				for(int i = 0;i<renderTextures.Length;i++) {
+					var tex = renderTextures[i];
+					tex.UpdateSize();
+				}
 			}
 		}
 

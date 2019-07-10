@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GameEngine.Graphics.RenderingPipelines;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
@@ -79,6 +80,9 @@ namespace GameEngine.Graphics
 		};
 		#endregion
 
+		public static int drawCallsCount;
+		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);
+
 		internal static GameWindow window;
 		internal static List<Camera> cameraList;
 		internal static List<Renderer> rendererList;
@@ -86,9 +90,6 @@ namespace GameEngine.Graphics
 		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static Type renderingPipelineType;
-		public static int drawCallsCount;
-
-		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);
 
 		internal static RenderingPipeline renderingPipeline;
 		public static RenderingPipeline RenderingPipeline => renderingPipeline;
@@ -138,6 +139,10 @@ namespace GameEngine.Graphics
 
 		internal static void Render()
 		{
+			if(Input.GetKeyDown(Keys.L)) {
+				window.ClientSize = new System.Drawing.Size(1920,1017);
+			}
+			
 			drawCallsCount = 0;
 
 			//Calculate view and projection matrices,culling frustums
@@ -158,13 +163,15 @@ namespace GameEngine.Graphics
 
 			//Clear buffers
 			//GL.Enable(EnableCap.StencilTest);
+			GL.Viewport(0,0,Screen.Width,Screen.Height);
+
 			if(renderingPipeline.Framebuffers!=null) {
-				int length = renderingPipeline.Framebuffers?.Length ?? 0;
+				int length = renderingPipeline.Framebuffers.Length;
+
 				for(int i=0;i<=length;i++) {
 					var framebuffer = i==length ? null : renderingPipeline.Framebuffers[i];
+					framebuffer?.PrepareAttachments();
 					Framebuffer.Bind(framebuffer);
-
-					GL.Viewport(0,0,Screen.Width,Screen.Height);
 
 					GL.ClearColor(0f,0f,0f,0f);
 					//GL.StencilMask(~0);
@@ -188,7 +195,7 @@ namespace GameEngine.Graphics
 			#region RenderTargetDebug
 			if(Input.GetKey(Keys.F)) {
 				//TODO: This is completely temporarily
-				bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
+				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
 				
 				int textureCount = 0;
 				for(int i=0;i<renderingPipeline.Framebuffers.Length;i++) {
@@ -197,13 +204,9 @@ namespace GameEngine.Graphics
 						if(!IsDepthTexture(tex)) { 
 							textureCount++;
 						}
-						/*if(tex.attachment!=FramebufferAttachment.DepthAttachment) {
-							textureCount++;
-						}*/
 					}
 				}
 
-				//hmmmmmmmmm
 				int size = 1;
 				while(size*size<textureCount) {
 					size++;
@@ -225,9 +228,8 @@ namespace GameEngine.Graphics
 						int wSize = Screen.width/size;
 						int hSize = Screen.height/size;
 						GL.BlitFramebuffer(
-							//					//					//					//
-							0,					0,					tex.Width,			tex.Height,
-							x*wSize,			(size-y-1)*hSize,	(x+1)*wSize,		(size-y)*hSize,
+							0,0,tex.Width,tex.Height,
+							x*wSize,(size-y-1)*hSize,(x+1)*wSize,(size-y)*hSize,
 							ClearBufferMask.ColorBufferBit,
 							BlitFramebufferFilter.Nearest
 						);
@@ -286,7 +288,7 @@ namespace GameEngine.Graphics
 		{
 			Screen.UpdateValues(window);
 
-			InstantiateRenderingPipeline();
+			//InstantiateRenderingPipeline();
 		}
 		internal static void Dispose() {}
 	}

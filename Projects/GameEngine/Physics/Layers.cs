@@ -20,10 +20,12 @@ namespace GameEngine
 			if(Game.preInitDone) {
 				throw new Exception("Cannot add layers after Game.PreInit() call has finished.");
 			}
+
 			int newLength = layerCount+layerNames.Length;
 			if(newLength>=64) {
 				throw new Exception("Cannot add more than 64 layers.");
 			}
+
 			int j = layerCount;
 			for(int i=0;i<layerNames.Length;i++,j++) {
 				indexToMask[j] = (ulong)1 << j;
@@ -53,6 +55,7 @@ namespace GameEngine
 					return indexToMask[i];
 				}
 			}
+
 			throw new Exception("Could not find any layers named ''"+name+"''");
 		}
 

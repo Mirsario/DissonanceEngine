@@ -8,24 +8,19 @@ namespace GameEngine.Graphics
 {
 	public class Texture : Asset<Texture>
 	{
-		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
 		public static FilterMode defaultFilterMode = FilterMode.Trilinear;
+		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
 		
 		public string name = "";
+		protected FilterMode filterMode;
+		protected TextureWrapMode wrapMode;
+		protected bool useMipmaps;
 
-		public int Id { protected set; get; }
-		protected int width;
-		public int Width {
-			get => width;
-			protected set => width = value;
-		}
-		protected int height;
-		public int Height {
-			get => height;
-			protected set => height = value;
-		}
+		public int Id { get; protected set; }
+		public int Width { get; protected set; }
+		public int Height { get; protected set; }
 		
-		public Vector2Int Size => new Vector2Int(width,height);
+		public Vector2Int Size => new Vector2Int(Width,Height);
 		
 		protected Texture() { }
 		
@@ -47,11 +42,7 @@ namespace GameEngine.Graphics
 				pixels[i] = fillColor;
 			}
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.Rgba,width,height,0,PixelFormat.Rgba,PixelType.UnsignedByte,pixels);
-
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
+			SetupTexture(pixels);
 		}
 		internal Texture(int id,int width,int height)
 		{
@@ -59,16 +50,22 @@ namespace GameEngine.Graphics
 			Width = width;
 			Height = height;
 		}
+
+		public override void Dispose()
+		{
+			GL.DeleteTexture(Id);
+		}
+
 		public Pixel[,] GetPixels()
 		{
-			var pixels1D = new Pixel[width*height];
+			var pixels1D = new Pixel[Width*Height];
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,Id);
 			GL.GetTexImage(TextureTarget.Texture2D,0,PixelFormat.Rgba,PixelType.UnsignedByte,pixels1D);
 			GL.BindTexture(TextureTarget.Texture2D,0);
 
 			//TODO: Can these loops be avoided?
-			var pixels = new Pixel[width,height];
+			var pixels = new Pixel[Width,Height];
 			int i = 0;
 			for(int y = 0;y<Height;y++) {
 				for(int x = 0;x<Width;x++) {
@@ -92,13 +89,14 @@ namespace GameEngine.Graphics
         public void SetPixels(Pixel[,] pixels)
 		{
 			//TODO: Can these loops be avoided?
-			var pixels1D = new Pixel[width*height];
+			var pixels1D = new Pixel[Width*Height];
 			int i = 0;
 			for(int y = 0;y<Height;y++) {
 				for(int x = 0;x<Width;x++) {
 					pixels1D[i++] = pixels[x,y];
 				}
 			}
+
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,Id);
 			GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat.Rgba,PixelType.UnsignedByte,pixels1D);
@@ -110,9 +108,14 @@ namespace GameEngine.Graphics
 			bitmap.Save(path);
 			bitmap.Dispose();
 		}
-		public override void Dispose()
+
+		private void SetupTexture(Pixel[] pixels)
 		{
-			GL.DeleteTexture(Id);
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D,Id);
+			GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.Rgba,Width,Height,0,PixelFormat.Rgba,PixelType.UnsignedByte,pixels);
+
+			SetupFiltering(filterMode,wrapMode,useMipmaps);
 		}
 		
 		public static Texture FromBitmap(Bitmap bitmap,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)

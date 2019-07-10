@@ -16,18 +16,27 @@ namespace GameEngine.Graphics
 		public Renderbuffer[] renderbuffers;
 		public Shader passShader; //Remove this field?
 		public Shader[] shaders;
+		private Func<Camera,RectInt> viewportGetter;
 
 		protected RenderPass(string name)
 		{
 			this.name = name;
 		}
 
-		public virtual void Render() {}
+		public abstract void Render();
+		
+		protected virtual RectInt GetViewport(Camera camera) => viewportGetter?.Invoke(camera) ?? (camera?.ViewPixel ?? (framebuffer!=null ? new RectInt(0,0,framebuffer.maxTextureWidth,framebuffer.maxTextureHeight) : new RectInt(0,0,Screen.Width,Screen.Height)));
+
 		public virtual void Dispose() {}
 
 		public RenderPass WithFramebuffer(Framebuffer framebuffer)
 		{
 			this.framebuffer = framebuffer;
+			return this;
+		}
+		public RenderPass WithViewport(Func<Camera,RectInt> getter)
+		{
+			viewportGetter = getter;
 			return this;
 		}
 		public RenderPass WithPassedTextures(params RenderTexture[] passedTextures)

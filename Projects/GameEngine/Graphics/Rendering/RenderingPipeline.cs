@@ -37,7 +37,6 @@ namespace GameEngine.Graphics
 		}
 
 		public abstract void Setup(out Framebuffer[] framebuffers,out RenderPass[] renderPasses); 
-		public abstract void Resize(); 
 
 		public virtual void Dispose()
 		{

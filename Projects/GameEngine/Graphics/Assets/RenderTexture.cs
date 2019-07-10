@@ -33,13 +33,13 @@ namespace GameEngine.Graphics
 			TextureFormat = textureFormat;
 			this.name = name;
 
-			UpdateSize();
+			var size = (targetSize ?? throw new ArgumentNullException(nameof(targetSize)))();
+			Width = size.x;
+			Height = size.y;
 
-			var (formatGeneral,formatInternal,_,_) = Rendering.textureFormatInfo[textureFormat];
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,width,height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
+			Debug.Log($"Created [{Width},{Height}] RenderTexture");
+
+			SetupTexture();
 		}
 		
 		public void GenerateMipmaps()
@@ -50,17 +50,12 @@ namespace GameEngine.Graphics
 		}
 		public void Resize(int width,int height)
 		{
-			var (formatGeneral,formatInternal,_,_) = Rendering.textureFormatInfo[TextureFormat];
-
-			this.width = width;
-			this.height = height;
+			Width = width;
+			Height = height;
 
 			Debug.Log($"Resizing to [{width},{height}]");
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,width,height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
-			SetupFiltering(null,null,false);
+			SetupTexture();
 		}
 		public override void Dispose()
 		{
@@ -82,13 +77,24 @@ namespace GameEngine.Graphics
 				throw new InvalidOperationException("Texture's height can't equal or be less than zero.");
 			}
 
-			if(vec.x!=width || vec.y!=height) {
-				width = vec.x;
-				height = vec.y;
-				return true;
+			if(vec.x==Width && vec.y==Height) {
+				return false;
 			}
 
-			return false;
+			Resize(vec.x,vec.y);
+
+			return true;
+		}
+
+		private void SetupTexture()
+		{
+			var (formatGeneral,formatInternal,_,_) = Rendering.textureFormatInfo[TextureFormat];
+
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D,Id);
+			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,Width,Height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
+
+			SetupFiltering(filterMode,wrapMode,useMipmaps);
 		}
 
 		/*public RenderTexture(int width,int height,PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f,PixelFormat pixelFormat = PixelFormat.Rgba,PixelType pixelType = PixelType.UnsignedByte)

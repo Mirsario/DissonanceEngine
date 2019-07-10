@@ -23,8 +23,8 @@ namespace GameEngine.Graphics
 
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
-				var viewRect = camera.ViewPixel;
-				GL.Viewport(viewRect.x,viewRect.y,viewRect.width,viewRect.height);
+				var viewport = GetViewport(camera);
+				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
 				var cameraPos = camera.Transform.Position;
 

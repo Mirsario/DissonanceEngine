@@ -10,9 +10,5 @@
 			//RenderPasses
 			renderPasses = new[] { new GeometryPass("Geometry") };
 		}
-		public override void Resize()
-		{
-			
-		}
 	}
 }

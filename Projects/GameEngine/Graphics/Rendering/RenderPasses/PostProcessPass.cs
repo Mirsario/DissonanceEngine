@@ -11,7 +11,8 @@ namespace GameEngine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
-			GL.Viewport(0,0,Screen.Width,Screen.Height);
+			var viewport = GetViewport(null);
+			GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
 			Shader.SetShader(passShader);
 			OpenTK.Vector3 ambientCol = Rendering.ambientColor;
@@ -29,8 +30,10 @@ namespace GameEngine.Graphics
 			if(passedTextures!=null) {
 				for(int i=0;i<passedTextures.Length;i++) {
 					var texture = passedTextures[i];
+					
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+i));
 					GL.BindTexture(TextureTarget.Texture2D,texture.Id);
+
 					if(passShader!=null) {
 						int location = GL.GetUniformLocation(passShader.program,texture.name);
 						GL.Uniform1(location,i);

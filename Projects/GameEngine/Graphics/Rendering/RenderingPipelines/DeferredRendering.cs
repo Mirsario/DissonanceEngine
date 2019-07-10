@@ -14,21 +14,23 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
+			static Vector2Int ScreenSize() => Screen.Size;
+
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("normalBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
-					.WithRenderTexture(new RenderTexture("positionBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("colorBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var colorBuffer)
+					.WithRenderTexture(new RenderTexture("normalBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
+					.WithRenderTexture(new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",() => Screen.Size,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var lightingTexture)
+					.WithRenderTexture(new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var lightingTexture)
 			};
 
 			//RenderPasses
-			renderPasses = new RenderPass[] {
+			renderPasses = new[] {
 				//Geometry
 				new GeometryPass("Geometry")
 					.WithFramebuffer(mainFramebuffer),
@@ -60,16 +62,16 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			Framebuffer.Bind(null);
 		}
-		public override void Resize()
+		/*public override void Resize()
 		{
-			/*Vector2Int screenSize = Screen.size;
-			
-			for(int i = 0;i<framebuffers.Length;i++) {
-				var fb = framebuffers[i];
-				for(int j = 0;j<fb.renderTextures.Length;j++) {
-					fb.renderTextures[j].Resize(screenSize.x,screenSize.y);
-				}
-			}*/
+			//Vector2Int screenSize = Screen.size;
+			//
+			//for(int i = 0;i<framebuffers.Length;i++) {
+			//	var fb = framebuffers[i];
+			//	for(int j = 0;j<fb.renderTextures.Length;j++) {
+			//		fb.renderTextures[j].Resize(screenSize.x,screenSize.y);
+			//	}
+			//}
 
 			for(int i = 0;i<framebuffers.Length;i++) {
 				var fb = framebuffers[i];
@@ -80,6 +82,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 					}
 				}
 			}
-		}
+		}*/
 	}
 }

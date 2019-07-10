@@ -56,7 +56,7 @@ void main()
 		1f
 	);
 	
-	oLight = vec4(lighting.rgb+emission.rgb+ambientColor,lighting.a);
+	oLight = vec4(lighting.rgb+/*emission.rgb+*/ambientColor,lighting.a);
 	oLight.rgb = vec3(
 		ceil(oLight.r*numColors)/numColors,
 		ceil(oLight.g*numColors)/numColors,

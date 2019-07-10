@@ -18,10 +18,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			ParseJSON(jsonText,out buffers,out passes);
 		}
-		public override void Resize()
-		{
-			
-		}
 
 		internal static void ParseJSON(string jsonText,out Framebuffer[] buffers,out RenderPass[] passes)
 		{
