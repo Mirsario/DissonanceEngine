@@ -24,8 +24,9 @@ namespace GameEngine
 	{
 		//Debug
 		private const bool BigScreen = true;
-		private const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
-		private const int DefaultHeight = BigScreen ? 900 : 540; //960;	
+
+		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
+		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;	
 
 		public static int targetUpdates = 60;
 		public static int targetFPS = 0;
@@ -39,6 +40,8 @@ namespace GameEngine
 		internal static bool shouldQuit;
 		internal static bool preInitDone;
 		internal static bool fixedUpdate;
+
+		private static bool resizedWindow;
 
 		public static bool HasFocus	{ get; internal set; } = true;
 
@@ -56,7 +59,7 @@ namespace GameEngine
 				}
 
 				if(dict.TryGetValue("assetspath",out string path)) {
-					assetsPath = path ?? throw new ArgumentNullException("Expected a directory path after command line argument 'assetspath'");
+					assetsPath = path ?? throw new ArgumentException("Expected a directory path after command line argument 'assetspath'.");
 				}
 			}
 
@@ -69,7 +72,8 @@ namespace GameEngine
 			PreInit();
 			preInitDone = true;
 
-			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName);
+			var device = DisplayDevice.Default;
+			Rendering.window = window = new GameWindow(device.Width,device.Height,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
 			
 			window.VSync = VSyncMode.Off;
 			
@@ -163,6 +167,13 @@ namespace GameEngine
 		}
 		internal void FixedUpdateInternal(object sender,FrameEventArgs e)
 		{
+			//TODO: This is a temporary fix for what seems to be an OpenTK bug, which introduces issues with setting GL.Viewport's width & height to values bigger than window's original Width & Height. There must be a better solution.
+			if(!resizedWindow) {
+				window.Location = new System.Drawing.Point((window.Width/2)-(DefaultWidth/2),(window.Height/2)-(DefaultHeight/2));
+				window.Size = new System.Drawing.Size(DefaultWidth,DefaultHeight);
+				resizedWindow = true;
+			}
+			
 			fixedUpdate = true;
 			Time.PreFixedUpdate();
 
