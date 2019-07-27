@@ -19,7 +19,7 @@ namespace GameEngine.Graphics
 		{
 			Setup(out var tempFramebuffers,out var tempRenderPasses);
 
-			Rendering.CheckGLErrors(); //Do not remove
+			Rendering.CheckGLErrors();
 
 			if(tempFramebuffers!=null) {
 				foreach(var framebuffer in tempFramebuffers) {
@@ -37,7 +37,9 @@ namespace GameEngine.Graphics
 		}
 
 		public abstract void Setup(out Framebuffer[] framebuffers,out RenderPass[] renderPasses); 
-
+		
+		public virtual void PreRender() {}
+		public virtual void PostRender() {}
 		public virtual void Dispose()
 		{
 			if(framebuffers!=null) {

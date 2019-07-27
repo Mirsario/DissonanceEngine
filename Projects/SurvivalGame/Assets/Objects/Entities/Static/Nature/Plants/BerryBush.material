@@ -2,7 +2,7 @@
 	"name": "$FileName$",
 	"shader": "Transparent/Cutout/DiffuseDualSided",
 	"floats": {
-		"cutout": 0.5
+		"cutoff": 0.5
 	},
 	"textures": {
 		"mainTex":	"$FileName$.png"

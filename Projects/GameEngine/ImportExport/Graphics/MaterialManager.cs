@@ -30,24 +30,35 @@ namespace GameEngine
 			using(var reader = new StreamReader(stream)) {
 				jsonText = reader.ReadToEnd();
 			}
+
 			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
 			jsonMat.name = FilterText(jsonMat.name,fileName);
 			jsonMat.shader = FilterText(jsonMat.shader,fileName);
+
 			var shader = Resources.Find<Shader>(jsonMat.shader);
 			if(shader==null) {
-				throw new Exception("Shader "+jsonMat.shader+" couldn't be found.");
+				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
 			}
+
 			var material = new Material(jsonMat.name,shader);
 			if(jsonMat.textures!=null) {
 				foreach(var pair in jsonMat.textures) {
 					material.SetTexture(FilterText(pair.Key,fileName),Resources.Import<Texture>(FilterText(pair.Value,fileName)));
 				}
-			}
-			if(jsonMat.vectors!=null) {
+            }
+
+            if(jsonMat.floats!=null)  {
+                foreach(var pair in jsonMat.floats) {
+                    material.SetFloat(FilterText(pair.Key,fileName),pair.Value);
+                }
+            }
+
+            if (jsonMat.vectors!=null) {
 				foreach(var pair in jsonMat.vectors) {
 					material.SetVector(FilterText(pair.Key,fileName),pair.Value);
 				}
 			}
+
 			return material;
 		}
 		private static string FilterText(string str,string file)

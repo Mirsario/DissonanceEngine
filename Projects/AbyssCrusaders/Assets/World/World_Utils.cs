@@ -2,7 +2,7 @@ using GameEngine;
 
 namespace AbyssCrusaders
 {
-	public abstract partial class World : GameObject2D
+	partial class World
 	{
 		public Chunk GetChunkAt(int x,int y)
 		{
@@ -12,7 +12,7 @@ namespace AbyssCrusaders
 			int chunkY = y/Chunk.ChunkSize;
 			ref var chunk = ref chunks[chunkX,chunkY];
 			if(chunk==null) {
-				chunk = new Chunk(this,chunkX,chunkY);
+				chunk = new Chunk(this,new Vector2Int(chunkX,chunkY));
 			}
 			return chunk;
 		}
@@ -24,7 +24,7 @@ namespace AbyssCrusaders
 			int chunkY = y/Chunk.ChunkSize;
 			chunk = chunks[chunkX,chunkY];
 			if(chunk==null) {
-				chunks[chunkX,chunkY] = chunk = new Chunk(this,chunkX,chunkY);
+				chunks[chunkX,chunkY] = chunk = new Chunk(this,new Vector2Int(chunkX,chunkY));
 			}
 			return ref chunk.tiles[x%Chunk.ChunkSize,y%Chunk.ChunkSize];
 		}

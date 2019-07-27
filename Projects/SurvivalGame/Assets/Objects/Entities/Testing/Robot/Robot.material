@@ -1,8 +1,8 @@
 {
 	"name": "Robot",
-	"shader": "Diffuse",
+	"shader": "EmissiveDiffuse",
 	"textures": {
-		"mainTex":		"RobotDiffuse.png",
-		"emissionMap":	"RobotEmission.png"
+		"mainTex": "RobotDiffuse.png",
+		"emissionMap": "RobotEmission.png"
 	}
 }

@@ -6,6 +6,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 namespace GameEngine.Graphics
 {
@@ -90,6 +91,8 @@ namespace GameEngine.Graphics
 		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static Type renderingPipelineType;
+		internal static BlendingFactor currentBlendFactorSrc;
+		internal static BlendingFactor currentBlendFactorDst;
 
 		internal static RenderingPipeline renderingPipeline;
 		public static RenderingPipeline RenderingPipeline => renderingPipeline;
@@ -139,13 +142,11 @@ namespace GameEngine.Graphics
 
 		internal static void Render()
 		{
-			if(Input.GetKeyDown(Keys.L)) {
-				window.ClientSize = new System.Drawing.Size(1920,1017);
-			}
-			
 			drawCallsCount = 0;
 
-			//Calculate view and projection matrices,culling frustums
+			Rendering.CheckGLErrors();
+
+			//Calculate view and projection matrices, culling frustums
 			for(int i=0;i<cameraList.Count;i++) {
 				var camera = cameraList[i];
 				float aspectRatio = camera.ViewPixel.width/(float)camera.ViewPixel.height;
@@ -179,8 +180,9 @@ namespace GameEngine.Graphics
 				}
 			}
 
+			renderingPipeline.PreRender();
+
 			//Render passes
-			//GL.StencilFunc(StencilFunction.Always,0,0);
 			for(int i=0;i<renderingPipeline.RenderPasses.Length;i++) {
 				var pass = renderingPipeline.RenderPasses[i];
 				if(pass.enabled) {
@@ -189,6 +191,8 @@ namespace GameEngine.Graphics
 			}
 
 			Framebuffer.Bind(null);
+
+			renderingPipeline.PostRender();
 
 			//GL.Disable(EnableCap.StencilTest);
 
@@ -245,18 +249,21 @@ namespace GameEngine.Graphics
 
 			GUIPass();
 			
+			Rendering.CheckGLErrors();
+
+			//GL.Finish();
 			window.SwapBuffers();
-			GL.Flush();
+
+			Rendering.CheckGLErrors();
 		}
 		internal static void GUIPass()
 		{
 			Framebuffer.BindWithDrawBuffers(null);
-			
+
 			Shader.SetShader(GUIShader);
-			
+
 			GL.Enable(EnableCap.Blend);
-			GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
-			
+			SetBlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
 			GUI.canDraw = true;
 
 			Game.instance.OnGUI();
@@ -264,7 +271,6 @@ namespace GameEngine.Graphics
 
 			GUI.canDraw = false;
 			
-			GL.BlendFunc(BlendingFactor.One,BlendingFactor.Zero);
 			GL.Disable(EnableCap.Blend);
 		}
 		

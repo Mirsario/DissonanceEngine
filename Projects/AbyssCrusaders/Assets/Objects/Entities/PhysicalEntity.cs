@@ -174,6 +174,7 @@ namespace AbyssCrusaders
 			if(acceleration.x==0f && acceleration.y==0f) {
 				return;
 			}
+
 			float speed = acceleration.Magnitude;
 			Vector2 direction = acceleration.Normalized;
 			float maxSpeedValue = maxSpeed ?? this.maxSpeed;
@@ -182,10 +183,12 @@ namespace AbyssCrusaders
 			if(addSpeed<=0f) {
 				return;
 			}
+
 			float accelSpeed = speed*maxSpeedValue*Time.FixedDeltaTime;
 			if(accelSpeed>addSpeed) {
 				accelSpeed = addSpeed;
 			}
+
 			velocity += direction*accelSpeed;
 		}
 	}

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using GLEnableCap = OpenTK.Graphics.OpenGL.EnableCap;
+using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 #pragma warning disable 0649
 
@@ -19,26 +20,6 @@ namespace GameEngine.Graphics
 		StencilBufferBit = 1024,
 		ColorBufferBit = 16384,
 		CoverageBufferBitNv = 32768
-	}
-	public enum BlendFunc
-	{
-		Zero = 0,
-		One = 1,
-		SrcColor = 768,
-		OneMinusSrcColor = 769,
-		SrcAlpha = 770,
-		OneMinusSrcAlpha = 771,
-		DstAlpha = 772,
-		OneMinusDstAlpha = 773,
-		DstColor = 774,
-		OneMinusDstColor = 775,
-		SrcAlphaSaturate = 776,
-		ConstantColor = 32769,
-		OneMinusConstantColor = 32770,
-		ConstantAlpha = 32771,
-		OneMinusConstantAlpha = 32772,
-		Src1Alpha = 34185,
-		Src1Color = 35065
 	}
 
 	public enum GraphicsFeature
@@ -196,8 +177,8 @@ namespace GameEngine.Graphics
 		
 		internal static void Draw()
 		{
-			//test
-			/*DrawDelayed(delegate {
+            //test
+            /*DrawDelayed(delegate {
 				Begin(PrimitiveType.Quads);
 				Vertex2(-0.5f,0.5f);
 				Color3(1f,1f,1f);
@@ -210,12 +191,14 @@ namespace GameEngine.Graphics
 				End();
 			});*/
 
-			for(int i=0;i<drawActions.Count;i++) {
-				drawActions[i]?.Invoke();
-			}
-			drawActions.Clear();
-		}
-		public static void DrawDelayed(Action action)
+            if(drawActions.Count>0) {
+                for(int i = 0;i<drawActions.Count;i++) {
+                    drawActions[i]?.Invoke();
+                }
+                drawActions.Clear();
+            }
+        }
+        public static void DrawDelayed(Action action)
 		{
 			drawActions.Add(action);
 		}
@@ -244,9 +227,9 @@ namespace GameEngine.Graphics
 		{
 			GL.Disable((GLEnableCap)cap);
 		}
-		public static void BlendFunc(BlendFunc sourceFunc,BlendFunc destFunc)
+		public static void BlendFunc(BlendingFactor sourceFunc,BlendingFactor destFunc)
 		{
-			GL.BlendFunc((BlendingFactor)sourceFunc,(BlendingFactor)destFunc);
+			Rendering.SetBlendFunc(sourceFunc,destFunc);
 		}
 
 		#region Textures
@@ -282,6 +265,11 @@ namespace GameEngine.Graphics
 		public static void Vertex2(int x,int y) => GL.Vertex2(x,y);
 		public static void Vertex2(float x,float y) => GL.Vertex2(x,y);
 		public static void Vertex2(double x,double y) => GL.Vertex2(x,y);
+		//VertexAttrib
+		public static void VertexAttrib4(AttributeId attribute,Vector4 vec4)
+		{
+			GL.VertexAttrib4((int)attribute,vec4);
+		}
 		//UV
 		public static void TexCoord2(Vector2 v)
 		{

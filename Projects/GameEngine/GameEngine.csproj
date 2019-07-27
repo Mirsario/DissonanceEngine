@@ -74,6 +74,12 @@
     <Compile Include="Components\ComponentAttributes.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="DebugInternal.cs" />
+    <Compile Include="Graphics\Enums\BlendingFactor.cs" />
+    <Compile Include="Graphics\Enums\PolygonMode.cs" />
+    <Compile Include="Graphics\Assets\Shader.UniformSetters.cs" />
+    <Compile Include="Graphics\Enums\ShaderCombination.cs" />
+    <Compile Include="Graphics\Enums\ShaderType.cs" />
+    <Compile Include="Graphics\Enums\ShaderUniform.cs" />
     <Compile Include="Graphics\Components\Light2D.cs" />
     <Compile Include="Graphics\Enums\FramebufferAttachment.cs" />
     <Compile Include="Extensions\Extensions.cs" />
@@ -104,7 +110,7 @@
     <Compile Include="Graphics\Rendering.cs" />
     <Compile Include="Graphics\GUI\Font.cs" />
     <Compile Include="Graphics\GUI\GUI.cs" />
-    <Compile Include="Graphics\JSON_RenderSettings.cs" />
+    <Compile Include="Graphics\Rendering\RenderingPipelines\JSON_RenderSettings.cs" />
     <Compile Include="Graphics\Rendering.Utils.cs" />
     <Compile Include="Graphics\Rendering\Enums\AttributeId.cs" />
     <Compile Include="Graphics\Rendering\Enums\CullMode.cs" />

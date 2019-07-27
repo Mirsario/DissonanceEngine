@@ -26,7 +26,7 @@ namespace AbyssCrusaders
 			//list.Add(new RandomTileChunksPass(ironOre,stone,width*height/768,4,24,0,height));
 			//list.Add(new RandomTileChunksPass(silverOre,stone,width*height/1024,8,16,(int)(height*0.65f),height));
 			//list.Add(new RandomTileChunksPass(goldOre,stone,width*height/2048,8,24,(int)(height*0.75f),height));
-			list.Add(new TunnelsPass(width/40,10,35,3,5));
+			list.Add(new TunnelsPass(width/20,10,35,3,5));
 			list.Add(new TileFramePass());
 		}
 	}

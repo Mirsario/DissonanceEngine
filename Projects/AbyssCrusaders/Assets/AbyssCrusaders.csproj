@@ -56,6 +56,7 @@
     <Compile Include="Objects\Entities\Entity.cs" />
     <Compile Include="Objects\Entities\PhysicalEntity.cs" />
     <Compile Include="Objects\Entities\Player\Player.cs" />
+    <Compile Include="Objects\Etc\CursorLightObj.cs" />
     <Compile Include="Objects\Etc\LightObj.cs" />
     <Compile Include="Objects\Etc\Skybox.cs" />
     <Compile Include="Objects\GameObject2D.cs" />

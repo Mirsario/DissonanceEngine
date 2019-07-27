@@ -27,7 +27,12 @@ void main (void)
 	
 	//Emission
 	#ifdef EMISSIONMAP
-		oEmission = texture(emissionMap,vUV);
+		#ifdef NEGATIVEEMISSION
+			oEmission = texture(emissionMap,vUV);
+			oEmission.a = -1f;
+		#else
+			oEmission = texture(emissionMap,vUV);
+		#endif
 	#else
 		oEmission = vec4(0.0,0.0,0.0,0.0);
 	#endif

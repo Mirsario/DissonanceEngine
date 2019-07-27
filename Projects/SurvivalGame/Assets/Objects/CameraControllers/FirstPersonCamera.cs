@@ -35,13 +35,13 @@ namespace SurvivalGame
 			var newRotation = controlling ? rotation : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.RenderDeltaTime*2f);
 			newRotation.y -= delta.x;
 			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.RenderDeltaTime*10f);
-			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,minLockedPitch,maxLockedPitch);
+			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,MinLockedPitch,MaxLockedPitch);
 			newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
 			rotation = newRotation;
 			//float horizontalSpeed = new Vector2(localVelocity.x,localVelocity.z).Magnitude;
 			//bobTime += horizontalSpeed*Time.DeltaTime*3f;
 			//float bob = Mathf.Sin(bobTime);
-			camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,minLockedPitch,maxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
+			camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,MinLockedPitch,MaxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
 
 			direction = Vector3.EulerToDirection(newRotation);
 			Vector3 position = entity.Transform.Position+new Vector3(0f,2f,0f);

@@ -5,6 +5,7 @@ namespace SurvivalGame
 	public class LightObj : Entity
 	{
 		public Light light;
+
 		public override void OnInit()
 		{
 			light = AddComponent<Light>();

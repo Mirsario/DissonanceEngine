@@ -100,6 +100,7 @@ namespace GameEngine
 			if(fontSize==-1) {
 				fontSize = font.size;
 			}
+
 			DrawString(font,fontSize,rect,text,color,alignment);
 		}
 		public static void DrawTexture(RectFloat rect,Texture texture,Vector4? color = null)
@@ -170,14 +171,16 @@ namespace GameEngine
 			if(string.IsNullOrEmpty(text)) {
 				return;
 			}
+
 			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.one;
 				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
+
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,font.texture.Id);
 			GL.Uniform1(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.MainTex],0);
-			
+
 			float scale = fontSize/font.charSize.y;
 			var position = new Vector2(rect.x,rect.y);
 			if(alignment==TextAlignment.UpperCenter || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.LowerCenter) {
@@ -186,13 +189,15 @@ namespace GameEngine
 			if(alignment==TextAlignment.MiddleLeft || alignment==TextAlignment.MiddleCenter || alignment==TextAlignment.MiddleRight) {
 				position.y += rect.height/2f-fontSize/2f;
 			}
-			
+
 			float xPos = position.x/Screen.Width;
 			float yPos = position.y/Screen.Height;
 			float width = font.charSize.x/Screen.Width*scale;
 			float height = font.charSize.y/Screen.Height*scale;
 			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.program,"uv");
+
 			GL.Begin(PrimitiveTypeGL.Quads);
+
 			for(int i=0;i<text.Length;i++) {
 				char c = text[i];
 				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
@@ -201,8 +206,10 @@ namespace GameEngine
 					GL.VertexAttrib2(uvAttrib,uvs[2]);	GL.Vertex2(xPos+width,	1f-yPos-height);
 					GL.VertexAttrib2(uvAttrib,uvs[3]);	GL.Vertex2(xPos,		1f-yPos-height);
 				}
+
 				xPos += width;
 			}
+
 			GL.End();
 		}
 	}

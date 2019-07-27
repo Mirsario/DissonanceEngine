@@ -28,6 +28,8 @@ namespace AbyssCrusaders
 		public static MenuController menuController;
 		public static bool mainMenu;
 
+		public static Vector2 MouseWorld { get; private set; }
+
 		public override void PreInit()
 		{
 			Texture.defaultFilterMode = FilterMode.Point;
@@ -36,7 +38,7 @@ namespace AbyssCrusaders
 				"World",
 				"Entity"
 			);
-			Time.TargetRenderCount = 144;
+			//Time.TargetRenderCount = 144;
 			Rendering.SetRenderingPipeline<CustomRenderPipeline>(); //ForwardRendering
 		}
 		public override void Start()
@@ -58,9 +60,9 @@ namespace AbyssCrusaders
 			menuController.SetState<MainMenuState>();
 
 			camera = GameObject.Instantiate<CameraObj>("Camera",new Vector3(0f,0f,10f));
-			var skybox = GameObject.Instantiate<Skybox>();
+			GameObject.Instantiate<Skybox>();
 
-			Rendering.ambientColor = new Vector3(0f,0f,0f);
+			Rendering.ambientColor = new Vector3(0.02f,0.02f,0.02f);
 
 			/*var world = World.Create<Overworld>(4096,2048); //World.Create<Overworld>(8192,4096);
 			var player = Entity.Instantiate<Player>(world,"Player",(Vector2)world.spawnPoint);
@@ -78,17 +80,25 @@ namespace AbyssCrusaders
 				}
 			}
 		}
+		public override void RenderUpdate()
+		{
+			if(camera!=null) {
+				MouseWorld = camera.Position+((Input.MousePosition-Screen.Size*0.5f)/camera.zoom*PixelSizeInUnits);
+			}
+		}
 		public override void OnGUI()
 		{
 			if(mainMenu && menuController!=null) {
 				menuController.OnGUI();
 			}else{
 				float y = 0.5f;
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render FPS: {Time.RenderFramerate }");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Render MS: {Time.RenderMs:0.00}");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic FPS: {Time.LogicFramerate}");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Logic MS: {Time.LogicMs:0.00}");
-				GUI.DrawText(new RectFloat(8,y++*16,128,8),$"Draw Calls Count: {Rendering.drawCallsCount}");
+				RectFloat Rect() => new RectFloat(8,y++*16,128,8);
+
+				GUI.DrawText(Rect(),$"Render FPS: {Time.RenderFramerate }");
+				GUI.DrawText(Rect(),$"Render MS: {Time.RenderMs:0.00}");
+				GUI.DrawText(Rect(),$"Logic FPS: {Time.LogicFramerate}");
+				GUI.DrawText(Rect(),$"Logic MS: {Time.LogicMs:0.00}");
+				GUI.DrawText(Rect(),$"Draw Calls Count: {Rendering.drawCallsCount}");
 			}
 		}
 	}

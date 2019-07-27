@@ -85,7 +85,7 @@ namespace GameEngine.Graphics
 			GL.BindTexture(TextureTarget.Texture2D,Id);
 			GL.TexImage2D(TextureTarget.Texture2D,0,formatInternal,Width,Height,0,formatGeneral,PixelType.UnsignedByte,IntPtr.Zero);
 
-			SetupFiltering(null,null,false);
+			SetupFiltering(filterMode,wrapMode,useMipmaps);
 		}
 
 		/*public RenderTexture(int width,int height,PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f,PixelFormat pixelFormat = PixelFormat.Rgba,PixelType pixelType = PixelType.UnsignedByte)

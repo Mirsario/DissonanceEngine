@@ -1,6 +1,9 @@
 {
 	"name": "$FileName$",
-	"shader": "Diffuse",
+	"shader": "Specular",
+	"floats": {
+		"specular": 1.0
+	},
 	"textures": {
 		"mainTex": "$FileName$.png"
 	}

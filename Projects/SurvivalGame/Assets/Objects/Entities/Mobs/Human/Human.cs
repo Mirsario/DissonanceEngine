@@ -9,10 +9,10 @@ namespace SurvivalGame
 	{
 		//TODO: Make this not bad.
 
-		public const float airAcceleration = 0.4f;
-		public const float jumpSpeed = 7.5f;
-		public const float stopSpeed = 1f;
-		public const float friction = 4.5f;
+		public const float AirAcceleration = 0.4f;
+		public const float JumpSpeed = 7.5f;
+		public const float StopSpeed = 1f;
+		public const float Friction = 4.5f;
 		
 		public bool wasOnGround;
 		public float forceAirMove;
@@ -35,13 +35,12 @@ namespace SurvivalGame
 		public float MoveSpeed => (isSprinting && onGroundCached) ? 12f : 7.5f;
 		public float Acceleration => 4.25f;
 
-		public override Type CameraControllerType => typeof(FirstPersonCamera);
+		public override Type CameraControllerType => Main.forceThirdPerson ? typeof(BasicThirdPersonCamera) : typeof(FirstPersonCamera);
 
 		public override void OnInit()
 		{
 			size = new Vector3(1f,1.95f,1f); //JoJo height.
 
-			//
 			collider = AddComponent<CylinderCollider>(false);
 			collider.size = size;
 			collider.offset = new Vector3(0f,size.y/2f,0f);
@@ -54,30 +53,31 @@ namespace SurvivalGame
 			renderer = AddComponent<MeshRenderer>();
 			renderer.Mesh = Resources.Get<Mesh>("Robot.mesh");
 			renderer.Material = Resources.Get<Material>("Robot.material");
-			//
 
 			rigidbody.UseGravity = false;
 			rigidbody.Friction = 0f;
 			rigidbody.Drag = 0f;
 
-			//var box = AddComponent<MeshRenderer>();
-			//box.Mesh = PrimitiveMeshes.Cube;
-			//box.Material = Resources.Get<Material>("TestCube.material");
-
 			audioSource = AddComponent<AudioSource>();
 		}
 		public override void FixedUpdate()
 		{
+			if(IsLocal) {
+				renderer.Enabled = Main.forceThirdPerson;
+			}
+
 			var camera = Main.camera;
 			if(Input.GetKeyDown(Keys.C)) { //Sound test
 				Debug.Log("HONK!");
 				PlayVoiceClip(Resources.Get<AudioClip>("Sounds/honk.wav"));
 			}
+
 			if(Input.GetKeyDown(Keys.K)) { //Add light
 				Instantiate<LightObj>(world,position:camera.Transform.Position);
 			}
 
 			moveInput = brain.Signal2(GameInput.moveX,GameInput.moveY);
+
 			if(moveInput.x==0f && moveInput.y<=0f) {
 				isSprinting = false;
 			}else if(brain.JustActivated(GameInput.sprint)) {
@@ -112,30 +112,36 @@ namespace SurvivalGame
 			}
 
 			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => Main.LocalEntity==obj ? false : (bool?)null)) {
-				if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(MouseButton.Middle)) {
-					Main.LocalEntity = entity;
-					screenFlash = 0.5f;
-					SoundInstance.Create($"Magic.ogg",entity.Transform.Position);
-				}
-				if(Input.GetKeyDown(Keys.X)) { //Teleport
-					Transform.Position = hit.point+Vector3.up;
-				}
-				if(Input.GetKeyDown(Keys.J)) {
-					Instantiate<RaisingPlatform>(world,position:hit.point);
-				}
-				if(Input.GetKeyDown(Keys.V)) {
-					Instantiate<Robot>(world,position:hit.point);
-				}
-				if(Input.GetKeyDown(Keys.B)) {
-					Instantiate<StoneHatchet>(world,position:hit.point+new Vector3(0f,15f,0f));
-				}
-				if(Input.GetKeyDown(Keys.N)) {
-					Instantiate<TexTest>(world,position:hit.point+new Vector3(0f,15f,0f));
-				}
-				if(Input.GetKeyDown(Keys.U)) {
-					enableStrafeJumping = !enableStrafeJumping;
-				}
-			}
+                if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(MouseButton.Middle)) {
+                    Main.LocalEntity = entity;
+                    screenFlash = 0.5f;
+                    SoundInstance.Create($"Magic.ogg",entity.Transform.Position);
+                }
+                if(Input.GetKeyDown(Keys.X)) { //Teleport
+                    Transform.Position = hit.point+Vector3.up;
+                }
+                if(Input.GetKeyDown(Keys.J)) {
+                    Instantiate<RaisingPlatform>(world,position: hit.point);
+                }
+                if(Input.GetKeyDown(Keys.V)) {
+                    Instantiate<Robot>(world,position: hit.point);
+                }
+                if(Input.GetKeyDown(Keys.B)) {
+                    Instantiate<StoneHatchet>(world,position: hit.point+new Vector3(0f,15f,0f));
+                }
+                if(Input.GetKeyDown(Keys.N)) {
+                    Instantiate<TexTest>(world,position: hit.point+new Vector3(0f,15f,0f));
+                }
+                if(Input.GetKeyDown(Keys.M)) {
+                    Instantiate<TestSphere>(world,position: hit.point + new Vector3(0f,15f,0f));
+                }
+                if(Input.GetKeyDown(Keys.H)) {
+                    Instantiate<GiantPlatform>(world,position: hit.point);
+                }
+                if(Input.GetKeyDown(Keys.U)) {
+                    enableStrafeJumping = !enableStrafeJumping;
+                }
+            }
 		}
 		public override void RenderUpdate()
 		{
@@ -145,6 +151,10 @@ namespace SurvivalGame
 		}
 		public override void OnGUI()
 		{
+			if(Main.hideUI) {
+				return;
+			}
+			
 			int i = 5;
 			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Player Speed - XZ:{new Vector3(velocity.x,0f,velocity.z).Magnitude:0.00} Y: {velocity.y:0.00}");
 			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
@@ -158,7 +168,10 @@ namespace SurvivalGame
 		public override void UpdateIsPlayer(bool isPlayer)
 		{
 			base.UpdateIsPlayer(isPlayer);
-			renderer.Enabled = !isPlayer;
+
+			if(!isPlayer) {
+				renderer.Enabled = true;
+			}
 		}
 
 		#region Movement
@@ -243,7 +256,7 @@ namespace SurvivalGame
 
 			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
 			float wishSpeed = MoveSpeed;
-			float acceleration = airAcceleration;
+			float acceleration = AirAcceleration;
 
 			Movement_Acceleration(wishDirection,wishSpeed,acceleration);
 		}
@@ -253,9 +266,9 @@ namespace SurvivalGame
 				return false;
 			}
 			if(velocity.y<0f) {
-				velocity.y = jumpSpeed;
+				velocity.y = JumpSpeed;
 			}else{
-				velocity.y += jumpSpeed;
+				velocity.y += JumpSpeed;
 			}
 			return true;
 		}
@@ -266,7 +279,7 @@ namespace SurvivalGame
 			float speed = tempVec.Magnitude;
 			float drop = 0f;
 			if(onGroundCached) {
-				drop = (speed<stopSpeed ? stopSpeed : speed)*friction*Time.FixedDeltaTime;
+				drop = (speed<StopSpeed ? StopSpeed : speed)*Friction*Time.FixedDeltaTime;
 			}
 			float newSpeed = speed-drop;
 			if(newSpeed<0) {

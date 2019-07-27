@@ -22,13 +22,13 @@ namespace AbyssCrusaders
 
 		public ref Tile this[int x,int y] {
 			get {
-				x = Mathf.Repeat(x,width);
-				y = Mathf.Repeat(y,height);
+				x = x>=0 ? (x<width ? x : x%width) : (int.MaxValue+x+1)%width;
+				y = y>=0 ? (y<height ? y : y%height) : (int.MaxValue+y+1)%height;
 				int chunkX = x/Chunk.ChunkSize;
 				int chunkY = y/Chunk.ChunkSize;
 				ref var chunk = ref chunks[chunkX,chunkY];
 				if(chunk==null) {
-					chunk = new Chunk(this,chunkX,chunkY);
+					chunk = new Chunk(this,new Vector2Int(chunkX,chunkY));
 				}
 				return ref chunk.tiles[x%Chunk.ChunkSize,y%Chunk.ChunkSize];
 			}
@@ -58,7 +58,7 @@ namespace AbyssCrusaders
 
 			for(int y = y1;y<=y2;y++) {
 				for(int x = x1;x<=x2;x++) {
-					var chunk = chunks[x,y] ?? (chunks[x,y] = new Chunk(this,x,y));
+					var chunk = chunks[x,y] ?? (chunks[x,y] = new Chunk(this,new Vector2Int(x,y)));
 					if(resetFrames) {
 						int xEnd = (x+1)*Chunk.ChunkSize;
 						int yEnd = (y+1)*Chunk.ChunkSize;

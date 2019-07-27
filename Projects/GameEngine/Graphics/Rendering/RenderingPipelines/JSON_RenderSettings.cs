@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using GameEngine.Graphics;
 
+#pragma warning disable CS0649
+
 namespace GameEngine
 {
 	[JsonObject]
@@ -19,6 +21,7 @@ namespace GameEngine
 			[JsonProperty(Required = Required.Always)]
 			public Dictionary<string,Texture> textures;
 		}
+
 		public class RenderPass
 		{
 			[JsonProperty(Required = Required.Always)]
@@ -28,6 +31,7 @@ namespace GameEngine
 			public Dictionary<string,string> shaders;
 			public string shader;
 		}
+
 		public Dictionary<string,Framebuffer> framebuffers = new Dictionary<string,Framebuffer>();
 		[JsonProperty(Required = Required.Always)]
 		public Dictionary<string,RenderPass> pipeline;

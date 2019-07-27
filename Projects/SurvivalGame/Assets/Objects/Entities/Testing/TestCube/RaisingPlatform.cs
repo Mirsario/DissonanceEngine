@@ -11,8 +11,6 @@ namespace SurvivalGame
 
 		public override void OnInit()
 		{
-			//layer = Layers.GetLayerIndex("Box");
-			
 			rigidbody = AddComponent<Rigidbody>();
 			rigidbody.IsKinematic = true;
 

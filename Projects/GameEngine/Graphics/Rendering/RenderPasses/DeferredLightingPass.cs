@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
 using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 namespace GameEngine.Graphics
 {
@@ -28,7 +29,6 @@ namespace GameEngine.Graphics
 
 			GL.Enable(EnableCap.Blend);
 			GL.Enable(EnableCap.CullFace);
-			GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.One);
 			GL.DepthMask(false);
 
 			//test if it equals 1
@@ -66,21 +66,24 @@ namespace GameEngine.Graphics
 						}
 					}
 
-					int uniformLightRange = GL.GetUniformLocation(activeShader.program,"lightRange");
-					int uniformLightPosition = GL.GetUniformLocation(activeShader.program,"lightPosition");
-					int uniformLightDirection = GL.GetUniformLocation(activeShader.program,"lightDirection");
-					int uniformLightIntensity = GL.GetUniformLocation(activeShader.program,"lightIntensity");
-					int uniformLightColor = GL.GetUniformLocation(activeShader.program,"lightColor");
-				
+					activeShader.TryGetUniformLocation("lightRange",out int uniformLightRange);
+					activeShader.TryGetUniformLocation("lightPosition",out int uniformLightPosition);
+					activeShader.TryGetUniformLocation("lightDirection",out int uniformLightDirection);
+					activeShader.TryGetUniformLocation("lightIntensity",out int uniformLightIntensity);
+					activeShader.TryGetUniformLocation("lightColor",out int uniformLightColor);
+					
 					foreach(var light in Rendering.lightList) {
 						if(light.type!=lightType) {
 							continue;
 						}
 
-						var world = Matrix4x4.CreateScale(light.range)*Matrix4x4.CreateTranslation(light.Transform.Position);
+						var lightTransform = light.Transform;
+						var lightPosition = lightTransform.Position;
+
+						var world = Matrix4x4.CreateScale(light.range)*Matrix4x4.CreateTranslation(lightPosition);
 
 						activeShader.SetupUniforms(
-							ref camera,ref cameraPos,light.Transform,
+							ref camera,ref cameraPos,lightTransform,
 							ref world,ref worldInverse,
 							ref worldView,ref worldViewInverse,
 							ref worldViewProj,ref worldViewProjInverse,
@@ -89,16 +92,25 @@ namespace GameEngine.Graphics
 							true
 						);
 
-						//TODO: Get rid of GetUniformLocation somehow?
-						if(lightType!=LightType.Directional) {
+						if(uniformLightRange!=-1) {
 							GL.Uniform1(uniformLightRange,light.range);
-							GL.Uniform3(uniformLightPosition,light.Transform.Position);
 						}
-						if(lightType!=LightType.Point) {
-							GL.Uniform3(uniformLightDirection,light.Transform.Forward);
+
+						if(uniformLightPosition!=-1) {
+							GL.Uniform3(uniformLightPosition,lightPosition);
 						}
-						GL.Uniform1(uniformLightIntensity,light.intensity);
-						GL.Uniform3(uniformLightColor,new Vector3(light.color.x,light.color.y,light.color.z));
+
+						if(uniformLightDirection!=-1) {
+							GL.Uniform3(uniformLightDirection,lightTransform.Forward);
+						}
+
+						if(uniformLightIntensity!=-1) {
+							GL.Uniform1(uniformLightIntensity,light.intensity);
+						}
+
+						if(uniformLightColor!=-1) {
+							GL.Uniform3(uniformLightColor,light.color);
+						}
 
 						switch(lightType) {
 							case LightType.Point:
@@ -124,6 +136,7 @@ namespace GameEngine.Graphics
 					}
 				}
 			}
+
 			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 			GL.Disable(EnableCap.CullFace);

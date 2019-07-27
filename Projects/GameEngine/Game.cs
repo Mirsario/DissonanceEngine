@@ -41,8 +41,6 @@ namespace GameEngine
 		internal static bool preInitDone;
 		internal static bool fixedUpdate;
 
-		private static bool resizedWindow;
-
 		public static bool HasFocus	{ get; internal set; } = true;
 
 		public void Run(string[] args = null)

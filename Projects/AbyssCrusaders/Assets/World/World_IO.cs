@@ -4,7 +4,7 @@ using GameEngine;
 
 namespace AbyssCrusaders
 {
-	public abstract partial class World : GameObject2D
+	partial class World
 	{
 		public bool Save(string path)
 		{

@@ -56,15 +56,19 @@
 				}
 				#endregion
 			};
+
 			if(addNormals) {
 				newMesh.RecalculateNormals();
 			}
+
 			if(addTangents) {
 				newMesh.RecalculateTangents();
 			}
+
 			if(apply) {
 				newMesh.Apply();
 			}
+
 			return newMesh;
 		}
 		public static Mesh GenerateCube(float size = 1f,bool inverted = false,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool apply = true)
@@ -177,8 +181,8 @@
 					newMesh.triangles[triangleIndex+1] = vertexIndex+1;
 					newMesh.triangles[triangleIndex+2] = vertexIndex+3;
 					newMesh.triangles[triangleIndex+3] = vertexIndex+2;
-					newMesh.triangles[triangleIndex+4] = vertexIndex+3;
-					newMesh.triangles[triangleIndex+5] = vertexIndex+1;
+					newMesh.triangles[triangleIndex+4] = vertexIndex;
+					newMesh.triangles[triangleIndex+5] = vertexIndex+3;
 					vertexIndex += 4;
 					triangleIndex += 6;
 				}

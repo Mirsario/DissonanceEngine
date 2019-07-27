@@ -2,7 +2,7 @@
 	"name": "TestCube",
 	"shader": "EmissiveDiffuse",
 	"textures": {
-		"mainTex":		"Entities/Testing/TestCube/TestCubeTexture.png",
-		"emissionMap":	"Entities/Testing/TestCube/TestCubeEmission.png",
+		"mainTex":	 "Entities/Testing/TestCube/TestCubeTexture.png",
+		"emissionMap": "Entities/Testing/TestCube/TestCubeEmission.png",
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using GLPrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace GameEngine.Graphics
 {
@@ -14,7 +14,6 @@ namespace GameEngine.Graphics
 
 			GL.Enable(EnableCap.Blend);
 			GL.Enable(EnableCap.CullFace);
-			GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.One);
 			GL.DepthMask(false);
 
 			Matrix4x4 worldInverse = default,
@@ -65,9 +64,10 @@ namespace GameEngine.Graphics
 					GL.BindBuffer(BufferTarget.ArrayBuffer,PrimitiveMeshes.quad.vertexBufferId);
 					GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,PrimitiveMeshes.quad.vertexSize,(IntPtr)0);
 					GL.BindBuffer(BufferTarget.ElementArrayBuffer,PrimitiveMeshes.quad.indexBufferId);
-					GL.DrawElements(PrimitiveTypeGL.Triangles,PrimitiveMeshes.quad.indexLength,DrawElementsType.UnsignedInt,0);
+					GL.DrawElements(GLPrimitiveType.Triangles,PrimitiveMeshes.quad.indexLength,DrawElementsType.UnsignedInt,0);
 				}
 			}
+
 			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 			GL.Disable(EnableCap.CullFace);

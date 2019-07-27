@@ -80,10 +80,11 @@ namespace GameEngine.Graphics
 		internal void ApplyUniforms(Shader shader)
 		{
 			foreach(var pair in uniformsFloat) {
-				(byte vecSize,var data)=	pair.Value;
+				(byte vecSize,var data) = pair.Value;
 				int location = shader.uniforms[pair.Key].location;
+
 				switch(vecSize) {
-					case 1: GL.Uniform1(location,data.Length,data);   break;
+					case 1: GL.Uniform1(location,data.Length,data); break;
 					case 2: GL.Uniform2(location,data.Length/2,data); break;
 					case 3: GL.Uniform3(location,data.Length/3,data); break;
 					case 4: GL.Uniform4(location,data.Length/4,data); break;
@@ -191,14 +192,19 @@ namespace GameEngine.Graphics
 		public void SetVector(string name,float[] val)
 		{
 			CheckUniform(name,"SetVector");
-			if(val.Length==2) {
-				SetVector2(name,new Vector2(val[0],val[1]));
-			}else if(val.Length==3) {
-				SetVector3(name,new Vector3(val[0],val[1],val[2]));
-			}else if(val.Length==4) {
-				SetVector4(name,new Vector4(val[0],val[1],val[2],val[3]));
-			}else{
-				throw new Exception("Array's length must be in range [2..4]");
+
+			switch(val.Length) {
+				case 2:
+					SetVector2(name,new Vector2(val[0],val[1]));
+					break;
+				case 3:
+					SetVector3(name,new Vector3(val[0],val[1],val[2]));
+					break;
+				case 4:
+					SetVector4(name,new Vector4(val[0],val[1],val[2],val[3]));
+					break;
+				default:
+					throw new Exception("Array's length must be in range [2..4]");
 			}
 		}
 		public void SetTexture(string name,Texture texture)

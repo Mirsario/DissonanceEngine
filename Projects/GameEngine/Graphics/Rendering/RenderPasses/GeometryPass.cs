@@ -41,10 +41,12 @@ namespace GameEngine.Graphics
 					if(shader==null) {
 						continue;
 					}
+
 					int materialCount = shader.materialAttachments.Count;
 					if(materialCount==0) {
 						continue;
 					}
+
 					if(cullMode!=shader.cullMode) {
 						if(shader.cullMode==CullMode.Off) {
 							GL.Disable(EnableCap.CullFace);
@@ -56,9 +58,11 @@ namespace GameEngine.Graphics
 						}
 						cullMode = shader.cullMode;
 					}
+
 					if(polygonMode!=shader.polygonMode) {
 						GL.PolygonMode(MaterialFace.FrontAndBack,(OpenTK.Graphics.OpenGL.PolygonMode)(polygonMode = shader.polygonMode));
 					}
+
 					if(Shader.activeShader!=shader) {
 						Shader.SetShader(shader);
 					}
@@ -69,10 +73,12 @@ namespace GameEngine.Graphics
 						if(material==null) {
 							continue;
 						}
+
 						int rendererCount = material.rendererAttachments.Count;
 						if(rendererCount==0) {
 							continue;
 						}
+
 						material.ApplyTextures(shader);
 						material.ApplyUniforms(shader);
 						
@@ -94,6 +100,7 @@ namespace GameEngine.Graphics
 							if(postCullResult!=null) {
 								cullResult = postCullResult.Value;
 							}
+
 							if(!cullResult) {
 								continue;
 							}

@@ -42,6 +42,8 @@ namespace AbyssCrusaders
 
 			var light = AddComponent<Light2D>();
 			light.color = new Vector3(1f,0.75f,0.5f);
+			light.range = 32f;
+			Instantiate<CursorLightObj>().light.color = Vector3.one;
 		}
 		public override void FixedUpdate()
 		{
@@ -50,7 +52,15 @@ namespace AbyssCrusaders
 
 			if(moveX!=0f) {
 				Direction = moveX>0f ? 1 : -1;
-				ApplyAcceleration(new Vector2(moveX*(collisions.down ? 5f : 2.5f),0f));
+				if(collisions.down) {
+					if(GameInput.sprint.IsPressed) {
+						ApplyAcceleration(new Vector2(moveX*5f,0f),maxSpeed*1.5f);
+					}else{
+						ApplyAcceleration(new Vector2(moveX*5f,0f));
+					}
+				}else{
+					ApplyAcceleration(new Vector2(moveX*2.5f,0f));
+				}
 			}else{
 				ApplyFriction();
 			}
@@ -60,8 +70,12 @@ namespace AbyssCrusaders
 			}else{
 				jumpKeyBuffer -= Time.FixedDeltaTime;
 			}
+
 			if(collisions.down && jumpKeyBuffer>0f) {
 				velocity.y = -26f;
+				if(moveX!=0f) {
+					velocity.x += moveX*2f;
+				}
 				jumpKeyBuffer = 0f;
 			}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Linq;
+using GameEngine.Graphics;
 using Ionic.Zip;
 
 namespace GameEngine
@@ -246,6 +247,7 @@ namespace GameEngine
 		public static T Import<T>(string filePath,bool addToCache = true,AssetManager<T> assetManager = null,bool throwOnFail = true) where T : class
 		{
 			NameToPath(ref filePath,out bool ntpMultiplePaths);
+
 			return ImportInternal(filePath,addToCache,assetManager,ntpMultiplePaths);
 		}
 		internal static T ImportInternal<T>(string filePath,bool addToCache,AssetManager<T> assetManager,bool ntpMultiplePaths) where T : class
@@ -266,22 +268,22 @@ namespace GameEngine
 			using var stream = File.OpenRead(filePath);
 			var content = ImportFromStream(stream,assetManager,Path.GetFileName(filePath));
 			cacheByPath[filePath] = content;
+
 			return content;
 		}
 		internal static object ImportBuiltInAsset(string filePath,AssetManager manager = null,byte[] data = null)
 		{
 			ReadyPath(ref filePath);
 
-			if(data==null) {
-				if(!builtInAssets.TryGetValue(filePath,out data)) {
-					throw new FileNotFoundException("Couldn't find built-in asset at '"+filePath+"'");
-				}
+			if(data==null && !builtInAssets.TryGetValue(filePath,out data)) {
+				throw new FileNotFoundException($"Couldn't find built-in asset at '{filePath}'.");
 			}
 
 			if(manager==null) {
 				if(!assetManagers.TryGetValue(Path.GetExtension(filePath).ToLower(),out var list)) {
 					return null;
 				}
+
 				manager = list[0];
 			}
 
@@ -343,22 +345,17 @@ namespace GameEngine
 
 			return ImportInternal<T>(filePath,true,null,ntpMultiplePaths);
 		}
-		#endregion
-		#region Find
-		//Finds already loaded resources by their internal asset names,if they have them. Exists mostly for stuff like shaders.
-		public static bool Find<T>(string assetName,out T asset) where T : class
-		{
-			asset = Find<T>(assetName);
-			return asset!=null;
-		}
-		public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
+        #endregion
+        #region Find
+        //Finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
+        public static bool Find<T>(string assetName,out T asset) where T : class
+            => (asset = Find<T>(assetName))!=null;
+        public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
 		{
 			var type = typeof(T);
 
-			if(cacheByName.TryGetValue(type,out var realDict)) {
-				if(realDict.TryGetValue(assetName,out var obj) && obj is T content) {
-					return content;
-				}
+			if(cacheByName.TryGetValue(type,out var realDict) && realDict.TryGetValue(assetName, out var obj) && obj is T content) {
+				return content;
 			}
 
 			if(throwOnFail) {

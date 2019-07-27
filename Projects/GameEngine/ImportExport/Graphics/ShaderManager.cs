@@ -21,9 +21,9 @@ namespace GameEngine
 			//Parameters
 			public string cullMode;
 			public string polygonMode;
-			public string renderType;
-			public string blendFuncSrc;
-			public string blendFuncDest;
+			//public string renderType;
+			public BlendingFactor blendFactorSrc = BlendingFactor.One;
+			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
 
 			//Uniforms
 			public Dictionary<string,float> floats;
@@ -41,8 +41,10 @@ namespace GameEngine
 			using(var reader = new StreamReader(stream)) {
 				jsonText = reader.ReadToEnd();
 			}
+
 			var shaders = new List<Shader>();
 			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string,JSON_ShaderProgram>>(jsonText);
+			
 			foreach(var pair in jsonShaders) {
 				string name = pair.Key;
 				var jsonShader = pair.Value;
@@ -57,6 +59,9 @@ namespace GameEngine
 				if(!Enum.TryParse(jsonShader.polygonMode,true,out shader.polygonMode)) {
 					shader.polygonMode = PolygonMode.Fill;
 				}
+
+				shader.blendFactorSrc = jsonShader.blendFactorSrc;
+				shader.blendFactorDst = jsonShader.blendFactorDst;
 
 				shaders.Add(shader);
 			}

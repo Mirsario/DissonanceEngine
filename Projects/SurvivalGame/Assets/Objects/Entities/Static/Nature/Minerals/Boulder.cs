@@ -16,7 +16,7 @@ namespace SurvivalGame
 
 			renderer = AddComponent<MeshRenderer>();
 			renderer.Mesh = mesh;
-			renderer.Material = Resources.Find<Material>($"{GetType().Name}");
+			renderer.Material = Resources.Find<Material>(GetType().Name);
 
 			collider = AddComponent<MeshCollider>();
 			collider.Mesh = mesh;

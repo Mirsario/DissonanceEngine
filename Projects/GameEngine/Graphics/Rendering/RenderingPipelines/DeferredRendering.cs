@@ -23,6 +23,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 					.WithRenderTexture(new RenderTexture("normalBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
 					.WithRenderTexture(new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
 					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f),out var specularBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")
@@ -41,8 +42,9 @@ namespace GameEngine.Graphics.RenderingPipelines
 					.WithPassedTextures(
 						normalBuffer,
 						positionBuffer,
-						emissionBuffer
-					)
+						emissionBuffer,
+                        specularBuffer
+                    )
 					.WithShaders(
 						Resources.Find<Shader>("LightingPoint"),
 						Resources.Find<Shader>("LightingDirectional"),

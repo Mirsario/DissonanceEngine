@@ -23,7 +23,7 @@ namespace SurvivalGame
 		{
 			const float grassSize = 2f;
 			for(int i = 0;i<3;i++) {
-				var pos = new Vector3(localPos.x+(Chunk.tileSize*Rand.Range(0f,1f)),0f,localPos.z+(Chunk.tileSize*Rand.Range(0f,1f)));
+				var pos = new Vector3(localPos.x+(Chunk.TileSize*Rand.Range(0f,1f)),0f,localPos.z+(Chunk.TileSize*Rand.Range(0f,1f)));
 				pos.y = chunk.world.HeightAt(pos+chunk.WorldPoint,false)-grassSize*0.5f;
 
 				var rot = Rand.Range(0f,360f);

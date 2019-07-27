@@ -2,7 +2,7 @@ using AbyssCrusaders.DataStructures;
 
 namespace AbyssCrusaders
 {
-	public abstract partial class World : GameObject2D
+	partial class World
 	{
 		public void TileFrame(int x,int y)
 		{

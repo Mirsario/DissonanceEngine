@@ -9,6 +9,7 @@ namespace GameEngine
 		protected override void OnInit()
 		{
 			base.OnInit();
+
 			UpdateCollider();
 		}
 		internal override void UpdateCollider()
@@ -17,7 +18,9 @@ namespace GameEngine
 				collShape.Dispose();
 				collShape = null;
 			}
-			collShape = new BoxShape(size*0.5f);
+
+            collShape = new BoxShape(size*0.5f);
+
 			base.UpdateCollider();
 		}
 	}

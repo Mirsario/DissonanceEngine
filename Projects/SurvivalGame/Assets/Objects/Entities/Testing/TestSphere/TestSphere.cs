@@ -3,7 +3,7 @@ using GameEngine.Graphics;
 
 namespace SurvivalGame
 {
-	public class TestSphere : GameObject,IHasMaterial
+	public class TestSphere : Entity, IHasMaterial
 	{
 		public MeshRenderer renderer;
 		public SphereCollider collider;

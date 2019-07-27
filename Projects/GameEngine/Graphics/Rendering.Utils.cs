@@ -4,24 +4,28 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 namespace GameEngine.Graphics
 {
 	public static partial class Rendering
 	{
-		private static Regex regexGLVersion = new Regex(@".*?([\d.]+).*",RegexOptions.Compiled);
+		private static readonly Regex RegexGLVersion = new Regex(@".*?([\d.]+).*",RegexOptions.Compiled);
 		
 		public static Version GetOpenGLVersion()
 		{
 			string versionStr = GL.GetString(StringName.Version);
 			
-			var match = regexGLVersion.Match(versionStr);
+			var match = RegexGLVersion.Match(versionStr);
 			if(!match.Success) {
 				throw new Exception("Unable to read OpenGL version. This is sad...");
 			}
 
 			return new Version(match.Groups[1].Value);
 		}
+		
+		[Obsolete("This call of CheckGLErrors was meant to be temporary.")]
+		public static bool CheckGLErrorsTemp(bool throwException = true,object prefix = null) => CheckGLErrors(throwException,prefix);
 		public static bool CheckGLErrors(bool throwException = true,object prefix = null)
 		{
 			if(prefix==null) {
@@ -66,6 +70,15 @@ namespace GameEngine.Graphics
 					throw new Exception("Attempt to use an unsupported format combinaton!");
 				default:
 					throw new Exception("Unknown error while attempting to create frame buffer object!");
+			}
+		}
+
+		internal static void SetBlendFunc(BlendingFactor blendFactorSrc,BlendingFactor blendFactorDst)
+		{
+			if(blendFactorSrc!=currentBlendFactorSrc || blendFactorDst!=currentBlendFactorDst) {
+				currentBlendFactorSrc = blendFactorSrc;
+				currentBlendFactorDst = blendFactorDst;
+				GL.BlendFunc((GLBlendingFactor)blendFactorSrc,(GLBlendingFactor)blendFactorDst);
 			}
 		}
 	}

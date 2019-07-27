@@ -26,7 +26,7 @@ namespace SurvivalGame
 
 		protected virtual string[] Variants => throw new NotImplementedException();
 		#pragma warning disable 0675
-		public virtual byte GetVariant(int x,int y) => (byte)(((y*y)+(x*x*y))%numVariants);
+		public virtual byte GetVariant(int x,int y) => (byte)((byte)(((y*y)+(x*x*y)))%numVariants);
 		#pragma warning restore 0675
 
 		//TODO: Move this, don't use virtual methods in the constructor.

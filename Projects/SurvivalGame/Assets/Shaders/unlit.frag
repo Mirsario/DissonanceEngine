@@ -12,8 +12,8 @@ out vec4 oEmission;
 
 void main (void)  
 {
-	oDiffuse=	texture(mainTex,uv)*col;
-	oNormal=	vec3(1.0,1.0,1.0);
-	oPosition=	worldPos;
-	oEmission=	vec4(1.0,1.0,1.0,1.0);
+	oDiffuse = texture(mainTex,uv)*col;
+	oNormal = vec3(1f,1f,1f);
+	oPosition = worldPos;
+	oEmission = vec4(1f,1f,1f,1f);
 }

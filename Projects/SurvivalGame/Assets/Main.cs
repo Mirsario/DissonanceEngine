@@ -12,10 +12,11 @@ namespace SurvivalGame
 	{
 		public static void Main()
 		{
-			var main = new Main();
+			using var main = new Main();
 			main.Run();
 		}
 	}
+
 	public class Main : Game
 	{
 		public enum MenuState
@@ -37,12 +38,13 @@ namespace SurvivalGame
 		public static Camera camera;
 		public static World world;
 		public static bool shouldLockCursor;
-		private static Func<bool?,string> dynamicMenuSetup;
+		public static bool enableMusic = false; //To be moved
+		public static Texture whiteTexture; //To be moved
+		public static bool hideUI; //To be moved
+		public static bool forceThirdPerson; //To be moved
 
-		#region ToMove
-		public static bool enableMusic = false; //shouldn't be here 
-		public static Texture whiteTexture; //this too
-		#endregion
+		private static Func<bool?,string> dynamicMenuSetup;
+		private static Type prevCameraControllerType; //To be moved
 
 		private WorldInfo[] worldList;
 		private string worldNameString = "";
@@ -52,7 +54,9 @@ namespace SurvivalGame
 			get => _mainMenu;
 			set {
 				shouldLockCursor = !value;
+				
 				UpdateCursor();
+
 				if(!value) {
 					menuState = MenuState.Main;
 					prevMenuState = MenuState.Main;
@@ -67,19 +71,12 @@ namespace SurvivalGame
 				if(localEntity==value) {
 					return;
 				}
-				camera?.GameObject.Dispose();
-				var controllerType = value.CameraControllerType;
-				if(controllerType==null || !typeof(CameraController).IsAssignableFrom(controllerType)) {
-					throw new Exception($"Invalid CameraControllerType return value, '{controllerType?.ToString() ?? "null"}' does not derive from CameraController class.");
-				}
-				var controller = (CameraController)GameObject.Instantiate(controllerType,init:false);
-				controller.camera = camera = InstantiateCamera(controller);
-				controller.entity = value;
-				controller.Init();
 
 				localEntity?.UpdateIsPlayer(false);
 				value.UpdateIsPlayer(true);
 				localEntity = value;
+
+				CheckCamera(true);
 			}
 		}
 		public static bool EnableFXAA { //Test
@@ -108,16 +105,11 @@ namespace SurvivalGame
 			name = "SurvivalTest";
 			displayName = "Survival Test";
 			
-			docPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\","/")}/My Games/{name}/"; //TODO: Change for linux and mac
-			savePath = docPath+@"Saves/";
-			modsPath = docPath+@"Mods/";
-			sourcesPath = modsPath+@"Sources/";
-			builtPath = modsPath+@"Local/";
-			Directory.CreateDirectory(docPath);
-			Directory.CreateDirectory(savePath);
-			Directory.CreateDirectory(modsPath);
-			Directory.CreateDirectory(sourcesPath);
-			Directory.CreateDirectory(builtPath);
+			Directory.CreateDirectory(docPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\","/")}/My Games/{name}/"); //TODO: Change for linux and mac
+			Directory.CreateDirectory(savePath = docPath+@"Saves/");
+			Directory.CreateDirectory(modsPath = docPath+@"Mods/");
+			Directory.CreateDirectory(sourcesPath = modsPath+@"Sources/");
+			Directory.CreateDirectory(builtPath = modsPath+@"Local/");
 
 			whiteTexture = new Texture(1,1);
 
@@ -131,6 +123,8 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
+			CheckCamera();
+			
 			if(Input.GetKeyDown(Keys.Escape)) {
 				if(Screen.lockCursor || !Screen.showCursor) {
 					Screen.lockCursor = false;
@@ -141,14 +135,23 @@ namespace SurvivalGame
 			}else if(shouldLockCursor && Input.GetMouseButtonDown(MouseButton.Left) || Input.GetMouseButtonDown(MouseButton.Right)) {
 				UpdateCursor();
 			}
+
 			if(Input.GetKeyDown(Keys.Y)) {
-				Debug.Log("Boop");
 				EnableFXAA = !EnableFXAA;
 			}
-			//Physics.gravity = new Vector3(0f,Mathf.Sin(Time.fixedTime*2f)*5f,0f);
+			if(Input.GetKeyDown(Keys.F1)) {
+				hideUI = !hideUI;
+			}
+			if(Input.GetKeyDown(Keys.F5)) {
+				forceThirdPerson = !forceThirdPerson;
+			}
 		}
 		public override void OnGUI()
 		{
+			if(hideUI) {
+				return;
+			}
+			
 			MenuState? setMenuState = null;
 			if(MainMenu) {
 				switch(menuState) {
@@ -169,17 +172,22 @@ namespace SurvivalGame
 						if(worldList==null || prevMenuState!=menuState) {
 							RefreshWorlds();
 						}
+						
 						if(GUI.Button(new RectFloat(64,Screen.Height-256,256,64),"New World")) {
 							setMenuState = MenuState.WorldCreate;
 						}
+
 						if(GUI.Button(new RectFloat(64,Screen.Height-192,256,64),"Back")) {
 							setMenuState = MenuState.Main;
 						}
+
 						GUI.DrawText(new RectFloat(0,Screen.Height/2-272,Screen.Width,32),"Worlds",alignment:TextAlignment.MiddleCenter);
+
 						for(int i=0;i<worldList.Length;i++) {
 							if(GUI.Button(new RectFloat((Screen.Width*0.5f)-256,256+(i*64),448,64),worldList[i].displayName)) {
 								World.LoadWorld(worldList[i].localPath);
 							}
+
 							if(GUI.Button(new RectFloat((Screen.Width*0.5f)+192,256+(i*64),64,64),"X")) {
 								int iCopy = i;
 								setMenuState = MenuState.DynamicYesOrNo;
@@ -202,19 +210,23 @@ namespace SurvivalGame
 							worldNameString = "";
 						}
 						GUI.DrawText(new RectFloat(0,Screen.Height/2-24,Screen.Width,32),"Enter World Name:",alignment:TextAlignment.MiddleCenter);
+
 						if(!string.IsNullOrEmpty(Input.InputString)) {
 							worldNameString += Input.InputString;
 						}
+
 						if(Input.GetKeyDown(Keys.BackSpace) && worldNameString.Length>0) {
 							worldNameString = worldNameString.Remove(worldNameString.Length-1,1);
 						}
+
 						bool showLine = Mathf.FloorToInt(Time.GlobalTime*2f)%2==0;
 						GUI.DrawText(new RectFloat((showLine && worldNameString.Length>0) ? 6 : 0,Screen.Height*0.5f,Screen.Width,32),worldNameString+(showLine ? "_" : ""),alignment:TextAlignment.MiddleCenter);
 
 						if(GUI.Button(new RectFloat(Screen.Width/2-128,Screen.Height/2+32,128,64),"Back")) {
 							setMenuState = MenuState.WorldSelect;
 						}
-						bool active=	!string.IsNullOrWhiteSpace(worldNameString);
+
+						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
 							world = World.NewWorld(worldNameString,256,256);
 							setMenuState = MenuState.Main;
@@ -242,12 +254,11 @@ namespace SurvivalGame
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic MS: {Time.LogicMs:0.00}");
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"FXAA: {(EnableFXAA ? "Enabled" : "Disabled")} ([Y] - Toggle)");
 			}
+
 			prevMenuState = menuState;
 			if(setMenuState!=null) {
 				menuState = setMenuState.Value;
 			}
-
-			//GUI.DrawTexture(new Rect(32,32,64,64),TileEntity.tileTexture);	//This was... weirdly moving???
 		}
 
 		private void RefreshWorlds()
@@ -278,21 +289,45 @@ namespace SurvivalGame
 					});
 				}
 			}
+
 			worldList = worlds.ToArray();
-			//});
 		}
 
-		public static Camera InstantiateCamera(CameraController controller)
+		private static void UpdateCursor()
+		{
+			Screen.lockCursor = shouldLockCursor;
+			Screen.showCursor = !shouldLockCursor;
+		}
+		private static Camera InstantiateCamera(CameraController controller)
 		{
 			var newCamera = controller.AddComponent<Camera>();
 			newCamera.fov = 110f;
 			controller.AddComponent<AudioListener>();
 			return newCamera;
 		}
-		public static void UpdateCursor()
+		private static void CheckCamera(bool forceRecreation = false)
 		{
-			Screen.lockCursor = shouldLockCursor;
-			Screen.showCursor = !shouldLockCursor;
+			if(localEntity==null) {
+				camera?.GameObject.Dispose();
+				camera = null;
+				return;
+			}
+			
+			var controllerType = localEntity.CameraControllerType;
+			if(forceRecreation || controllerType!=prevCameraControllerType) {
+				camera?.GameObject.Dispose();
+
+				if(controllerType==null || !typeof(CameraController).IsAssignableFrom(controllerType)) {
+					throw new Exception($"Invalid CameraControllerType return value, '{controllerType?.ToString() ?? "null"}' does not derive from CameraController class.");
+				}
+
+				var controller = (CameraController)GameObject.Instantiate(controllerType,init:false);
+				controller.camera = camera = InstantiateCamera(controller);
+				controller.entity = localEntity;
+				controller.Init();
+			}
+
+			prevCameraControllerType = controllerType;
 		}
 	}
 }

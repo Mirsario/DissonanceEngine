@@ -22,10 +22,12 @@ namespace GameEngine.Graphics
 			"screenHeight",
 			"screenResolution",
 			"cameraPosition",
+            "cameraDirection",
 			//Other
 			"color",
 			"mainTex",
 		};
+
 		//Matrices
 		public const int World = 0;
 		public const int WorldInverse = 1;
@@ -44,10 +46,11 @@ namespace GameEngine.Graphics
 		public const int ScreenHeight = 13;
 		public const int ScreenResolution = 14;
 		public const int CameraPosition = 15;
-		//Other
-		public const int Color = 16;
-		public const int MainTex = 17;
+        public const int CameraDirection = 16;
+        //Other
+        public const int Color = 17;
+		public const int MainTex = 18;
 		//Count, important
-		public const int Count = 18;
+		public const int Count = 19;
 	}
 }

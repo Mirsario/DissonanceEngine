@@ -3,7 +3,7 @@ using GameEngine.Graphics;
 
 namespace SurvivalGame
 {
-	public class CubeObj : GameObject,IHasMaterial
+	public class CubeObj : GameObject, IHasMaterial
 	{
 		public MeshRenderer renderer;
 		public BoxCollider collider;

@@ -32,7 +32,7 @@ namespace GameEngine
 		public static Vector2 operator/(Vector2Int a,float d) => new Vector2(a.x/d,a.y/d);
 
 		public override string ToString() => "X: "+x+",Y: "+y;
-		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
+		public override int GetHashCode() => x^y<<2;
 		public override bool Equals(object other)
 		{
 			if(!(other is Vector2Int)) {

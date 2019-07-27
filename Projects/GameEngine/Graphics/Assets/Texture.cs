@@ -169,8 +169,6 @@ namespace GameEngine.Graphics
 			if(useMipmaps) {
 				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 			}
-
-			Rendering.CheckGLErrors();
 		}
 	}
 }

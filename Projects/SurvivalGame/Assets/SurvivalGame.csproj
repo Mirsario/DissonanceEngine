@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameInput.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interaction\IFootstepProvider.cs" />
     <Compile Include="Interaction\PhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\DirtPhysicMaterial.cs" />
@@ -76,8 +77,9 @@
     <Compile Include="Objects\Entities\Testing\Robot\Robot.cs" />
     <Compile Include="Objects\Entities\Testing\Rocket\Rocket.cs" />
     <Compile Include="Objects\Entities\Testing\Skybox.cs" />
-    <Compile Include="Objects\Entities\Testing\Sun.cs" />
+    <Compile Include="Objects\Entities\Testing\Sun\Sun.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\CubeObj.cs" />
+    <Compile Include="Objects\Entities\Testing\TestCube\GiantPlatform.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\MovingCube.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\RaisingPlatform.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\TexTest.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoundInstance.cs" />
     <Compile Include="World\AtmosphereSystem.cs" />
+    <Compile Include="World\ChunkRenderer.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Tile.cs" />
     <Compile Include="World\Tiles\Dirt.cs" />

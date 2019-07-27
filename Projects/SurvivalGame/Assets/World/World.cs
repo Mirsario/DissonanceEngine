@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GameEngine;
@@ -28,6 +29,7 @@ namespace SurvivalGame
 		public float ySizeInUnits;
 		public Tile[,] tiles; //Multiplayer non-host clients store tile arrays in Chunks instead.
 		public Chunk[,] chunks;
+		public Dictionary<Vector2Int,ChunkRenderer> chunkRenderers;
 
 		public bool IsReady { protected set; get; }
 
@@ -36,27 +38,32 @@ namespace SurvivalGame
 		public Tile this[int x,int y] {
 			get {
 				RepeatTilePos(ref x,ref y);
+
 				if(Netplay.isHost) {
 					return tiles[x,y];
 				}
-				var chunkPoint = new Vector2Int(x/Chunk.chunkSize,y/Chunk.chunkSize);
-				var relativePos = new Vector2Int(x-(chunkPoint.x*Chunk.chunkSize),y-(chunkPoint.y*Chunk.chunkSize));
-				var chunk = chunks[x/Chunk.chunkSize,y/Chunk.chunkSize];
+
+				var chunkPoint = new Vector2Int(x/Chunk.ChunkSize,y/Chunk.ChunkSize);
+				var relativePos = new Vector2Int(x-(chunkPoint.x*Chunk.ChunkSize),y-(chunkPoint.y*Chunk.ChunkSize));
+				var chunk = chunks[x/Chunk.ChunkSize,y/Chunk.ChunkSize];
 				return chunk?.tiles[relativePos.x,relativePos.y];
 			}
 			set {
 				RepeatTilePos(ref x,ref y);
-				var chunkPoint = new Vector2Int(x/Chunk.chunkSize,y/Chunk.chunkSize);
-				Chunk chunk = Netplay.isHost ? null : (chunks[chunkPoint.x,chunkPoint.y] ?? (chunks[chunkPoint.x,chunkPoint.y] = chunk = Chunk.Create(this,chunkPoint.x,chunkPoint.y)));
+
+				var chunkPoint = new Vector2Int(x/Chunk.ChunkSize,y/Chunk.ChunkSize);
+				Chunk chunk = Netplay.isHost ? null : (chunks[chunkPoint.x,chunkPoint.y] ?? (chunks[chunkPoint.x,chunkPoint.y] = Chunk.Create(this,chunkPoint.x,chunkPoint.y)));
+
 				if(Netplay.isHost) {
 					tiles[x,y]?.Dispose();
 					tiles[x,y] = value;
 				}else{
-					int X = x-(chunkPoint.x*Chunk.chunkSize);
-					int Y = y-(chunkPoint.y*Chunk.chunkSize);
+					int X = x-(chunkPoint.x*Chunk.ChunkSize);
+					int Y = y-(chunkPoint.y*Chunk.ChunkSize);
 					chunk.tiles[X,Y]?.Dispose();
 					chunk.tiles[X,Y] = value;
 				}
+
 				if(chunk!=null) {
 					chunk.updateMesh = Netplay.isClient;
 					chunk.updateCollisionMesh = true;
@@ -69,14 +76,16 @@ namespace SurvivalGame
 		public override void OnInit()
 		{
 			Debug.Log("Constructor called!");
-			if(xSize<=0 || ySize<=0 || xSize%Chunk.chunkSize!=0 || ySize%Chunk.chunkSize!=0) {
-				throw new ArgumentException($"World size must be multiple of chunks' size ({Chunk.chunkSize})");
+			
+			if(xSize<=0 || ySize<=0 || xSize%Chunk.ChunkSize!=0 || ySize%Chunk.ChunkSize!=0) {
+				throw new ArgumentException($"World size must be multiple of chunks' size ({Chunk.ChunkSize})");
 			}
+
 			Name = "World_"+worldName;
-			xSizeInChunks = xSize/Chunk.chunkSize;
-			ySizeInChunks = ySize/Chunk.chunkSize;
-			xSizeInUnits = xSize*Chunk.tileSize;
-			ySizeInUnits = ySize*Chunk.tileSize;
+			xSizeInChunks = xSize/Chunk.ChunkSize;
+			ySizeInChunks = ySize/Chunk.ChunkSize;
+			xSizeInUnits = xSize*Chunk.TileSize;
+			ySizeInUnits = ySize*Chunk.TileSize;
 
 			chunks = new Chunk[xSizeInChunks,ySizeInChunks];
 			layer = Layers.GetLayerIndex("World");
@@ -90,11 +99,41 @@ namespace SurvivalGame
 			}
 			
 			Debug.Log("Init called!");
-			chunks = new Chunk[xSize/Chunk.chunkSize,ySize/Chunk.chunkSize];
+			chunks = new Chunk[xSize/Chunk.ChunkSize,ySize/Chunk.ChunkSize];
 			layer = Layers.GetLayerIndex("World");
 
-			//GenerateWorld();
+			if(Netplay.isClient) {
+				chunkRenderers = new Dictionary<Vector2Int,ChunkRenderer>();
+			}
 		}
+		public override void FixedUpdate()
+		{
+			if(!Netplay.isClient || Main.camera==null) {
+				return;
+			}
+			
+			Vector2Int cameraPos = (Vector2Int)(Main.camera.Transform.Position.XZ/Chunk.ChunkWorldSize);
+
+			const int Range = 16;
+
+			for(int y = -Range;y<Range;y++) {
+				for(int x = -Range;x<Range;x++) {
+					Vector2Int realPos = new Vector2Int(cameraPos.x+x,cameraPos.y+y);
+
+					if(chunkRenderers.ContainsKey(realPos)) {
+						continue;
+					}
+
+					Vector2Int chunkPos = realPos;
+					RepeatChunkPos(ref chunkPos.x,ref chunkPos.y);
+
+					var chunk = chunks[chunkPos.x,chunkPos.y];
+
+					chunkRenderers[realPos] = ChunkRenderer.Create(chunk,realPos.x,realPos.y);
+				}
+			}
+		}
+
 		public void Generate()
 		{
 			var noise = new PerlinNoiseFloat(Rand.Next(10000),frequency:xSize/64f);
@@ -108,15 +147,13 @@ namespace SurvivalGame
 
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
-					ushort type = Rand.Next(3)==0 ? grassFlowers : grass;
-					float height = noise.GetValue(x*divX,0f,y*divY)*60f;
-					Tile tile = new Tile {
+					this[x,y] = new Tile {
 						type = Rand.Next(3)==0 ? grassFlowers : grass,
-						height = height
+						height = noise.GetValue(x*divX,0f,y*divY)*60f
 					};
-					this[x,y] = tile;
 				}
 			}
+
 			/*for(int i=0;i<5;i++) {
 				var posA = new Vector2Int(Rand.Next(xSize),Rand.Next(ySize));
 				var posB = new Vector2Int(Rand.Next(xSize),Rand.Next(ySize));
@@ -164,12 +201,13 @@ namespace SurvivalGame
 					}
 					(int maxRand, var action) = genRoster[Rand.Next(genRoster.Length)];
 					if(Rand.Next(maxRand)==0) {
-						var spawnPos = new Vector3(x*Chunk.tileSize+Chunk.tileSizeHalf,0f,y*Chunk.tileSize+Chunk.tileSizeHalf);
+						var spawnPos = new Vector3(x*Chunk.TileSize+Chunk.TileSizeHalf,0f,y*Chunk.TileSize+Chunk.TileSizeHalf);
 						spawnPos.y = HeightAt(spawnPos,false);
 						action(tile,x,y,spawnPos);
 					}
 				}
 			}
+
 			for(int i = 0;i<1000;i++) {
 				int x = Rand.Range(1,xSize-1);
 				int y = Rand.Range(1,ySize-1);
@@ -179,12 +217,12 @@ namespace SurvivalGame
 					tiles[x-1,y].type = tiles[x,y-1].type = tiles[x-1,y-1].type = tile.type = stone;
 				}
 			}
+
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
 			playerPos.y = HeightAt(playerPos,false);
 			Main.LocalEntity = Entity.Instantiate<Human>(this,position:playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
 			Entity.Instantiate<StoneHatchet>(this,position:new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
 			Instantiate<AtmosphereSystem>();
-
 			Instantiate<Sun>();
 			Instantiate<Skybox>(); //TODO: Implement a skybox inside the engine
 
@@ -250,20 +288,30 @@ namespace SurvivalGame
 		{
 			//bad
 			if(x<0) {
-				do {
-					x += xSize;
-				}
-				while(x<0);
+				do { x += xSize; } while(x<0);
 			}else while(x>=xSize) {
 				x -= xSize;
 			}
+
 			if(y<0) {
-				do {
-					y += ySize;
-				}
-				while(y<0);
+				do { y += ySize; } while(y<0);
 			}else while(y>=ySize) {
 				y -= ySize;
+			}
+		}
+		public void RepeatChunkPos(ref int x,ref int y)
+		{
+			//bad
+			if(x<0) {
+				do { x += xSizeInChunks; } while(x<0);
+			}else while(x>=xSizeInChunks) {
+				x -= xSizeInChunks;
+			}
+
+			if(y<0) {
+				do { y += ySizeInChunks; } while(y<0);
+			}else while(y>=ySizeInChunks) {
+				y -= ySizeInChunks;
 			}
 		}
 		public float HeightAt(Vector3 position,bool tileSpace) => HeightAt(position.x,position.z,tileSpace);
@@ -271,8 +319,8 @@ namespace SurvivalGame
 		public float HeightAt(float x,float y,bool tileSpace)
 		{
 			if(!tileSpace) {
-				x /= Chunk.tileSize;
-				y /= Chunk.tileSize;
+				x /= Chunk.TileSize;
+				y /= Chunk.TileSize;
 			}
 
 			int X1 = Mathf.FloorToInt(x);
@@ -311,54 +359,54 @@ namespace SurvivalGame
 		public static void SaveWorld(World w,string path)
 		{
 			//WIP
-			using(var stream = File.OpenWrite(path)) {
-				using(var writer = new BinaryWriter(stream)) {
-					writer.Write(fileHeader);
-					writer.Write(w.worldName);
-					writer.Write(w.worldDisplayName);
-					writer.Write(w.xSize);
-					writer.Write(w.ySize);
+			using var stream = File.OpenWrite(path);
+			using var writer = new BinaryWriter(stream);
 
-					//Make a (chunkId > dataPos) map here
+			writer.Write(fileHeader);
+			writer.Write(w.worldName);
+			writer.Write(w.worldDisplayName);
+			writer.Write(w.xSize);
+			writer.Write(w.ySize);
+
+			//Make a (chunkId > dataPos) map here
 				
-					for(int y=0;y<w.ySizeInChunks;y++) {
-						for(int x=0;x<w.xSizeInChunks;x++) {
-							w.chunks[x,y].Save(writer);
-						}
-					}
+			for(int y=0;y<w.ySizeInChunks;y++) {
+				for(int x=0;x<w.xSizeInChunks;x++) {
+					w.chunks[x,y].Save(writer);
 				}
 			}
 		}
 		public static World LoadWorld(string path)
 		{
 			//WIP
-			World w;
-			using(var stream = File.OpenRead(path)) {
-				using(var reader = new BinaryReader(stream)) {
-					if(!ReadInfoHeader(reader,out var info)) {
-						throw new IOException("World is corrupt.");
-					}
-					w = Instantiate(info.displayName,info.xSize,info.ySize,path);
+			using var stream = File.OpenRead(path);
+			using var reader = new BinaryReader(stream);
 
-					//Make a (chunkId > dataIOPosition) map here?
+			if(!ReadInfoHeader(reader,out var info)) {
+				throw new IOException("World is corrupt.");
+			}
 
-					for(int y=0;y<w.ySizeInChunks;y++) {
-						for(int x=0;x<w.xSizeInChunks;x++) {
-							var chunk = w.chunks[x,y] = Chunk.Create(w,x,y);
-							chunk.Load(reader);
-						}
-					}
+			var w = Instantiate(info.displayName,info.xSize,info.ySize,path);
+
+			//Make a (chunkId > dataIOPosition) map here?
+
+			for(int y=0;y<w.ySizeInChunks;y++) {
+				for(int x=0;x<w.xSizeInChunks;x++) {
+					var chunk = w.chunks[x,y] = Chunk.Create(w,x,y);
+					chunk.Load(reader);
 				}
 			}
+
 			w.IsReady = true;
 			Main.MainMenu = false;
+			
 			return null;
 		}
 
 		public Chunk GetChunkAt(float x,float y)
 		{
-			int X = Mathf.FloorToInt(Mathf.Repeat(x*Chunk.chunkWorldSizeDiv,xSizeInChunks));
-			int Y = Mathf.FloorToInt(Mathf.Repeat(y*Chunk.chunkWorldSizeDiv,ySizeInChunks));
+			int X = Mathf.FloorToInt(Mathf.Repeat(x*Chunk.ChunkWorldSizeDiv,xSizeInChunks));
+			int Y = Mathf.FloorToInt(Mathf.Repeat(y*Chunk.ChunkWorldSizeDiv,ySizeInChunks));
 			return chunks[X,Y];
 		}
 
@@ -373,7 +421,7 @@ namespace SurvivalGame
 				info.displayName = reader.ReadString();
 				info.xSize = reader.ReadInt32();
 				info.ySize = reader.ReadInt32();
-				if(info.xSize%Chunk.chunkSize!=0 || info.ySize%Chunk.chunkSize!=0) {
+				if(info.xSize%Chunk.ChunkSize!=0 || info.ySize%Chunk.ChunkSize!=0) {
 					return false;
 				}
 				return true;

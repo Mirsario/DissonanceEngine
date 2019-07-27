@@ -1,8 +1,8 @@
 {
 	"name": "TestSphere",
-	"shader": "DiffuseBumped",
+	"shader": "Specular",
 	"textures": {
-		"mainTex":		"Entities/Testing/TestSphere/TestSphereDiffuse.png",
-		"normalMap":	"Entities/Testing/TestSphere/TestSphereNormalMap.png",
+		//"mainTex": "Entities/Testing/TestSphere/TestSphereDiffuse.png"
+		//"normalMap": "Entities/Testing/TestSphere/TestSphereNormalMap.png",
 	}
 }

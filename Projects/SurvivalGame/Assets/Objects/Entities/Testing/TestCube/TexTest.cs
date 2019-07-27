@@ -66,7 +66,7 @@ namespace SurvivalGame
 				Rendering.CheckGLErrors();
 				Debug.Log("Checked errors!");
 				
-				var mat = new Material("textest",Resources.Find<Shader>("Diffuse"));
+				var mat = new Material("textest",Resources.Find<Shader>("DiffuseColor"));
 				mat.SetVector3("color",new Vector3(1f,1f,1f));
 				mat.SetTexture("mainTex",texture);
 				renderer.Material = mat;

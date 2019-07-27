@@ -14,14 +14,24 @@
 	/////////////
 	//Emmissive//
 	/////////////
-	"EmissiveDiffuse": {
+	"Game/SpriteEmissive": {
 		"vertexShader": "Sprite.vert",
 		"fragmentShader": "Sprite.frag",
 		"shaderDefines": ["EMISSIONMAP"],
 	},
-	"Game/SpriteEmissive": {
+	"Game/SpriteEmissiveColor": {
 		"vertexShader": "Sprite.vert",
 		"fragmentShader": "Sprite.frag",
 		"shaderDefines": ["EMISSIONMAP","COLOR"],
+	},
+	"Game/SpriteNegativeEmissive": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+		"shaderDefines": ["NEGATIVEEMISSION","EMISSIONMAP"],
+	},
+	"Game/SpriteNegativeEmissiveColor": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "Sprite.frag",
+		"shaderDefines": ["NEGATIVEEMISSION","EMISSIONMAP","COLOR"],
 	},
 }
