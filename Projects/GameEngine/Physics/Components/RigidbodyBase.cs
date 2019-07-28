@@ -50,17 +50,20 @@ namespace GameEngine
 		protected override void OnInit()
 		{
 			base.OnInit();
+
 			gameObject.rigidbodyInternal.rigidbody = this;
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Dynamic;
 		}
 		protected override void OnEnable()
 		{
 			Physics.ActiveRigidbodies.Add(this);
-			IsKinematic = _isKinematic;
+
+            IsKinematic = _isKinematic;
 		}
 		protected override void OnDisable()
 		{
 			Physics.ActiveRigidbodies.Remove(this);
+
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Static;
 		}
 		protected override void OnDispose()

@@ -32,8 +32,9 @@ namespace GameEngine
 
 							beenEnabledBefore = true;
 						}
+
 						OnEnable();
-						ProgrammableEntityHooks.SubscribeEntity(this);
+                        ProgrammableEntityHooks.SubscribeEntity(this);
 
 						enabled = true;
 					}

@@ -17,7 +17,7 @@ namespace SurvivalGame
 		{
 			layer = Layers.GetLayerIndex("Entity");
 			collider = AddComponent<BoxCollider>();
-			collider.size = new Vector3(0.2f,1f,0.2f);
+			collider.Size = new Vector3(0.2f,1f,0.2f);
 			rigidbody = AddComponent<Rigidbody>();
 			rigidbody.Mass = 1f;
 

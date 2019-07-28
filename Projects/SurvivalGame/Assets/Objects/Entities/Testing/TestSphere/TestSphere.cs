@@ -14,7 +14,7 @@ namespace SurvivalGame
 			Debug.Log("TestSphere spawned");
 			layer = Layers.GetLayerIndex("Entity");
 			collider = AddComponent<SphereCollider>();
-			collider.radius = 10f;
+			collider.Radius = 10f;
 
 			renderer = AddComponent<MeshRenderer>();
 			renderer.Mesh = PrimitiveMeshes.Sphere;

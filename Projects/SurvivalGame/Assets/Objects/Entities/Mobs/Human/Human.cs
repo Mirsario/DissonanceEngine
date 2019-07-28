@@ -42,8 +42,8 @@ namespace SurvivalGame
 			size = new Vector3(1f,1.95f,1f); //JoJo height.
 
 			collider = AddComponent<CylinderCollider>(false);
-			collider.size = size;
-			collider.offset = new Vector3(0f,size.y/2f,0f);
+			collider.Size = size;
+			collider.Offset = new Vector3(0f,size.y/2f,0f);
 			collider.Enabled = true;
 
 			rigidbody = AddComponent<Rigidbody>();

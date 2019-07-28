@@ -18,11 +18,10 @@ namespace SurvivalGame
             renderer.Mesh = PrimitiveMeshes.Cube;
             renderer.Material = Resources.Get<Material>("Entities/Testing/TestCube/TestCube.material");
 
-            collider = AddComponent<BoxCollider>(false);
-            collider.size = new Vector3(100f,1f,100f);
+            collider = AddComponent<BoxCollider>();
+            collider.Size = new Vector3(100f,1f,100f);
 
-            Transform.LocalScale = collider.size;
-            collider.Enabled = true;
+            //Transform.LocalScale = collider.Size;
         }
     }
 }

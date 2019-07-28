@@ -4,25 +4,27 @@ namespace GameEngine
 {
 	public class CylinderCollider : Collider
 	{
-		public Vector3 size = Vector3.one;
+		protected Vector3 size = Vector3.one;
+		public Vector3 Size {
+			get => size;
+			set {
+                if(size!=value) {
+                    size = value;
 
-		protected override void OnInit()
-		{
-			base.OnInit();
-			UpdateCollider();
+                    TryUpdateCollider();
+                }
+			}
 		}
+
 		internal override void UpdateCollider()
 		{
 			if(collShape!=null) {
 				collShape.Dispose();
 				collShape = null;
 			}
-			Debug.Log("Cylinder size: "+size);
+
 			collShape = new CylinderShape(size*0.5f);
-			/*OpenTK.Vector3 a,b;
-			((CylinderShape)collShape).GetAabb(Matrix4x4.identity,out a,out b);
-			Debug.Log("AABB: "+a+"-> "+b);
-			Debug.Log("SIZE: "+(b-a));*/
+			
 			base.UpdateCollider();
 		}
 	}

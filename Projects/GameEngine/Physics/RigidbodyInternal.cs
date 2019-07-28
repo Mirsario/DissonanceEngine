@@ -113,6 +113,7 @@ namespace GameEngine
 			set {
 				if(_type!=value) {
 					_type = value;
+
 					if(_type==RigidbodyType.Dynamic) {
 						btRigidbody.CollisionFlags = CollisionFlags.None;
 						btRigidbody.ActivationState = ActivationState.ActiveTag;
@@ -123,7 +124,7 @@ namespace GameEngine
 						btRigidbody.CollisionFlags = CollisionFlags.StaticObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
 					}
-					//Debug.Log("Setting type to "+_type+" for "+gameObject.name);
+
 					UpdateMass();
 				}
 			}
@@ -160,28 +161,31 @@ namespace GameEngine
 			if(collisionShape!=null && (collisionShape is CompoundShape || collisionShape is EmptyShape)) {
 				collisionShape.Dispose();
 			}
+
 			//var summOffset = Vector3.zero;
 			var colliders = gameObject.GetComponents<Collider>().ToArray();
 
 			if(colliders.Length==0) {
 				//EmptyShape
 				collisionShape = new EmptyShape();
-			//}else if(colliders.Length==1) {
-			//	//Use the shape we have
-			//	collisionShape = colliders[0].collShape;
-			//	//summOffset += collider.offset;
-			}else{
+			}/*else if(colliders.Length==1) {
+				//Use the shape we have
+				collisionShape = colliders[0].collShape;
+				//summOffset += collider.offset;
+			}*/else{
 				//CompoundShape
 				var compoundShape = new CompoundShape();
 				for(int i=0;i<colliders.Length;i++) {
-					var collShape = colliders[i].collShape;
+					var collider = colliders[i];
+					var collShape = collider.collShape;
+
 					if(collShape!=null) {
-						compoundShape.AddChildShape(Matrix4x4.CreateTranslation(colliders[i].offset),collShape);
-						//summOffset += colliders[i].offset;
+						compoundShape.AddChildShape(Matrix4x4.CreateTranslation(collider.Offset),collShape);
 					}
 				}
 				collisionShape = compoundShape;
 			}
+
 			float tempMass = MassFiltered;
 			var localInertia = MassFiltered<=0f ? BulletSharp.Vector3.Zero : collisionShape.CalculateLocalInertia(tempMass);
 			btRigidbody.CollisionShape = collisionShape;

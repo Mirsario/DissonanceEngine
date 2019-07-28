@@ -4,14 +4,18 @@ namespace GameEngine
 {
 	public class BoxCollider : Collider
 	{
-		public Vector3 size = Vector3.one;
+        protected Vector3 size = Vector3.one;
+		public Vector3 Size {
+            get => size;
+            set {
+				if(size!=value) {
+					size = value;
 
-		protected override void OnInit()
-		{
-			base.OnInit();
+					TryUpdateCollider();
+				}
+            }
+        }
 
-			UpdateCollider();
-		}
 		internal override void UpdateCollider()
 		{
 			if(collShape!=null) {
