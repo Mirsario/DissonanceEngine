@@ -60,11 +60,12 @@ namespace GameEngine
 
 		internal static ALFormat GetSoundFormat(int channels,int bits)
 		{
-			switch(channels) {
-				case 1:		return bits==8 ? ALFormat.Mono8 : ALFormat.Mono16;
-				case 2:		return bits==8 ? ALFormat.Stereo8 : ALFormat.Stereo16;
-				default:	throw new NotSupportedException("The specified sound format is not supported.");
-			}
+			return channels switch
+			{
+				1 => bits==8 ? ALFormat.Mono8 : ALFormat.Mono16,
+				2 => bits==8 ? ALFormat.Stereo8 : ALFormat.Stereo16,
+				_ => throw new NotSupportedException("The specified sound format is not supported."),
+			};
 		}
 	}
 }

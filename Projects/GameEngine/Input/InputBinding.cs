@@ -4,8 +4,9 @@ namespace GameEngine
 {
 	public class InputBinding
 	{
-		public readonly string input;
-		public readonly int inputHash;
+		public readonly string Input;
+		public readonly int InputHash;
+
 		public float deadZone;
 		public float sensitivity;
 		public bool inversed;
@@ -27,9 +28,9 @@ namespace GameEngine
 				}
 				input = input.Substring(1);
 			}
-			inputHash = input.ToLower().GetHashCode();
+			InputHash = input.ToLower().GetHashCode();
 
-			this.input = input;
+			this.Input = input;
 			this.sensitivity = sensitivity;
 			this.deadZone = deadZone;
 		}

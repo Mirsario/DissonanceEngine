@@ -10,18 +10,20 @@ namespace GameEngine
 			Medium,
 			High
 		}
-		public const int maxOctaves = 30;
+
+		public const int MaxOctaves = 30;
 		
 		public QualityMode quality;
 		public float frequency;
 		public float lacunarity;
 		public float persistence;
-		private int _octaves;
-		public int Octaves {
-			get => _octaves;
-			set => _octaves = Mathf.Clamp(value,1,maxOctaves);
-		}
 		public int seed;
+
+		private int octaves;
+		public int Octaves {
+			get => octaves;
+			set => octaves = Mathf.Clamp(value,1,MaxOctaves);
+		}
 		
 		public PerlinNoiseFloat(int seed = 0,int octaves = 6,float frequency = 1f,float persistence = 0.5f,float lacunarity = 2f,QualityMode quality = QualityMode.Low)
 		{
@@ -107,9 +109,9 @@ namespace GameEngine
 			int i = (int)(1619*ix+31337*iy+6971*iz+1013*seed&0xffffffff);
 			i ^= i>>8;
 			i &= 0xff;
-			float xvg = randomValues[i<<2];
-			float yvg = randomValues[(i<<2)+1];
-			float zvg = randomValues[(i<<2)+2];
+			float xvg = RandomValues[i<<2];
+			float yvg = RandomValues[(i<<2)+1];
+			float zvg = RandomValues[(i<<2)+2];
 			float xvp = fx-ix;
 			float yvp = fy-iy;
 			float zvp = fz-iz;
@@ -136,7 +138,7 @@ namespace GameEngine
 
 		//Giant array of pre-made noise that the Noise method will use
 		//I'm not entirely sure if this is a good idea.
-		internal static readonly float[] randomValues = {
+		internal static readonly float[] RandomValues = {
 			-0.763874f,	-0.596439f,	-0.246489f,	0.0f,	0.396055f,	0.904518f,	-0.158073f,	0.0f,
 			-0.499004f,	-0.8665f,	-0.0131631f,	0.0f,	0.468724f,	-0.824756f,	0.316346f,	0.0f,
 			0.829598f,	0.43195f,	0.353816f,	0.0f,	-0.454473f,	0.629497f,	-0.630228f,	0.0f,

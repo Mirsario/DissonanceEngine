@@ -6,12 +6,12 @@ namespace GameEngine
 	public struct Vector4
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector4));
-		public static readonly Vector4 zero = default;
-		public static readonly Vector4 one = new Vector4(1f,1f,1f,1f);
-		public static readonly Vector4 unitX = new Vector4(1f,0f,0f,0f);
-		public static readonly Vector4 unitY = new Vector4(0f,1f,0f,0f);
-		public static readonly Vector4 unitZ = new Vector4(0f,0f,1f,0f);
-		public static readonly Vector4 unitW = new Vector4(0f,0f,0f,1f);
+		public static readonly Vector4 Zero = default;
+		public static readonly Vector4 One = new Vector4(1f,1f,1f,1f);
+		public static readonly Vector4 UnitX = new Vector4(1f,0f,0f,0f);
+		public static readonly Vector4 UnitY = new Vector4(0f,1f,0f,0f);
+		public static readonly Vector4 UnitZ = new Vector4(0f,0f,1f,0f);
+		public static readonly Vector4 UnitW = new Vector4(0f,0f,0f,1f);
 
 		public Vector4 Normalized {
 			get {
@@ -34,16 +34,13 @@ namespace GameEngine
 		public Vector3 XYZ => new Vector3(x,y,z);
 
 		public float this[int index] {
-			get {
-				switch(index) {
-					case 0: return x;
-					case 1: return y;
-					case 2: return z;
-					case 3: return w;
-					default:
-						throw new IndexOutOfRangeException("Indices for Vector4 run from 0 to 3,inclusive.");
-				}
-			}
+			get => index switch {
+				0 => x,
+				1 => y,
+				2 => z,
+				3 => w,
+				_ => throw new IndexOutOfRangeException("Indices for Vector4 run from 0 to 3,inclusive."),
+			};
 			set {
 				switch(index) {
 					case 0: x = value; return;

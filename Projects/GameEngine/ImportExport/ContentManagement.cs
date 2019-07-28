@@ -11,6 +11,9 @@ namespace GameEngine
 	public static class Resources
 	{
 		public const string builtInAssetsFolder = "BuiltInAssets/";
+
+		private static readonly string[] DefaultSearchPattern = { "*" };
+
 		internal static Dictionary<string,List<AssetManager>> assetManagers;
 		internal static AssetManager[][] autoloadOrder;
 		internal static Dictionary<string,string> nameToPath;
@@ -397,11 +400,10 @@ namespace GameEngine
 		}
 		#endregion
 
-		private static readonly string[] defaultSearchPattern = { "*" };
 		internal static string[] GetFilesRecursive(string path,string[] searchPattern = null,string[] ignoredPaths = null)
 		{
 			if(searchPattern==null) {
-				searchPattern = defaultSearchPattern;
+				searchPattern = DefaultSearchPattern;
 			}
 
 			var files = new List<string>();

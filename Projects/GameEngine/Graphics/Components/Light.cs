@@ -13,7 +13,7 @@ namespace GameEngine
 	{
 		public float range = 16f;
 		public float intensity = 1f;
-		public Vector3 color = Vector3.one;
+		public Vector3 color = Vector3.One;
 		public LightType type = LightType.Point;
 		
 		protected override void OnEnable() => Rendering.lightList.Add(this);

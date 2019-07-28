@@ -179,7 +179,7 @@ namespace GameEngine
 				newNormals[triangles[i*3+2]] -= normal;
 			}
 
-			var zero = Vector3.zero;
+			var zero = Vector3.Zero;
 			for(int i=0;i<vertices.Length;i++) {
 				if(newNormals[i]!=zero) {
 					newNormals[i].Normalize();

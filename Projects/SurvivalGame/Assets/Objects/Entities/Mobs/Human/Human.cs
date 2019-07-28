@@ -22,7 +22,7 @@ namespace SurvivalGame
 		public bool enableStrafeJumping;
 		public float screenFlash;
 		public Vector2 moveInput;
-		public Vector3 size = Vector3.one;
+		public Vector3 size = Vector3.One;
 		public Vector3 prevVelocity;
 		public MeshRenderer renderer;
 		public CylinderCollider collider;
@@ -31,7 +31,7 @@ namespace SurvivalGame
 		public bool isSprinting;
 		public bool onGroundCached;
 
-		public bool OnGround => rigidbody.Collisions.Any(c => c.contacts.Any(p => p.point.y>=Transform.Position.y-0.1f));
+		public bool OnGround => rigidbody.Collisions.Any(c => c.Contacts.Any(p => p.point.y>=Transform.Position.y-0.1f));
 		public float MoveSpeed => (isSprinting && onGroundCached) ? 12f : 7.5f;
 		public float Acceleration => 4.25f;
 
@@ -41,19 +41,18 @@ namespace SurvivalGame
 		{
 			size = new Vector3(1f,1.95f,1f); //JoJo height.
 
-			collider = AddComponent<CylinderCollider>(false);
+            renderer = AddComponent<MeshRenderer>();
+            renderer.Mesh = Resources.Get<Mesh>("Robot.mesh");
+            renderer.Material = Resources.Get<Material>("Robot.material");
+
+            collider = AddComponent<CylinderCollider>(false);
 			collider.Size = size;
 			collider.Offset = new Vector3(0f,size.y/2f,0f);
 			collider.Enabled = true;
 
 			rigidbody = AddComponent<Rigidbody>();
 			rigidbody.Mass = 1f;
-			rigidbody.AngularFactor = Vector3.zero;
-			
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = Resources.Get<Mesh>("Robot.mesh");
-			renderer.Material = Resources.Get<Material>("Robot.material");
-
+			rigidbody.AngularFactor = Vector3.Zero;
 			rigidbody.UseGravity = false;
 			rigidbody.Friction = 0f;
 			rigidbody.Drag = 0f;
@@ -90,7 +89,7 @@ namespace SurvivalGame
 			Transform.EulerRot = new Vector3(euler.x,brain.Transform.EulerRot.y,euler.z);
 			
 			if(brain.JustActivated(GameInput.primaryUse)) {
-				Vector3 direction = brain?.LookDirection ?? Vector3.forward;
+				Vector3 direction = brain?.LookDirection ?? Vector3.Forward;
 				Rocket rocket = Instantiate<Rocket>(world,position:camera.Transform.Position+direction);
 				rocket.velocity = direction*25f;
 				rocket.owner = this;
@@ -118,7 +117,7 @@ namespace SurvivalGame
                     SoundInstance.Create($"Magic.ogg",entity.Transform.Position);
                 }
                 if(Input.GetKeyDown(Keys.X)) { //Teleport
-                    Transform.Position = hit.point+Vector3.up;
+                    Transform.Position = hit.point+Vector3.Up;
                 }
                 if(Input.GetKeyDown(Keys.J)) {
                     Instantiate<RaisingPlatform>(world,position: hit.point);
@@ -181,8 +180,8 @@ namespace SurvivalGame
 
 			onGroundCached = OnGround;
 
-			var forward = brain?.Transform.Forward ?? Vector3.forward;
-			var right = brain?.Transform.Right ?? Vector3.right;
+			var forward = brain?.Transform.Forward ?? Vector3.Forward;
+			var right = brain?.Transform.Right ?? Vector3.Right;
 			forward.y = 0f;
 			right.y = 0f;
 			forward.Normalize();
@@ -330,7 +329,7 @@ namespace SurvivalGame
 		{
 			var atPoint = Transform.Position;
 			// ReSharper disable once SuspiciousTypeConversion.Global
-			var providers = rigidbody.Collisions.SelectIgnoreNull(c => c.gameObject as IFootstepProvider ?? ((c.gameObject as IHasMaterial)?.GetMaterial(atPoint))).ToArray();
+			var providers = rigidbody.Collisions.SelectIgnoreNull(c => c.GameObject as IFootstepProvider ?? ((c.GameObject as IHasMaterial)?.GetMaterial(atPoint))).ToArray();
 			if(providers.Length>0) {
 				var provider = providers[0];
 				provider.GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);

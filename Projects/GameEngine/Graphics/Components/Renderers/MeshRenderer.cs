@@ -27,23 +27,23 @@ namespace GameEngine
 		private Mesh cachedRenderMesh;
 		#endregion
 		#region Properties
-		internal Mesh _mesh;
+		internal Mesh mesh;
 		public virtual Mesh Mesh {
-			get => _lodMeshes?[0]?.mesh;
+			get => lodMeshes?[0]?.mesh;
 			set {
-				if(_lodMeshes!=null) {
-					_lodMeshes[0].mesh = value;
+				if(lodMeshes!=null) {
+					lodMeshes[0].mesh = value;
 				}else{
 					LODMeshes = new[] { new MeshLOD(value) };
 				}
 			}
 		}
-		internal MeshLOD[] _lodMeshes;
+		internal MeshLOD[] lodMeshes;
 		public virtual MeshLOD[] LODMeshes {
-			get => _lodMeshes;
+			get => lodMeshes;
 			set {
 				if(value==null) {
-					_lodMeshes = value;
+					lodMeshes = value;
 				}else{
 					bool hadNull = false;
 					if(value.Length==0) {
@@ -58,15 +58,15 @@ namespace GameEngine
 						list.RemoveAt(0);
 						list.Add(val);
 					}
-					_lodMeshes = list.ToArray();
+					lodMeshes = list.ToArray();
 				}
 			}
 		}
 		public virtual MeshLOD LODMesh {
-			get => _lodMeshes?[0];
+			get => lodMeshes?[0];
 			set {
-				if(_lodMeshes!=null) {
-					_lodMeshes[0] = value;
+				if(lodMeshes!=null) {
+					lodMeshes[0] = value;
 				}else{
 					LODMeshes = new[] { value };
 				}

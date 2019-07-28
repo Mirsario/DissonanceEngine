@@ -3,17 +3,17 @@ namespace GameEngine
 {
 	public struct Matrix4x4
 	{
-		#region Constants
+		//Constants
 		public const int Length = 16;
-		#endregion
-		#region StaticFields
-		public static readonly Matrix4x4 identity = new Matrix4x4(Vector4.unitX,Vector4.unitY,Vector4.unitZ,Vector4.unitW);
-		public static readonly Matrix4x4 zero = new Matrix4x4(Vector4.zero,Vector4.zero,Vector4.zero,Vector4.zero);
-		#endregion
-		#region InstanceFields
+
+		//Read-only fields
+		public static readonly Matrix4x4 Identity = new Matrix4x4(Vector4.UnitX,Vector4.UnitY,Vector4.UnitZ,Vector4.UnitW);
+		public static readonly Matrix4x4 Zero = new Matrix4x4(Vector4.Zero,Vector4.Zero,Vector4.Zero,Vector4.Zero);
+
+		//Fields
 		public float m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33;
-		#endregion
-		#region Properties
+
+		//Properties
 		public float Determinant =>
 			m00*m11*m22*m33-m00*m11*m23*m32+m00*m12*m23*m31-m00*m12*m21*m33+
 			m00*m13*m21*m32-m00*m13*m22*m31-m01*m12*m23*m30+m01*m12*m20*m33-
@@ -21,7 +21,7 @@ namespace GameEngine
 			m02*m13*m20*m31-m02*m13*m21*m30+m02*m10*m21*m33-m02*m10*m23*m31+
 			m02*m11*m23*m30-m02*m11*m20*m33-m03*m10*m21*m32+m03*m10*m22*m31-
 			m03*m11*m22*m30+m03*m11*m20*m32-m03*m12*m20*m31+m03*m12*m21*m30;
-		public Matrix4x4 Transpose => identity; //Matrix4x4.Transpose(this);
+		public Matrix4x4 Transpose => throw new NotImplementedException(); //Matrix4x4.Transpose(this);
 		public Matrix4x4 Normalized {
 			get {
 				var matrix = this;
@@ -73,41 +73,46 @@ namespace GameEngine
 				m33 = value.w;
 			}
 		}
-		#endregion
-		#region Indexers
+
+		//Indexers
 		public float this[int row,int column] {
 			get {
-				switch(column) {
-					case 0: switch(row) {
-						case 0:	return m00;
-						case 1:	return m01;
-						case 2:	return m02;
-						case 3:	return m03;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
-					}
-					case 1: switch(row) {
-						case 0:	return m10;
-						case 1:	return m11;
-						case 2:	return m12;
-						case 3:	return m13;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
-					}
-					case 2: switch(row) {
-						case 0:	return m20;
-						case 1:	return m21;
-						case 2:	return m22;
-						case 3:	return m23;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
-					}
-					case 3: switch(row) {
-						case 0:	return m30;
-						case 1:	return m31;
-						case 2:	return m32;
-						case 3:	return m33;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
-					}
-					default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
-				}
+				return column switch
+				{
+					0 => row switch
+					{
+						0 => m00,
+						1 => m01,
+						2 => m02,
+						3 => m03,
+						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
+					},
+					1 => row switch
+					{
+						0 => m10,
+						1 => m11,
+						2 => m12,
+						3 => m13,
+						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
+					},
+					2 => row switch
+					{
+						0 => m20,
+						1 => m21,
+						2 => m22,
+						3 => m23,
+						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
+					},
+					3 => row switch
+					{
+						0 => m30,
+						1 => m31,
+						2 => m32,
+						3 => m33,
+						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
+					},
+					_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
+				};
 			}
 			set {
 				switch(column) {
@@ -145,25 +150,26 @@ namespace GameEngine
 		}
 		public float this[int id] {
 			get {
-				switch(id) {
-					case 0:	return m00;
-					case 1:	return m01;
-					case 2:	return m02;
-					case 3:	return m03;
-					case 4:	return m10;
-					case 5:	return m11;
-					case 6:	return m12;
-					case 7:	return m13;
-					case 8:	return m20;
-					case 9:	return m21;
-					case 10: return m22;
-					case 11: return m23;
-					case 12: return m30;
-					case 13: return m31;
-					case 14: return m32;
-					case 15: return m33;
-					default: throw new IndexOutOfRangeException("["+id+"] single matrix index must range from 0 to 15.");
-				}
+				return id switch
+				{
+					0 => m00,
+					1 => m01,
+					2 => m02,
+					3 => m03,
+					4 => m10,
+					5 => m11,
+					6 => m12,
+					7 => m13,
+					8 => m20,
+					9 => m21,
+					10 => m22,
+					11 => m23,
+					12 => m30,
+					13 => m31,
+					14 => m32,
+					15 => m33,
+					_ => throw new IndexOutOfRangeException("["+id+"] single matrix index must range from 0 to 15."),
+				};
 			}
 			set {
 				switch(id) {
@@ -187,8 +193,8 @@ namespace GameEngine
 				}
 			}
 		}
-		#endregion
-		#region Constructors
+
+		//Constructors
 		public Matrix4x4(Vector4 row0,Vector4 row1,Vector4 row2,Vector4 row3)
 		{
 			m00 = row0.x; m01 = row0.y; m02 = row0.z; m03 = row0.w;
@@ -207,10 +213,111 @@ namespace GameEngine
 			this.m20 = m20; this.m21 = m21; this.m22 = m22; this.m23 = m23;
 			this.m30 = m30; this.m31 = m31; this.m32 = m32; this.m33 = m33;
 		}
-		#endregion
 
-		#region InstanceMethods
-		#region Clear
+		//Override Instance Methods
+		public override string ToString() => $"[{m00}, {m01}, {m02}, {m03},\n {m10}, {m11}, {m12}, {m13},\n {m20}, {m21}, {m22}, {m23},\n {m30}, {m31}, {m32}, {m33}]";
+		public override int GetHashCode() => Row0.GetHashCode()^Row1.GetHashCode()<<2^Row2.GetHashCode()>>2^Row3.GetHashCode()>>1;
+		public override bool Equals(object other) => other is Matrix4x4 matrix && Equals(matrix);
+		
+		//Instance Methods
+		public bool Equals(Matrix4x4 o) => m00==o.m00 && m01==o.m01 && m02==o.m02 && m03==o.m03 && m10==o.m10 && m11==o.m11 && m12==o.m12 && m13==o.m13 && m20==o.m20 && m21==o.m21 && m22==o.m22 && m23==o.m23;
+		public void Normalize()
+		{
+			float d = Determinant;
+			Row0 /= d;
+			Row1 /= d;
+			Row2 /= d;
+			Row3 /= d;
+		}
+		public void Invert()
+		{
+			//TODO: Optimize this???
+			int[] colIdx = { 0,0,0,0 };
+			int[] rowIdx = { 0,0,0,0 };
+			int[] pivotIdx = { -1,-1,-1,-1 };
+			float[,] inverse =  {
+				{ m00,m01,m02,m03 },
+				{ m10,m11,m12,m13 },
+				{ m20,m21,m22,m23 },
+				{ m30,m31,m32,m33 }
+			};
+			int icol = 0;
+			int irow = 0;
+			for(int i = 0;i<4;i++) {
+				float maxPivot = 0f;
+				for(int j = 0;j<4;j++) {
+					if(pivotIdx[j]!=0) {
+						for(int k = 0;k<4;++k) {
+							if(pivotIdx[k]==-1) {
+								float absVal = Math.Abs(inverse[j,k]);
+								if(absVal>maxPivot) {
+									maxPivot = absVal;
+									irow = j;
+									icol = k;
+								}
+							} else if(pivotIdx[k]>0) {
+								return;
+							}
+						}
+					}
+				}
+				++pivotIdx[icol];
+				if(irow!=icol) {
+					for(int k = 0;k<4;++k) {
+						float f = inverse[irow,k];
+						inverse[irow,k] = inverse[icol,k];
+						inverse[icol,k] = f;
+					}
+				}
+				rowIdx[i] = irow;
+				colIdx[i] = icol;
+				float pivot = inverse[icol,icol];
+				if(pivot==0f) {
+					return;
+					//throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
+				}
+				float oneOverPivot = 1f/pivot;
+				inverse[icol,icol] = 1f;
+				for(int k = 0;k<4;++k) {
+					inverse[icol,k] *= oneOverPivot;
+				}
+				for(int j = 0;j<4;++j) {
+					if(icol!=j) {
+						float f = inverse[j,icol];
+						inverse[j,icol] = 0f;
+						for(int k = 0;k<4;++k) {
+							inverse[j,k] -= inverse[icol,k]*f;
+						}
+					}
+				}
+			}
+			for(int j = 3;j>=0;--j) {
+				int ir = rowIdx[j];
+				int ic = colIdx[j];
+				for(int k = 0;k<4;++k) {
+					float f = inverse[k,ir];
+					inverse[k,ir] = inverse[k,ic];
+					inverse[k,ic] = f;
+				}
+			}
+			m00 = inverse[0,0];
+			m01 = inverse[0,1];
+			m02 = inverse[0,2];
+			m03 = inverse[0,3];
+			m10 = inverse[1,0];
+			m11 = inverse[1,1];
+			m12 = inverse[1,2];
+			m13 = inverse[1,3];
+			m20 = inverse[2,0];
+			m21 = inverse[2,1];
+			m22 = inverse[2,2];
+			m23 = inverse[2,3];
+			m30 = inverse[3,0];
+			m31 = inverse[3,1];
+			m32 = inverse[3,2];
+			m33 = inverse[3,3];
+		}
+		//Clear
 		public void ClearTranslation()
 		{
 			m30 = 0f;
@@ -232,8 +339,7 @@ namespace GameEngine
 			Row1 = new Vector4(0f,mag1,0f,m13);
 			Row2 = new Vector4(0f,0f,mag2,m23);
 		}
-		#endregion
-		#region Extract
+		//Extract
 		public Vector3 ExtractTranslation() => new Vector3(m30,m31,m32);
 		public Vector3 ExtractScale() => new Vector3(
 			Mathf.Sqrt(m00*m00+m01*m01+m02*m02),
@@ -349,8 +455,7 @@ namespace GameEngine
 			q.Normalize();
 			return q;
 		}
-		#endregion
-		#region Set
+		//Set
 		public void SetTranslation(Vector3 translation)
 		{
 			m30 = translation.x;
@@ -390,130 +495,35 @@ namespace GameEngine
 			m10 = (xy-wz)*scale.y;		m11 = (1f-(xx+zz))*scale.y;	m12 = (yz+wx)*scale.y;
 			m20 = (xz+wy)*scale.z;		m21 = (yz-wx)*scale.z;		m22 = (1f-(xx+yy))*scale.z;
 		}
-		#endregion
 
-		public void Normalize()
+		//Static Methods
+		public static Matrix4x4 Normalize(Matrix4x4 matrix)
 		{
-			float d = Determinant;
-			Row0 /= d;
-			Row1 /= d;
-			Row2 /= d;
-			Row3 /= d;
+			matrix.Normalize();
+			return matrix;
 		}
-		public void Invert()
+		public static Matrix4x4 Invert(Matrix4x4 matrix)
 		{
-			//TODO: Optimize this???
-			int[] colIdx = { 0,0,0,0 };
-			int[] rowIdx = { 0,0,0,0 };
-			int[] pivotIdx = { -1,-1,-1,-1 };
-			float[,] inverse =  {
-				{ m00,m01,m02,m03 },
-				{ m10,m11,m12,m13 },
-				{ m20,m21,m22,m23 },
-				{ m30,m31,m32,m33 }
-			};
-			int icol = 0;
-			int irow = 0;
-			for(int i=0;i<4;i++) {
-				float maxPivot = 0f;
-				for(int j=0;j<4;j++) {
-					if(pivotIdx[j]!=0) {
-						for(int k=0;k<4;++k) {
-							if(pivotIdx[k]==-1) {
-								float absVal = Math.Abs(inverse[j,k]);
-								if(absVal>maxPivot) {
-									maxPivot = absVal;
-									irow = j;
-									icol = k;
-								}
-							}else if(pivotIdx[k]>0) {
-								return;
-							}
-						}
-					}
-				}
-				++pivotIdx[icol];
-				if(irow!=icol) {
-					for(int k=0;k<4;++k) {
-						float f = inverse[irow,k];
-						inverse[irow,k] = inverse[icol,k];
-						inverse[icol,k] = f;
-					}
-				}
-				rowIdx[i] = irow;
-				colIdx[i] = icol;
-				float pivot = inverse[icol,icol];
-				if(pivot==0f) {
-					return;
-					//throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
-				}
-				float oneOverPivot = 1f/pivot;
-				inverse[icol,icol] = 1f;
-				for(int k=0;k<4;++k) {
-					inverse[icol,k] *= oneOverPivot;
-				}
-				for(int j=0;j<4;++j) {
-					if(icol!=j) {
-						float f = inverse[j,icol];
-						inverse[j,icol] = 0f;
-						for(int k=	0; k<4;++k) {
-							inverse[j,k] -= inverse[icol,k]*f;
-						}
-					}
-				}
-			}
-			for(int j=3;j>=0;--j) {
-				int ir = rowIdx[j];
-				int ic = colIdx[j];
-				for(int k=0;k<4;++k) {
-					float f = inverse[k,ir];
-					inverse[k,ir] = inverse[k,ic];
-					inverse[k,ic] = f;
-				}
-			}
-			m00 = inverse[0,0];
-			m01 = inverse[0,1];
-			m02 = inverse[0,2];
-			m03 = inverse[0,3];
-			m10 = inverse[1,0];
-			m11 = inverse[1,1];
-			m12 = inverse[1,2];
-			m13 = inverse[1,3];
-			m20 = inverse[2,0];
-			m21 = inverse[2,1];
-			m22 = inverse[2,2];
-			m23 = inverse[2,3];
-			m30 = inverse[3,0];
-			m31 = inverse[3,1];
-			m32 = inverse[3,2];
-			m33 = inverse[3,3];
+			matrix.Invert();
+			return matrix;
 		}
-
-		public override string ToString() => $"[{m00}, {m01}, {m02}, {m03},\n {m10}, {m11}, {m12}, {m13},\n {m20}, {m21}, {m22}, {m23},\n {m30}, {m31}, {m32}, {m33}]";
-		public override int GetHashCode() => Row0.GetHashCode()^Row1.GetHashCode()<<2^Row2.GetHashCode()>>2^Row3.GetHashCode()>>1;
-		public override bool Equals(object other) => other is Matrix4x4 matrix && Equals(matrix);
-		public bool Equals(Matrix4x4 o) => m00==o.m00 && m01==o.m01 && m02==o.m02 && m03==o.m03 && m10==o.m10 && m11==o.m11 && m12==o.m12 && m13==o.m13 && m20==o.m20 && m21==o.m21 && m22==o.m22 && m23==o.m23;
-		#endregion
-		#region StaticMethods
-		#region Create
-		#region Translation
+		//Translation
 		public static Matrix4x4 CreateTranslation(Vector3 vec) => CreateTranslation(vec.x,vec.y,vec.z);
 		public static Matrix4x4 CreateTranslation(float x,float y,float z)
 		{
-			var result = identity;
+			var result = Identity;
 			result.m30 = x;
 			result.m31 = y;
 			result.m32 = z;
 			return result;
 		}
-		#endregion
-		#region Rotation
+		//Rotation
 		public static Matrix4x4 CreateRotationX(float eulerAngle)
 		{
 			float angle = eulerAngle*Mathf.Deg2Rad;
 			float cos = Mathf.Cos(angle);
 			float sin = Mathf.Sin(angle);
-			var result = identity;
+			var result = Identity;
 			result.m11 = cos;
 			result.m12 = sin;
 			result.m21 = -sin;
@@ -525,7 +535,7 @@ namespace GameEngine
 			float angle = eulerAngle*Mathf.Deg2Rad;
 			float cos = Mathf.Cos(angle);
 			float sin = Mathf.Sin(angle);
-			var result = identity;
+			var result = Identity;
 			result.m00 = cos;
 			result.m02 = -sin;
 			result.m20 = sin;
@@ -537,7 +547,7 @@ namespace GameEngine
 			float angle = eulerAngle*Mathf.Deg2Rad;
 			float cos = Mathf.Cos(angle);
 			float sin = Mathf.Sin(angle);
-			var result = identity;
+			var result = Identity;
 			result.m00 = cos;
 			result.m01 = sin;
 			result.m10 = -sin;
@@ -590,7 +600,7 @@ namespace GameEngine
 		}
 		public static Matrix4x4 CreateFromAxisAngle(Vector3 axis,float angle)
 		{
-			var result = identity;
+			var result = Identity;
 			axis.Normalize();
 			float axisX = axis.x;
 			float axisY = axis.y;
@@ -619,27 +629,25 @@ namespace GameEngine
 			result.m21 = tYZ+sinX;
 			result.m22 = tZZ+cos;
 			result.m23 = 0;
-			result.Row3 = Vector4.unitW;
+			result.Row3 = Vector4.UnitW;
 			return result;
 		}
-		#endregion
-		#region Scale
+		//Scale
 		public static Matrix4x4 CreateScale(float xyz) => CreateScale(xyz,xyz,xyz);
 		public static Matrix4x4 CreateScale(Vector3 vec) => CreateScale(vec.x,vec.y,vec.z);
 		public static Matrix4x4 CreateScale(float x,float y,float z)
 		{
-			var result = identity;
+			var result = Identity;
 			result.m00 = x;
 			result.m11 = y;
 			result.m22 = z;
 			return result;
 		}
-		#endregion
-		#region Projection
+		//Projection
 		public static Matrix4x4 CreateOrthographic(float width,float height,float zNear,float zFar) => CreateOrthographicOffCenter(-width/2,width/2,-height/2,height/2,zNear,zFar);
 		public static Matrix4x4 CreateOrthographicOffCenter(float left,float right,float bottom,float top,float zNear,float zFar)
 		{
-			var result = identity;
+			var result = Identity;
 			float invRL = 1f/(right-left);
 			float invTB = 1f/(top-bottom);
 			float invFN = 1f/(zFar-zNear);
@@ -674,7 +682,7 @@ namespace GameEngine
 		}
 		public static Matrix4x4 CreatePerspective(float left,float right,float bottom,float top,float zNear,float zFar)
 		{
-			var result = identity;
+			var result = Identity;
 			if(zNear<=0) {
 				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
@@ -732,22 +740,8 @@ namespace GameEngine
 			result.m33 = 1f;
 			return result;
 		}
-		#endregion
-		#endregion
 
-		public static Matrix4x4 Normalize(Matrix4x4 matrix)
-		{
-			matrix.Normalize();
-			return matrix;
-		}
-		public static Matrix4x4 Invert(Matrix4x4 matrix)
-		{
-			matrix.Invert();
-			return matrix;
-		}
-		#endregion
-
-		#region Operators
+		//Operators
 		public static Matrix4x4 operator *(Matrix4x4 lhs,Matrix4x4 rhs)
 		{
 			Matrix4x4 result;
@@ -804,6 +798,5 @@ namespace GameEngine
 			}
 			return output;
 		}
-		#endregion
 	}
 }

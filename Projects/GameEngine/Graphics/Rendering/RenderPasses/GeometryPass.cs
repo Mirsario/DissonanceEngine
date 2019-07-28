@@ -131,7 +131,7 @@ namespace GameEngine.Graphics
 								offset += sizeof(float)*3;
 							}else{
 								GL.DisableVertexAttribArray((int)AttributeId.Normal);
-								GL.VertexAttrib3((int)AttributeId.Normal,Vector3.zero);
+								GL.VertexAttrib3((int)AttributeId.Normal,Vector3.Zero);
 							}
 							#endregion
 							#region Tangents
@@ -141,7 +141,7 @@ namespace GameEngine.Graphics
 								offset += sizeof(float)*4;
 							}else{
 								GL.DisableVertexAttribArray((int)AttributeId.Tangent);
-								GL.VertexAttrib4((int)AttributeId.Tangent,Vector4.zero);
+								GL.VertexAttrib4((int)AttributeId.Tangent,Vector4.Zero);
 							}
 							#endregion
 							#region Colors
@@ -151,7 +151,7 @@ namespace GameEngine.Graphics
 								offset += sizeof(float)*4;
 							}else{
 								GL.DisableVertexAttribArray((int)AttributeId.Color);
-								GL.VertexAttrib4((int)AttributeId.Color,Vector4.one);
+								GL.VertexAttrib4((int)AttributeId.Color,Vector4.One);
 							}
 							#endregion
 							#region BoneWeights
@@ -165,8 +165,8 @@ namespace GameEngine.Graphics
 							}else{
 								GL.DisableVertexAttribArray((int)AttributeId.BoneIndices);
 								GL.DisableVertexAttribArray((int)AttributeId.BoneWeights);
-								GL.VertexAttrib4((int)AttributeId.BoneIndices,Vector4.zero);
-								GL.VertexAttrib4((int)AttributeId.BoneWeights,Vector4.zero);
+								GL.VertexAttrib4((int)AttributeId.BoneIndices,Vector4.Zero);
+								GL.VertexAttrib4((int)AttributeId.BoneWeights,Vector4.Zero);
 							}
 							#endregion
 							#region UV

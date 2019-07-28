@@ -12,10 +12,11 @@ namespace GameEngine
 	//
 	public class DDSManager : AssetManager<Texture>
 	{
-		public override string[] Extensions => new [] {".dds"};
+		private static readonly byte[] Signature = { (byte)'D',(byte)'D',(byte)'S',(byte)' '};
 
 		public static bool preserveAlpha = true;
-		private static readonly byte[] signature = { (byte)'D',(byte)'D',(byte)'S',(byte)' '};
+
+		public override string[] Extensions => new [] {".dds"};
 
 		public override Texture Import(Stream stream,string fileName)
 		{
@@ -44,7 +45,7 @@ namespace GameEngine
 			var header = new DDSHeader();
 			var sign = reader.ReadBytes(4);
 			for(int i=0;i<4;i++){
-				if(sign[i]!=signature[i]){
+				if(sign[i]!=Signature[i]){
 					throw new Exception("File's signature is wrong");
 				}
 			}

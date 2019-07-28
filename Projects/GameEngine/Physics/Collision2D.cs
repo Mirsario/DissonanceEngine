@@ -8,19 +8,20 @@ namespace GameEngine
 		public Collider otherCollider;
 		public float separation;
 	}
+
 	public class Collision2D
 	{
-		public readonly GameObject gameObject;
-		public readonly Rigidbody2D rigidbody;
-		public readonly Collider collider;
-		public ContactPoint2D[] contacts;
+		public readonly GameObject GameObject;
+		public readonly Rigidbody2D Rigidbody;
+		public readonly Collider Collider;
+		public readonly ContactPoint2D[] Contacts;
 
 		public Collision2D(GameObject gameObject,Rigidbody2D rigidbody,Collider collider,ContactPoint2D[] contacts)
 		{
-			this.gameObject = gameObject;
-			this.rigidbody = rigidbody;
-			this.collider = collider;
-			this.contacts = contacts;
+			GameObject = gameObject;
+			Rigidbody = rigidbody;
+			Collider = collider;
+			Contacts = contacts;
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace SurvivalGame
 
 		public BrainSignal(InputTrigger trigger)
 		{
-			name = trigger.name;
+			name = trigger.Name;
 			minValue = trigger.minValue;
 			maxValue = trigger.maxValue;
 			inputTrigger = trigger;

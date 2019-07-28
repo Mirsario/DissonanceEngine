@@ -6,27 +6,27 @@ namespace GameEngine
 	{
 		internal static Random staticRandom;
 		internal Random random;
-		private static int _globalSeed;
+		private static int globalSeed;
 		public static int GlobalSeed {
-			get => _globalSeed;
+			get => globalSeed;
 			set {
-				_globalSeed = value;
-				staticRandom = new Random(_globalSeed);
+				globalSeed = value;
+				staticRandom = new Random(globalSeed);
 			}
 		}
 		
-		private int _seed;
+		private int seed;
 		public int Seed {
-			get => _seed;
+			get => seed;
 			set {
-				_seed = value;
-				random = new Random(_seed);
+				seed = value;
+				random = new Random(seed);
 			}
 		}
 		
 		public Rand(int seed)
 		{
-			_seed = seed;
+			this.seed = seed;
 			random = new Random(seed);
 		}
 		public float NextFloat(float minValue,float maxValue)
@@ -50,8 +50,8 @@ namespace GameEngine
 		
 		public static void Init()
 		{
-			_globalSeed = (int)DateTime.Now.Ticks;
-			staticRandom = new Random(_globalSeed);
+			globalSeed = (int)DateTime.Now.Ticks;
+			staticRandom = new Random(globalSeed);
 		}
 		public static int Next(int maxValue)
 		{

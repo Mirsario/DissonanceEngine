@@ -16,12 +16,13 @@ namespace GameEngine
 		public double frequency;
 		public double lacunarity;
 		public double persistence;
-		private int _octaves;
-		public int Octaves {
-			get => _octaves;
-			set => _octaves = Mathf.Clamp(value,1,maxOctaves);
-		}
 		public int seed;
+
+		private int octaves;
+		public int Octaves {
+			get => octaves;
+			set => octaves = Mathf.Clamp(value,1,maxOctaves);
+		}
 		
 		public PerlinNoiseDouble(int seed = 0,int octaves = 6,double frequency = 1.0,double persistence = 0.5,double lacunarity = 2.0,QualityMode quality = QualityMode.Low)
 		{
@@ -106,9 +107,9 @@ namespace GameEngine
 			int i = (int)(1619*ix+31337*iy+6971*iz+1013*seed&0xffffffff);
 			i ^= i>>8;
 			i &= 0xff;
-			double xvg = randomValues[i<<2];
-			double yvg = randomValues[(i<<2)+1];
-			double zvg = randomValues[(i<<2)+2];
+			double xvg = RandomValues[i<<2];
+			double yvg = RandomValues[(i<<2)+1];
+			double zvg = RandomValues[(i<<2)+2];
 			double xvp = fx-ix;
 			double yvp = fy-iy;
 			double zvp = fz-iz;
@@ -142,7 +143,7 @@ namespace GameEngine
 
 		//Giant array of pre-made noise that the Noise method will use
 		//I'm not entirely sure if this is a good idea.
-		internal static readonly double[] randomValues = {
+		internal static readonly double[] RandomValues = {
 			-0.763874,	-0.596439,	-0.246489,	0.0,	0.396055,	0.904518,	-0.158073,	0.0,
 			-0.499004,	-0.8665,	-0.0131631,	0.0,	0.468724,	-0.824756,	0.316346,	0.0,
 			0.829598,	0.43195,	0.353816,	0.0,	-0.454473,	0.629497,	-0.630228,	0.0,

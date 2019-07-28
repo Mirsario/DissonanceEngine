@@ -23,7 +23,8 @@ namespace GameEngine.Graphics
 		internal int[] defaultUniformIndex = new int[DSU.Count];
 		internal List<Material> materialAttachments = new List<Material>();
 
-		public readonly string name;
+		public readonly string Name;
+
 		public int program;
 		public int vertexShader;
 		public int fragmentShader;
@@ -34,26 +35,26 @@ namespace GameEngine.Graphics
 		public CullMode cullMode = CullMode.Front;
 		public PolygonMode polygonMode = PolygonMode.Fill;
 		
-		private static Shader _errorShader;
-		public static Shader ErrorShader => _errorShader ??= Resources.Find<Shader>("Error");
+		private static Shader errorShader;
+		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 
-		public override string GetAssetName() => name;
+		public override string GetAssetName() => Name;
 
 		private Shader(string name)
 		{
-			this.name = name;
+			this.Name = name;
 		}
 
-		public override string ToString() => name;
+		public override string ToString() => Name;
 
 		private void Init()
 		{
-			if(shadersByName.TryGetValue(name,out var oldShader) && oldShader!=null) {
+			if(shadersByName.TryGetValue(Name,out var oldShader) && oldShader!=null) {
 				oldShader.Dispose();
 				shaders.Remove(oldShader);
 			}
 
-			shadersByName[name] = this;
+			shadersByName[Name] = this;
 			shaders.Add(this);
 
 			//Set uniform locations

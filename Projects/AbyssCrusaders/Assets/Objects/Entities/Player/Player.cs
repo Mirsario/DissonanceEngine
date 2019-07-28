@@ -43,7 +43,7 @@ namespace AbyssCrusaders
 			var light = AddComponent<Light2D>();
 			light.color = new Vector3(1f,0.75f,0.5f);
 			light.range = 32f;
-			Instantiate<CursorLightObj>().light.color = Vector3.one;
+			Instantiate<CursorLightObj>().light.color = Vector3.One;
 		}
 		public override void FixedUpdate()
 		{

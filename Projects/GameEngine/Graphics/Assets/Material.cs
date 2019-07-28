@@ -19,20 +19,20 @@ namespace GameEngine.Graphics
 		private List<KeyValuePair<string,Texture>> textures;
 		internal List<Renderer> rendererAttachments;
 
-		protected Shader _shader;
+		protected Shader shader;
 		public Shader Shader {
-			get => _shader;
+			get => shader;
 			set {
-				if(_shader==value) {
+				if(shader==value) {
 					return;
 				}
-				if(_shader!=null) {
-					_shader.MaterialDetach(this);
+				if(shader!=null) {
+					shader.MaterialDetach(this);
 				}
 				if(value!=null) {
 					value.MaterialAttach(this);
 				}
-				_shader = value;
+				shader = value;
 			}
 		}
 		#endregion
@@ -107,7 +107,7 @@ namespace GameEngine.Graphics
 				throw new Exception($"{methodName} cannot be used when material's Shader is null.");
 			}
 			if(!shader.uniforms.ContainsKey(name)) {
-				throw new Exception($"Uniform {name} doesn't exist in shader ''{shader.name}''.");
+				throw new Exception($"Uniform {name} doesn't exist in shader ''{shader.Name}''.");
 			}
 		}
 

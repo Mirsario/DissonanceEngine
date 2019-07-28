@@ -8,7 +8,7 @@ namespace GameEngine
 
 		private bool needsUpdate;
 
-		protected Vector3 offset = Vector3.zero;
+		protected Vector3 offset = Vector3.Zero;
 		public Vector3 Offset {
 			get => offset;
 			set {

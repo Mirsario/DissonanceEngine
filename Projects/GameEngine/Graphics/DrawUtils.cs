@@ -21,7 +21,7 @@ namespace GameEngine.Graphics
 			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 
 			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
-				var col = color ?? Vector4.one;
+				var col = color ?? Vector4.One;
 				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 			

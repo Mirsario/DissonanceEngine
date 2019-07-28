@@ -6,14 +6,15 @@ namespace GameEngine
 {
 	public class Transform
 	{
-		internal Matrix4x4 _matrix = Matrix4x4.identity;
 		public Transform parent = null;
 		public GameObject gameObject;
+
+		internal Matrix4x4 matrix = Matrix4x4.Identity;
 		internal bool updatePhysicsPosition = true;
 		internal bool updatePhysicsRotation = true;
 		internal bool updatePhysicsScale = true;
 
-		#region Properties
+		//Properties
 		public Transform Root => parent==null ? this : GetParents().Last();
 		public Vector3 Forward {
 			get {
@@ -39,49 +40,49 @@ namespace GameEngine
 		public Vector3 Position {
 			get => WorldMatrix.ExtractTranslation();
 			set {
-				var m = _matrix;
+				var m = matrix;
 				m.SetTranslation(value);
 				if(parent!=null) {
 					m = ToLocalSpace(m);
 				}
-				_matrix.SetTranslation(m.ExtractTranslation());
+				matrix.SetTranslation(m.ExtractTranslation());
 				updatePhysicsPosition = true;
 			}
 		}
 		public Vector3 LocalPosition {
-			get => _matrix.ExtractTranslation();
+			get => matrix.ExtractTranslation();
 			set {
-				_matrix.SetTranslation(value);
+				matrix.SetTranslation(value);
 				updatePhysicsPosition = true;
 			}
 		}
 		public Vector3 LocalScale {
-			get => _matrix.ExtractScale();
+			get => matrix.ExtractScale();
 			set {
-				_matrix.SetScale(value);
+				matrix.SetScale(value);
 				updatePhysicsScale = true;
 			}
 		}
 		public Quaternion Rotation {
 			get => WorldMatrix.ExtractQuaternion();
 			set {
-				var tempPos = _matrix.ExtractTranslation();
-				var tempScale = _matrix.ExtractScale();
+				var tempPos = matrix.ExtractTranslation();
+				var tempScale = matrix.ExtractScale();
 				
 				var m = Matrix4x4.CreateRotation(value);
-				_matrix = m;
+				matrix = m;
 				
-				_matrix.SetTranslation(tempPos);
-				_matrix.SetScale(tempScale);
+				matrix.SetTranslation(tempPos);
+				matrix.SetScale(tempScale);
 				updatePhysicsRotation = true;
 			}
 		}
 		public Quaternion LocalRotation {
-			get => _matrix.ExtractQuaternion();
+			get => matrix.ExtractQuaternion();
 			set {
 				var tempPos = LocalPosition;
 				var tempScale = LocalScale;
-				_matrix = Matrix4x4.CreateRotation(value);
+				matrix = Matrix4x4.CreateRotation(value);
 				LocalPosition = tempPos;
 				LocalScale = tempScale;
 				updatePhysicsRotation = true;
@@ -90,49 +91,48 @@ namespace GameEngine
 		public Vector3 EulerRot {
 			get => WorldMatrix.ExtractEuler();
 			set {
-				var tempPos = _matrix.ExtractTranslation();
-				var tempScale = _matrix.ExtractScale();
+				var tempPos = matrix.ExtractTranslation();
+				var tempScale = matrix.ExtractScale();
 				
-				_matrix = parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
+				matrix = parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
 				
-				_matrix.SetTranslation(tempPos);
-				_matrix.SetScale(tempScale);
+				matrix.SetTranslation(tempPos);
+				matrix.SetScale(tempScale);
 				updatePhysicsRotation = true;
 			}
 		}
 		public Vector3 LocalEulerRot {
-			get => _matrix.ExtractEuler();
+			get => matrix.ExtractEuler();
 			set {
-				var tempPos = _matrix.ExtractTranslation();
-				var tempScale = _matrix.ExtractScale();
+				var tempPos = matrix.ExtractTranslation();
+				var tempScale = matrix.ExtractScale();
 				
 				value.NormalizeEuler();
-				_matrix = Matrix4x4.CreateRotation(value);
+				matrix = Matrix4x4.CreateRotation(value);
 				
-				_matrix.SetTranslation(tempPos);
-				_matrix.SetScale(tempScale);
+				matrix.SetTranslation(tempPos);
+				matrix.SetScale(tempScale);
 				updatePhysicsRotation = true;
 			}
 		}
 		public Matrix4x4 Matrix {
-			get => _matrix;
+			get => matrix;
 			set {
-				_matrix = value;
+				matrix = value;
 				updatePhysicsPosition = true;
 				updatePhysicsRotation = true;
 				updatePhysicsScale = true;
 			}
 		}
 		public Matrix4x4 WorldMatrix {
-			get => parent==null ? _matrix : ToWorldSpace(_matrix);
+			get => parent==null ? matrix : ToWorldSpace(matrix);
 			set {
-				_matrix = parent==null ? value : ToLocalSpace(value);
+				matrix = parent==null ? value : ToLocalSpace(value);
 				updatePhysicsPosition = true;
 				updatePhysicsRotation = true;
 				updatePhysicsScale = true;
 			}
 		}
-		#endregion
 
 		public Transform(GameObject gameObject = null)
 		{

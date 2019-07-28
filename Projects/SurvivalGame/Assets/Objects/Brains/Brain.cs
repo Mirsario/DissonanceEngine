@@ -16,11 +16,11 @@ namespace SurvivalGame
 				if(value.x==0f && value.y==0f && value.z==0f) {
 					throw new Exception("Direction cannot have all axes set to zero.");
 				}
-				Transform.Rotation = Quaternion.FromDirection(value.Normalized,Vector3.up);
+				Transform.Rotation = Quaternion.FromDirection(value.Normalized,Vector3.Up);
 			}
 		}
 
-		public BrainSignal this[InputTrigger trigger] => signals[trigger.id];
+		public BrainSignal this[InputTrigger trigger] => signals[trigger.Id];
 
 		public override void OnInit()
 		{

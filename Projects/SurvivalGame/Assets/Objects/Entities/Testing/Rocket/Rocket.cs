@@ -31,10 +31,10 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
-			if(velocity==Vector3.zero) {
+			if(velocity==Vector3.Zero) {
 				return;
 			}
-			Transform.Rotation = Quaternion.FromDirection(velocity.Normalized,Vector3.up);
+			Transform.Rotation = Quaternion.FromDirection(velocity.Normalized,Vector3.Up);
 
 			var deltaVelocity = velocity*Time.FixedDeltaTime;
 			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
@@ -47,7 +47,7 @@ namespace SurvivalGame
 				foreach(var rigidbodyBase in Physics.ActiveRigidbodies) {
 					if(rigidbodyBase is Rigidbody body) {
 						var direction = body.Transform.Position-Transform.Position;
-						if(direction==Vector3.zero) {
+						if(direction==Vector3.Zero) {
 							continue;
 						}
 						float distance = direction.Magnitude;
@@ -57,7 +57,7 @@ namespace SurvivalGame
 							continue;
 						}
 						powerScale = 1f-powerScale;
-						body.ApplyForce(direction*power*powerScale,Vector3.zero);
+						body.ApplyForce(direction*power*powerScale,Vector3.Zero);
 					}
 				}
 

@@ -33,7 +33,7 @@ namespace SurvivalGame
 		}
 		public override void RenderUpdate()
 		{
-			Transform.LocalScale = Vector3.one*(1.5f+Mathf.Sin(Time.GameTime*Mathf.PI));
+			Transform.LocalScale = Vector3.One*(1.5f+Mathf.Sin(Time.GameTime*Mathf.PI));
 		}
 	}
 }

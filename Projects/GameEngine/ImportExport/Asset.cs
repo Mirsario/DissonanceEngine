@@ -126,32 +126,35 @@ namespace GameEngine
 			do action(array,walker.position);
 			while(walker.Step());
 		}
-	}
-	internal class ArrayTraverse
-	{
-		private readonly int[] maxLengths;
-		public int[] position;
 
-		public ArrayTraverse(Array array)
+
+		private class ArrayTraverse
 		{
-			maxLengths = new int[array.Rank];
-			for(int i = 0;i < array.Rank;++i) {
-				maxLengths[i] = array.GetLength(i)-1;
-			}
-			position = new int[array.Rank];
-		}
-		public bool Step()
-		{
-			for(int i = 0;i < position.Length;++i) {
-				if(position[i] < maxLengths[i]) {
-					position[i]++;
-					for(int j = 0;j < i;j++) {
-						position[j] = 0;
-					}
-					return true;
+			private readonly int[] MaxLengths;
+
+			public int[] position;
+
+			public ArrayTraverse(Array array)
+			{
+				MaxLengths = new int[array.Rank];
+				for(int i = 0;i < array.Rank;++i) {
+					MaxLengths[i] = array.GetLength(i)-1;
 				}
+				position = new int[array.Rank];
 			}
-			return false;
+			public bool Step()
+			{
+				for(int i = 0;i < position.Length;++i) {
+					if(position[i] < MaxLengths[i]) {
+						position[i]++;
+						for(int j = 0;j < i;j++) {
+							position[j] = 0;
+						}
+						return true;
+					}
+				}
+				return false;
+			}
 		}
 	}
 }

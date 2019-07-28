@@ -13,7 +13,7 @@ namespace SurvivalGame
 			light.type = LightType.Directional;
 
 			light.color = new Vector3(1f,0.85f,0.75f); //Sun
-			Rendering.ambientColor = Vector3.one*0.25f;
+			Rendering.ambientColor = Vector3.One*0.25f;
 			//light.color = new Vector3(0.66f,0.33f,1f)*0.25f; //Moon
 			//Graphics.ambientColor = new Vector3(0.05f);
 
@@ -29,7 +29,7 @@ namespace SurvivalGame
 				t.Position = camera.Transform.Position+new Vector3(20f,40f,10f);
 			}
 			t.EulerRot = new Vector3(-60f,0f,0f);
-			t.LocalScale = Vector3.one;
+			t.LocalScale = Vector3.One;
         }
 	}
 }

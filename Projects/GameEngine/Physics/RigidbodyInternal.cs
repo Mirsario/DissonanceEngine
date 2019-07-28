@@ -10,20 +10,20 @@ namespace GameEngine
 	{
 		private class MotionStateInternal : MotionState
 		{
-			private readonly Transform transform;
+			private readonly Transform Transform;
 			
 			public override Matrix WorldTransform {
-				get => transform.parent==null ? transform._matrix : transform.ToWorldSpace(transform._matrix);
-				set => transform._matrix = transform.parent==null ? value : (Matrix)transform.ToLocalSpace(value);
+				get => Transform.parent==null ? Transform.matrix : Transform.ToWorldSpace(Transform.matrix);
+				set => Transform.matrix = Transform.parent==null ? value : (Matrix)Transform.ToLocalSpace(value);
 			}
 
 			public MotionStateInternal(Transform transform)
 			{
-				this.transform = transform;
+				Transform = transform;
 			}
 		}
 
-		//private readonly MotionStateInternal motionState;
+		//private readonly MotionStateInternal MotionState;
 		internal RigidBody btRigidbody;
 		internal CollisionShape collisionShape;
 		internal List<Collision> collisions;
@@ -37,19 +37,19 @@ namespace GameEngine
 		#region Properties
 		public bool Active => btRigidbody.IsActive;
 
-		private float _mass = 1f;
+		private float mass = 1f;
 		public float Mass {
-			get => _mass;
+			get => mass;
 			set {
-				_mass = value;
+				mass = value;
 				UpdateMass();
 			}
 		}
-		public float MassFiltered => _type==RigidbodyType.Dynamic ? _mass : 0f;
+		public float MassFiltered => type==RigidbodyType.Dynamic ? mass : 0f;
 		public Vector3 Velocity {
 			get => btRigidbody.LinearVelocity;
 			set {
-				if(value!=Vector3.zero && !btRigidbody.IsActive) {
+				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 				btRigidbody.LinearVelocity = value;
@@ -58,7 +58,7 @@ namespace GameEngine
 		public Vector3 AngularVelocity {
 			get => btRigidbody.AngularVelocity;
 			set {
-				if(value!=Vector3.zero && !btRigidbody.IsActive) {
+				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 				btRigidbody.AngularVelocity = value;
@@ -86,18 +86,18 @@ namespace GameEngine
 				if(value) {
 					btRigidbody.Gravity = Physics.Gravity;
 				}else{
-					btRigidbody.Gravity = Vector3.zero;
+					btRigidbody.Gravity = Vector3.Zero;
 				}
 				btRigidbody.ApplyGravity();
 			}
 		}
-		private bool _isKinematic;
+		private bool isKinematic;
 		public bool IsKinematic {
-			get => _isKinematic;
+			get => isKinematic;
 			set {
-				if(_isKinematic!=value) {
-					_isKinematic = value;
-					if(_isKinematic) {
+				if(isKinematic!=value) {
+					isKinematic = value;
+					if(isKinematic) {
 						btRigidbody.CollisionFlags = btRigidbody.CollisionFlags | CollisionFlags.KinematicObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
 					}else{
@@ -107,17 +107,17 @@ namespace GameEngine
 				}
 			}
 		}
-		private RigidbodyType _type = RigidbodyType.Static;
+		private RigidbodyType type = RigidbodyType.Static;
 		public RigidbodyType Type {
-			get => _type;
+			get => type;
 			set {
-				if(_type!=value) {
-					_type = value;
+				if(type!=value) {
+					type = value;
 
-					if(_type==RigidbodyType.Dynamic) {
+					if(type==RigidbodyType.Dynamic) {
 						btRigidbody.CollisionFlags = CollisionFlags.None;
 						btRigidbody.ActivationState = ActivationState.ActiveTag;
-					}else if(_type==RigidbodyType.Kinematic) {
+					}else if(type==RigidbodyType.Kinematic) {
 						btRigidbody.CollisionFlags = CollisionFlags.KinematicObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
 					}else{
@@ -140,7 +140,7 @@ namespace GameEngine
 			//At first we just create a rigidbody with an empty shape and 1f mass (zero local inertia)
 			collisionShape = new EmptyShape();
 			var motionState = new MotionStateInternal(gameObject.transform);
-			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.zero) {
+			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero) {
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,
 				Friction = 0.6f,
@@ -197,7 +197,7 @@ namespace GameEngine
 		{
 			Physics.world.RemoveRigidBody(btRigidbody);
 				
-			BulletSharp.Vector3 localInertia = Vector3.zero;
+			BulletSharp.Vector3 localInertia = Vector3.Zero;
 			float tempMass = MassFiltered;
 			if(tempMass!=0f && collisionShape!=null) {
 				localInertia = collisionShape.CalculateLocalInertia(tempMass);

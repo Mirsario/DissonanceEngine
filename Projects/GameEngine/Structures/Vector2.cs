@@ -25,12 +25,12 @@ namespace GameEngine
 		public float this[int index]
 		{
 			get {
-				switch(index) {
-					case 0: return x;
-					case 1: return y;
-					default:
-						throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1,inclusive.");
-				}
+				return index switch
+				{
+					0 => x,
+					1 => y,
+					_ => throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1,inclusive."),
+				};
 			}
 			set {
 				switch(index) {

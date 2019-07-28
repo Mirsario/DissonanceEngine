@@ -12,8 +12,9 @@ namespace GameEngine
 			public float prevAnalogInput;
 		}
 		
-		public readonly int id;
-		public readonly string name;
+		public readonly int Id;
+		public readonly string Name;
+
 		public float maxValue;
 		public float minValue;
 
@@ -34,7 +35,7 @@ namespace GameEngine
 				for(int i = 0;i<bindingCount;i++) {
 					var binding = value[i];
 					bindings[i] = binding;
-					bindingsHashes[i] = binding.inputHash;
+					bindingsHashes[i] = binding.InputHash;
 				}
 			}
 		}
@@ -46,8 +47,8 @@ namespace GameEngine
 
 		internal InputTrigger(int id,string name,InputBinding[] bindings,float minValue,float maxValue)
 		{
-			this.id = id;
-			this.name = name;
+			this.Id = id;
+			this.Name = name;
 			this.minValue = minValue;
 			this.maxValue = maxValue;
 			Bindings = bindings;

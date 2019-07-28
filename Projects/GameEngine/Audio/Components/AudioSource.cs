@@ -8,28 +8,28 @@ namespace GameEngine
 		internal uint sourceId;
 		
 		//TODO: Document these properties, got a little bit confusing after some absence.
-		private bool _is2D;
+		private bool is2D;
 		public bool Is2D {
-			get => _is2D;
+			get => is2D;
 			set {
-				if(value!=_is2D) {
-					_is2D = value;
-					AL.Source(sourceId,ALSourceb.SourceRelative,_is2D);
-					var pos = (OpenTK.Vector3)(_is2D ? Vector3.zero : Transform.Position);
+				if(value!=is2D) {
+					is2D = value;
+					AL.Source(sourceId,ALSourceb.SourceRelative,is2D);
+					var pos = (OpenTK.Vector3)(is2D ? Vector3.Zero : Transform.Position);
 					AL.Source(sourceId,ALSource3f.Position,ref pos);
 				}
 			}
 		}
-		internal AudioClip _clip;
+		internal AudioClip clip;
 		public AudioClip Clip {
-			get => _clip;
+			get => clip;
 			set {
-				if(_clip!=value) {
+				if(clip!=value) {
 					if(IsPlaying) {
 						Stop();
 					}
-					_clip = value;
-					AL.Source(sourceId,ALSourcei.Buffer,_clip?.bufferId ?? -1);
+					clip = value;
+					AL.Source(sourceId,ALSourcei.Buffer,clip?.bufferId ?? -1);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ namespace GameEngine
 		}
 		public override void FixedUpdate()
 		{
-			if(!_is2D) {
+			if(!is2D) {
 				OpenTK.Vector3 pos = Transform.Position;
 				AL.Source(sourceId,ALSource3f.Position,ref pos);
 			}
@@ -112,21 +112,21 @@ namespace GameEngine
 
 		public void Play()
 		{
-			if(_clip==null) {
+			if(clip==null) {
 				throw new Exception("This AudioSource has no clip set!");
 			}
 			AL.SourcePlay(sourceId);
 		}
 		public void Pause()
 		{
-			if(_clip==null) {
+			if(clip==null) {
 				throw new Exception("This AudioSource has no clip set!");
 			}
 			AL.SourcePause(sourceId);
 		}
 		public void Stop()
 		{
-			if(_clip==null) {
+			if(clip==null) {
 				throw new Exception("This AudioSource has no clip set!");
 			}
 			AL.SourceStop(sourceId);

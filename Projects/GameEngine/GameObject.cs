@@ -15,10 +15,10 @@ namespace GameEngine
 		internal bool initialized;
 		public byte layer;
 		
-		public string _name;
+		public string name;
 		public string Name {
-			get => _name;
-			set => _name = value ?? throw new Exception("GameObject's name cannot be set to null");
+			get => name;
+			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
 		}
 		internal Transform transform;
 		public Transform Transform => transform;

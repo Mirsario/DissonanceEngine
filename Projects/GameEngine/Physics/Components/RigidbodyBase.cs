@@ -9,7 +9,6 @@ namespace GameEngine
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent
 	{
-		#region Properties
 		public bool WantsSleeping => gameObject.rigidbodyInternal.btRigidbody.WantsSleeping;
 
 		public float Mass {
@@ -32,11 +31,6 @@ namespace GameEngine
 			get => gameObject.rigidbodyInternal.UseGravity;
 			set => gameObject.rigidbodyInternal.UseGravity = value;
 		}
-		protected bool _isKinematic;
-		public bool IsKinematic {
-			get => _isKinematic;
-			set => gameObject.rigidbodyInternal.Type = (_isKinematic = value) ? RigidbodyType.Kinematic : RigidbodyType.Dynamic;
-		}
 		public bool Active {
 			get => gameObject.rigidbodyInternal.btRigidbody.IsActive;
 			set { 
@@ -45,7 +39,12 @@ namespace GameEngine
 				}
 			}
 		}
-		#endregion
+
+		protected bool isKinematic;
+		public bool IsKinematic {
+			get => isKinematic;
+			set => gameObject.rigidbodyInternal.Type = (isKinematic = value) ? RigidbodyType.Kinematic : RigidbodyType.Dynamic;
+		}
 
 		protected override void OnInit()
 		{
@@ -58,7 +57,7 @@ namespace GameEngine
 		{
 			Physics.ActiveRigidbodies.Add(this);
 
-			IsKinematic = _isKinematic;
+			IsKinematic = isKinematic;
 		}
 		protected override void OnDisable()
 		{

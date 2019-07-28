@@ -26,14 +26,14 @@ namespace GameEngine.Graphics
 
 		public byte this[int index] {
 			get {
-				switch(index) {
-					case 0: return r;
-					case 1: return g;
-					case 2: return b;
-					case 3: return a;
-					default:
-						throw new IndexOutOfRangeException("Indices for Pixel run from 0 to 3,inclusive.");
-				}
+				return index switch
+				{
+					0 => r,
+					1 => g,
+					2 => b,
+					3 => a,
+					_ => throw new IndexOutOfRangeException("Indices for Pixel run from 0 to 3,inclusive."),
+				};
 			}
 			set {
 				switch(index) {

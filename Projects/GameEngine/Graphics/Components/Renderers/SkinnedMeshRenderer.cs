@@ -6,7 +6,7 @@ namespace GameEngine
 	public class SkinnedMeshRenderer : MeshRenderer
 	{
 		public override Mesh Mesh {
-			get => _mesh;
+			get => mesh;
 			set {
 				if(value!=null) {
 					if(skeleton!=null) {
@@ -19,7 +19,7 @@ namespace GameEngine
 						Debug.Log($"{gameObject.Name} - mesh's skeleton is null");
 					}
 				}
-				_mesh = value;
+				mesh = value;
 			}
 		}
 		public AnimationSkeleton skeleton;

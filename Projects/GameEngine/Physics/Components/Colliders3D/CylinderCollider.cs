@@ -4,7 +4,7 @@ namespace GameEngine
 {
 	public class CylinderCollider : Collider
 	{
-		protected Vector3 size = Vector3.one;
+		protected Vector3 size = Vector3.One;
 		public Vector3 Size {
 			get => size;
 			set {

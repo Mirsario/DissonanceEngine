@@ -8,18 +8,18 @@ namespace GameEngine
 		public const float kEpsilon = 0.00001F;
 		public const float kEpsilonNormalSqrt = 1e-15F;
 
-		public static readonly int sizeInBytes = Marshal.SizeOf(typeof(Vector3));
-		public static readonly Vector3 zero = default;
-		public static readonly Vector3 one = new Vector3( 1f,1f,1f);
-		public static readonly Vector3 unitX = new Vector3( 1f,0f,0f);
-		public static readonly Vector3 unitY = new Vector3( 0f,1f,0f);
-		public static readonly Vector3 unitZ = new Vector3( 0f,0f,1f);
-		public static readonly Vector3 up = new Vector3( 0f,1f,0f);
-		public static readonly Vector3 down = new Vector3( 0f,-1f,0f);
-		public static readonly Vector3 left = new Vector3(-1f,0f,0f);
-		public static readonly Vector3 right = new Vector3( 1f,0f,0f);
-		public static readonly Vector3 forward = new Vector3( 0f,0f,1f);
-		public static readonly Vector3 backward = new Vector3( 0f,0f,-1f);
+		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector3));
+		public static readonly Vector3 Zero = default;
+		public static readonly Vector3 One = new Vector3( 1f,1f,1f);
+		public static readonly Vector3 UnitX = new Vector3( 1f,0f,0f);
+		public static readonly Vector3 UnitY = new Vector3( 0f,1f,0f);
+		public static readonly Vector3 UnitZ = new Vector3( 0f,0f,1f);
+		public static readonly Vector3 Up = new Vector3( 0f,1f,0f);
+		public static readonly Vector3 Down = new Vector3( 0f,-1f,0f);
+		public static readonly Vector3 Left = new Vector3(-1f,0f,0f);
+		public static readonly Vector3 Right = new Vector3( 1f,0f,0f);
+		public static readonly Vector3 Forward = new Vector3( 0f,0f,1f);
+		public static readonly Vector3 Backward = new Vector3( 0f,0f,-1f);
 
 		public float x;
 		public float y;
@@ -30,11 +30,17 @@ namespace GameEngine
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
 		public Vector2 XY {
 			get => new Vector2(x,y);
-			set { x = value.x; y = value.y; }
+			set {
+				x = value.x;
+				y = value.y;
+			}
 		}
 		public Vector2 XZ {
 			get => new Vector2(x,z);
-			set { x = value.x; z = value.y; }
+			set {
+				x = value.x;
+				z = value.y;
+			}
 		}
 		public Vector3 Normalized {
 			get {
@@ -48,20 +54,18 @@ namespace GameEngine
 		}
 		
 		public float this[int index] {
-			get {
-				switch(index) {
-					case 0: return x;
-					case 1: return y;
-					case 2: return z;
-					default: throw new IndexOutOfRangeException("Indices for Vector3 run from 0 to 2,inclusive.");
-				}
-			}
+			get => index switch {
+				0 => x,
+				1 => y,
+				2 => z,
+				_ => throw new IndexOutOfRangeException($"Indices for {nameof(Vector3)} run from 0 to 2 (inclusive)."),
+			};
 			set {
 				switch(index) {
 					case 0: x = value; return;
 					case 1: y = value; return;
 					case 2: z = value; return;
-					default: throw new IndexOutOfRangeException("Indices for Vector3 run from 0 to 2,inclusive.");
+					default: throw new IndexOutOfRangeException($"Indices for {nameof(Vector3)} run from 0 to 2 (inclusive).");
 				}
 			}
 		}
@@ -178,7 +182,7 @@ namespace GameEngine
 			//TODO: Redo this fucking garbage
 			//Matrix4x4 matrix = Matrix4x4.LookAt(zero,direction,up);
 			
-			return Matrix4x4.LookAt(zero,direction.Normalized,up).ExtractEuler();
+			return Matrix4x4.LookAt(Zero,direction.Normalized,Up).ExtractEuler();
 			/*float cX = Mathf.Cos(direction.x);
 			float sX = Mathf.Sin(direction.x);
 			float cY = Mathf.Cos(direction.y);
@@ -266,10 +270,7 @@ namespace GameEngine
 		public static implicit operator BulletSharp.Vector3(Vector3 value) => new BulletSharp.Vector3(value.x,value.y,value.z);
 		public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
 
-		public override int GetHashCode()
-		{
-			return x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
-		}
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
 		public override bool Equals(object other)
 		{
 			if(!(other is Vector3)) {
@@ -278,14 +279,6 @@ namespace GameEngine
 			var vector = (Vector3)other;
 			return x.Equals(vector.x) && y.Equals(vector.y) && z.Equals(vector.z);
 		}
-		/*public static implicit operator BulletSharp.Vector3(Vector3 value)
-		{
-			return new BulletSharp.Vector3(value.x,value.y,value.z);
-		}
-		public static implicit operator Vector3(BulletSharp.Vector3 value)
-		{
-			return new Vector3(value.X,value.Y,value.Z);
-		}*/
 	}
 }
 

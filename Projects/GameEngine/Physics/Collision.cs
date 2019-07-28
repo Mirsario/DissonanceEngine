@@ -10,17 +10,17 @@ namespace GameEngine
 	}
 	public class Collision
 	{
-		public readonly GameObject gameObject;
-		public readonly Rigidbody rigidbody;
-		public readonly Collider collider;
-		public ContactPoint[] contacts;
+		public readonly GameObject GameObject;
+		public readonly Rigidbody Rigidbody;
+		public readonly Collider Collider;
+		public readonly ContactPoint[] Contacts;
 
 		public Collision(GameObject gameObject,Rigidbody rigidbody,Collider collider,ContactPoint[] contacts)
 		{
-			this.gameObject = gameObject;
-			this.rigidbody = rigidbody;
-			this.collider = collider;
-			this.contacts = contacts;
+			GameObject = gameObject;
+			Rigidbody = rigidbody;
+			Collider = collider;
+			Contacts = contacts;
 		}
 	}
 }

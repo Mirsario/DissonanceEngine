@@ -9,16 +9,16 @@ namespace GameEngine
 		public Func<bool?> PreCullingModifyResult { get; set; }
 		public Func<bool,bool> PostCullingModifyResult { get; set; }
 		
-		internal MaterialCollection _materials;
+		internal MaterialCollection materials;
 		public MaterialCollection Materials {
-			get => _materials;
+			get => materials;
 			set {
-				if(_materials==value) {
+				if(materials==value) {
 					return;
 				}
-				if(_materials!=null) {
-					for(int i=0;i<_materials.Count;i++) {
-						_materials[i]?.RendererDetach(this);
+				if(materials!=null) {
+					for(int i=0;i<materials.Count;i++) {
+						materials[i]?.RendererDetach(this);
 					}
 				}
 				if(value!=null) {
@@ -27,7 +27,7 @@ namespace GameEngine
 					}
 					value.renderer = this;
 				}
-				_materials = value;
+				materials = value;
 			}
 		}
 		public virtual Material Material {
