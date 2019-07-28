@@ -43,8 +43,8 @@ namespace GameEngine.Graphics.RenderingPipelines
 						normalBuffer,
 						positionBuffer,
 						emissionBuffer,
-                        specularBuffer
-                    )
+						specularBuffer
+					)
 					.WithShaders(
 						Resources.Find<Shader>("LightingPoint"),
 						Resources.Find<Shader>("LightingDirectional"),

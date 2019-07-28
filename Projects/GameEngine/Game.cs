@@ -160,7 +160,7 @@ namespace GameEngine
 			Audio.Init();
 
 			Debug.Log("Loading game...");
-            Start();
+			Start();
 			Debug.Log("Game started.");
 		}
 		internal void FixedUpdateInternal(object sender,FrameEventArgs e)
@@ -173,7 +173,7 @@ namespace GameEngine
 				Mouse.SetPosition(center.x,center.y);
 			}
 
-            window.CursorVisible = Screen.showCursor || !window.Focused;
+			window.CursorVisible = Screen.showCursor || !window.Focused;
 			Screen.UpdateValues(window);
 
 			Time.UpdateFixed(1.0/targetUpdates);

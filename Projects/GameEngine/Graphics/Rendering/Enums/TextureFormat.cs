@@ -3,14 +3,14 @@ namespace GameEngine.Graphics
 	public enum TextureFormat
 	{
 		#region A
-		A8,     //8
-		A16,    //16
+		A8,	 //8
+		A16,	//16
 		#endregion
 		#region R
-		R8,     //8
+		R8,	 //8
 		R8i,
 		R8ui,
-		R16,    //16
+		R16,	//16
 		R16f,
 		R16i,
 		R16ui,
@@ -19,7 +19,7 @@ namespace GameEngine.Graphics
 		R32ui,
 		#endregion
 		#region RG
-		RG8,    //8
+		RG8,	//8
 		RG8i,
 		RG8ui,
 		RG16,   //16
@@ -43,14 +43,14 @@ namespace GameEngine.Graphics
 		RGB32ui,
 		#endregion
 		#region RGBA
-		RGBA8,      //8
+		RGBA8,	  //8
 		RGBA8i,
 		RGBA8ui,
-		RGBA16,     //16
+		RGBA16,	 //16
 		RGBA16f,
 		RGBA16i,
 		RGBA16ui,
-		RGBA32f,    //32
+		RGBA32f,	//32
 		RGBA32i,
 		RGBA32ui,
 		#endregion

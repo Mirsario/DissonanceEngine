@@ -22,7 +22,7 @@ namespace GameEngine.Graphics
 			"screenHeight",
 			"screenResolution",
 			"cameraPosition",
-            "cameraDirection",
+			"cameraDirection",
 			//Other
 			"color",
 			"mainTex",
@@ -46,9 +46,9 @@ namespace GameEngine.Graphics
 		public const int ScreenHeight = 13;
 		public const int ScreenResolution = 14;
 		public const int CameraPosition = 15;
-        public const int CameraDirection = 16;
-        //Other
-        public const int Color = 17;
+		public const int CameraDirection = 16;
+		//Other
+		public const int Color = 17;
 		public const int MainTex = 18;
 		//Count, important
 		public const int Count = 19;

@@ -345,12 +345,12 @@ namespace GameEngine
 
 			return ImportInternal<T>(filePath,true,null,ntpMultiplePaths);
 		}
-        #endregion
-        #region Find
-        //Finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
-        public static bool Find<T>(string assetName,out T asset) where T : class
-            => (asset = Find<T>(assetName))!=null;
-        public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
+		#endregion
+		#region Find
+		//Finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
+		public static bool Find<T>(string assetName,out T asset) where T : class
+			=> (asset = Find<T>(assetName))!=null;
+		public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
 		{
 			var type = typeof(T);
 
@@ -393,7 +393,7 @@ namespace GameEngine
 
 			using(var stream = File.OpenWrite(filePath)) {
 				assetManager.Export(asset,stream);
-            }
+			}
 		}
 		#endregion
 
@@ -495,5 +495,5 @@ namespace GameEngine
 				}
 			}
 		}
-    }
+	}
 }

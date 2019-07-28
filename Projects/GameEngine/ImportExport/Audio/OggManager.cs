@@ -23,17 +23,17 @@ namespace GameEngine
 			}
 		}
 
-        private static void CastBuffer(float[] inBuffer,short[] outBuffer,long length)
-        {
-            for(long i=0;i<length;i++)  {
-                int temp = (int)(32767f*inBuffer[i]);
-                if(temp>short.MaxValue) {
+		private static void CastBuffer(float[] inBuffer,short[] outBuffer,long length)
+		{
+			for(long i=0;i<length;i++)  {
+				int temp = (int)(32767f*inBuffer[i]);
+				if(temp>short.MaxValue) {
 					temp = short.MaxValue;
-                }else if(temp<short.MinValue) {
+				}else if(temp<short.MinValue) {
 					temp = short.MinValue;
 				}
-                outBuffer[i] = (short)temp;
-            }
+				outBuffer[i] = (short)temp;
+			}
 		}
 	}
 }

@@ -12,11 +12,11 @@ namespace GameEngine
 				return reader.ReadToEnd();
 			}
 		}
-        public override void Export(string text,Stream stream)
-        {
+		public override void Export(string text,Stream stream)
+		{
 			using(var writer = new StreamWriter(stream)) {
 				writer.Write(text);
 			}
-        }
-    }
+		}
+	}
 }

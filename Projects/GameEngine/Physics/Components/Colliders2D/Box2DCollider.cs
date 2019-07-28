@@ -3,20 +3,20 @@ using BulletSharp;
 namespace GameEngine
 {
 	public class Box2DCollider : Collider
-    {
-        protected Vector2 size = Vector2.One;
-        public Vector2 Size {
-            get => size;
-            set {
+	{
+		protected Vector2 size = Vector2.One;
+		public Vector2 Size {
+			get => size;
+			set {
 				if(size!=value) {
 					size = value;
 
 					TryUpdateCollider();
 				}
 			}
-        }
+		}
 
-        internal override void UpdateCollider()
+		internal override void UpdateCollider()
 		{
 			if(collShape!=null) {
 				collShape.Dispose();

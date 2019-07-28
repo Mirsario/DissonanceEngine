@@ -105,14 +105,14 @@ namespace GameEngine.Graphics
 			}
 			if(hasDefaultUniform[DSU.CameraPosition]) {
 				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos);
-            }
-            if(hasDefaultUniform[DSU.CameraDirection])  {
-                GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
-            }
+			}
+			if(hasDefaultUniform[DSU.CameraDirection])  {
+				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
+			}
 
-            #region World
-            //bool needsWorld;
-            if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
+			#region World
+			//bool needsWorld;
+			if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 				//Check
 				if(!uniformComputed[DSU.World]) { world = transform.WorldMatrix; uniformComputed[DSU.World] = true; }
 
@@ -186,11 +186,11 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ScreenWidth]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width); }
 			if(hasDefaultUniform[DSU.ScreenHeight]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight],Screen.Height); }
 			if(hasDefaultUniform[DSU.CameraPosition]) { GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos); }
-            if(hasDefaultUniform[DSU.CameraDirection]) { GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);  }
+			if(hasDefaultUniform[DSU.CameraDirection]) { GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);  }
 
-            #region World
-            //bool needsWorld;
-            if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
+			#region World
+			//bool needsWorld;
+			if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 				if(!dontCalculateWorld) {
 					world = transform.WorldMatrix;
 				}

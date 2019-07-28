@@ -12,9 +12,9 @@ namespace GameEngine
 			stream.Read(bytes,0,bytes.Length);
 			return bytes;
 		}
-        public override void Export(byte[] bytes,Stream stream)
-        {
+		public override void Export(byte[] bytes,Stream stream)
+		{
 			stream.Write(bytes,0,bytes.Length);
-        }
-    }
+		}
+	}
 }

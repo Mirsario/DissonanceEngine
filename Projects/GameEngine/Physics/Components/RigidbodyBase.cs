@@ -58,7 +58,7 @@ namespace GameEngine
 		{
 			Physics.ActiveRigidbodies.Add(this);
 
-            IsKinematic = _isKinematic;
+			IsKinematic = _isKinematic;
 		}
 		protected override void OnDisable()
 		{

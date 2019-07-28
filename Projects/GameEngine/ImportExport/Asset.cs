@@ -5,12 +5,12 @@ using System.Reflection;
 
 namespace GameEngine
 {
-    public abstract class Asset : IDisposable
-    {
-	    protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
+	public abstract class Asset : IDisposable
+	{
+		protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
 
 		public virtual string GetAssetName() => null;
-	    internal void InitAsset()
+		internal void InitAsset()
 		{
 			string name = GetAssetName();
 			if(name!=null) {
@@ -20,16 +20,16 @@ namespace GameEngine
 		}
 
 		public virtual void Dispose() {}
-    }
+	}
 
 	public class IgnoreInCloning : Attribute {} // ???
 
-    public abstract class Asset<T> : Asset where T : class
-    {
+	public abstract class Asset<T> : Asset where T : class
+	{
 		public virtual T Clone() => (T)InternalClone(this);
-	    public virtual T DeepClone() => (T)InternalDeepClone(this,new Dictionary<object,object>(new ReferenceEqualityComparer()));
+		public virtual T DeepClone() => (T)InternalDeepClone(this,new Dictionary<object,object>(new ReferenceEqualityComparer()));
 
-	    #region ShallowClone
+		#region ShallowClone
 		//Copy only original object and arrays
 		private static object InternalClone(object obj)
 		{
@@ -107,7 +107,7 @@ namespace GameEngine
 		#endregion
 
 		public static bool IsPrimitive(Type type) => type==typeof(string) || type.IsValueType & type.IsPrimitive;
-    }
+	}
 
 	//TODO: Move all these to their own files, jeez
 	internal class ReferenceEqualityComparer : EqualityComparer<object>

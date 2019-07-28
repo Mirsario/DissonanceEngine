@@ -5,20 +5,20 @@ namespace GameEngine
 	public class CapsuleCollider : Collider
 	{
 		protected float radius = 0.5f;
-        public float Radius {
-            get => radius;
-            set {
+		public float Radius {
+			get => radius;
+			set {
 				if(radius!=value) {
 					radius = value;
 
 					TryUpdateCollider();
 				}
-            }
-        }
+			}
+		}
 		protected float height = 2f;
-        public float Height {
-            get => height;
-            set {
+		public float Height {
+			get => height;
+			set {
 				if(height!=value) {
 					height = value;
 
@@ -27,7 +27,7 @@ namespace GameEngine
 			}
 		}
 
-        internal override void UpdateCollider()
+		internal override void UpdateCollider()
 		{
 			if(collShape!=null) {
 				collShape.Dispose();
@@ -36,7 +36,7 @@ namespace GameEngine
 
 			collShape = new CapsuleShape(radius,height-2f*radius);
 
-            base.UpdateCollider();
+			base.UpdateCollider();
 		}
 	}
 }

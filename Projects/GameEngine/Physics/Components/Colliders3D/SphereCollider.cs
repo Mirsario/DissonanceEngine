@@ -8,11 +8,11 @@ namespace GameEngine
 		public float Radius {
 			get => radius;
 			set {
-                if(radius!=value) {
-                    radius = value;
+				if(radius!=value) {
+					radius = value;
 
-                    TryUpdateCollider();
-                }
+					TryUpdateCollider();
+				}
 			}
 		}
 

@@ -77,20 +77,20 @@ namespace GameEngine.Graphics
 				}
 			}
 			return pixels;
-        }
-        public Bitmap GetBitmap()
-        {
-           //TODO: Speed this up
-            var pixels = GetPixels();
+		}
+		public Bitmap GetBitmap()
+		{
+		   //TODO: Speed this up
+			var pixels = GetPixels();
 			var bitmap = new Bitmap(Width,Height);
 			for(int y=0;y<Height;y++) {
 				for(int x=0;x<Width;x++) {
 					bitmap.SetPixel(x,y,pixels[x,y]);
 				}
 			}
-            return bitmap;
-        }
-        public void SetPixels(Pixel[,] pixels)
+			return bitmap;
+		}
+		public void SetPixels(Pixel[,] pixels)
 		{
 			//TODO: Can these loops be avoided?
 			var pixels1D = new Pixel[Width*Height];

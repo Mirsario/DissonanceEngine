@@ -177,8 +177,8 @@ namespace GameEngine.Graphics
 		
 		internal static void Draw()
 		{
-            //test
-            /*DrawDelayed(delegate {
+			//test
+			/*DrawDelayed(delegate {
 				Begin(PrimitiveType.Quads);
 				Vertex2(-0.5f,0.5f);
 				Color3(1f,1f,1f);
@@ -191,14 +191,14 @@ namespace GameEngine.Graphics
 				End();
 			});*/
 
-            if(drawActions.Count>0) {
-                for(int i = 0;i<drawActions.Count;i++) {
-                    drawActions[i]?.Invoke();
-                }
-                drawActions.Clear();
-            }
-        }
-        public static void DrawDelayed(Action action)
+			if(drawActions.Count>0) {
+				for(int i = 0;i<drawActions.Count;i++) {
+					drawActions[i]?.Invoke();
+				}
+				drawActions.Clear();
+			}
+		}
+		public static void DrawDelayed(Action action)
 		{
 			drawActions.Add(action);
 		}

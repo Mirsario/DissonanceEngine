@@ -34,7 +34,7 @@ namespace GameEngine
 						}
 
 						OnEnable();
-                        ProgrammableEntityHooks.SubscribeEntity(this);
+						ProgrammableEntityHooks.SubscribeEntity(this);
 
 						enabled = true;
 					}

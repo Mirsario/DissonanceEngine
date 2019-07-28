@@ -4,17 +4,17 @@ namespace GameEngine
 {
 	public class BoxCollider : Collider
 	{
-        protected Vector3 size = Vector3.one;
+		protected Vector3 size = Vector3.one;
 		public Vector3 Size {
-            get => size;
-            set {
+			get => size;
+			set {
 				if(size!=value) {
 					size = value;
 
 					TryUpdateCollider();
 				}
-            }
-        }
+			}
+		}
 
 		internal override void UpdateCollider()
 		{
@@ -23,7 +23,7 @@ namespace GameEngine
 				collShape = null;
 			}
 
-            collShape = new BoxShape(size*0.5f);
+			collShape = new BoxShape(size*0.5f);
 
 			base.UpdateCollider();
 		}

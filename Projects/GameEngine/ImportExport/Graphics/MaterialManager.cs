@@ -45,15 +45,15 @@ namespace GameEngine
 				foreach(var pair in jsonMat.textures) {
 					material.SetTexture(FilterText(pair.Key,fileName),Resources.Import<Texture>(FilterText(pair.Value,fileName)));
 				}
-            }
+			}
 
-            if(jsonMat.floats!=null)  {
-                foreach(var pair in jsonMat.floats) {
-                    material.SetFloat(FilterText(pair.Key,fileName),pair.Value);
-                }
-            }
+			if(jsonMat.floats!=null)  {
+				foreach(var pair in jsonMat.floats) {
+					material.SetFloat(FilterText(pair.Key,fileName),pair.Value);
+				}
+			}
 
-            if (jsonMat.vectors!=null) {
+			if (jsonMat.vectors!=null) {
 				foreach(var pair in jsonMat.vectors) {
 					material.SetVector(FilterText(pair.Key,fileName),pair.Value);
 				}
@@ -68,5 +68,5 @@ namespace GameEngine
 				("$FILENAME$",	Path.GetFileNameWithoutExtension(file))
 			);
 		}
-    }
+	}
 }

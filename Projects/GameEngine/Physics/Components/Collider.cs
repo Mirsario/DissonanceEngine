@@ -4,9 +4,9 @@ namespace GameEngine
 {
 	public abstract class Collider : PhysicsComponent
 	{
-        internal CollisionShape collShape;
+		internal CollisionShape collShape;
 
-        private bool needsUpdate;
+		private bool needsUpdate;
 
 		protected Vector3 offset = Vector3.zero;
 		public Vector3 Offset {
@@ -21,38 +21,38 @@ namespace GameEngine
 		}
 
 		protected override void OnInit()
-        {
-            base.OnInit();
+		{
+			base.OnInit();
 
-            needsUpdate = true;
-        }
-        protected override void OnEnable()
-        {
-            base.OnEnable();
+			needsUpdate = true;
+		}
+		protected override void OnEnable()
+		{
+			base.OnEnable();
 
-            if(needsUpdate) {
-                UpdateCollider();
-            }
-        }
+			if(needsUpdate) {
+				UpdateCollider();
+			}
+		}
 
-        internal virtual void UpdateCollider()
+		internal virtual void UpdateCollider()
 		{
 			if(collShape!=null) {
 				collShape.UserObject = this;
 			}
 
 			gameObject.rigidbodyInternal.UpdateShape();
-            needsUpdate = false;
-        }
+			needsUpdate = false;
+		}
 
-        protected void TryUpdateCollider()
-        {
-            if(enabled) {
-                UpdateCollider();
-            }else{
-                needsUpdate = true;
-            }
-        }
+		protected void TryUpdateCollider()
+		{
+			if(enabled) {
+				UpdateCollider();
+			}else{
+				needsUpdate = true;
+			}
+		}
 	}
 }
 

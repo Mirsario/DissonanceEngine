@@ -8,11 +8,11 @@ namespace GameEngine
 		public Vector3 Size {
 			get => size;
 			set {
-                if(size!=value) {
-                    size = value;
+				if(size!=value) {
+					size = value;
 
-                    TryUpdateCollider();
-                }
+					TryUpdateCollider();
+				}
 			}
 		}
 

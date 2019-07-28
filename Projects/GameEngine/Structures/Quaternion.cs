@@ -32,16 +32,16 @@ namespace GameEngine
 		
 		public float this[int index] {
 			get {
-                return index switch {
-                    0 => x,
-                    1 => y,
-                    2 => z,
-                    3 => w,
-                    _ => throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3"),
-                };
-            }
+				return index switch {
+					0 => x,
+					1 => y,
+					2 => z,
+					3 => w,
+					_ => throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3"),
+				};
+			}
 			set {
-                switch (index) {
+				switch (index) {
 					case 0: x = value; return;
 					case 1: y = value; return;
 					case 2: z = value; return;

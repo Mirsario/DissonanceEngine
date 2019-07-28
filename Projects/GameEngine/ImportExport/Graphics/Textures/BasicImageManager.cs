@@ -16,9 +16,9 @@ namespace GameEngine
 			bitmap.Dispose();
 			return texture;
 		}
-        public override void Export(Texture asset,Stream stream)
-        {
+		public override void Export(Texture asset,Stream stream)
+		{
 			asset.GetBitmap().Save(stream,ImageFormat.Png);
-        }
-    }
+		}
+	}
 }
