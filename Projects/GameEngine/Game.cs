@@ -124,6 +124,7 @@ namespace GameEngine
 			if(!Directory.Exists(assetsPath)) {
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
 			}
+
 			filePaths = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
 			foreach(string file in Resources.GetFilesRecursive(assetsPath,null,new[] { $"{assetsPath}/bin",$"{assetsPath}/obj" })) {
 				filePaths[Path.GetFileName(file)] = file;

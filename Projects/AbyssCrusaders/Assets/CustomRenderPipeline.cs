@@ -64,6 +64,9 @@ namespace AbyssCrusaders
 						lightingBuffer
 					)
 					.WithShaders(compositeShader),
+
+				//GUI
+				new GUIPass("GUI")
 			};
 		}
 

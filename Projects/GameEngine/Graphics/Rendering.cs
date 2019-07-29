@@ -105,7 +105,7 @@ namespace GameEngine.Graphics
 
 		internal static void PreInit()
 		{
-			renderingPipelineType = typeof(JSONRenderingPipeline);
+			renderingPipelineType = typeof(DeferredRendering);
 		}
 		internal static void Init()
 		{
@@ -247,31 +247,12 @@ namespace GameEngine.Graphics
 			}
 			#endregion
 
-			GUIPass();
-			
 			Rendering.CheckGLErrors();
 
 			//GL.Finish();
 			window.SwapBuffers();
 
 			Rendering.CheckGLErrors();
-		}
-		internal static void GUIPass()
-		{
-			Framebuffer.BindWithDrawBuffers(null);
-
-			Shader.SetShader(GUIShader);
-
-			GL.Enable(EnableCap.Blend);
-			SetBlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
-			GUI.canDraw = true;
-
-			Game.instance.OnGUI();
-			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.OnGUI));
-
-			GUI.canDraw = false;
-			
-			GL.Disable(EnableCap.Blend);
 		}
 		
 		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()

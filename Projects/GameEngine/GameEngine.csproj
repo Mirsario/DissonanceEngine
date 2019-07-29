@@ -122,6 +122,7 @@
     <Compile Include="Graphics\Rendering\RenderingPipelines\DeferredRendering.cs" />
     <Compile Include="Graphics\Rendering\RenderingPipelines\ForwardRendering.cs" />
     <Compile Include="Graphics\Rendering\RenderingPipelines\JSONRenderingPipeline.cs" />
+    <Compile Include="Graphics\Rendering\RenderPasses\GUIPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPasses\Light2DPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPasses\DeferredLightingPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPasses\GeometryPass.cs" />

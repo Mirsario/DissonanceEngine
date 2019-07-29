@@ -60,6 +60,9 @@ namespace GameEngine.Graphics.RenderingPipelines
 						lightingTexture
 					)
 					.WithShaders(Resources.Find<Shader>("Composite")),
+
+				//GUI
+				new GUIPass("GUI")
 			};
 
 			Framebuffer.Bind(null);

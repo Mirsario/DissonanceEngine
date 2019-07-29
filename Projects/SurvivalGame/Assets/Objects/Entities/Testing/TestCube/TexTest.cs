@@ -16,8 +16,9 @@ namespace SurvivalGame
 		public override void OnInit()
 		{
 			layer = Layers.GetLayerIndex("Entity");
+
 			collider = AddComponent<BoxCollider>();
-			collider.Size = new Vector3(0.2f,1f,0.2f);
+
 			rigidbody = AddComponent<Rigidbody>();
 			rigidbody.Mass = 1f;
 

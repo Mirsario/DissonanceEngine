@@ -8,7 +8,13 @@
 			framebuffers = new Framebuffer[0];
 
 			//RenderPasses
-			renderPasses = new[] { new GeometryPass("Geometry") };
+			renderPasses = new RenderPass[] {
+				//Geometry, our everything
+				new GeometryPass("Geometry"),
+
+				//GUI
+				new GUIPass("GUI")
+			};
 		}
 	}
 }
