@@ -1,7 +1,19 @@
+using System.Runtime.InteropServices;
+
 namespace GameEngine
 {
 	public partial struct Vector2Int
 	{
+		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2Int));
+		public static readonly Vector2Int Zero = default;
+		public static readonly Vector2Int One = new Vector2Int(1,1);
+		public static readonly Vector2Int UnitX = new Vector2Int(1,0);
+		public static readonly Vector2Int UnitY = new Vector2Int(0,1);
+		public static readonly Vector2Int Up = new Vector2Int(0,1);
+		public static readonly Vector2Int Down = new Vector2Int(0,-1);
+		public static readonly Vector2Int Left = new Vector2Int(-1,0);
+		public static readonly Vector2Int Right = new Vector2Int(1,0);
+
 		public int x;
 		public int y;
 		public Vector2Int(int X,int Y)
