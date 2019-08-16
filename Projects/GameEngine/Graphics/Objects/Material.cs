@@ -5,15 +5,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine.Graphics
 {
+	//TODO: Implement OnDispose
 	public class Material : Asset<Material>
 	{
-		//TODO: Implement OnDispose
-
-		#region StaticFields
 		private static Dictionary<string,Material> materials = new Dictionary<string,Material>();
 		public static Material defaultMat;
-		#endregion
-		#region InstanceFields
+
 		public string name;
 		private Dictionary<string,(byte vecSize,float[] data)> uniformsFloat;
 		private List<KeyValuePair<string,Texture>> textures;
@@ -35,10 +32,6 @@ namespace GameEngine.Graphics
 				shader = value;
 			}
 		}
-		#endregion
-		//public uint stencilWrite = 1;
-
-		public override string GetAssetName() => name;
 
 		public Material(string name,Shader shader)
 		{
@@ -49,6 +42,7 @@ namespace GameEngine.Graphics
 			textures = new List<KeyValuePair<string,Texture>>();
 			rendererAttachments = new List<Renderer>();
 		}
+
 		public override Material Clone()
 		{
 			var clone = new Material(name,Shader);
@@ -56,6 +50,7 @@ namespace GameEngine.Graphics
 			clone.textures.AddRange(textures);
 			return clone;
 		}
+		public override string GetAssetName() => name;
 
 		internal void ApplyTextures(Shader shader)
 		{
@@ -84,7 +79,7 @@ namespace GameEngine.Graphics
 				int location = shader.uniforms[pair.Key].location;
 
 				switch(vecSize) {
-					case 1: GL.Uniform1(location,data.Length,data); break;
+					case 1: GL.Uniform1(location,data.Length,  data); break;
 					case 2: GL.Uniform2(location,data.Length/2,data); break;
 					case 3: GL.Uniform3(location,data.Length/3,data); break;
 					case 4: GL.Uniform4(location,data.Length/4,data); break;

@@ -7,7 +7,7 @@ using GameEngine.Graphics;
 
 namespace SurvivalGame
 {
-	public class TileType : ICloneable, IDisposable, IHasMaterial
+	public abstract class TileType : ICloneable, IDisposable, IHasMaterial
 	{
 		//Static
 		public static bool initialized;
@@ -43,9 +43,10 @@ namespace SurvivalGame
 			OnInit();
 		}
 
-		public virtual void OnInit() {}
+		public abstract PhysicMaterial GetMaterial(Vector3? atPoint = null);
+
+		public virtual void OnInit() { }
 		public virtual void ModifyGrassMesh(Chunk chunk,Tile tile,Vector2Int tilePos,Vector3 localPos,Vector3 tileNormal,MeshInfo mesh) => throw new NotImplementedException();
-		public virtual PhysicMaterial GetMaterial(Vector3? atPoint = null) => throw new NotImplementedException();
 
 		public static void Initialize()
 		{

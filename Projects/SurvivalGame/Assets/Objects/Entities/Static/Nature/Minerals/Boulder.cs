@@ -18,9 +18,10 @@ namespace SurvivalGame
 			renderer.Mesh = mesh;
 			renderer.Material = Resources.Find<Material>(GetType().Name);
 
-			collider = AddComponent<MeshCollider>();
+			collider = AddComponent<MeshCollider>(enable:false);
 			collider.Mesh = mesh;
 			collider.Convex = false;
+			collider.Enabled = true;
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<StonePhysicMaterial>();

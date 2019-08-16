@@ -1,6 +1,5 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace GameEngine.Graphics
 {
@@ -118,74 +117,10 @@ namespace GameEngine.Graphics
 								ref camera.matrix_proj,	ref camera.matrix_projInverse
 							);
 							renderer.ApplyUniforms(shader);
-							
-							#region Draw
-							GL.BindBuffer(BufferTarget.ArrayBuffer,mesh.vertexBufferId);
-							int offset = 0;
-							GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-							offset += sizeof(float)*3;
-							#region Normals
-							if(mesh.normals!=null) {
-								GL.EnableVertexAttribArray((int)AttributeId.Normal);
-								GL.VertexAttribPointer((int)AttributeId.Normal,3,VertexAttribPointerType.Float,true,mesh.vertexSize,(IntPtr)offset);
-								offset += sizeof(float)*3;
-							}else{
-								GL.DisableVertexAttribArray((int)AttributeId.Normal);
-								GL.VertexAttrib3((int)AttributeId.Normal,Vector3.Zero);
-							}
-							#endregion
-							#region Tangents
-							if(mesh.tangents!=null) {
-								GL.EnableVertexAttribArray((int)AttributeId.Tangent);
-								GL.VertexAttribPointer((int)AttributeId.Tangent,4,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-								offset += sizeof(float)*4;
-							}else{
-								GL.DisableVertexAttribArray((int)AttributeId.Tangent);
-								GL.VertexAttrib4((int)AttributeId.Tangent,Vector4.Zero);
-							}
-							#endregion
-							#region Colors
-							if(mesh.colors!=null) {
-								GL.EnableVertexAttribArray((int)AttributeId.Color);
-								GL.VertexAttribPointer((int)AttributeId.Color,4,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-								offset += sizeof(float)*4;
-							}else{
-								GL.DisableVertexAttribArray((int)AttributeId.Color);
-								GL.VertexAttrib4((int)AttributeId.Color,Vector4.One);
-							}
-							#endregion
-							#region BoneWeights
-							if(mesh.boneWeights!=null) {
-								GL.EnableVertexAttribArray((int)AttributeId.BoneIndices);
-								GL.EnableVertexAttribArray((int)AttributeId.BoneWeights);
-								GL.VertexAttribPointer((int)AttributeId.BoneIndices,4,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-								offset += sizeof(float)*4;
-								GL.VertexAttribPointer((int)AttributeId.BoneWeights,4,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-								offset += sizeof(float)*4;
-							}else{
-								GL.DisableVertexAttribArray((int)AttributeId.BoneIndices);
-								GL.DisableVertexAttribArray((int)AttributeId.BoneWeights);
-								GL.VertexAttrib4((int)AttributeId.BoneIndices,Vector4.Zero);
-								GL.VertexAttrib4((int)AttributeId.BoneWeights,Vector4.Zero);
-							}
-							#endregion
-							#region UV
-							if(mesh.uv!=null) {
-								GL.EnableVertexAttribArray((int)AttributeId.Uv0);
-								GL.VertexAttribPointer((int)AttributeId.Uv0,2,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)offset);
-								//offset += sizeof(float)*2;
-							}else{
-								GL.DisableVertexAttribArray((int)AttributeId.Uv0);
-								GL.VertexAttrib2((int)AttributeId.Uv0,Vector2.Zero);
-							}
-							#endregion
-							GL.BindBuffer(BufferTarget.ElementArrayBuffer,mesh.indexBufferId);
 
-							//GL.PolygonMode(MaterialFace.Front,PolygonMode.Line);
+							mesh.DrawMesh();
 							
-							GL.DrawElements(PrimitiveTypeGL.Triangles,mesh.indexLength,DrawElementsType.UnsignedInt,0);
 							Rendering.drawCallsCount++;
-							#endregion
 						}
 						#endregion
 					}

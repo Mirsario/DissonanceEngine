@@ -1,6 +1,4 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+﻿using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine.Graphics
 {

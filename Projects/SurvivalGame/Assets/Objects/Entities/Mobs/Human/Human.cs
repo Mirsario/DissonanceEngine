@@ -97,6 +97,7 @@ namespace SurvivalGame
 			}
 
 			jumpPress = brain.JustActivated(GameInput.jump) ? 0.25f : Math.Max(0f,jumpPress-Time.FixedDeltaTime);
+
 			Movement();
 
 			var tempPos = Transform.Position;
@@ -125,14 +126,14 @@ namespace SurvivalGame
                 if(Input.GetKeyDown(Keys.V)) {
                     Instantiate<Robot>(world,position: hit.point);
                 }
-                if(Input.GetKeyDown(Keys.B)) {
+                if(Input.GetKey(Keys.B)) {
                     Instantiate<StoneHatchet>(world,position: hit.point+new Vector3(0f,15f,0f));
                 }
                 if(Input.GetKeyDown(Keys.N)) {
-                    Instantiate<TexTest>(world,position: hit.point+new Vector3(0f,15f,0f));
+                    Instantiate<CubeObj>(world,position: hit.point+new Vector3(0f,5f,0f));
                 }
                 if(Input.GetKeyDown(Keys.M)) {
-                    Instantiate<TestSphere>(world,position: hit.point + new Vector3(0f,15f,0f));
+                    Instantiate<CubeObj2>(world,position: hit.point + new Vector3(0f,5f,0f));
                 }
                 if(Input.GetKeyDown(Keys.H)) {
                     Instantiate<GiantPlatform>(world,position: hit.point);
@@ -156,6 +157,7 @@ namespace SurvivalGame
 			
 			int i = 5;
 			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Player Speed - XZ:{new Vector3(velocity.x,0f,velocity.z).Magnitude:0.00} Y: {velocity.y:0.00}");
+			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Player Position - {Transform.Position}");
 			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Quake 3 Acceleration: {(enableStrafeJumping ? "Enabled" : "Disabled")} ([U] - Toggle)");
 			GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Input: {moveInput.x:0.00},{moveInput.y:0.00}");
 			GUI.DrawText(new RectFloat(8,8+(i*16),128,8),$"Sprinting: {isSprinting}");
@@ -180,16 +182,25 @@ namespace SurvivalGame
 
 			onGroundCached = OnGround;
 
-			var forward = brain?.Transform.Forward ?? Vector3.Forward;
-			var right = brain?.Transform.Right ?? Vector3.Right;
+			var forwardUnlimited = brain?.Transform.Forward ?? Vector3.Forward;
+			var rightUnlimited = brain?.Transform.Right ?? Vector3.Right;
+			var forward = forwardUnlimited;
+			var right = rightUnlimited;
+			forwardUnlimited.Normalize();
+			forwardUnlimited.Normalize();
 			forward.y = 0f;
 			right.y = 0f;
 			forward.Normalize();
 			right.Normalize();
 
-			if(onGroundCached && forceAirMove<=0f) {
+			var position = Transform.Position;
+
+			bool inWater = position.y+1.5f<=world.GetWaterLevelAt(position);
+
+			if(onGroundCached && forceAirMove<=0f && !inWater) {
 				if(moveInput!=default) {
 					walkTime += Time.FixedDeltaTime;
+
 					if(walkTime>=(isSprinting ? 0.3f : 0.5f)) {
 						Footstep("Walk",0.3f);
 						walkTime = 0f;
@@ -198,17 +209,25 @@ namespace SurvivalGame
 					walkTime = 0f;
 				}
 
-				Movement_WalkMove(forward,right);
+				if(Movement_CheckJump()) {
+					PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
+					forceAirMove = 0.1f;
+					Movement_Move(AirAcceleration,MoveSpeed,Friction,forward,right);
+				} else {
+					Movement_Move(Acceleration,MoveSpeed,Friction,forward,right);
 
-				if(!wasOnGround) {
-					Footstep("Land",0.8f);
-					float magnitude = prevVelocity.Magnitude-velocity.Magnitude;
-					const float minSpeed = 8.5f;
-					if(magnitude>minSpeed) {
-						float power = Mathf.Lerp(0f,1f,(magnitude-minSpeed)*0.2f);
-						screenFlash = power*0.5f;
-						SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.FixedDeltaTime),power);
-						ScreenShake.New(power*0.5f,1f,5f,Transform.Position);
+					if(!wasOnGround) {
+						Footstep("Land",0.8f);
+
+						float magnitude = prevVelocity.Magnitude-velocity.Magnitude;
+						const float minSpeed = 8.5f;
+
+						if(magnitude>minSpeed) {
+							float power = Mathf.Lerp(0f,1f,(magnitude-minSpeed)*0.2f);
+							screenFlash = power*0.5f;
+							SoundInstance.Create($"FallBig{Rand.Range(1,6)}.ogg",Transform.Position+(velocity*Time.FixedDeltaTime),power);
+							ScreenShake.New(power*0.5f,1f,5f,Transform.Position);
+						}
 					}
 				}
 
@@ -217,69 +236,57 @@ namespace SurvivalGame
 			} else {
 				walkTime = 0f;
 
-				if(forceAirMove>0f) {
-					forceAirMove = Math.Max(0f,forceAirMove-Time.FixedDeltaTime);
+				forceAirMove = Mathf.StepTowards(forceAirMove,0f,Time.FixedDeltaTime);
+
+				if(inWater) {
+					Movement_Move(AirAcceleration,MoveSpeed,10f,forwardUnlimited,rightUnlimited);
+
+					Movement_Acceleration(Vector3.Backward+Vector3.Left,4f,0.5f);
+				} else {
+					Movement_Move(AirAcceleration,MoveSpeed,Friction,forward,right);
 				}
 
-				Movement_AirMove(forward,right);
-
 				wasOnGround = false;
+
+				velocity.y += (inWater ? 2f : -18f)*Time.FixedDeltaTime;
 			}
 
-			velocity.y -= 18f*Time.FixedDeltaTime; //Temporary implementation, doing gravity through the physics engine would probably be better. 
 			rigidbody.Velocity = velocity;
 			prevVelocity = velocity;
 		}
-		public void Movement_WalkMove(Vector3 forward,Vector3 right)
+		public void Movement_Move(float acceleration,float moveSpeed,float friction,Vector3 forward,Vector3 right)
 		{
-			if(Movement_CheckJump()) {
-				PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
-				//SoundInstance.Create("Land.ogg",transform.position);
-				Movement_AirMove(forward,right);
-
-				forceAirMove = 0.1f;
-				return;
-			}
-
-			Movement_Friction();
+			Movement_Friction(friction);
 
 			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
-			float wishSpeed = MoveSpeed;
-			float acceleration = Acceleration;
 
-			Movement_Acceleration(wishDirection,wishSpeed,acceleration);
-		}
-		public void Movement_AirMove(Vector3 forward,Vector3 right)
-		{
-			Movement_Friction();
-
-			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
-			float wishSpeed = MoveSpeed;
-			float acceleration = AirAcceleration;
-
-			Movement_Acceleration(wishDirection,wishSpeed,acceleration);
+			Movement_Acceleration(wishDirection,moveSpeed,acceleration);
 		}
 		public bool Movement_CheckJump()
 		{
 			if(jumpPress<=0f) {
 				return false;
 			}
+
 			if(velocity.y<0f) {
 				velocity.y = JumpSpeed;
 			}else{
 				velocity.y += JumpSpeed;
 			}
+
 			return true;
 		}
-		public void Movement_Friction()
+		public void Movement_Friction(float friction)
 		{
 			var tempVec = velocity;
 			tempVec.y = 0f;
 			float speed = tempVec.Magnitude;
 			float drop = 0f;
+
 			if(onGroundCached) {
-				drop = (speed<StopSpeed ? StopSpeed : speed)*Friction*Time.FixedDeltaTime;
+				drop = (speed<StopSpeed ? StopSpeed : speed)*friction*Time.FixedDeltaTime;
 			}
+
 			float newSpeed = speed-drop;
 			if(newSpeed<0) {
 				newSpeed = 0;
@@ -287,6 +294,7 @@ namespace SurvivalGame
 			if(newSpeed!=0f) {
 				newSpeed /= speed;
 			}
+
 			velocity.x *= newSpeed; //Temporary! Do an air friction method.
 			velocity.z *= newSpeed;
 		}

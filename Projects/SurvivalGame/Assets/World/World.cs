@@ -1,3 +1,5 @@
+//#define LOOP_WORLD
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +29,7 @@ namespace SurvivalGame
 		public int ySizeInChunks;
 		public float xSizeInUnits;
 		public float ySizeInUnits;
+		public float waterLevel;
 		public Tile[,] tiles; //Multiplayer non-host clients store tile arrays in Chunks instead.
 		public Chunk[,] chunks;
 		public Dictionary<Vector2Int,ChunkRenderer> chunkRenderers;
@@ -34,6 +37,8 @@ namespace SurvivalGame
 		public bool IsReady { protected set; get; }
 
 		public Vector2Int Size => new Vector2Int(xSize,ySize);
+		public Vector2Int SizeInChunks => new Vector2Int(xSizeInChunks,ySizeInChunks);
+		public Vector2 SizeInUnits => new Vector2(xSizeInUnits,ySizeInUnits);
 
 		public Tile this[int x,int y] {
 			get {
@@ -72,7 +77,6 @@ namespace SurvivalGame
 			}
 		}
 
-		//public World(string name,int xSize,int ySize,string path = null) : base("") {}
 		public override void OnInit()
 		{
 			Debug.Log("Constructor called!");
@@ -116,20 +120,32 @@ namespace SurvivalGame
 
 			const int Range = 16;
 
-			for(int y = -Range;y<Range;y++) {
-				for(int x = -Range;x<Range;x++) {
-					Vector2Int realPos = new Vector2Int(cameraPos.x+x,cameraPos.y+y);
+#if LOOP_WORLD
+			int xStart = cameraPos.x-Range;
+			int yStart = cameraPos.y-Range;
+			int xEnd = cameraPos.x+Range;
+			int yEnd = cameraPos.y+Range;
+#else
+			int xStart = Mathf.Clamp(cameraPos.x-Range,0,xSizeInChunks-1);
+			int yStart = Mathf.Clamp(cameraPos.y-Range,0,ySizeInChunks-1);
+			int xEnd = Mathf.Clamp(cameraPos.x+Range,0,xSizeInChunks-1);
+			int yEnd = Mathf.Clamp(cameraPos.y+Range,0,ySizeInChunks-1);
+#endif
 
-					if(chunkRenderers.ContainsKey(realPos)) {
+			for(int y = yStart;y<=yEnd;y++) {
+				for(int x = xStart;x<=xEnd;x++) {
+					Vector2Int vecPos = new Vector2Int(x,y);
+
+					if(chunkRenderers.ContainsKey(vecPos)) {
 						continue;
 					}
 
-					Vector2Int chunkPos = realPos;
+					Vector2Int chunkPos = vecPos;
+#if LOOP_WORLD
 					RepeatChunkPos(ref chunkPos.x,ref chunkPos.y);
+#endif
 
-					var chunk = chunks[chunkPos.x,chunkPos.y];
-
-					chunkRenderers[realPos] = ChunkRenderer.Create(chunk,realPos.x,realPos.y);
+					chunkRenderers[vecPos] = ChunkRenderer.Create(chunks[chunkPos.x,chunkPos.y],vecPos.x,vecPos.y);
 				}
 			}
 		}
@@ -144,13 +160,21 @@ namespace SurvivalGame
 			ushort grassFlowers = TileType.byName["GrassFlowers"].type;
 			ushort dirt = TileType.byName["Dirt"].type;
 			ushort stone = TileType.byName["Stone"].type;
+			ushort sand = TileType.byName["Sand"].type;
+
+			waterLevel = 32f;
+
+			float beachLevel = waterLevel+1.5f;
 
 			for(int y=0;y<ySize;y++) {
 				for(int x=0;x<xSize;x++) {
-					this[x,y] = new Tile {
-						type = Rand.Next(3)==0 ? grassFlowers : grass,
+					var tile = new Tile {
 						height = noise.GetValue(x*divX,0f,y*divY)*60f
 					};
+
+					tile.type = tile.height<=beachLevel ? sand : (Rand.Next(3)==0 ? grassFlowers : grass);
+
+					this[x,y] = tile;
 				}
 			}
 
@@ -163,6 +187,9 @@ namespace SurvivalGame
 
 			var genRoster = new(int maxRand,Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
+					if(spawnPos.y<=beachLevel) {
+						return;
+					}
 					Entity.Instantiate<Spruce>(this,position:spawnPos,rotation:Quaternion.FromEuler(0f,Rand.Range(0f,360f),0f));
 					t.type = dirt;
 				}),
@@ -173,6 +200,9 @@ namespace SurvivalGame
 					}
 				}),
 				(300,(t,x,y,spawnPos) => {
+					if(spawnPos.y<=beachLevel) {
+						return;
+					}
 					Entity.Instantiate<BerryBush>(this,position:spawnPos);
 					for(int i=0;i<20;i++) {
 						this[x+Rand.Range(-2,2),y+Rand.Range(-2,2)].type = grassFlowers;
@@ -180,6 +210,10 @@ namespace SurvivalGame
 					t.type = dirt;
 				}),
 				(600,(t,x,y,spawnPos) => {
+					if(spawnPos.y<=beachLevel) {
+						return;
+					}
+
 					Entity.Instantiate<Campfire>(this,position:spawnPos);
 					t.type = dirt;
 					for(int i = 0;i<3;i++) {
@@ -194,11 +228,15 @@ namespace SurvivalGame
 					if(tile.type==dirt) {
 						continue;
 					}
-					float maxHeightDiff = Mathf.Max(Mathf.Abs(this[x-1,y].height-this[x+1,y].height),Mathf.Abs(this[x,y-1].height-this[x,y+1].height));
-					if(maxHeightDiff>=3.2f) {
-						tile.type = maxHeightDiff>=4.35f ? stone : dirt;
-						continue;
+
+					if(tile.height>beachLevel) {
+						float maxHeightDiff = Mathf.Max(Mathf.Abs(this[x-1,y].height-this[x+1,y].height),Mathf.Abs(this[x,y-1].height-this[x,y+1].height));
+						if(maxHeightDiff>=3.2f) {
+							tile.type = maxHeightDiff>=4.35f ? stone : dirt;
+							continue;
+						}
 					}
+
 					(int maxRand, var action) = genRoster[Rand.Next(genRoster.Length)];
 					if(Rand.Next(maxRand)==0) {
 						var spawnPos = new Vector3(x*Chunk.TileSize+Chunk.TileSizeHalf,0f,y*Chunk.TileSize+Chunk.TileSizeHalf);
@@ -208,6 +246,7 @@ namespace SurvivalGame
 				}
 			}
 
+			//Random stone pikes
 			for(int i = 0;i<1000;i++) {
 				int x = Rand.Range(1,xSize-1);
 				int y = Rand.Range(1,ySize-1);
@@ -220,11 +259,14 @@ namespace SurvivalGame
 
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
 			playerPos.y = HeightAt(playerPos,false);
+
 			Main.LocalEntity = Entity.Instantiate<Human>(this,position:playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
+
 			Entity.Instantiate<StoneHatchet>(this,position:new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
 			Instantiate<AtmosphereSystem>();
 			Instantiate<Sun>();
 			Instantiate<Skybox>(); //TODO: Implement a skybox inside the engine
+			Entity.Instantiate<Water>(this,position:new Vector3(xSizeInUnits*0.5f,32f,ySizeInUnits*0.5f));
 
 			IsReady = true;
 		}
@@ -335,10 +377,19 @@ namespace SurvivalGame
 				y
 			);
 		}
-		
+
+		public Chunk GetChunkAt(float x,float y)
+		{
+			int X = Mathf.FloorToInt(Mathf.Repeat(x*Chunk.ChunkWorldSizeDiv,xSizeInChunks));
+			int Y = Mathf.FloorToInt(Mathf.Repeat(y*Chunk.ChunkWorldSizeDiv,ySizeInChunks));
+			return chunks[X,Y];
+		}
+		public float GetWaterLevelAt(Vector3 position) => GetWaterLevelAt(position.x,position.z);
+		public float GetWaterLevelAt(float x,float z) => waterLevel+Mathf.Lerp(-2f,2f,Mathf.Sin(Time.GameTime+(x+z)*0.1f)*0.5f+0.5f);
+
 		public static World Instantiate(string name,int xSize,int ySize,string path = null)
 		{
-			var world = Instantiate<World>(init:false);
+			var world = Instantiate<World>(init: false);
 			world.worldDisplayName = name;
 			world.worldName = new string(name.Select(c => char.IsWhiteSpace(c) ? '_' : c).ToArray());
 			world.xSize = xSize;
@@ -369,9 +420,9 @@ namespace SurvivalGame
 			writer.Write(w.ySize);
 
 			//Make a (chunkId > dataPos) map here
-				
-			for(int y=0;y<w.ySizeInChunks;y++) {
-				for(int x=0;x<w.xSizeInChunks;x++) {
+
+			for(int y = 0;y<w.ySizeInChunks;y++) {
+				for(int x = 0;x<w.xSizeInChunks;x++) {
 					w.chunks[x,y].Save(writer);
 				}
 			}
@@ -390,8 +441,8 @@ namespace SurvivalGame
 
 			//Make a (chunkId > dataIOPosition) map here?
 
-			for(int y=0;y<w.ySizeInChunks;y++) {
-				for(int x=0;x<w.xSizeInChunks;x++) {
+			for(int y = 0;y<w.ySizeInChunks;y++) {
+				for(int x = 0;x<w.xSizeInChunks;x++) {
 					var chunk = w.chunks[x,y] = Chunk.Create(w,x,y);
 					chunk.Load(reader);
 				}
@@ -399,17 +450,9 @@ namespace SurvivalGame
 
 			w.IsReady = true;
 			Main.MainMenu = false;
-			
+
 			return null;
 		}
-
-		public Chunk GetChunkAt(float x,float y)
-		{
-			int X = Mathf.FloorToInt(Mathf.Repeat(x*Chunk.ChunkWorldSizeDiv,xSizeInChunks));
-			int Y = Mathf.FloorToInt(Mathf.Repeat(y*Chunk.ChunkWorldSizeDiv,ySizeInChunks));
-			return chunks[X,Y];
-		}
-
 		public static bool ReadInfoHeader(BinaryReader reader,out WorldInfo info)
 		{
 			info = default;

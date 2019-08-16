@@ -24,6 +24,7 @@ namespace GameEngine.Graphics
 			"cameraPosition",
 			"cameraDirection",
 			//Other
+			"time",
 			"color",
 			"mainTex",
 		};
@@ -48,9 +49,10 @@ namespace GameEngine.Graphics
 		public const int CameraPosition = 15;
 		public const int CameraDirection = 16;
 		//Other
-		public const int Color = 17;
-		public const int MainTex = 18;
+		public const int Time = 17;
+		public const int Color = 18;
+		public const int MainTex = 19;
 		//Count, important
-		public const int Count = 19;
+		public const int Count = 20;
 	}
 }

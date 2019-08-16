@@ -1,0 +1,10 @@
+{
+	"name": "$FileName$",
+	"shader": "Water",
+	"textures": {
+		"mainTex": "$FileName$.png"
+	},
+	"vectors": {
+		"color": [ 1.0,1.0,1.0,1.0 ]
+	}
+}

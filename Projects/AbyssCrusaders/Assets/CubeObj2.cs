@@ -18,9 +18,5 @@ namespace AbyssCrusaders
 			AddComponent<Box2DCollider>();
 			AddComponent<Rigidbody2D>();
 		}
-		public override void FixedUpdate()
-		{
-			
-		}
 	}
 }

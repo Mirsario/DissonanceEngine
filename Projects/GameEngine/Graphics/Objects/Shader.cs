@@ -110,6 +110,9 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.CameraDirection])  {
 				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
 			}
+			if(hasDefaultUniform[DSU.Time]) {
+				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
+			}
 
 			#region World
 			//bool needsWorld;
@@ -187,7 +190,11 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ScreenWidth]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width); }
 			if(hasDefaultUniform[DSU.ScreenHeight]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight],Screen.Height); }
 			if(hasDefaultUniform[DSU.CameraPosition]) { GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos); }
-			if(hasDefaultUniform[DSU.CameraDirection]) { GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);  }
+			if(hasDefaultUniform[DSU.CameraDirection]) { GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward); }
+
+			if(hasDefaultUniform[DSU.Time]) {
+				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
+			}
 
 			#region World
 			//bool needsWorld;
@@ -267,8 +274,9 @@ namespace GameEngine.Graphics
 			GL.CompileShader(shader);
 
 			string info = GL.GetShaderInfoLog(shader);
+
 			if(!string.IsNullOrEmpty(info)) {
-				Debug.Log($"Error compilling shader: \n{info}\n\n{code}");
+				Debug.Log($"Error compilling shader: \r\n{info}\r\n\r\n{code}");
 
 				GL.DeleteShader(shader);
 

@@ -1,5 +1,7 @@
 using System;
+using GameEngine.Graphics;
 using OpenTK.Graphics.OpenGL;
+using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 #pragma warning disable 0649
 
@@ -170,17 +172,25 @@ namespace GameEngine
 		public void RecalculateNormals()
 		{
 			var newNormals = new Vector3[vertices.Length];
-			for(int i=0;i<triangles.Length/3;i++) {
-				var firstVec = vertices[triangles[i*3+1]]-vertices[triangles[i*3]];
-				var secondVec = vertices[triangles[i*3]]-vertices[triangles[i*3+2]];
-				var normal = Vector3.Cross(firstVec,secondVec).Normalized;
-				newNormals[triangles[i*3]] -= normal;
-				newNormals[triangles[i*3+1]] -= normal;
-				newNormals[triangles[i*3+2]] -= normal;
+
+			for(int i = 0;i<triangles.Length;i+=3) {
+				int i1 = triangles[i];
+				int i2 = triangles[i+1];
+				int i3 = triangles[i+2];
+
+				var v1 = vertices[i1];
+				var v2 = vertices[i2];
+				var v3 = vertices[i3];
+
+				var normal = Vector3.Cross(v2-v1,v3-v1).Normalized;
+
+				newNormals[i1] += normal;
+				newNormals[i2] += normal;
+				newNormals[i3] += normal;
 			}
 
 			var zero = Vector3.Zero;
-			for(int i=0;i<vertices.Length;i++) {
+			for(int i = 0;i<vertices.Length;i++) {
 				if(newNormals[i]!=zero) {
 					newNormals[i].Normalize();
 				}
@@ -254,6 +264,67 @@ namespace GameEngine
 				float w = Vector3.Dot(Vector3.Cross(n,t),tan2[i])<0f ?-1f : 1f;
 				tangents[i] = new Vector4((t-n*Vector3.Dot(n,t)).Normalized,w);
 			}
+		}
+
+		public virtual void DrawMesh()
+		{
+			int offset = 0;
+
+			void TrySubmitAttribute(bool active,int attributeId,int size,VertexAttribPointerType pointerType,bool normalized,int stride)
+			{
+				if(active) {
+					GL.EnableVertexAttribArray(attributeId);
+					GL.VertexAttribPointer(attributeId,size,pointerType,normalized,stride,(IntPtr)offset);
+
+					switch(pointerType) {
+						case VertexAttribPointerType.Byte:
+						case VertexAttribPointerType.UnsignedByte:
+							offset += size;
+							break;
+						case VertexAttribPointerType.Short:
+						case VertexAttribPointerType.HalfFloat:
+						case VertexAttribPointerType.UnsignedShort:
+							offset += size*2;
+							break;
+						case VertexAttribPointerType.Int:
+						case VertexAttribPointerType.Float:
+						case VertexAttribPointerType.UnsignedInt:
+						case VertexAttribPointerType.UnsignedInt10F11F11FRev:
+						case VertexAttribPointerType.UnsignedInt2101010Rev:
+							offset += size*4;
+							break;
+						case VertexAttribPointerType.Double:
+							offset += size*8;
+							break;
+					}
+				} else {
+					GL.DisableVertexAttribArray(attributeId);
+				}
+			}
+
+			GL.BindBuffer(BufferTarget.ArrayBuffer,vertexBufferId);
+			GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,vertexSize,(IntPtr)offset);
+			offset += sizeof(float)*3;
+
+			//Normals
+			TrySubmitAttribute(normals!=null,(int)AttributeId.Normal,3,VertexAttribPointerType.Float,true,vertexSize);
+
+			//Tangents
+			TrySubmitAttribute(tangents!=null,(int)AttributeId.Tangent,4,VertexAttribPointerType.Float,false,vertexSize);
+
+			//Colors
+			TrySubmitAttribute(colors!=null,(int)AttributeId.Color,4,VertexAttribPointerType.Float,false,vertexSize);
+
+			//BoneWeights
+			bool hasWeights = boneWeights!=null;
+			TrySubmitAttribute(hasWeights,(int)AttributeId.BoneIndices,4,VertexAttribPointerType.Int,false,vertexSize);
+			TrySubmitAttribute(hasWeights,(int)AttributeId.BoneWeights,4,VertexAttribPointerType.Float,false,vertexSize);
+			
+			//UVs
+			TrySubmitAttribute(uv!=null,(int)AttributeId.Uv0,2,VertexAttribPointerType.Float,false,vertexSize);
+
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer,indexBufferId);
+			GL.DrawElements(PrimitiveTypeGL.Triangles,indexLength,DrawElementsType.UnsignedInt,0);
 		}
 	}
 	

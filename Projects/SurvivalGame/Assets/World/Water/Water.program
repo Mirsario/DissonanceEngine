@@ -1,0 +1,8 @@
+{
+	"Water": {
+		"vertexShader": "Water.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/default.frag",
+		"shaderDefines": ["COLOR","SPECULAR"],
+		"cullMode": "Off"
+	}
+}

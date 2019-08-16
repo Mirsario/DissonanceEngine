@@ -32,13 +32,13 @@ namespace SurvivalGame
 				light.Transform.parent = Transform;
 				light.Transform.LocalPosition = new Vector3(0f,1.25f,0f);
 
-				audioSource = AddComponent<AudioSource>();
+				/*audioSource = AddComponent<AudioSource>();
 				var clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
 				audioSource.Clip = clip;
 				audioSource.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
 				audioSource.Loop = true;
 				audioSource.RefDistance = 0.1f;
-				audioSource.Play();
+				audioSource.Play();*/
 			}
 		}
 		public override void FixedUpdate()

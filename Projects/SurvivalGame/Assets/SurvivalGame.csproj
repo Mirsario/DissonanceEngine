@@ -77,7 +77,8 @@
     <Compile Include="Objects\Entities\Testing\Robot\Robot.cs" />
     <Compile Include="Objects\Entities\Testing\Rocket\Rocket.cs" />
     <Compile Include="Objects\Entities\Testing\Skybox.cs" />
-    <Compile Include="Objects\Entities\Testing\Sun\Sun.cs" />
+    <Compile Include="Objects\Entities\Testing\TestCube\CubeObj2.cs" />
+    <Compile Include="World\Sun\Sun.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\CubeObj.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\GiantPlatform.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\MovingCube.cs" />
@@ -91,9 +92,11 @@
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Tile.cs" />
     <Compile Include="World\Tiles\Dirt.cs" />
+    <Compile Include="World\Tiles\Sand.cs" />
     <Compile Include="World\Tiles\Grass.cs" />
     <Compile Include="World\Tiles\Stone.cs" />
     <Compile Include="World\TileType.cs" />
+    <Compile Include="World\Water\Water.cs" />
     <Compile Include="World\World.cs" />
   </ItemGroup>
   <ItemGroup>

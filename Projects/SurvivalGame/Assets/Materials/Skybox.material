@@ -2,7 +2,7 @@
 	"name": "$FILENAME",
 	"shader": "Skybox",
 	"vectors": {
-		"colorTop":    [0.43,0.72,0.92],
+		"colorTop": [0.43,0.72,0.92],
 		"colorBottom": [0.68,0.80,0.85]
 	}
 }

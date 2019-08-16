@@ -33,6 +33,7 @@ namespace SurvivalGame
 
 		public MeshCollider collider;
 		public RenderTexture rtTexture;
+		public Texture specularTexture;
 		private Texture idTex;
 		private Vector4[] idToUV;
 
@@ -99,7 +100,8 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
-			if(Main.MainMenu || !world.IsReady) {}
+			if(Main.MainMenu || !world.IsReady) {
+			}
 			/*if(updateCollisionMesh) {
 				GenerateMesh(true);
 				updateCollisionMesh = false;
@@ -168,41 +170,54 @@ namespace SurvivalGame
 			bool noGraphics = !Netplay.isClient;
 
 			collider.Mesh?.Dispose();
-			var meshInfo = new MeshInfo(hasUVs:true);
 			var grassMeshes = (!generateGrass || noGraphics) ? null : new Dictionary<string,MeshInfo>();
 
 			int div = lodLevel==0 ? 1 : (int)Math.Pow(2,lodLevel);
 			int size = ChunkSize/div;
+			int vertexCount = (size+1)*(size+1);
+			int triIndexCount = size*size*6;
+
+			mesh = new Mesh() {
+				vertices = new Vector3[vertexCount],
+				normals = new Vector3[vertexCount],
+				uv = noGraphics ? null : new Vector2[vertexCount],
+				triangles = new int[triIndexCount]
+			};
 
 			Tile tile;
+			int vertex = 0;
 			var vertice2D = new int[size+1,size+1];
 			for(int y=0;y<=size;y++) {
 				for(int x=0;x<=size;x++) {
 					tile = this[x*div,y*div];
-					vertice2D[x,y] = meshInfo.vertices.Count;
-					meshInfo.vertices.Add(new Vector3(x*TileSize*div,tile.height,y*TileSize*div));
+
+					mesh.vertices[vertex] = new Vector3(x*TileSize*div,tile.height,y*TileSize*div);
 					if(!noGraphics) {
-						meshInfo.uvs.Add(new Vector2((y/(float)size),1f-(x/(float)size)));
+						mesh.uv[vertex] = new Vector2((y/(float)size),1f-(x/(float)size));
 					}
+
+					vertice2D[x,y] = vertex++;
 				}
 			}
 
+			vertex = 0;
 			for(int y=0;y<=size;y++) {
 				for(int x=0;x<=size;x++) {
 					int X = x*div;
 					int Y = y*div;
 
 					//NormalCalculation
-					var vLeft = x==0	? new Vector3((X-1)*TileSize,world[positionInTiles.x+X-1,positionInTiles.y+Y].height,Y*TileSize) : meshInfo.vertices[vertice2D[x-1,y]];
-					var vRight = x==size	? new Vector3((X+1)*TileSize,world[positionInTiles.x+X+1,positionInTiles.y+Y].height,Y*TileSize) : meshInfo.vertices[vertice2D[x+1,y]];
+					var vLeft = x==0 ? new Vector3((X-1)*TileSize,world[positionInTiles.x+X-1,positionInTiles.y+Y].height,Y*TileSize) : mesh.vertices[vertice2D[x-1,y]];
+					var vRight = x==size ? new Vector3((X+1)*TileSize,world[positionInTiles.x+X+1,positionInTiles.y+Y].height,Y*TileSize) : mesh.vertices[vertice2D[x+1,y]];
 					var vHorizontal = (vRight-vLeft).Normalized;
 
-					var vUp = y==0 ? new Vector3(X*TileSize,world[positionInTiles.x+X,positionInTiles.y+Y-1].height,(Y-1)*TileSize) : meshInfo.vertices[vertice2D[x,y-1]];
-					var vDown = y==size	? new Vector3(X*TileSize,world[positionInTiles.x+X,positionInTiles.y+Y+1].height,(Y+1)*TileSize) : meshInfo.vertices[vertice2D[x,y+1]];
+					var vUp = y==0 ? new Vector3(X*TileSize,world[positionInTiles.x+X,positionInTiles.y+Y-1].height,(Y-1)*TileSize) : mesh.vertices[vertice2D[x,y-1]];
+					var vDown = y==size	? new Vector3(X*TileSize,world[positionInTiles.x+X,positionInTiles.y+Y+1].height,(Y+1)*TileSize) : mesh.vertices[vertice2D[x,y+1]];
 					var vVertical = (vDown-vUp).Normalized;
 
 					var normal = Vector3.Cross(vVertical,vHorizontal).Normalized;
-					meshInfo.normals.Add(normal);
+
+					mesh.normals[vertex++] = normal;
 
 					if(!noGraphics && generateGrass && x<size && y<size) {
 						tile = this[x*div,y*div];
@@ -218,29 +233,24 @@ namespace SurvivalGame
 				}
 			}
 
+			int triIndex = 0;
+
 			for(int y=0;y<size;y++) {
 				for(int x=0;x<size;x++) {
-					//int tilePosX = position.x+x;
-					//int tilePosY = position.y+y;
-					meshInfo.triangles.Add(vertice2D[x,y+1]);
-					meshInfo.triangles.Add(vertice2D[x+1,y+1]);
-					meshInfo.triangles.Add(vertice2D[x,y]);
-					meshInfo.triangles.Add(vertice2D[x+1,y]);
-					meshInfo.triangles.Add(vertice2D[x,y]);
-					meshInfo.triangles.Add(vertice2D[x+1,y+1]);
+					mesh.triangles[triIndex++] = vertice2D[x,y+1];
+					mesh.triangles[triIndex++] = vertice2D[x+1,y+1];
+					mesh.triangles[triIndex++] = vertice2D[x,y];
+					mesh.triangles[triIndex++] = vertice2D[x+1,y];
+					mesh.triangles[triIndex++] = vertice2D[x,y];
+					mesh.triangles[triIndex++] = vertice2D[x+1,y+1];
 				}
 			}
 
-			if(meshInfo.vertices.Count==0) {
-				mesh = null;
-			}else{
-				mesh = new Mesh();
-				meshInfo.ApplyToMesh(mesh);
-				if(!noGraphics) {
-					mesh.RecalculateTangents();
-				}
-				mesh.Apply();
+			if(!noGraphics) {
+				mesh.RecalculateTangents();
 			}
+
+			mesh.Apply();
 
 			if(setAsCollisionMesh) {
 				collider.Mesh = mesh;
@@ -282,6 +292,7 @@ namespace SurvivalGame
 			const int IdTexSize = ChunkSize+2;
 
 			var idPixels = new Pixel[IdTexSize,IdTexSize];
+			//var specularPixels = new Pixel[IdTexSize,IdTexSize];
 			var tileUVs = new List<(ushort type,byte variant,Vector4 uv)>();
 			
 			for(int y=-1;y<=ChunkSize;y++) {
@@ -302,6 +313,8 @@ namespace SurvivalGame
 					}
 
 					idPixels[x+1,y+1] = new Pixel((byte)index,255,255,255);
+
+					//specularPixels[x+1,y+1] = new Pixel(tile.height<world.waterLevel ? (byte)255 : (byte)0,0,0,0);
 				}
 			}
 
@@ -310,8 +323,12 @@ namespace SurvivalGame
 				idToUV[i] = tileUVs[i].uv;
 			}
 
-			idTex ??= new Texture(IdTexSize,IdTexSize,FilterMode.Point); //it's important for this texture to have point filtering
+			idTex ??= new Texture(IdTexSize,IdTexSize,FilterMode.Point); //Point Filtering, because we're dealing with bytes
 			idTex.SetPixels(idPixels);
+
+			//specularTexture ??= new Texture(IdTexSize,IdTexSize,FilterMode.Bilinear); //Bilinear filtering, for smoothness
+			//specularTexture.SetPixels(specularPixels);
+			//Material.SetTexture("specularMap",specularTexture);
 
 			//RTDraw
 			GLDraw.DrawDelayed(() => {
