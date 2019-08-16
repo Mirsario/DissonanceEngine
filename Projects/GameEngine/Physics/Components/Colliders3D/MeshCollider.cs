@@ -44,7 +44,7 @@ namespace GameEngine
 				if(convex) {
 					//Convex shapes can be used for anything
 					var tempShape = new ConvexTriangleMeshShape(triMesh);
-					var tempHull = new ShapeHull(tempShape);
+					using var tempHull = new ShapeHull(tempShape);
 					tempHull.BuildHull(tempShape.Margin);
 					collShape = new ConvexHullShape(tempHull.Vertices);
 				}else{
