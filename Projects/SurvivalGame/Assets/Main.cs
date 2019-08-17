@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 #pragma warning disable 219
 namespace SurvivalGame

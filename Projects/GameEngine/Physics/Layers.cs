@@ -1,6 +1,6 @@
 using System;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public static class Layers
 	{
@@ -27,7 +27,7 @@ namespace GameEngine
 			}
 
 			int j = layerCount;
-			for(int i=0;i<layerNames.Length;i++,j++) {
+			for(int i = 0;i<layerNames.Length;i++, j++) {
 				indexToMask[j] = (ulong)1 << j;
 				indexToName[j] = layerNames[i];
 			}
@@ -50,7 +50,7 @@ namespace GameEngine
 		}
 		public static ulong GetLayerMask(string name)
 		{
-			for(int i=0;i<layerCount;i++) {
+			for(int i = 0;i<layerCount;i++) {
 				if(indexToName[i]==name) {
 					return indexToMask[i];
 				}
@@ -68,17 +68,17 @@ namespace GameEngine
 		}
 		public static string GetLayerName(ulong flag)
 		{
-			for(int i=0;i<layerCount;i++) {
+			for(int i = 0;i<layerCount;i++) {
 				if(indexToMask[i]==flag) {
 					return indexToName[i];
 				}
 			}
 			throw new Exception("Could not find any layers with flag ''"+flag+"''");
 		}
-		
+
 		public static byte GetLayerIndex(string name)
 		{
-			for(int i=0;i<layerCount;i++) {
+			for(int i = 0;i<layerCount;i++) {
 				if(indexToName[i]==name) {
 					return (byte)i;
 				}
@@ -87,7 +87,7 @@ namespace GameEngine
 		}
 		public static byte GetLayerIndex(ulong flag)
 		{
-			for(int i=0;i<layerCount;i++) {
+			for(int i = 0;i<layerCount;i++) {
 				if(indexToMask[i]==flag) {
 					return (byte)i;
 				}

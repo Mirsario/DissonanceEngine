@@ -1,15 +1,15 @@
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
-	public class SphereCollider : Collider
+	public class BoxCollider : Collider
 	{
-		protected float radius = 1f;
-		public float Radius {
-			get => radius;
+		protected Vector3 size = Vector3.One;
+		public Vector3 Size {
+			get => size;
 			set {
-				if(radius!=value) {
-					radius = value;
+				if(size!=value) {
+					size = value;
 
 					TryUpdateCollider();
 				}
@@ -23,7 +23,7 @@ namespace GameEngine
 				collShape = null;
 			}
 
-			collShape = new SphereShape(radius);
+			collShape = new BoxShape(size*0.5f);
 
 			base.UpdateCollider();
 		}

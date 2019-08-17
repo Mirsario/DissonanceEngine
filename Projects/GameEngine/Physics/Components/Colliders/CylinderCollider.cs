@@ -1,6 +1,6 @@
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public class CylinderCollider : Collider
 	{
@@ -24,7 +24,7 @@ namespace GameEngine
 			}
 
 			collShape = new CylinderShape(size*0.5f);
-			
+
 			base.UpdateCollider();
 		}
 	}

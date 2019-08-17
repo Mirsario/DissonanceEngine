@@ -1,6 +1,6 @@
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public abstract class Collider : PhysicsComponent
 	{
@@ -49,7 +49,7 @@ namespace GameEngine
 		{
 			if(enabled) {
 				UpdateCollider();
-			}else{
+			} else {
 				needsUpdate = true;
 			}
 		}

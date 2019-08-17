@@ -1,3 +1,5 @@
+using GameEngine.Physics;
+
 namespace GameEngine.Extensions.Chains
 {
 	public static class Box2DColliderExtensions

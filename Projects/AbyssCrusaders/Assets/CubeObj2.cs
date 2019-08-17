@@ -1,6 +1,7 @@
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Extensions.Chains;
+using GameEngine.Physics;
 
 namespace AbyssCrusaders
 {

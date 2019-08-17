@@ -1,5 +1,6 @@
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {

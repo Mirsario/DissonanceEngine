@@ -1,6 +1,6 @@
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public class CapsuleCollider : Collider
 	{

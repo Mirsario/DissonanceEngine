@@ -1,5 +1,6 @@
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {
@@ -37,14 +38,14 @@ namespace SurvivalGame
 			Transform.Rotation = Quaternion.FromDirection(velocity.Normalized,Vector3.Up);
 
 			var deltaVelocity = velocity*Time.FixedDeltaTime;
-			if(Physics.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
+			if(PhysicsEngine.Raycast(Transform.Position,deltaVelocity.Normalized,out var hit,deltaVelocity.Magnitude,customFilter:o => o==owner ? new bool?(false) : null)) {
 				Transform.Position = hit.point;
 				const float maxDistance = 10f;
 				const float power = 3000f;
 				SoundInstance.Create("Explosion"+Rand.Range(1,3)+".ogg",Transform.Position,10f);
 				ScreenShake.New(0.3f,1f,maxDistance*5f,Transform.Position);
 
-				foreach(var rigidbodyBase in Physics.ActiveRigidbodies) {
+				foreach(var rigidbodyBase in PhysicsEngine.ActiveRigidbodies) {
 					if(rigidbodyBase is Rigidbody body) {
 						var direction = body.Transform.Position-Transform.Position;
 						if(direction==Vector3.Zero) {

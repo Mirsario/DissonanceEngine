@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GameEngine;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {

@@ -165,30 +165,34 @@
     <Compile Include="Graphics\Objects\Mesh\Mesh.cs" />
     <Compile Include="PerlinNoiseDouble.cs" />
     <Compile Include="PerlinNoiseFloat.cs" />
-    <Compile Include="Physics\Collision.cs" />
-    <Compile Include="Physics\Collision2D.cs" />
+    <Compile Include="Physics\Collision\Collision.cs" />
+    <Compile Include="Physics\Collision\Collision2D.cs" />
     <Compile Include="Physics\Components\CharacterController.cs" />
     <Compile Include="Physics\Components\Colliders\Collider.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders2D\Box2DCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\Box2DCollider.cs" />
     <Compile Include="Extensions\Chains\Box2DColliderExtensions.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders3D\BoxCollider.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders3D\CapsuleCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\BoxCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\CapsuleCollider.cs" />
     <Compile Include="Extensions\Chains\BoxColliderExtensions.cs" />
     <Compile Include="Extensions\Chains\CapsuleColliderExtensions.cs" />
     <Compile Include="Extensions\Chains\SphereColliderExtensions.cs" />
     <Compile Include="Extensions\Chains\CylinderColliderExtensions.cs" />
     <Compile Include="Extensions\Chains\MeshColliderExtensions.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders3D\CylinderCollider.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders3D\MeshCollider.cs" />
-    <Compile Include="Physics\Components\Colliders\Colliders3D\SphereCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\CylinderCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\MeshCollider.cs" />
+    <Compile Include="Physics\Components\Colliders\SphereCollider.cs" />
     <Compile Include="Extensions\Chains\ColliderExtensions.cs" />
     <Compile Include="Extensions\Chains\RigidbodyBaseExtensions.cs" />
     <Compile Include="Physics\Components\PhysicsComponent.cs" />
     <Compile Include="Physics\Components\Rigidbody.cs" />
     <Compile Include="Physics\Components\Rigidbody2D.cs" />
     <Compile Include="Physics\Components\RigidbodyBase.cs" />
+    <Compile Include="Physics\Collision\ContactPoint.cs" />
+    <Compile Include="Physics\Collision\ContactPoint2D.cs" />
+    <Compile Include="Physics\Enums\RigidbodyType.cs" />
     <Compile Include="Physics\Layers.cs" />
-    <Compile Include="Physics\Physics.cs" />
+    <Compile Include="Physics\PhysicsEngine.cs" />
+    <Compile Include="Physics\RaycastHit.cs" />
     <Compile Include="Physics\RigidbodyInternal.cs" />
     <Compile Include="ProgrammableEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -234,5 +238,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

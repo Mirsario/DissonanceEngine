@@ -1,6 +1,6 @@
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public class MeshCollider : Collider
 	{
@@ -37,7 +37,7 @@ namespace GameEngine
 			//TODO:
 			if(Mesh!=null) {
 				var triMesh = new TriangleMesh();
-				for(int i=0;i<Mesh.triangles.Length;i += 3) {
+				for(int i = 0;i<Mesh.triangles.Length;i += 3) {
 					triMesh.AddTriangle(Mesh.vertices[Mesh.triangles[i]],Mesh.vertices[Mesh.triangles[i+1]],Mesh.vertices[Mesh.triangles[i+2]]);
 				}
 
@@ -47,7 +47,7 @@ namespace GameEngine
 					using var tempHull = new ShapeHull(tempShape);
 					tempHull.BuildHull(tempShape.Margin);
 					collShape = new ConvexHullShape(tempHull.Vertices);
-				}else{
+				} else {
 					//Concave shapes should only be used for static meshes or kinematic rigidbodies
 					collShape = new BvhTriangleMeshShape(triMesh,true);
 				}

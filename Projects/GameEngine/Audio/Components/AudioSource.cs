@@ -61,13 +61,12 @@ namespace GameEngine
 		}
 		///<summary>Indicate the gain (volume amplification) applied. Type: float. Range: [0.0f - ? ] A value of 1.0 means un-attenuated/unchanged. Each division by 2 equals an attenuation of -6dB. Each multiplicaton with 2 equals an amplification of +6dB. A value of 0.0f is meaningless with respect to a logarithmic scale; it is interpreted as zero volume - the channel is effectively disabled.</summary>
 		public float Volume {
-		//Quite weird? For some reason setting ALSourcef.Gain to values lower than 1.0 is the same as setting it to 1.0.
 			get {
 				AL.GetSource(sourceId,ALSourcef.MaxGain,out float maxGain);
 				if(maxGain<1f) {
 					return maxGain;
 				}
-				AL.GetSource(sourceId,ALSourcef.Gain,out float gain);
+				AL.GetSource(sourceId,ALSourcef.Gain,out float gain); //For some reason setting ALSourcef.Gain to values lower than 1.0 is the same as setting it to 1.0.
 				return gain;
 			}
 			set {
@@ -80,7 +79,7 @@ namespace GameEngine
 				}
 			}
 		}
-		///<summary>The playback position, expressed in seconds.</summary>
+		///<summary>The playback position, in seconds.</summary>
 		public float PlaybackOffset {
 			get {
 				AL.GetSource(sourceId,ALSourcef.SecOffset,out float val);
@@ -93,9 +92,11 @@ namespace GameEngine
 		{
 			AL.GenSource(out sourceId);
 			//AL.Source(sourceId,ALSourcef.RolloffFactor,1f);
+
 			RefDistance = 1f;
 			MaxDistance = float.MaxValue;
 			Volume = 1f;
+
 			FixedUpdate();
 		}
 		protected override void OnDispose()

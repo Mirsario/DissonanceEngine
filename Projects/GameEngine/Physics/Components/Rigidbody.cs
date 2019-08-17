@@ -1,4 +1,4 @@
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public class Rigidbody : RigidbodyBase
 	{

@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using GameEngine.Physics;
 
 namespace GameEngine
 {

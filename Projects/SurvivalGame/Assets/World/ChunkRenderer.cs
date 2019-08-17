@@ -1,6 +1,7 @@
 //#define NO_CHUNK_LODS
 
 using GameEngine;
+using GameEngine.Physics;
 using static SurvivalGame.Chunk;
 
 namespace SurvivalGame

@@ -2,35 +2,23 @@ using System;
 using System.Collections.Generic;
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
-	public struct RaycastHit
+	public static class PhysicsEngine
 	{
-		public Vector3 point;
-		public Vector3 normal;
-		public int triangleIndex;
-		public Collider collider;
-		public GameObject gameObject;
-	}
-	public static class Physics
-	{
-		#region StaticFields
+		internal static DbvtBroadphase broadphase;
 		internal static DiscreteDynamicsWorld world;
 		internal static CollisionDispatcher dispatcher;
-		internal static DbvtBroadphase broadphase;
-		internal static List<CollisionShape> collisionShapes;
 		internal static CollisionConfiguration collisionConf;
-		internal static List<RigidbodyInternal> rigidbodies;
 		internal static List<Collider> collidersToUpdate;
-		internal static bool enabled;
-		#endregion
-		#region StaticProperties
+		internal static List<CollisionShape> collisionShapes;
+		internal static List<RigidbodyInternal> rigidbodies;
+
 		public static List<RigidbodyBase> ActiveRigidbodies	{ get; private set; }
 		public static Vector3 Gravity {
 			get => world.Gravity;
 			set => world.Gravity = value;
 		}
-		#endregion
 		
 		public static void Init()
 		{
@@ -40,23 +28,19 @@ namespace GameEngine
 			ActiveRigidbodies = new List<RigidbodyBase>();
 			collidersToUpdate = new List<Collider>();
 			dispatcher = new CollisionDispatcher(collisionConf);
-			
 			broadphase = new DbvtBroadphase();
+
 			world = new DiscreteDynamicsWorld(dispatcher,broadphase,null,collisionConf);
 			world.SetInternalTickCallback(InternalTickCallback);
+
 			Gravity = new Vector3(0f,-9.81f,0f);
 
 			ManifoldPoint.ContactAdded += Callback_ContactAdded;
 			PersistentManifold.ContactProcessed += Callback_ContactProcessed;
 			PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
 		}
-		public static void Update()
-		{
-			
-		}
 		public static void UpdateFixed()
 		{
-			enabled = true;
 			for(int i=0;i<rigidbodies.Count;i++) {
 				var rigidbody = rigidbodies[i];
 				if(!rigidbody.enabled) {
@@ -69,8 +53,10 @@ namespace GameEngine
 
 					if(transform.updatePhysicsPosition) {
 						matrix.SetTranslation(transform.Position);
+
 						transform.updatePhysicsPosition = false;
 					}
+
 					if(transform.updatePhysicsScale && transform.updatePhysicsRotation) {
 						matrix.SetRotationAndScale(transform.Rotation,transform.LocalScale);
 						transform.updatePhysicsScale = false;
@@ -86,6 +72,7 @@ namespace GameEngine
 					rigidbody.btRigidbody.WorldTransform = matrix;
 				}
 			}
+
 			world.StepSimulation(Time.fixedDeltaTime);
 		}
 		public static void UpdateRender()
@@ -251,7 +238,7 @@ namespace GameEngine
 				var shapeInfo = rayResult.LocalShapeInfo;
 				if(rb!=null && shapeInfo!=null) {
 					//Debug.Log(shapeInfo.ShapePart);
-					var collShape = Physics.GetSubShape(rb.CollisionShape,shapeInfo.ShapePart);
+					var collShape = PhysicsEngine.GetSubShape(rb.CollisionShape,shapeInfo.ShapePart);
 					if(collShape!=null) {
 						var userObject = collShape.UserObject;
 						if(userObject!=null && userObject is Collider coll) {

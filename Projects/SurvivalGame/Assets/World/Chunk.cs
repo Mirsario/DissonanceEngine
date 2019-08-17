@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {

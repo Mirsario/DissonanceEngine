@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
 
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	//TO CONSIDER: Make this be derived from Bullet's RigidBody ?
 	internal class RigidbodyInternal : IDisposable
@@ -11,7 +11,7 @@ namespace GameEngine
 		private class MotionStateInternal : MotionState
 		{
 			private readonly Transform Transform;
-			
+
 			public override Matrix WorldTransform {
 				get => Transform.parent==null ? Transform.matrix : Transform.ToWorldSpace(Transform.matrix);
 				set => Transform.matrix = Transform.parent==null ? value : (Matrix)Transform.ToLocalSpace(value);
@@ -30,7 +30,7 @@ namespace GameEngine
 		internal List<Collision2D> collisions2D;
 		internal bool updateRotation = true;
 		internal bool enabled = true;
-		
+
 		internal GameObject gameObject;
 		internal RigidbodyBase rigidbody;
 
@@ -84,8 +84,8 @@ namespace GameEngine
 			get => btRigidbody.Gravity!=BulletSharp.Vector3.Zero;
 			set {
 				if(value) {
-					btRigidbody.Gravity = Physics.Gravity;
-				}else{
+					btRigidbody.Gravity = PhysicsEngine.Gravity;
+				} else {
 					btRigidbody.Gravity = Vector3.Zero;
 				}
 				btRigidbody.ApplyGravity();
@@ -100,7 +100,7 @@ namespace GameEngine
 					if(isKinematic) {
 						btRigidbody.CollisionFlags = btRigidbody.CollisionFlags | CollisionFlags.KinematicObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
-					}else{
+					} else {
 						btRigidbody.CollisionFlags = btRigidbody.CollisionFlags & ~CollisionFlags.KinematicObject;
 						btRigidbody.ActivationState = ActivationState.ActiveTag;
 					}
@@ -117,10 +117,10 @@ namespace GameEngine
 					if(type==RigidbodyType.Dynamic) {
 						btRigidbody.CollisionFlags = CollisionFlags.None;
 						btRigidbody.ActivationState = ActivationState.ActiveTag;
-					}else if(type==RigidbodyType.Kinematic) {
+					} else if(type==RigidbodyType.Kinematic) {
 						btRigidbody.CollisionFlags = CollisionFlags.KinematicObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
-					}else{
+					} else {
 						btRigidbody.CollisionFlags = CollisionFlags.StaticObject;
 						btRigidbody.ActivationState = ActivationState.DisableDeactivation;
 					}
@@ -151,12 +151,12 @@ namespace GameEngine
 			btRigidbody.CollisionFlags |= CollisionFlags.CustomMaterialCallback;
 			btRigidbody.UserObject = this;
 
-			Physics.world.AddRigidBody(btRigidbody);
-			Physics.rigidbodies.Add(this);
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
+			PhysicsEngine.rigidbodies.Add(this);
 		}
 		internal void UpdateShape()
 		{
-			Physics.world.RemoveRigidBody(btRigidbody);
+			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
 
 			if(collisionShape!=null && (collisionShape is CompoundShape || collisionShape is EmptyShape)) {
 				collisionShape.Dispose();
@@ -172,10 +172,10 @@ namespace GameEngine
 				//Use the shape we have
 				collisionShape = colliders[0].collShape;
 				//summOffset += collider.offset;
-			}*/else{
+			}*/else {
 				//CompoundShape
 				var compoundShape = new CompoundShape();
-				for(int i=0;i<colliders.Length;i++) {
+				for(int i = 0;i<colliders.Length;i++) {
 					var collider = colliders[i];
 					var collShape = collider.collShape;
 
@@ -191,20 +191,20 @@ namespace GameEngine
 			btRigidbody.CollisionShape = collisionShape;
 			btRigidbody.SetMassProps(tempMass,localInertia);
 
-			Physics.world.AddRigidBody(btRigidbody);
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
 		}
 		internal void UpdateMass()
 		{
-			Physics.world.RemoveRigidBody(btRigidbody);
-				
+			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
+
 			BulletSharp.Vector3 localInertia = Vector3.Zero;
 			float tempMass = MassFiltered;
 			if(tempMass!=0f && collisionShape!=null) {
 				localInertia = collisionShape.CalculateLocalInertia(tempMass);
 			}
 			btRigidbody.SetMassProps(tempMass,localInertia);
-			
-			Physics.world.AddRigidBody(btRigidbody);
+
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
 		}
 		public void ApplyForce(Vector3 force,Vector3 relativePos)
 		{
@@ -215,11 +215,11 @@ namespace GameEngine
 		}
 		public void Dispose()
 		{
-			Physics.rigidbodies.Remove(this);
+			PhysicsEngine.rigidbodies.Remove(this);
 		}
 		internal void AddCollision(RigidbodyInternal bodyOther)
 		{
-			
+
 		}
 	}
 }

@@ -1,11 +1,6 @@
-namespace GameEngine
+namespace GameEngine.Physics
 {
-	public enum RigidbodyType
-	{
-		Dynamic,
-		Kinematic,
-		Static
-	}
+
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent
 	{
@@ -33,7 +28,7 @@ namespace GameEngine
 		}
 		public bool Active {
 			get => gameObject.rigidbodyInternal.btRigidbody.IsActive;
-			set { 
+			set {
 				if(value) {
 					gameObject.rigidbodyInternal.btRigidbody.Activate();
 				}
@@ -55,13 +50,13 @@ namespace GameEngine
 		}
 		protected override void OnEnable()
 		{
-			Physics.ActiveRigidbodies.Add(this);
+			PhysicsEngine.ActiveRigidbodies.Add(this);
 
 			IsKinematic = isKinematic;
 		}
 		protected override void OnDisable()
 		{
-			Physics.ActiveRigidbodies.Remove(this);
+			PhysicsEngine.ActiveRigidbodies.Remove(this);
 
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Static;
 		}

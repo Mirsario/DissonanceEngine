@@ -3,6 +3,7 @@ using System.Linq;
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Extensions;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {
@@ -112,7 +113,7 @@ namespace SurvivalGame
 				Transform.Position = tempPos;
 			}
 
-			if(Physics.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => Main.LocalEntity==obj ? false : (bool?)null)) {
+			if(PhysicsEngine.Raycast(camera.Transform.Position,camera.Transform.Forward,out var hit,customFilter:obj => Main.LocalEntity==obj ? false : (bool?)null)) {
                 if(hit.gameObject is Entity entity && Input.GetMouseButtonDown(MouseButton.Middle)) {
                     Main.LocalEntity = entity;
                     screenFlash = 0.5f;

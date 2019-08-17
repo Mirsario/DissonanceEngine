@@ -1,4 +1,4 @@
-namespace GameEngine
+namespace GameEngine.Physics
 {
 	public abstract class PhysicsComponent : Component
 	{

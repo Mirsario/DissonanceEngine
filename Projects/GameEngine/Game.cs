@@ -7,6 +7,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace GameEngine
 {
@@ -18,7 +19,6 @@ namespace GameEngine
 	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	//TODO: Fix issues with window resizing
-
 	public class Game : IDisposable
 	{
 		//Debug
@@ -95,7 +95,7 @@ namespace GameEngine
 		public void Dispose()
 		{
 			Rendering.Dispose();
-			Physics.Dispose();
+			PhysicsEngine.Dispose();
 		}
 
 		internal void Init()
@@ -157,7 +157,7 @@ namespace GameEngine
 			Rendering.Init();
 			GUI.Init();
 			Input.Init();
-			Physics.Init();
+			PhysicsEngine.Init();
 			Audio.Init();
 
 			Debug.Log("Loading game...");
@@ -179,8 +179,7 @@ namespace GameEngine
 
 			Time.UpdateFixed(1.0/targetUpdates);
 			Input.FixedUpdate();
-			
-			Physics.Update();
+
 			FixedUpdate();
 
 			if(shouldQuit) {
@@ -193,7 +192,7 @@ namespace GameEngine
 				return;
 			}
 
-			Physics.UpdateFixed();
+			PhysicsEngine.UpdateFixed();
 			Input.LateFixedUpdate();
 			Audio.FixedUpdate();
 
@@ -231,7 +230,7 @@ namespace GameEngine
 				return;
 			}
 
-			Physics.UpdateRender();
+			PhysicsEngine.UpdateRender();
 			Rendering.Render();
 			Input.LateRenderUpdate();
 
