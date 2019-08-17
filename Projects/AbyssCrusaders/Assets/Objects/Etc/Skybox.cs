@@ -1,16 +1,15 @@
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Extensions.Chains;
 
 namespace AbyssCrusaders
 {
 	public class Skybox : GameObject2D
 	{
-		public Sprite sprite;
-		
 		public override void OnInit()
 		{
-			sprite = AddComponent<Sprite>();
-			sprite.Material = Resources.Get<Material>("Skybox.material");
+			AddComponent<Sprite>()
+				.WithMaterial(Resources.Get<Material>("Skybox.material"));
 
 			Depth = -1000f;
 		}
