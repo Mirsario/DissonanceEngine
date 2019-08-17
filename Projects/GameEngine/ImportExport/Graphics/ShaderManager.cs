@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using GameEngine.Graphics;
+using GameEngine.Extensions;
 
 namespace GameEngine
 {
@@ -11,7 +12,7 @@ namespace GameEngine
 		[JsonObject]
 		private class JSON_ShaderProgram
 		{
-			#pragma warning disable 649
+			#pragma warning disable CS0649
 			//Shaders
 			[JsonProperty(Required = Required.Always)] public string vertexShader;
 			[JsonProperty(Required = Required.Always)] public string fragmentShader;
@@ -29,7 +30,7 @@ namespace GameEngine
 			public Dictionary<string,float> floats;
 			public Dictionary<string,float[]> vectors;
 			public Dictionary<string,string> textures;
-			#pragma warning restore 649
+			#pragma warning restore CS0649
 		}
 
 		public override string[] Extensions => new [] { ".program" };
@@ -65,6 +66,7 @@ namespace GameEngine
 
 				shaders.Add(shader);
 			}
+
 			return shaders.ToArray();
 		}
 	}

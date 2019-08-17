@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Extensions;
 
 namespace SurvivalGame
 {
@@ -40,6 +41,7 @@ namespace SurvivalGame
 			for(int i=0;i<variants.Length;i++) {
 				variantTextures[i] = Resources.Import<Texture>(variants[i]);
 			}
+
 			OnInit();
 		}
 

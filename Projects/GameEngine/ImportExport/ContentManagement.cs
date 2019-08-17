@@ -4,6 +4,7 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using GameEngine.Graphics;
+using GameEngine.Extensions;
 using Ionic.Zip;
 
 namespace GameEngine

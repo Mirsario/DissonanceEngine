@@ -113,8 +113,9 @@ namespace GameEngine
 			Screen.showCursor = true;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
 			instance = this;
-			Extensions.Init();
+
 			ReflectionCache.Init();
 			RenderPass.Init();
 			Rand.Init();

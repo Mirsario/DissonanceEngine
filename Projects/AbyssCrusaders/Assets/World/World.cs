@@ -8,7 +8,6 @@ namespace AbyssCrusaders
 	{
 		public static readonly byte[] FileHeader = System.Text.Encoding.UTF8.GetBytes("game world file."); //h
 
-		public string name;
 		public string displayName;
 		public string localPath;
 		public int width;

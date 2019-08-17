@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using GameEngine.Graphics;
+using GameEngine.Extensions;
 
 namespace GameEngine
 {

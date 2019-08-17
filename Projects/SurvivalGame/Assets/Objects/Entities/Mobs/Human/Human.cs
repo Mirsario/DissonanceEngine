@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Extensions;
 
 namespace SurvivalGame
 {

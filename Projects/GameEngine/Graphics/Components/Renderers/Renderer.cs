@@ -59,6 +59,7 @@ namespace GameEngine
 		}
 
 		public virtual void ApplyUniforms(Shader shader) {}
+
 		protected virtual Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition) => throw new NotImplementedException();
 
 		internal Mesh GetRenderMeshInternal(Vector3 rendererPosition,Vector3 cameraPosition) => GetRenderMesh(rendererPosition,cameraPosition);

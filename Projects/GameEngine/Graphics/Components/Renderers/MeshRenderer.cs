@@ -23,10 +23,8 @@ namespace GameEngine
 	}
 	public class MeshRenderer : Renderer
 	{
-		#region Fields
 		private Mesh cachedRenderMesh;
-		#endregion
-		#region Properties
+		
 		internal Mesh mesh;
 		public virtual Mesh Mesh {
 			get => lodMeshes?[0]?.mesh;
@@ -46,18 +44,21 @@ namespace GameEngine
 					lodMeshes = value;
 				}else{
 					bool hadNull = false;
+
 					if(value.Length==0) {
 						throw new Exception("Value cannot be an empty array. Set it to null instead.");
 					}
 					if(value.Any(l1 => l1==null ? hadNull = true : value.Count(l2 => l1.maxDistance==l2.maxDistance)>1)) {//dumb check
 						throw new Exception(hadNull ? "Array cannot contain null values" : "All maxDistance values must be unique.");
 					}
+
 					var list = value.OrderBy(q => q.maxDistance).ToList();
 					if(list[0].maxDistance==0f) {
 						var val = list[0];
 						list.RemoveAt(0);
 						list.Add(val);
 					}
+
 					lodMeshes = list.ToArray();
 				}
 			}
@@ -72,7 +73,6 @@ namespace GameEngine
 				}
 			}
 		}
-		#endregion
 
 		protected override void OnDispose()
 		{

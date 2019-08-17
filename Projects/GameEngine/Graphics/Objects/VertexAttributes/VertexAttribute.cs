@@ -27,7 +27,7 @@ namespace GameEngine.Graphics
 
 		public readonly VertexAttributeInfo AttributeInfo;
 
-		internal bool isEnabled;
+		//internal bool isEnabled;
 
 		protected abstract VertexAttributeInfo Info { get; }
 
