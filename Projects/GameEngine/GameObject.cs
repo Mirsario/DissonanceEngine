@@ -67,6 +67,17 @@ namespace GameEngine
 			gameObjects.Remove(this);
 		}
 
+		public T AddComponent<T>(Action<T> initializer) where T : Component => AddComponent(true,initializer);
+		public T AddComponent<T>(bool enable,Action<T> initializer) where T : Component
+		{
+			T component = AddComponent<T>(false);
+
+			initializer(component);
+
+			component.Enabled = true;
+
+			return component;
+		}
 		public T AddComponent<T>(bool enable = true) where T : Component
 		{
 			var componentType = typeof(T);
@@ -76,7 +87,9 @@ namespace GameEngine
 					throw new Exception("You can't add more than 1 component of type "+componentType.Name+" to a single gameobject");
 				}
 			}
-			Component newComponent;	
+
+			Component newComponent;
+
 			try {
 				newComponent = (Component)Activator.CreateInstance(typeof(T));
 			}
@@ -84,18 +97,20 @@ namespace GameEngine
 				Debug.Log(e.InnerException);
 				return null;
 			}
+
 			int key = newComponent.NameHash;
 			if(!componentsByNameHash.TryGetValue(key,out var componentList)) {
 				componentsByNameHash[key] = componentList = new List<Component>();
 			}
+
 			componentList.Add(newComponent);
 			components.Add(newComponent);
 
 			newComponent.gameObject = this;
+
 			if(enable) {
 				newComponent.Enabled = true;
 			}
-			
 			
 			return (T)newComponent;
 		}

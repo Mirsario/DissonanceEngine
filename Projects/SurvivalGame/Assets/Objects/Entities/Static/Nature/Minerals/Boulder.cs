@@ -13,14 +13,15 @@ namespace SurvivalGame
 
 			var mesh = Resources.Get<Mesh>($"{GetType().Name}.obj");
 
-			AddComponent<MeshRenderer>()
-				.WithMesh(mesh)
-				.WithMaterial(Resources.Find<Material>(GetType().Name));
+			AddComponent<MeshRenderer>(c => {
+				c.Mesh = mesh;
+				c.Material = Resources.Find<Material>(GetType().Name);
+			});
 
-			AddComponent<MeshCollider>(false)
-				.WithMesh(mesh)
-				.WithConvex(true)
-				.Enable();
+			AddComponent<MeshCollider>(c => {
+				c.Mesh = mesh;
+				c.Convex = true;
+			});
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<StonePhysicMaterial>();
