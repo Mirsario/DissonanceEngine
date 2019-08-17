@@ -1,5 +1,3 @@
-using GameEngine;
-
 namespace AbyssCrusaders
 {
 	public class CursorLightObj : LightObj

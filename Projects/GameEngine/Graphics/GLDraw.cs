@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using GLEnableCap = OpenTK.Graphics.OpenGL.EnableCap;
-using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 #pragma warning disable 0649
 

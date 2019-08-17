@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine.Graphics.RenderingPipelines
 {

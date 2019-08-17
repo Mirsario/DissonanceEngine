@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GameEngine.Graphics
+﻿namespace GameEngine.Graphics
 {
 	public static class PrimitiveMeshes
 	{

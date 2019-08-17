@@ -1,11 +1,4 @@
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using ShaderTypeGL = OpenTK.Graphics.OpenGL.ShaderType;
-using DSU = GameEngine.Graphics.DefaultShaderUniforms;
 
 namespace GameEngine.Graphics
 {

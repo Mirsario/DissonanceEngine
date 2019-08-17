@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using OpenTK.Graphics.OpenGL;
-
-namespace GameEngine.Graphics.RenderingPipelines
+﻿namespace GameEngine.Graphics.RenderingPipelines
 {
 	public class DeferredRendering : RenderingPipeline
 	{

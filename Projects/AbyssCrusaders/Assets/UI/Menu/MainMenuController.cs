@@ -1,5 +1,4 @@
 ﻿using GameEngine;
-using GameEngine.Graphics;
 
 namespace AbyssCrusaders.UI.Menu
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
 using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
-using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 
 namespace GameEngine.Graphics
 {
