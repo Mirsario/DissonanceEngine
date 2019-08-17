@@ -22,13 +22,14 @@ namespace GameEngine.Physics
 		
 		public static void Init()
 		{
-			collisionShapes = new List<CollisionShape>();
+			broadphase = new DbvtBroadphase();
 			collisionConf = new DefaultCollisionConfiguration();
+			collisionShapes = new List<CollisionShape>();
+			collidersToUpdate = new List<Collider>();
 			rigidbodies = new List<RigidbodyInternal>();
 			ActiveRigidbodies = new List<RigidbodyBase>();
-			collidersToUpdate = new List<Collider>();
+
 			dispatcher = new CollisionDispatcher(collisionConf);
-			broadphase = new DbvtBroadphase();
 
 			world = new DiscreteDynamicsWorld(dispatcher,broadphase,null,collisionConf);
 			world.SetInternalTickCallback(InternalTickCallback);
