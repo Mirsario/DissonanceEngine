@@ -2,11 +2,9 @@ namespace GameEngine.Physics
 {
 	public abstract class PhysicsComponent : Component
 	{
-		protected override void OnInit()
+		protected override void OnPreInit()
 		{
-			if(gameObject.rigidbodyInternal==null) {
-				gameObject.rigidbodyInternal = new RigidbodyInternal(GameObject);
-			}
+			gameObject.rigidbodyInternal ??= new RigidbodyInternal(GameObject);
 		}
 		protected override void OnDispose()
 		{

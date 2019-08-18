@@ -8,10 +8,6 @@ namespace GameEngine
 	{
 		public AudioContext audioContext;
 
-		protected override void OnInit()
-		{
-			
-		}
 		protected override void OnEnable()
 		{
 			if(audioContext==null) {

@@ -15,46 +15,51 @@ namespace GameEngine
 				if(materials==value) {
 					return;
 				}
+
 				if(materials!=null) {
 					for(int i=0;i<materials.Count;i++) {
 						materials[i]?.RendererDetach(this);
 					}
 				}
+
 				if(value!=null) {
 					for(int i=0;i<value.Count;i++) {
 						value[i]?.RendererAttach(this);
 					}
 					value.renderer = this;
 				}
+
 				materials = value;
 			}
 		}
 		public virtual Material Material {
 			get {
-				if(Materials==null || Materials.Count==0) {
+				if(materials==null || materials.Count==0) {
 					return null;
 				}
-				return Materials[0];
+				return materials[0];
 			}
 			set {
-				if(Materials==null || Materials.Count==0) {
+				if(materials==null || materials.Count==0) {
 					Materials = new Material[1];
 				}
-				Materials[0] = value;
+				materials[0] = value;
 			}
 		}
 
+		protected override void OnInit()
+		{
+			if(materials==null) {
+				Materials = new Material[1];
+				Material = Material.defaultMat;
+			}
+		}
 		protected override void OnEnable() => Rendering.rendererList.Add(this);
 		protected override void OnDisable() => Rendering.rendererList.Remove(this);
 		protected override void OnDispose()
 		{
 			Rendering.rendererList.Remove(this);
 			Materials = null;
-		}
-		protected override void OnInit()
-		{
-			Materials = new Material[1];
-			Material = Material.defaultMat;
 		}
 
 		public virtual void ApplyUniforms(Shader shader) {}

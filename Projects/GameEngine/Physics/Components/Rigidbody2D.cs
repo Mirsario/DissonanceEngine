@@ -26,11 +26,13 @@ namespace GameEngine.Physics
 		}
 		public void ApplyForce(Vector2 force,Vector2 relativePos)
 		{
-			if(!gameObject.rigidbodyInternal.btRigidbody.IsActive) {
-				gameObject.rigidbodyInternal.btRigidbody.Activate();
+			var btRigidbody = gameObject.rigidbodyInternal.btRigidbody;
+
+			if(!btRigidbody.IsActive) {
+				btRigidbody.Activate();
 			}
 
-			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(new Vector3(force.x,force.y,0f),new Vector3(relativePos.x,relativePos.y,0f));
+			btRigidbody.ApplyForce(new Vector3(force.x,force.y,0f),new Vector3(relativePos.x,relativePos.y,0f));
 		}
 	}
 }

@@ -39,6 +39,7 @@ namespace GameEngine
 		protected override void OnEnable() => Rendering.cameraList.Add(this);
 		protected override void OnDisable() => Rendering.cameraList.Remove(this);
 		protected override void OnDispose() => Rendering.cameraList.Remove(this);
+
 		public override void FixedUpdate()
 		{
 			

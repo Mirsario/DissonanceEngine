@@ -74,7 +74,9 @@ namespace GameEngine
 
 			initializer(component);
 
-			component.Enabled = true;
+			if(enable) {
+				component.Enabled = true;
+			}
 
 			return component;
 		}
@@ -107,6 +109,7 @@ namespace GameEngine
 			components.Add(newComponent);
 
 			newComponent.gameObject = this;
+			newComponent.PreInit();
 
 			if(enable) {
 				newComponent.Enabled = true;

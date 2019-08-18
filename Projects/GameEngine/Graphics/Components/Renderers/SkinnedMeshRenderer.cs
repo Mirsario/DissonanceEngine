@@ -5,6 +5,8 @@ namespace GameEngine
 {
 	public class SkinnedMeshRenderer : MeshRenderer
 	{
+		/*public AnimationSkeleton skeleton;
+
 		public override Mesh Mesh {
 			get => mesh;
 			set {
@@ -13,16 +15,17 @@ namespace GameEngine
 						skeleton.Dispose();
 						skeleton = null;
 					}
+
 					if(value.skeleton!=null) {
 						skeleton = value.skeleton.Instantiate(Transform);
 					}else{
 						Debug.Log($"{gameObject.Name} - mesh's skeleton is null");
 					}
 				}
+
 				mesh = value;
 			}
 		}
-		public AnimationSkeleton skeleton;
 		
 		public override void FixedUpdate()
 		{
@@ -38,6 +41,6 @@ namespace GameEngine
 					Shader.UniformMatrix4(GL.GetUniformLocation(shader.program,$"boneMatrices[{i}]"),ref matrix);
 				}
 			}
-		}
+		}*/
 	}
 }

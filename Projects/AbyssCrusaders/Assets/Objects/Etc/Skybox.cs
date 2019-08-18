@@ -8,8 +8,7 @@ namespace AbyssCrusaders
 	{
 		public override void OnInit()
 		{
-			AddComponent<Sprite>()
-				.WithMaterial(Resources.Get<Material>("Skybox.material"));
+			AddComponent<Sprite>(c => c.Material = Resources.Get<Material>("Skybox.material"));
 
 			Depth = -1000f;
 		}

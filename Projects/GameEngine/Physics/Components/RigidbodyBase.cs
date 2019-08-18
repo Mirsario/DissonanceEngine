@@ -1,11 +1,29 @@
 namespace GameEngine.Physics
 {
-
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent
 	{
+		protected bool isKinematic;
+		protected bool useGravity;
+
 		public bool WantsSleeping => gameObject.rigidbodyInternal.btRigidbody.WantsSleeping;
 
+		public bool IsKinematic {
+			get => isKinematic;
+			set => gameObject.rigidbodyInternal.Type = (isKinematic = value) ? RigidbodyType.Kinematic : RigidbodyType.Dynamic;
+		}
+		public bool UseGravity {
+			get => useGravity;
+			set => gameObject.rigidbodyInternal.UseGravity = value;
+		}
+		public bool Active {
+			get => gameObject.rigidbodyInternal.btRigidbody.IsActive;
+			set {
+				if(value) {
+					gameObject.rigidbodyInternal?.btRigidbody?.Activate();
+				}
+			}
+		}
 		public float Mass {
 			get => gameObject.rigidbodyInternal.Mass;
 			set => gameObject.rigidbodyInternal.Mass = value;
@@ -22,29 +40,9 @@ namespace GameEngine.Physics
 			get => gameObject.rigidbodyInternal.AngularDrag;
 			set => gameObject.rigidbodyInternal.AngularDrag = value;
 		}
-		public bool UseGravity {
-			get => gameObject.rigidbodyInternal.UseGravity;
-			set => gameObject.rigidbodyInternal.UseGravity = value;
-		}
-		public bool Active {
-			get => gameObject.rigidbodyInternal.btRigidbody.IsActive;
-			set {
-				if(value) {
-					gameObject.rigidbodyInternal.btRigidbody.Activate();
-				}
-			}
-		}
 
-		protected bool isKinematic;
-		public bool IsKinematic {
-			get => isKinematic;
-			set => gameObject.rigidbodyInternal.Type = (isKinematic = value) ? RigidbodyType.Kinematic : RigidbodyType.Dynamic;
-		}
-
-		protected override void OnInit()
+		protected override void OnPreInit()
 		{
-			base.OnInit();
-
 			gameObject.rigidbodyInternal.rigidbody = this;
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Dynamic;
 		}

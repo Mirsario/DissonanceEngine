@@ -11,14 +11,14 @@ namespace AbyssCrusaders
 		{
 			layer = Layers.GetLayerIndex("Entity");
 
-			AddComponent<MeshRenderer>()
-				.WithMesh(PrimitiveMeshes.Cube)
-				.WithMaterial(new Material("CubeMaterial",Resources.Find<Shader>("Diffuse")));
+			AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.Cube;
+				c.Material = new Material("CubeMaterial",Resources.Find<Shader>("Diffuse"));
+			});
 
 			AddComponent<Box2DCollider>();
 
-			AddComponent<Rigidbody2D>()
-				.WithIsKinematic(true);
+			AddComponent<Rigidbody2D>(c => c.IsKinematic = true);
 
 			Transform.LocalScale = new Vector3(10f,1f,1f);
 		}

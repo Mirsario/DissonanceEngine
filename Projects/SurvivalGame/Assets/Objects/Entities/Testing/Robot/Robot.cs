@@ -9,11 +9,10 @@ namespace SurvivalGame
 
 		public override void OnInit()
 		{
-			renderer = AddComponent<SkinnedMeshRenderer>();
-			renderer.Mesh = Resources.Import<Mesh>("Robot.mesh");//Mesh.Import("Assets/Robot.mesh",0.0133f);
-			renderer.Material = Resources.Find<Material>("DualSided");
-			//Resources.Export(renderer.Mesh,"NewRobot.mesh");
-			//transform.position = new Vector3(0f,0f,-40f);
+			renderer = AddComponent<SkinnedMeshRenderer>(c => {
+				c.Mesh = Resources.Import<Mesh>("Robot.mesh");
+				c.Material = Resources.Find<Material>("DualSided");
+			});
 		}
 		public override void FixedUpdate()
 		{

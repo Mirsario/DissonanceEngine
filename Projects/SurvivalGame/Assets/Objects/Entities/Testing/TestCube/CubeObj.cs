@@ -14,16 +14,14 @@ namespace SurvivalGame
 		{
 			layer = Layers.GetLayerIndex("Entity");
 
-			collider = AddComponent<BoxCollider>();
-			collider.Size = new Vector3(1f,1f,1f);
+			collider = AddComponent<BoxCollider>(c => c.Size = Vector3.One);
 
-			rigidbody = AddComponent<Rigidbody>();
-			rigidbody.IsKinematic = true;
+			rigidbody = AddComponent<Rigidbody>(c => c.IsKinematic = true);
 
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.Cube;
-
-			renderer.Material = Resources.Get<Material>("TestCube.material");
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.Cube;
+				c.Material = Resources.Get<Material>("TestCube.material");
+			});
 		}
 		public override void FixedUpdate()
 		{

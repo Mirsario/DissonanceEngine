@@ -13,21 +13,27 @@ namespace SurvivalGame
 		public override void OnInit()
 		{
 			base.OnInit();
+
+			string typeName = GetType().Name;
 			
-			var barkMesh = Resources.Get<Mesh>($"{GetType().Name}Bark.obj");
+			var barkMesh = Resources.Get<Mesh>($"{typeName}Bark.obj");
 
 			if(Netplay.isClient) {
-				bark = AddComponent<MeshRenderer>();
-				bark.LODMesh = new MeshLOD(barkMesh,384f);
-				bark.Material = Resources.Find<Material>($"{GetType().Name}Bark");
+				bark = AddComponent<MeshRenderer>(c => {
+					c.LODMesh = new MeshLOD(barkMesh,384f);
+					c.Material = Resources.Find<Material>($"{typeName}Bark");
+				});
 
-				branches = AddComponent<MeshRenderer>();
-				branches.LODMesh = new MeshLOD(Resources.Get<Mesh>($"{GetType().Name}Branches.obj"),192f);
-				branches.Material = Resources.Find<Material>($"{GetType().Name}Branch");
+				branches = AddComponent<MeshRenderer>(c => {
+					c.LODMesh = new MeshLOD(Resources.Get<Mesh>($"{typeName}Branches.obj"),192f);
+					c.Material = Resources.Find<Material>($"{typeName}Branch");
+				});
 			}
-			collider = AddComponent<MeshCollider>();
-			collider.Mesh = barkMesh;
-			collider.Convex = false;
+
+			collider = AddComponent<MeshCollider>(c => {
+				c.Mesh = barkMesh;
+				c.Convex = false;
+			});
 		}
 		public override void FixedUpdate()
 		{

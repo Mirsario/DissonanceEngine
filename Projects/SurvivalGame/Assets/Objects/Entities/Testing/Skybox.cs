@@ -7,9 +7,10 @@ namespace SurvivalGame
 	{
 		public override void OnInit()
 		{
-			var renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.InvertedCube;
-			renderer.Material = Resources.Get<Material>("Skybox.material");
+			AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.InvertedCube;
+				c.Material = Resources.Get<Material>("Skybox.material");
+			});
 		}
 		public override void RenderUpdate()
 		{

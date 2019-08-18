@@ -59,31 +59,15 @@ namespace GameEngine
 			if(!typeInstances.TryGetValue(type,out var list)) {
 				typeInstances[type] = list = new List<Component>();
 			}
+
 			list.Add(this);
 		}
-		internal static void Init()
-		{
-			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
-				foreach(var type in assembly.GetTypes()) {
-					if(typeof(Component).IsAssignableFrom(type)) {
-						if(!typeParameters.ContainsKey(type)) {
-							typeParameters[type] = new ComponentParameters();
-						}
-						var attributes = type.GetCustomAttributes<ComponentAttribute>();
-						foreach(var attribute in attributes) {
-							attribute.SetParameters(type);
-						}
-					}
-				}
-			}
-		}
 
-		#region VirtualMethods
-		protected virtual void OnInit() {}
+		protected virtual void OnPreInit() {}
+		protected virtual void OnInit() { }
 		protected virtual void OnEnable() {}
 		protected virtual void OnDisable() {}
 		protected virtual void OnDispose() {}
-		#endregion
 
 		public void Dispose()
 		{
@@ -98,6 +82,26 @@ namespace GameEngine
 				list.Remove(this);
 				if(list.Count==0) {
 					dict.Remove(NameHash);
+				}
+			}
+		}
+
+		internal void PreInit() => OnPreInit();
+
+		internal static void Init()
+		{
+			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+				foreach(var type in assembly.GetTypes()) {
+					if(typeof(Component).IsAssignableFrom(type)) {
+						if(!typeParameters.ContainsKey(type)) {
+							typeParameters[type] = new ComponentParameters();
+						}
+
+						var attributes = type.GetCustomAttributes<ComponentAttribute>();
+						foreach(var attribute in attributes) {
+							attribute.SetParameters(type);
+						}
+					}
 				}
 			}
 		}

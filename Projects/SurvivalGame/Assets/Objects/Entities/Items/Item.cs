@@ -16,15 +16,12 @@ namespace SurvivalGame
 
 			string typeName = GetType().Name;
 			
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = Resources.Get<Mesh>($"{typeName}.obj");
-			renderer.Material = Resources.Find<Material>($"{typeName}");
-
-			collider = AddComponent<MeshCollider>();
-			collider.Mesh = Resources.Get<Mesh>($"{typeName}.obj");
-
-			rigidbody = AddComponent<Rigidbody>();
-			rigidbody.Mass = 1f;
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = Resources.Get<Mesh>($"{typeName}.obj");
+				c.Material = Resources.Find<Material>($"{typeName}");
+			});
+			collider = AddComponent<MeshCollider>(c => c.Mesh = Resources.Get<Mesh>($"{typeName}.obj"));
+			rigidbody = AddComponent<Rigidbody>(c => c.Mass = 1f);
 		}
 	}
 }

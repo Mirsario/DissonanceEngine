@@ -16,25 +16,26 @@ namespace SurvivalGame
 		public override void OnInit()
 		{
 			Transform.LocalScale *= 0.5f;
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.Cube;
 
-			renderer.Material = Resources.Get<Material>("Entities/Testing/Rocket/Rocket.material");
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.Cube;
+				c.Material = Resources.Get<Material>("Entities/Testing/Rocket/Rocket.material");
+			});
 
-			light = AddComponent<Light>();
-			light.color = new Vector3(1f,0.75f,0f);
+			light = AddComponent<Light>(c => c.color = new Vector3(1f,0.75f,0f));
 			
-			audioSource = AddComponent<AudioSource>();
-			audioSource.Clip = Resources.Get<AudioClip>("Sounds/rocketFly.wav");
-			audioSource.Loop = true;
-			audioSource.Volume = 2f;
-			audioSource.Play();
+			(audioSource = AddComponent<AudioSource>(c => {
+				c.Clip = Resources.Get<AudioClip>("Sounds/rocketFly.wav");
+				c.Loop = true;
+				c.Volume = 2f;
+			})).Play();
 		}
 		public override void FixedUpdate()
 		{
 			if(velocity==Vector3.Zero) {
 				return;
 			}
+
 			Transform.Rotation = Quaternion.FromDirection(velocity.Normalized,Vector3.Up);
 
 			var deltaVelocity = velocity*Time.FixedDeltaTime;

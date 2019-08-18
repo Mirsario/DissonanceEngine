@@ -33,6 +33,7 @@ namespace AbyssCrusaders
 			currentTile = TilePreset.GetTypeId<Tiles.Wood>();
 
 			var texture = Resources.Get<Texture>("Player.png");
+
 			spriteObj = Instantiate<SpriteObject>();
 			spriteObj.sprite.Material = new Material("Player",Resources.Find<Shader>("Game/SpriteColor"));
 			spriteObj.sprite.Material.SetTexture("mainTex",texture);
@@ -40,9 +41,11 @@ namespace AbyssCrusaders
 			spriteObj.Transform.LocalScale = new Vector3(texture.Width*Main.PixelSizeInUnits,texture.Height*Main.PixelSizeInUnits,1f);
 			spriteObj.Position = Vector2.Zero;
 
-			var light = AddComponent<Light2D>();
-			light.color = new Vector3(1f,0.75f,0.5f);
-			light.range = 32f;
+			var light = AddComponent<Light2D>(c => {
+				c.color = new Vector3(1f,0.75f,0.5f);
+				c.range = 32f;
+			});
+
 			Instantiate<CursorLightObj>().light.color = Vector3.One;
 		}
 		public override void FixedUpdate()

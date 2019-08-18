@@ -16,16 +16,15 @@ namespace SurvivalGame
 		public override void OnInit()
 		{
 			layer = Layers.GetLayerIndex("World");
+
 			Transform.Position = new Vector3(position.x*ChunkWorldSize,0f,position.y*ChunkWorldSize);
 			
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Material = chunk.Material;
-			renderer.Mesh = chunk.GetMesh();
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Material = chunk.Material;
+				c.Mesh = chunk.GetMesh();
+			});
 		}
-		public override void OnDispose()
-		{
-			renderer.Dispose();
-		}
+		public override void OnDispose() => renderer.Dispose();
 
 		public static ChunkRenderer Create(Chunk chunk,int x,int y)
 		{

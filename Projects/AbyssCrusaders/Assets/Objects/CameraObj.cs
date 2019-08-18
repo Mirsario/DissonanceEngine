@@ -18,11 +18,9 @@ namespace AbyssCrusaders
 		
 		public override void OnInit()
 		{
-			zoomGoal = DefaultZoom;
-			zoom = DefaultZoom;
+			zoomGoal = zoom = DefaultZoom;
 
-			camera = AddComponent<Camera>();
-			camera.orthographic = true;
+			camera = AddComponent<Camera>(c => c.orthographic = true);
 
 			Depth = 1000f;
 			//Depth = 50f;

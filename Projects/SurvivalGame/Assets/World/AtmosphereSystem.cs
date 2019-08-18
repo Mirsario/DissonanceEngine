@@ -18,18 +18,22 @@ namespace SurvivalGame
 			const float maxWindSpeed = 100f;
 			float speed = localMob.velocity.Magnitude;
 			float goalVolume = 0f;
+
 			if(speed>=minWindSpeed) {
 				if(velocityWindSource==null) {
-					velocityWindSource = AddComponent<AudioSource>();
-					velocityWindSource.Is2D = true;
-					velocityWindSource.Volume = goalVolume;
-					velocityWindSource.Clip = Resources.Get<AudioClip>("Sounds/Atmosphere/VelocityWind.ogg");
-					velocityWindSource.Loop = true;
-					velocityWindSource.PlaybackOffset = Rand.Next(velocityWindSource.Clip.LengthInSeconds);
-					velocityWindSource.Play();
+					(velocityWindSource = AddComponent<AudioSource>(c => {
+						var clip = Resources.Get<AudioClip>("Sounds/Atmosphere/VelocityWind.ogg");
+						c.Clip = clip;
+						c.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
+						c.Volume = goalVolume;
+						c.Is2D = true;
+						c.Loop = true;
+					})).Play();
 				}
+
 				goalVolume = Math.Min(1f,(speed-minWindSpeed)/(maxWindSpeed-minWindSpeed));
 			}
+
 			if(velocityWindSource!=null) {
 				float newVolume = Mathf.StepTowards(velocityWindSource.Volume,goalVolume,Time.RenderDeltaTime*0.75f);
 				if(newVolume==0f) {

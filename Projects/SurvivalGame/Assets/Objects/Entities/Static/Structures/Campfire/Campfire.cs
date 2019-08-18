@@ -18,14 +18,16 @@ namespace SurvivalGame
 			
 			var mesh = Resources.Get<Mesh>($"{GetType().Name}.obj");
 
-			collider = AddComponent<MeshCollider>();
-			collider.Mesh = mesh;
-			collider.Convex = true;
+			collider = AddComponent<MeshCollider>(c => {
+				c.Mesh = mesh;
+				c.Convex = true;
+			});
 
 			if(Netplay.isClient) {
-				renderer = AddComponent<MeshRenderer>();
-				renderer.Mesh = mesh;
-				renderer.Material = Resources.Find<Material>($"{GetType().Name}");
+				renderer = AddComponent<MeshRenderer>(c => {
+					c.Mesh = mesh;
+					c.Material = Resources.Find<Material>($"{GetType().Name}");
+				});
 
 				light = Instantiate<LightObj>(world).GetComponent<Light>();
 				light.color = new Vector3(1f,0.8f,0f);

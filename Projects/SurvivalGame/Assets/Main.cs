@@ -229,7 +229,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld(worldNameString,1024,2048);
+							world = World.NewWorld(worldNameString,256,256);
 							setMenuState = MenuState.Main;
 						}
 						break;
@@ -242,8 +242,8 @@ namespace SurvivalGame
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+16,128,64),"No")) {
 							result = false;
 						}
-						string text = dynamicMenuSetup(result);
-						GUI.DrawText(new RectFloat(0,Screen.Height/2-16,Screen.Width,32),text,alignment:TextAlignment.MiddleCenter);
+
+						GUI.DrawText(new RectFloat(0,Screen.Height/2-16,Screen.Width,32),dynamicMenuSetup(result),alignment:TextAlignment.MiddleCenter);
 						break;
 					}
 				}
@@ -301,10 +301,8 @@ namespace SurvivalGame
 		}
 		private static Camera InstantiateCamera(CameraController controller)
 		{
-			var newCamera = controller.AddComponent<Camera>();
-			newCamera.fov = 110f;
 			controller.AddComponent<AudioListener>();
-			return newCamera;
+			return controller.AddComponent<Camera>(c => c.fov = 110f);
 		}
 		private static void CheckCamera(bool forceRecreation = false)
 		{

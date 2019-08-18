@@ -43,21 +43,23 @@ namespace SurvivalGame
 		{
 			size = new Vector3(1f,1.95f,1f); //JoJo height.
 
-            renderer = AddComponent<MeshRenderer>();
-            renderer.Mesh = Resources.Get<Mesh>("Robot.mesh");
-            renderer.Material = Resources.Get<Material>("Robot.material");
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = Resources.Get<Mesh>("Robot.mesh");
+				c.Material = Resources.Get<Material>("Robot.material");
+			});
 
-            collider = AddComponent<CylinderCollider>(false);
-			collider.Size = size;
-			collider.Offset = new Vector3(0f,size.y/2f,0f);
-			collider.Enabled = true;
+			collider = AddComponent<CylinderCollider>(c => {
+				c.Size = size;
+				c.Offset = new Vector3(0f,size.y/2f,0f);
+			});
 
-			rigidbody = AddComponent<Rigidbody>();
-			rigidbody.Mass = 1f;
-			rigidbody.AngularFactor = Vector3.Zero;
-			rigidbody.UseGravity = false;
-			rigidbody.Friction = 0f;
-			rigidbody.Drag = 0f;
+			rigidbody = AddComponent<Rigidbody>(c => {
+				c.Mass = 1f;
+				c.AngularFactor = Vector3.Zero;
+				c.UseGravity = false;
+				c.Friction = 0f;
+				c.Drag = 0f;
+			});
 
 			audioSource = AddComponent<AudioSource>();
 		}

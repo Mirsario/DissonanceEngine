@@ -14,12 +14,13 @@ namespace SurvivalGame
 		{
 			Debug.Log("TestSphere spawned");
 			layer = Layers.GetLayerIndex("Entity");
-			collider = AddComponent<SphereCollider>();
-			collider.Radius = 10f;
 
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.Sphere;
-			renderer.Material = Resources.Get<Material>("Entities/Testing/TestSphere/TestSphere.material");
+			collider = AddComponent<SphereCollider>(c => c.Radius = 10f);
+
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.Sphere;
+				c.Material = Resources.Get<Material>("Entities/Testing/TestSphere/TestSphere.material");
+			});
 
 			Transform.LocalScale *= 10f;
 		}

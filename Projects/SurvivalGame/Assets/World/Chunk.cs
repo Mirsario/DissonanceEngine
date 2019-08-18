@@ -94,9 +94,10 @@ namespace SurvivalGame
 				}
 			}
 
-			collider = AddComponent<MeshCollider>();
-			collider.Convex = false;
-			collider.Mesh = GetMesh();
+			collider = AddComponent<MeshCollider>(c => {
+				c.Mesh = GetMesh();
+				c.Convex = false;
+			});
 		}
 		public override void FixedUpdate()
 		{
@@ -136,14 +137,7 @@ namespace SurvivalGame
 				}
 			}
 		}
-		public Mesh GetMesh()
-		{
-			if(mesh==null) {
-				GenerateMesh(0,true,Netplay.isClient);
-			}
-
-			return mesh;
-		}
+		public Mesh GetMesh() => mesh ?? (mesh = GenerateMesh(0,Netplay.isClient));
 
 		private void UpdateHeights()
 		{
@@ -165,11 +159,10 @@ namespace SurvivalGame
 			this.maxHeight = maxHeight;
 			updateHeights = false;
 		}
-		private Mesh GenerateMesh(int lodLevel,bool setAsCollisionMesh,bool generateGrass)
+		private Mesh GenerateMesh(int lodLevel,bool generateGrass)
 		{
 			bool noGraphics = !Netplay.isClient;
 
-			collider.Mesh?.Dispose();
 			var grassMeshes = (!generateGrass || noGraphics) ? null : new Dictionary<string,MeshInfo>();
 
 			int div = lodLevel==0 ? 1 : (int)Math.Pow(2,lodLevel);
@@ -251,10 +244,6 @@ namespace SurvivalGame
 			}
 
 			mesh.Apply();
-
-			if(setAsCollisionMesh) {
-				collider.Mesh = mesh;
-			}
 
 			/*if(!noGraphics && generateGrass) {
 				var materialDict = grassMeshes.Select(p => new KeyValuePair<Material,MeshInfo>(Resources.Find<Material>(p.Key),p.Value)).ToDictionary(p => p.Key,p => p.Value);

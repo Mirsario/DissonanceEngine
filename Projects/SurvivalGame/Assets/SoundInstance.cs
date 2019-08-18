@@ -17,14 +17,18 @@ namespace SurvivalGame
 		public static SoundInstance Create(string sound,Vector3 position,float volume = 1f,Transform attachTo = null)
 		{
 			var instance = Instantiate<SoundInstance>("SoundInstance_"+sound);
+
 			if(attachTo!=null) {
 				instance.Transform.parent = attachTo;
 			}
+
 			instance.Transform.Position = position;
-			instance.source = instance.AddComponent<AudioSource>();
-			instance.source.Clip = Resources.Get<AudioClip>(sound);
-			instance.source.Volume = volume;
-			instance.source.Play();
+
+			(instance.source = instance.AddComponent<AudioSource>(c => {
+				c.Clip = Resources.Get<AudioClip>(sound);
+				c.Volume = volume;
+			})).Play();
+
 			return instance;
 		}
 	}

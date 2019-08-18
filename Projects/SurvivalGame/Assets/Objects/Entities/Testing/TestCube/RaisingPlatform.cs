@@ -12,14 +12,14 @@ namespace SurvivalGame
 
 		public override void OnInit()
 		{
-			rigidbody = AddComponent<Rigidbody>();
-			rigidbody.IsKinematic = true;
+			rigidbody = AddComponent<Rigidbody>(c => c.IsKinematic = true);
 
 			collider = AddComponent<BoxCollider>();
 
-			renderer = AddComponent<MeshRenderer>();
-			renderer.Mesh = PrimitiveMeshes.Cube;
-			renderer.Material = Resources.Get<Material>("Entities/Testing/TestCube/TestCube.material");
+			renderer = AddComponent<MeshRenderer>(c => {
+				c.Mesh = PrimitiveMeshes.Cube;
+				c.Material = Resources.Get<Material>("Entities/Testing/TestCube/TestCube.material");
+			});
 		}
 		public override void FixedUpdate()
 		{

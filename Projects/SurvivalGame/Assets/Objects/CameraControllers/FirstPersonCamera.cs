@@ -32,15 +32,17 @@ namespace SurvivalGame
 			var brain = (Main.LocalEntity as Mob)?.brain;
 			bool controlling = brain==null || brain is PlayerBrain;
 			var delta = (GameEngine.Screen.lockCursor && controlling) ? new Vector2(GameInput.lookX.Value,GameInput.lookY.Value) : Vector2.Zero;
+
 			var newRotation = controlling ? rotation : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.RenderDeltaTime*2f);
 			newRotation.y -= delta.x;
+
 			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.RenderDeltaTime*10f);
+
 			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,MinLockedPitch,MaxLockedPitch);
 			newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
+
 			rotation = newRotation;
-			//float horizontalSpeed = new Vector2(localVelocity.x,localVelocity.z).Magnitude;
-			//bobTime += horizontalSpeed*Time.DeltaTime*3f;
-			//float bob = Mathf.Sin(bobTime);
+
 			camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,MinLockedPitch,MaxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
 
 			direction = Vector3.EulerToDirection(newRotation);

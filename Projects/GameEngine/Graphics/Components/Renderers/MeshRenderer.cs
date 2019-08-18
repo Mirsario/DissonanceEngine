@@ -25,7 +25,6 @@ namespace GameEngine
 	{
 		private Mesh cachedRenderMesh;
 		
-		internal Mesh mesh;
 		public virtual Mesh Mesh {
 			get => lodMeshes?[0]?.mesh;
 			set {
@@ -74,28 +73,21 @@ namespace GameEngine
 			}
 		}
 
-		protected override void OnDispose()
-		{
-			Rendering.rendererList.Remove(this);
-			Materials = null;
-		}
-		protected override void OnInit()
-		{
-			Materials = new Material[1];
-			Material = Material.defaultMat;
-		}
 		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
 		{
 			if(cachedRenderMesh!=null && Time.renderUpdateCount%60!=0) {
 				return cachedRenderMesh;
 			}
+
 			var lods = LODMeshes;
 			if(lods==null) {
 				return null;
 			}
+
 			if(lods.Length==1) {
 				return cachedRenderMesh = lods[0].mesh;
 			}
+
 			float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
 			for(int k=0;k<lods.Length;k++) {
 				MeshLOD lodTemp = lods[k];
@@ -103,6 +95,7 @@ namespace GameEngine
 					return cachedRenderMesh = lodTemp.mesh;
 				}
 			}
+
 			return null;
 		}
 	}

@@ -12,17 +12,6 @@ namespace GameEngine
 
 		public SpriteEffects spriteEffects;
 		
-		protected override void OnDispose()
-		{
-			Rendering.rendererList.Remove(this);
-			Materials = null;
-		}
-		protected override void OnInit()
-		{
-			Materials = new Material[1];
-			Material = Material.defaultMat;
-		}
-		
 		//TODO: is dis slew
 		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
 		{
