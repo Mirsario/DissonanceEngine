@@ -17,7 +17,7 @@ namespace GameEngine
 		internal static Dictionary<string,List<AssetManager>> assetManagers;
 		internal static AssetManager[][] autoloadOrder;
 		internal static Dictionary<string,string> nameToPath;
-		internal static Dictionary<string,object> cacheByPath;
+		internal static Dictionary<Type,Dictionary<string,object>> cacheByPath;
 		internal static Dictionary<Type,Dictionary<string,object>> cacheByName;
 		internal static Dictionary<string,byte[]> builtInAssets;
 		internal static bool importingBuiltInAssets;
@@ -25,10 +25,10 @@ namespace GameEngine
 		public static void Init()
 		{
 			assetManagers = new Dictionary<string,List<AssetManager>>();
-			nameToPath = new Dictionary<string,string>(StringComparer.CurrentCultureIgnoreCase);
-			cacheByPath = new Dictionary<string,object>(StringComparer.CurrentCultureIgnoreCase);
+			nameToPath = new Dictionary<string,string>(InternalUtils.strComparerInvariantIgnoreCase);
+			cacheByPath = new Dictionary<Type,Dictionary<string,object>>();
 			cacheByName = new Dictionary<Type,Dictionary<string,object>>();
-			builtInAssets = new Dictionary<string,byte[]>(StringComparer.CurrentCultureIgnoreCase);
+			builtInAssets = new Dictionary<string,byte[]>(InternalUtils.strComparerInvariantIgnoreCase);
 
 			#region ContentManagers
 			#region RegisterManagers
@@ -270,7 +270,10 @@ namespace GameEngine
 
 			using var stream = File.OpenRead(filePath);
 			var content = ImportFromStream(stream,assetManager,Path.GetFileName(filePath));
-			cacheByPath[filePath] = content;
+
+			if(addToCache) {
+				AddToCache(filePath,content);
+			}
 
 			return content;
 		}
@@ -299,9 +302,11 @@ namespace GameEngine
 				return null;
 			}
 
-			var result = method.MakeGenericMethod(tType).Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
-			cacheByPath[filePath] = result;
-			return result;
+			var content = method.MakeGenericMethod(tType).Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
+
+			AddToCache(filePath,content);
+
+			return content;
 		}
 		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string fileName = null) where T : class
 		{
@@ -342,7 +347,7 @@ namespace GameEngine
 			ReadyPath(ref filePath);
 			NameToPath(ref filePath,out bool ntpMultiplePaths);
 
-			if(cacheByPath.TryGetValue(filePath,out var obj) && obj is T content) {
+			if(cacheByPath.TryGetValue(typeof(T),out var dict) && dict.TryGetValue(filePath,out var obj) && obj is T content) {
 				return content;
 			}
 
@@ -434,33 +439,11 @@ namespace GameEngine
 
 		public static void AddToCache<T>(string filePath,T content)
 		{
-			cacheByPath[filePath] = content;
-		}
-		public static void RegisterFormats<T>(AssetManager<T> importer,string[] formats,bool allowOverwriting = false) where T : class
-		{
-			RegisterFormats(typeof(T),importer,formats,allowOverwriting);
-		}
-		private static void RegisterFormats(Type type,AssetManager assetManager,string[] extensions,bool allowOverwriting = false)
-		{
-			//TODO: There's unused parameters here?
-			for(int i=0;i<extensions.Length;i++) {
-				string ext = extensions[i];
-				if(assetManagers.TryGetValue(ext,out var list)) {
-					list.Add(assetManager);
-				}else{
-					list = new List<AssetManager> { assetManager };
-				}
-				assetManagers[ext] = list;
+			var type = typeof(T);
+			if(!cacheByPath.TryGetValue(typeof(T),out var dict)) {
+				cacheByPath[type] = dict = new Dictionary<string,object>(InternalUtils.strComparerInvariantIgnoreCase);
 			}
-
-			/*for(int i=0;i<formats.Length;i++) {
-				string format = formats[i];
-				if(!dict.ContainsKey(format) || allowOverwriting) {
-					dict[format] = assetManager;
-				}else{
-					throw new Exception(type.Name+" importer for "+format+" extension is already defined: "+dict[format].GetType().FullName);
-				}
-			}*/
+			dict[filePath] = content;
 		}
 		public static void SetDefaultManager(string ext,Type type)
 		{
@@ -482,7 +465,36 @@ namespace GameEngine
 
 			throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers which would return a "+type.Name+".");
 		}
+		public static T1 GetAssetManager<T1,T2>()
+			where T1 : AssetManager<T2>
+			where T2 : Asset
+		{
+			var type = typeof(T1);
+			foreach(var pair in assetManagers) {
+				foreach(var assetManager in pair.Value) {
+					if(assetManager.GetType()==type) {
+						return (T1)assetManager;
+					}
+				}
+			}
+			return null;
+		}
+		public static void RegisterFormats<T>(AssetManager<T> importer,string[] formats,bool allowOverwriting = false) where T : class
+			=> RegisterFormats(typeof(T),importer,formats,allowOverwriting);
 
+		private static void RegisterFormats(Type type,AssetManager assetManager,string[] extensions,bool allowOverwriting = false)
+		{
+			//TODO: There's unused parameters here?
+			for(int i = 0;i<extensions.Length;i++) {
+				string ext = extensions[i];
+				if(assetManagers.TryGetValue(ext,out var list)) {
+					list.Add(assetManager);
+				} else {
+					list = new List<AssetManager> { assetManager };
+				}
+				assetManagers[ext] = list;
+			}
+		}
 		private static void ReadyPath(ref string path)
 		{
 			string lowerPath = path.ToLower();
