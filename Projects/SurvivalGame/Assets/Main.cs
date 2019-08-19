@@ -229,7 +229,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld(worldNameString,256,256);
+							world = World.NewWorld(worldNameString,1024,1024);
 							setMenuState = MenuState.Main;
 						}
 						break;

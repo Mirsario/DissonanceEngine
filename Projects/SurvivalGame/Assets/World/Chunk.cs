@@ -94,9 +94,12 @@ namespace SurvivalGame
 				}
 			}
 
+			var collisionMesh = new ConcaveCollisionMesh();
+			collisionMesh.SetupFromMesh(GetMesh());
+
 			collider = AddComponent<MeshCollider>(c => {
-				c.Mesh = GetMesh();
-				c.Convex = false;
+				c.Mesh = collisionMesh;
+				//c.Convex = false;
 			});
 		}
 		public override void FixedUpdate()

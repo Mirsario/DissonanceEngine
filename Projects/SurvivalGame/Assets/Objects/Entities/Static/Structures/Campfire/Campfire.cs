@@ -16,16 +16,16 @@ namespace SurvivalGame
 		{
 			base.OnInit();
 			
-			var mesh = Resources.Get<Mesh>($"{GetType().Name}.obj");
+			string typeName = GetType().Name;
+			string meshPath = $"{typeName}.obj";
 
 			collider = AddComponent<MeshCollider>(c => {
-				c.Mesh = mesh;
-				c.Convex = true;
+				c.Mesh = Resources.Get<ConvexCollisionMesh>(meshPath);
 			});
 
 			if(Netplay.isClient) {
 				renderer = AddComponent<MeshRenderer>(c => {
-					c.Mesh = mesh;
+					c.Mesh = Resources.Get<Mesh>(meshPath);
 					c.Material = Resources.Find<Material>($"{GetType().Name}");
 				});
 

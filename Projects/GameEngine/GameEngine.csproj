@@ -155,6 +155,7 @@
     <Compile Include="ImportExport\Graphics\Textures\DDSManager.cs" />
     <Compile Include="ImportExport\Other\BytesManager.cs" />
     <Compile Include="ImportExport\Other\TextManager.cs" />
+    <Compile Include="ImportExport\Physics\ConvexCollisionMeshManager.cs" />
     <Compile Include="Input\Input.cs" />
     <Compile Include="Input\InputBinding.cs" />
     <Compile Include="Input\InputTrigger.cs" />
@@ -167,6 +168,9 @@
     <Compile Include="PerlinNoiseFloat.cs" />
     <Compile Include="Physics\Collision\Collision.cs" />
     <Compile Include="Physics\Collision\Collision2D.cs" />
+    <Compile Include="Physics\Collision\ConcaveCollisionMesh.cs" />
+    <Compile Include="Physics\Collision\ConvexCollisionMesh.cs" />
+    <Compile Include="Physics\Collision\CollisionMesh.cs" />
     <Compile Include="Physics\Components\CharacterController.cs" />
     <Compile Include="Physics\Components\Colliders\Collider.cs" />
     <Compile Include="Physics\Components\Colliders\Box2DCollider.cs" />

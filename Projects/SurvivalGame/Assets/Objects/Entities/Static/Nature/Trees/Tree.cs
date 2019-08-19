@@ -15,12 +15,11 @@ namespace SurvivalGame
 			base.OnInit();
 
 			string typeName = GetType().Name;
-			
-			var barkMesh = Resources.Get<Mesh>($"{typeName}Bark.obj");
+			string barkMeshPath = $"{typeName}Bark.obj";
 
 			if(Netplay.isClient) {
 				bark = AddComponent<MeshRenderer>(c => {
-					c.LODMesh = new MeshLOD(barkMesh,384f);
+					c.LODMesh = new MeshLOD(Resources.Get<Mesh>(barkMeshPath),384f);
 					c.Material = Resources.Find<Material>($"{typeName}Bark");
 				});
 
@@ -31,8 +30,7 @@ namespace SurvivalGame
 			}
 
 			collider = AddComponent<MeshCollider>(c => {
-				c.Mesh = barkMesh;
-				c.Convex = false;
+				c.Mesh = Resources.Get<ConvexCollisionMesh>(barkMeshPath);
 			});
 		}
 		public override void FixedUpdate()

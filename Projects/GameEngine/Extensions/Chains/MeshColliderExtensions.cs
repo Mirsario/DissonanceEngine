@@ -6,12 +6,12 @@ namespace GameEngine.Extensions.Chains
 	{
 		public static T WithMesh<T>(this T obj,Mesh mesh) where T : MeshCollider
 		{
-			obj.Mesh = mesh;
+			//obj.Mesh = mesh;
 			return obj;
 		}
 		public static T WithConvex<T>(this T obj,bool convex) where T : MeshCollider
 		{
-			obj.Convex = convex;
+			//obj.Convex = convex;
 			return obj;
 		}
 	}

@@ -28,7 +28,7 @@ namespace GameEngine.Graphics
 			this.wrapMode = wrapMode ?? defaultWrapMode;
 			this.useMipmaps = useMipmaps;
 
-			Debug.Log($"Created [{Width},{Height}] RenderTexture");
+			//Debug.Log($"Created [{Width},{Height}] RenderTexture");
 
 			SetupTexture();
 		}
@@ -44,7 +44,7 @@ namespace GameEngine.Graphics
 			Width = width;
 			Height = height;
 
-			Debug.Log($"Resizing to [{width},{height}]");
+			//Debug.Log($"Resizing to [{width},{height}]");
 
 			SetupTexture();
 		}
