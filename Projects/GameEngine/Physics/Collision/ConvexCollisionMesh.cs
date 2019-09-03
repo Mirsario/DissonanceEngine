@@ -24,5 +24,12 @@ namespace GameEngine.Physics
 
 			collShape = new ConvexHullShape(tempHull.Vertices);
 		}
+
+		public static explicit operator ConvexCollisionMesh(Mesh mesh)
+		{
+			var collisionMesh = new ConvexCollisionMesh();
+			collisionMesh.SetupFromMesh(mesh);
+			return collisionMesh;
+		}
 	}
 }

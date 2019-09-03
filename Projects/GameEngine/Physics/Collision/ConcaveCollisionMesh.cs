@@ -19,5 +19,12 @@ namespace GameEngine.Physics
 
 			collShape = new BvhTriangleMeshShape(triMesh,true);
 		}
+
+		public static explicit operator ConcaveCollisionMesh(Mesh mesh)
+		{
+			var collisionMesh = new ConcaveCollisionMesh();
+			collisionMesh.SetupFromMesh(mesh);
+			return collisionMesh;
+		}
 	}
 }
