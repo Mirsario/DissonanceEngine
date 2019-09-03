@@ -20,6 +20,7 @@ namespace SurvivalGame
 		public float forceAirMove;
 		public float lastLand;
 		public float walkTime;
+		public float walkIntensity;
 		public float jumpPress;
 		public bool enableStrafeJumping;
 		public float screenFlash;
@@ -177,6 +178,8 @@ namespace SurvivalGame
 			if(!isPlayer) {
 				renderer.Enabled = true;
 			}
+
+			audioSource.Is2D = isPlayer;
 		}
 
 		#region Movement
@@ -201,17 +204,31 @@ namespace SurvivalGame
 
 			bool inWater = position.y+1.5f<=world.GetWaterLevelAt(position);
 
-			if(onGroundCached && forceAirMove<=0f && !inWater) {
-				if(moveInput!=default) {
+			void UpdateWalk(bool walking)
+			{
+				if(walking) {
+					float prevWalkTime = walkTime;
 					walkTime += Time.FixedDeltaTime;
 
-					if(walkTime>=(isSprinting ? 0.3f : 0.5f)) {
+					float repeatTime = isSprinting ? 0.3f : 0.5f;
+
+					if(Mathf.Repeat(walkTime,repeatTime)<Mathf.Repeat(prevWalkTime,repeatTime)) {
 						Footstep("Walk",0.3f);
-						walkTime = 0f;
 					}
-				} else {
-					walkTime = 0f;
+
+					walkIntensity = Mathf.StepTowards(walkIntensity,1f,Time.FixedDeltaTime);
+				} else if(walkIntensity>0f) {
+					walkIntensity -= Time.FixedDeltaTime*0.5f;
+
+					if(walkIntensity<=0f) {
+						walkTime = 0f;
+						walkIntensity = 0f;
+					}
 				}
+			}
+
+			if(onGroundCached && forceAirMove<=0f && !inWater) {
+				UpdateWalk(moveInput!=default);
 
 				if(Movement_CheckJump()) {
 					PlayVoiceClip(Resources.Get<AudioClip>("Jump.ogg"));
@@ -221,7 +238,7 @@ namespace SurvivalGame
 					Movement_Move(Acceleration,MoveSpeed,Friction,forward,right);
 
 					if(!wasOnGround) {
-						Footstep("Land",0.8f);
+						//Footstep("Land",0.8f);
 
 						float magnitude = prevVelocity.Magnitude-velocity.Magnitude;
 						const float minSpeed = 8.5f;
@@ -238,7 +255,7 @@ namespace SurvivalGame
 				lastLand = Time.FixedDeltaTime;
 				wasOnGround = true;
 			} else {
-				walkTime = 0f;
+				UpdateWalk(false);
 
 				forceAirMove = Mathf.StepTowards(forceAirMove,0f,Time.FixedDeltaTime);
 
@@ -345,7 +362,7 @@ namespace SurvivalGame
 			if(providers.Length>0) {
 				var provider = providers[0];
 				provider.GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);
-				SoundInstance.Create($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform);
+				SoundInstance.Create($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform,IsLocal);
 			}
 		}
 	}

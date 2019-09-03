@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SurvivalGame
 {
-	public class Tile : IDisposable
+	public struct Tile
 	{
 		public ushort type;
 		public float height;
@@ -18,6 +18,5 @@ namespace SurvivalGame
 			type = reader.ReadUInt16();
 			height = reader.ReadSingle();
 		}
-		public void Dispose() {}
 	}
 }

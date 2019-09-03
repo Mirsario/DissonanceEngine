@@ -24,7 +24,11 @@ namespace SurvivalGame
 				c.Mesh = chunk.GetMesh();
 			});
 		}
-		public override void OnDispose() => renderer.Dispose();
+		public override void OnDispose()
+		{
+			chunk = null;
+			renderer.Dispose();
+		}
 
 		public static ChunkRenderer Create(Chunk chunk,int x,int y)
 		{

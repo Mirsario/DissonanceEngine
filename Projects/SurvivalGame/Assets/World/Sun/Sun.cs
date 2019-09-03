@@ -20,12 +20,12 @@ namespace SurvivalGame
 				c.Mesh = PrimitiveMeshes.Sphere;
 				c.Material = Resources.Get<Material>("Sun.material");
 			});
-
-			Rendering.ambientColor = Vector3.Zero; //Rendering.ambientColor = new Vector3(0.05f);
 		}
 		public override void RenderUpdate()
 		{
-            var t = Transform;
+
+			Rendering.ambientColor = new Vector3(0.2f);
+			var t = Transform;
 
 			t.EulerRot = new Vector3(60f,30f,0f);
 

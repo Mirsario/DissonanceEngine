@@ -8,7 +8,7 @@ namespace SurvivalGame
 		public Chunk chunk;
 		public uint idInChunk;
 
-		public virtual Mesh[] GetCollisionMeshes() => null;
+		public virtual Mesh GetCollisionMesh() => null;
 
 		public override void OnInit()
 		{

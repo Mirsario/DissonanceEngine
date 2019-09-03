@@ -1,9 +1,8 @@
 #version 330
 
-const int chunkSize = 16;
-
 uniform sampler2D tileMap;
 uniform sampler2D tileAtlas;
+uniform int chunkSize = 16;
 uniform vec4[30] tileUVs;
 
 in vec2 uv;

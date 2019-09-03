@@ -14,7 +14,7 @@ namespace SurvivalGame
 			}
 		}
 
-		public static SoundInstance Create(string sound,Vector3 position,float volume = 1f,Transform attachTo = null)
+		public static SoundInstance Create(string sound,Vector3 position,float volume = 1f,Transform attachTo = null,bool is2D = false)
 		{
 			var instance = Instantiate<SoundInstance>("SoundInstance_"+sound);
 
@@ -27,6 +27,9 @@ namespace SurvivalGame
 			(instance.source = instance.AddComponent<AudioSource>(c => {
 				c.Clip = Resources.Get<AudioClip>(sound);
 				c.Volume = volume;
+				if(is2D) {
+					c.Is2D = true;
+				}
 			})).Play();
 
 			return instance;

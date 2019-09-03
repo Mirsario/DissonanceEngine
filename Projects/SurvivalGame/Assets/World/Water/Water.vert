@@ -22,7 +22,7 @@ out vec3 N;
 
 float getDisplacement(vec3 pos,vec2 texUv)
 {
-	return sin(time+(pos.x+pos.z)*0.1f)*0.5f+0.5f;
+	return sin(time+(pos.x+pos.z)*0.01)*0.5f+0.5f;
 }
 
 void main(void)
@@ -31,7 +31,7 @@ void main(void)
 	
 	worldPos = (world*newVertex).xyz;
 	
-	newVertex.y += mix(-2f,2f,getDisplacement(worldPos,uv0));
+	//newVertex.y += mix(-0.2,0.2,getDisplacement(worldPos,uv0));
 	
 	worldPos = (world*newVertex).xyz;
 	

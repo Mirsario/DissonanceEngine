@@ -46,8 +46,11 @@ namespace SurvivalGame
 			camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,MinLockedPitch,MaxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
 
 			direction = Vector3.EulerToDirection(newRotation);
+
 			Vector3 position = entity.Transform.Position+new Vector3(0f,2f,0f);
+
 			float shake = ScreenShake.GetPowerAtPoint(position);
+
 			camera.Transform.Position = position+new Vector3(Rand.Range(-shake,shake),Rand.Range(-shake,shake),Rand.Range(-shake,shake)); //+bob*0.05f
 		}
 		public override void FixedUpdate()

@@ -186,7 +186,7 @@ namespace SurvivalGame
 
 						for(int i=0;i<worldList.Length;i++) {
 							if(GUI.Button(new RectFloat((Screen.Width*0.5f)-256,256+(i*64),448,64),worldList[i].displayName)) {
-								World.LoadWorld(worldList[i].localPath);
+								World.LoadWorld<Overworld>(worldList[i].localPath);
 							}
 
 							if(GUI.Button(new RectFloat((Screen.Width*0.5f)+192,256+(i*64),64,64),"X")) {
@@ -229,7 +229,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld(worldNameString,1024,1024);
+							world = World.NewWorld<Overworld>(worldNameString,512,512);
 							setMenuState = MenuState.Main;
 						}
 						break;

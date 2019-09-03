@@ -33,12 +33,12 @@ namespace SurvivalGame
 				c.Mesh = Resources.Get<ConvexCollisionMesh>(barkMeshPath);
 			});
 		}
-		public override void FixedUpdate()
+		/*public override void FixedUpdate()
 		{
 			if(Rand.Next(10000)==0) {
 				SoundInstance.Create($"Sounds/Atmosphere/Nature/Birds/Bird{Rand.Range(1,10)}.ogg",Transform.Position,2f);
 			}
-		}
+		}*/
 		/*private float soundPlayDelay;
 		public override void FixedUpdate()
 		{
