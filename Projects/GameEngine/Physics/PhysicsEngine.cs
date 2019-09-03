@@ -115,11 +115,13 @@ namespace GameEngine.Physics
 			dispatcher?.Dispose();
 			broadphase?.Dispose();
 			collidersToUpdate?.Clear();
+
 			if(collisionShapes!=null) {
 				for(int i=0;i<collisionShapes.Count;i++) {
 					collisionShapes[i].Dispose();
 				}
 			}
+
 			if(rigidbodies!=null) {
 				for(int i=0;i<rigidbodies.Count;i++) {
 					rigidbodies[i].Dispose();
@@ -175,22 +177,26 @@ namespace GameEngine.Physics
 			for(int i=0;i<rigidbodies.Count;i++) {
 				rigidbodies[i].collisions.Clear();
 			}
+
 			for(int i=0;i<numManifolds;i++) {
 				var contactManifold = worldDispatcher.GetManifoldByIndexInternal(i);
 				int numContacts = contactManifold.NumContacts;
 				if(numContacts==0) {
 					continue;
 				}
+
 				var objA = contactManifold.Body0;
 				var objB = contactManifold.Body1;
 				if(!(objA.UserObject is RigidbodyInternal rigidBodyA) || !(objB.UserObject is RigidbodyInternal rigidbodyB)) {
 					throw new Exception("UserObject wasn't a '"+typeof(RigidbodyInternal).FullName+"'.");
 				}
+
 				for(int j=0;j<2;j++) {
 					bool doingA = j==0;
 					var thisRB = doingA ? rigidBodyA : rigidbodyB;
 					var otherRB = doingA ? rigidbodyB : rigidBodyA;
-					if(thisRB.rigidbody is Rigidbody) {
+
+					if(thisRB.rigidbody is Rigidbody rigidbody) {
 						var contacts = new ContactPoint[numContacts];
 						for(int k=0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
@@ -200,9 +206,10 @@ namespace GameEngine.Physics
 								separation = cPoint.Distance,
 							};
 						}
-						var collision = new Collision(otherRB.gameObject,otherRB.rigidbody as Rigidbody,null,contacts);
+
+						var collision = new Collision(otherRB.gameObject,rigidbody,null,contacts);
 						thisRB.collisions.Add(collision);
-					}else{
+					}else if(thisRB.rigidbody is Rigidbody2D rigidbody2D) {
 						var contacts = new ContactPoint2D[numContacts];
 						for(int k=0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
@@ -212,7 +219,8 @@ namespace GameEngine.Physics
 								separation = cPoint.Distance,
 							};
 						}
-						var collision = new Collision2D(otherRB.gameObject,otherRB.rigidbody as Rigidbody2D,null,contacts);
+
+						var collision = new Collision2D(otherRB.gameObject,rigidbody2D,null,contacts);
 						thisRB.collisions2D.Add(collision);
 					}
 				}

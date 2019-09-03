@@ -40,9 +40,7 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float NormalizeEuler(float angle)
 		{
 			if(angle>360f) {
-				do {
-					angle -= 360f;
-				} while(angle>360f);
+				do { angle -= 360f; } while(angle>360f);
 				return angle;
 			}
 			while(angle<0f) {
@@ -51,7 +49,7 @@ namespace GameEngine
 			return angle;
 		}
 
-		#region Trigonometry
+		//Trigonometry
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin(float f) => (float)Math.Sin(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Cos(float f) => (float)Math.Cos(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Tan(float f) => (float)Math.Tan(f);
@@ -59,8 +57,7 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Acos(float f) => (float)Math.Acos(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Atan(float f) => (float)Math.Atan(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Atan2(float y,float x) => (float)Math.Atan2(y,x);
-		#endregion
-		//[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sin01(float f) => Sin(f*PI);
+		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sqrt(float f) => (float)Math.Sqrt(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float SqrtReciprocal(float f) => 1f/Sqrt(f); //TODO: This could be sped up?
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Abs(float f) => Math.Abs(f);
@@ -72,23 +69,24 @@ namespace GameEngine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Log10(float f) => (float)Math.Log10(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Dot(float[] a,float[] b) => a[0]*b[0]+a[1]*b[1];
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Sign(float f) => f<0f ? -1f : 1f;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int Sign(int i) => i<0 ? -1 : 1;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int SignWithZero(int i) => i==0 ? 0 : (i<0 ? -1 : 1);
 
-		#region Rounding
+		//Rounding
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Ceil(float f) => (float)Math.Ceiling(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Floor(float f) => (float)Math.Floor(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Round(float f) => (float)Math.Round(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int CeilToInt(float f) => (int)Math.Ceiling(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int FloorToInt(float f) => (int)Math.Floor(f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int RoundToInt(float f) => (int)Math.Round(f);
-		#endregion
 
-		#region Clamp
+		//Clamp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int Clamp(int value,int min,int max) => value<min ? min : (value>max ? max : value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Clamp(float value,float min,float max) => value<min ? min : (value>max ? max : value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static double Clamp(double value,double min,double max) => value<min ? min : (value>max ? max : value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Clamp01(float value) => value<0f ? 0f : (value>1f ? 1f : value);
-		#endregion
-		#region Min/Max
+
+		//Min/Max
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Min(float a,float b) => a>=b ? b : a;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Min(params float[] values)
 		{
@@ -146,8 +144,8 @@ namespace GameEngine
 			}
 			return num;
 		}
-		#endregion
-		#region Interpolation
+
+		//Interpolation
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Lerp(float a,float b,float time) => a+(b-a)*Clamp01(time);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float LerpAngle(float a,float b,float t)
 		{
@@ -164,6 +162,5 @@ namespace GameEngine
 			float xx1 = point.x-topLeft.x;
 			return 1f/(x2x1*y2y1)*(valueBottomLeft*x2x*y2y+valueBottomRight*xx1*y2y+valueTopLeft*x2x*yy1+valueTopRight*xx1*yy1);
 		}
-		#endregion
 	}
 }

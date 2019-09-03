@@ -73,6 +73,13 @@ namespace GameEngine
 			}
 		}
 
+		protected override void OnDispose()
+		{
+			base.OnDispose();
+
+			cachedRenderMesh = null;
+		}
+
 		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
 		{
 			if(cachedRenderMesh!=null && Time.renderUpdateCount%60!=0) {

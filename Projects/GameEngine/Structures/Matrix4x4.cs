@@ -416,27 +416,29 @@ namespace GameEngine
 			var tempRow0 = (Vector3)Row0;
 			var tempRow1 = (Vector3)Row1;
 			var tempRow2 = (Vector3)Row2;
+
 			if(row_normalise) {
 				tempRow0.Normalize();
 				tempRow1.Normalize();
 				tempRow2.Normalize();
 			}
+
 			var q = new Quaternion();
 			float trace = 0.25f*(tempRow0[0]+tempRow1[1]+tempRow2[2]+1f);
 			if(trace>0) {
-				float sq = Mathf.Sqrt(trace);
-				q.w = sq;
-				sq = 1f/(4f*sq);
+				float sq = 1f/(4f*Mathf.Sqrt(trace));
+
 				q.x = (tempRow1[2]-tempRow2[1])*sq;
 				q.y = (tempRow2[0]-tempRow0[2])*sq;
 				q.z = (tempRow0[1]-tempRow1[0])*sq;
-			}else if(tempRow0[0]>tempRow1[1] && tempRow0[0]>tempRow2[2]) {
-				float sq = 2f*Mathf.Sqrt(1f+tempRow0[0]-tempRow1[1]-tempRow2[2]);
+				q.w = sq;
+			} else if(tempRow0[0]>tempRow1[1] && tempRow0[0]>tempRow2[2]) {
+				float sq = 1f/(2f*Mathf.Sqrt(1f+tempRow0[0]-tempRow1[1]-tempRow2[2]));
+
 				q.x = 0.25f*sq;
-				sq = 1f/sq;
-				q.w = (tempRow2[1]-tempRow1[2])*sq;
 				q.y = (tempRow1[0]+tempRow0[1])*sq;
 				q.z = (tempRow2[0]+tempRow0[2])*sq;
+				q.w = (tempRow2[1]-tempRow1[2])*sq;
 			}else if(tempRow1[1]>tempRow2[2]) {
 				float sq = 2f*Mathf.Sqrt(1f+tempRow1[1]-tempRow0[0]-tempRow2[2]);
 				q.y = 0.25f*sq;
@@ -445,12 +447,13 @@ namespace GameEngine
 				q.x = (tempRow1[0]+tempRow0[1])*sq;
 				q.z = (tempRow2[1]+tempRow1[2])*sq;
 			}else{
-				float sq = 2f*Mathf.Sqrt(1f+tempRow2[2]-tempRow0[0]-tempRow1[1]);
-				q.z = 0.25f*sq;
+				float sq = 1f/(2f*Mathf.Sqrt(1f+tempRow2[2]-tempRow0[0]-tempRow1[1]));
 				sq = 1f/sq;
-				q.w = (tempRow1[0]-tempRow0[1])*sq;
+
 				q.x = (tempRow2[0]+tempRow0[2])*sq;
 				q.y = (tempRow2[1]+tempRow1[2])*sq;
+				q.z = 0.25f*sq;
+				q.w = (tempRow1[0]-tempRow0[1])*sq;
 			}
 			q.Normalize();
 			return q;
@@ -465,6 +468,7 @@ namespace GameEngine
 		public void SetScale(Vector3 scale)
 		{
 			ClearScale();
+
 			m00 *= scale.x;
 			m01 *= scale.x;
 			m02 *= scale.x;
@@ -523,11 +527,13 @@ namespace GameEngine
 			float angle = eulerAngle*Mathf.Deg2Rad;
 			float cos = Mathf.Cos(angle);
 			float sin = Mathf.Sin(angle);
+
 			var result = Identity;
 			result.m11 = cos;
 			result.m12 = sin;
 			result.m21 = -sin;
 			result.m22 = cos;
+
 			return result;
 		}
 		public static Matrix4x4 CreateRotationY(float eulerAngle)
@@ -535,6 +541,7 @@ namespace GameEngine
 			float angle = eulerAngle*Mathf.Deg2Rad;
 			float cos = Mathf.Cos(angle);
 			float sin = Mathf.Sin(angle);
+
 			var result = Identity;
 			result.m00 = cos;
 			result.m02 = -sin;
@@ -601,13 +608,16 @@ namespace GameEngine
 		public static Matrix4x4 CreateFromAxisAngle(Vector3 axis,float angle)
 		{
 			var result = Identity;
+
 			axis.Normalize();
+
 			float axisX = axis.x;
 			float axisY = axis.y;
 			float axisZ = axis.z;
 			float cos = Mathf.Cos(-angle);
 			float sin = Mathf.Sin(-angle);
 			float t = 1f-cos;
+
 			float tXX = t*axisX*axisX,
 				tXY = t*axisX*axisY,
 				tXZ = t*axisX*axisZ,
@@ -617,6 +627,7 @@ namespace GameEngine
 			float sinX = sin*axisX,
 				sinY = sin*axisY,
 				sinZ = sin*axisZ;
+
 			result.m00 = tXX+cos;
 			result.m01 = tXY-sinZ;
 			result.m02 = tXZ+sinY;
@@ -630,6 +641,7 @@ namespace GameEngine
 			result.m22 = tZZ+cos;
 			result.m23 = 0;
 			result.Row3 = Vector4.UnitW;
+
 			return result;
 		}
 		//Scale
@@ -706,10 +718,10 @@ namespace GameEngine
 			result.m11 = y;
 			result.m12 = 0;
 			result.m13 = 0;
-			result.m20 = -a;	//
-			result.m21 = -b;	//
-			result.m22 = -c;	//
-			result.m23 = 1;	//
+			result.m20 = -a;
+			result.m21 = -b;
+			result.m22 = -c;
+			result.m23 = 1;
 			result.m30 = 0;
 			result.m31 = 0;
 			result.m32 = d;

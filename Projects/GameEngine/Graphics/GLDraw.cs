@@ -207,6 +207,8 @@ namespace GameEngine.Graphics
 		public static void End() => GL.End();
 
 		//uniforms
+		public static void Uniform1(string uniformName,int value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,uniformName),value);
+		public static void Uniform1(string uniformName,float value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,uniformName),value);
 		public static void Uniform4(string uniformName,Vector4 vec) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),vec);
 		public static void Uniform4(string uniformName,Vector4[] array) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),array.Length,array.SelectMany(v => v.ToArray()).ToArray());
 
