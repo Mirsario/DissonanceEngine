@@ -16,13 +16,17 @@ namespace AbyssCrusaders
 			Framebuffer mainFramebuffer,lightingFramebuffer;
 
 			static Vector2Int ScreenSize() => Screen.Size;
-			static Vector2Int LightingSize() => new Vector2Int((int)Math.Ceiling(Screen.Width/(Main.camera?.zoomGoal ?? 1f)),(int)Math.Ceiling(Screen.Height/(Main.camera?.zoomGoal ?? 1f)));
+			static Vector2Int LightingSize()
+			{
+				float zoom = Main.camera?.zoomGoal ?? 1f;
+				return new Vector2Int((int)Math.Ceiling(Screen.Width/zoom),(int)Math.Ceiling(Screen.Height/zoom));
+			}
 
 			//Framebuffers
 			framebuffers = new[] {
 				mainFramebuffer = new Framebuffer("mainBuffer")
 					.WithRenderTexture(new RenderTexture("colorBuffer",ScreenSize),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
+					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f),out var emissionBuffer)
 					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
 
 				lightingFramebuffer = new Framebuffer("lightingBuffer")

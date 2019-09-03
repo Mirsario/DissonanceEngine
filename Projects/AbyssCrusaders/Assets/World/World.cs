@@ -82,6 +82,7 @@ namespace AbyssCrusaders
 		}
 
 		public abstract void ModifyGenTasks(List<GenPass> list);
+
 		public virtual void Generate()
 		{
 			Debug.Log("Resetting Tile Array");

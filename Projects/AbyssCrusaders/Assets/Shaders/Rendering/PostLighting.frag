@@ -12,10 +12,20 @@ in vec2 screenPos;
 
 out vec3 oLight;
 
+vec2 Divide01Vec(vec2 vector,float value)
+{
+	return vec2(
+		((vector.x*2f-1f)/value+1f)*0.5f,
+		((vector.y*2f-1f)/value+1f)*0.5f
+	);
+}
+
 void main()
 {
 	vec4 lighting = texture2D(lightingBuffer,screenPos);
-	vec4 emission = texture2D(emissionBuffer,screenPos); //((screenPos*2f-vec2(1f,1f))/zoom)*0.5f+vec2(0.5f,0.5f));
+	//vec4 emission = vec4(screenPos,0f,1f); //texture2D(emissionBuffer,screenPos); //vec4(0.5f,0.5f,0.5f,1.0); //
+	//vec4 emission = texture2D(emissionBuffer,screenPos);
+	vec4 emission = texture2D(emissionBuffer,screenPos);
 	
 	/*vec4 blurredEmission = blurSampler(emissionBuffer,uv*screenResolution,screenResolution);
 	emission = vec4(

@@ -43,7 +43,7 @@ namespace AbyssCrusaders
 
 			var light = AddComponent<Light2D>(c => {
 				c.color = new Vector3(1f,0.75f,0.5f);
-				c.range = 32f;
+				c.range = 320f;
 			});
 
 			Instantiate<CursorLightObj>().light.color = Vector3.One;
@@ -97,8 +97,9 @@ namespace AbyssCrusaders
 			bool primaryUse = GameInput.primaryUse.IsPressed;
 			bool secondaryUse = GameInput.secondaryUse.IsPressed;
 			bool teleport = GameInput.mmb.JustPressed;
+			bool placeLight = Input.GetKeyDown(Keys.E);
 
-			if(primaryUse || secondaryUse || teleport) {
+			if(primaryUse || secondaryUse || teleport || placeLight) {
 				Vector2 mouseWorld = Main.camera.mousePosition;
 				Vector2Int mouseTile = (Vector2Int)mouseWorld;
 				bool control = Input.GetKey(Keys.LControl);
@@ -116,7 +117,8 @@ namespace AbyssCrusaders
 						world.PlaceWall(mouseTile.x,mouseTile.y,currentTile);
 					}
 				}else if(teleport) {
-					//Position = mouseWorld;
+					Position = mouseWorld;
+				} else if(placeLight) {
 					Instantiate<LightObj>(position:mouseWorld);
 				}
 			}
