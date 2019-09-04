@@ -10,10 +10,10 @@
 			//RenderPasses
 			renderPasses = new RenderPass[] {
 				//Geometry, our everything
-				new GeometryPass("Geometry"),
+				RenderPass.Create<GeometryPass>("Geometry"),
 
 				//GUI
-				new GUIPass("GUI")
+				RenderPass.Create<GUIPass>("GUI")
 			};
 		}
 	}

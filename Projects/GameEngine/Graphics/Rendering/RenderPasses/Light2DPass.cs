@@ -6,8 +6,6 @@ namespace GameEngine.Graphics
 {
 	public class Light2DPass : RenderPass
 	{
-		public Light2DPass(string name) : base(name) {}
-
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);

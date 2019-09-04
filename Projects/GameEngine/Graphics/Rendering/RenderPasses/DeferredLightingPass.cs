@@ -13,8 +13,6 @@ namespace GameEngine.Graphics
 		//public Shader directionalShader;
 		//public Shader spotShader;
 
-		public DeferredLightingPass(string name) : base(name) {}
-
 		/*public DeferredLightingPass(string name,Framebuffer framebuffer,RenderTexture[] renderTextures,Shader pointShader,Shader directionalShader,Shader spotShader) : base(name,framebuffer,renderTextures)
 		{
 			this.pointShader = pointShader;

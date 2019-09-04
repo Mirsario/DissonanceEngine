@@ -1,6 +1,9 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+#pragma warning disable IDE0051 // Remove unused private members
 
 namespace GameEngine.Graphics
 {
@@ -11,54 +14,88 @@ namespace GameEngine.Graphics
 		
 		public string name;
 		public bool enabled = true;
-		public Framebuffer framebuffer;
-		public RenderTexture[] passedTextures;
 		public Renderbuffer[] renderbuffers;
 		public Shader passShader; //Remove this field?
-		public Shader[] shaders;
-		private Func<Camera,RectInt> viewportGetter;
 
-		protected RenderPass(string name)
-		{
-			this.name = name;
+		protected Func<Camera,RectInt> viewportFunc;
+		public Func<Camera,RectInt> ViewportFunc {
+			get => viewportFunc;
+			set => viewportFunc = value;
 		}
+
+		protected Framebuffer framebuffer;
+		public Framebuffer Framebuffer {
+			get => framebuffer;
+			set => framebuffer = value;
+		}
+
+		protected Shader[] shaders;
+		public Shader[] Shaders {
+			get => shaders;
+			set {
+				if(value==null || value.Length==0) {
+					shaders = null;
+					passShader = null;
+					return;
+				}
+
+				int length = value.Length;
+				shaders = new Shader[length];
+				Array.Copy(value,shaders,length);
+
+				passShader = length==0 ? null : value[0]; //Temp?
+			}
+		}
+		public Shader Shader {
+			get => shaders?[0];
+			set => Shaders = value!=null ? new[] { value } : null;
+		}
+
+		protected RenderTexture[] passedTextures;
+		public RenderTexture[] PassedTextures {
+			get => passedTextures;
+			set {
+				if(value==null || value.Length==0) {
+					passedTextures = null;
+					return;
+				}
+
+				int length = value.Length;
+				if(passedTextures==null || passedTextures.Length!=length) {
+					passedTextures = new RenderTexture[length];
+				}
+
+				Array.Copy(value,passedTextures,length);
+			}
+		}
+
+		protected RenderPass() {}
 
 		public abstract void Render();
 		
-		protected virtual RectInt GetViewport(Camera camera) => viewportGetter?.Invoke(camera) ?? (camera?.ViewPixel ?? (framebuffer!=null ? new RectInt(0,0,framebuffer.maxTextureWidth,framebuffer.maxTextureHeight) : new RectInt(0,0,Screen.Width,Screen.Height)));
-
 		public virtual void Dispose() {}
 
-		public RenderPass WithFramebuffer(Framebuffer framebuffer)
-		{
-			this.framebuffer = framebuffer;
-			return this;
-		}
-		public RenderPass WithViewport(Func<Camera,RectInt> getter)
-		{
-			viewportGetter = getter;
-			return this;
-		}
-		public RenderPass WithPassedTextures(params RenderTexture[] passedTextures)
-		{
-			if(this.passedTextures==null || this.passedTextures.Length!=passedTextures.Length) {
-				this.passedTextures = new RenderTexture[passedTextures.Length];
-			}
-			for(int i = 0;i<passedTextures.Length;i++) {
-				this.passedTextures[i] = passedTextures[i];
-			}
-			return this;
-		}
-		public RenderPass WithShaders(params Shader[] shaders)
-		{
-			this.shaders = new Shader[shaders.Length];
-			for(int i = 0;i<shaders.Length;i++) {
-				this.shaders[i] = shaders[i]; // ?? throw new ArgumentNullException($"Shader cannot be null.");;
-			}
+		protected virtual RectInt GetViewport(Camera camera)
+			=> viewportFunc?.Invoke(camera) ?? (camera?.ViewPixel ?? (framebuffer!=null ? new RectInt(0,0,framebuffer.maxTextureWidth,framebuffer.maxTextureHeight) : new RectInt(0,0,Screen.Width,Screen.Height)));
 
-			passShader = shaders.Length==0 ? null : shaders[0]; //Temp?
+		public static T Create<T>(string name,Action<T> initializer = null) where T : RenderPass, new()
+		{
+			var pass = new T {
+				name = name
+			};
 
-			return this;
+			initializer?.Invoke(pass);
+
+			return pass;
+		}
+		public static RenderPass Create(Type type,string name,Action<RenderPass> initializer = null)
+		{
+			//TODO: This is not ideal.
+			var pass = (RenderPass)FormatterServices.GetUninitializedObject(type);
+			pass.name = name;
+			pass.enabled = true;
+			initializer?.Invoke(pass);
+			return pass;
 		}
 
 		internal static void Init()

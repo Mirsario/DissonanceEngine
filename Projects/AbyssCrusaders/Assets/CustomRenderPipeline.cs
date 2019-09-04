@@ -22,54 +22,67 @@ namespace AbyssCrusaders
 				return new Vector2Int((int)Math.Ceiling(Screen.Width/zoom),(int)Math.Ceiling(Screen.Height/zoom));
 			}
 
+			var colorBuffer = new RenderTexture("colorBuffer",ScreenSize);
+			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f);
+			var depthBuffer = new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f);
+			var lightingBuffer = new RenderTexture("lightingBuffer",LightingSize,textureFormat:TextureFormat.RGB8);
+
 			//Framebuffers
 			framebuffers = new[] {
-				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",ScreenSize),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f),out var emissionBuffer)
-					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
+				mainFramebuffer = Framebuffer.Create("mainBuffer",fb => {
+					fb.AttachRenderTextures(
+						colorBuffer,
+						emissionBuffer
+					);
+					fb.AttachRenderbuffer(depthBuffer,FramebufferAttachment.DepthAttachment);
+				}),
 
-				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",LightingSize,textureFormat:TextureFormat.RGB8),out var lightingBuffer)
+				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
+					fb.AttachRenderTexture(lightingBuffer);
+				})
 			};
 
 			postLightingShader = Resources.Find<Shader>("Game/PostLighting");
 			compositeShader = Resources.Find<Shader>("Game/Composite");
 
 			//RenderPasses
-			renderPasses = new[] {
+			renderPasses = new RenderPass[] {
 				//Geometry
-				new GeometryPass("Geometry")
-					.WithFramebuffer(mainFramebuffer),
+				RenderPass.Create<GeometryPass>("Geometry",p => {
+					p.Framebuffer = mainFramebuffer;
+				}),
 				
 				//Lights
-				new Light2DPass("Lighting")
-					.WithFramebuffer(lightingFramebuffer)
-					.WithViewport(c => new RectInt(default,LightingSize()))
-					.WithShaders(Resources.Find<Shader>("Game/Light")),
+				RenderPass.Create<Light2DPass>("Lighting",p => {
+					p.Framebuffer = lightingFramebuffer;
+					p.ViewportFunc = c => new RectInt(default,LightingSize());
+					p.Shader = Resources.Find<Shader>("Game/Light");
+				}),
 
 				//Post Lighting
-				new PostProcessPass("PostLighting")
-					.WithFramebuffer(lightingFramebuffer)
-					.WithViewport(c => new RectInt(default,LightingSize()))
-					.WithPassedTextures(
+				RenderPass.Create<PostProcessPass>("PostLighting",p => {
+					p.Framebuffer = lightingFramebuffer;
+					p.ViewportFunc = c => new RectInt(default,LightingSize());
+					p.Shader = postLightingShader;
+					p.PassedTextures = new[] {
 						lightingBuffer,
 						emissionBuffer
-					)
-					.WithShaders(postLightingShader),
+					};
+				}),
 				
 				//Composite
-				new PostProcessPass("Composite")
-					.WithFramebuffer(null)
-					.WithPassedTextures(
+				RenderPass.Create<PostProcessPass>("Composite",p => {
+					p.Framebuffer = null;
+					p.PassedTextures = new[] {
 						colorBuffer,
 						emissionBuffer,
 						lightingBuffer
-					)
-					.WithShaders(compositeShader),
+					};
+					p.Shader = compositeShader;
+				}),
 
 				//GUI
-				new GUIPass("GUI")
+				RenderPass.Create<GUIPass>("GUI")
 			};
 		}
 

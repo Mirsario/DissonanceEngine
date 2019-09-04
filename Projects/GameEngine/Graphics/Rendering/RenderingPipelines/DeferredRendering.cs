@@ -12,53 +12,66 @@
 
 			static Vector2Int ScreenSize() => Screen.Size;
 
+			var colorBuffer = new RenderTexture("colorBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+			var normalBuffer = new RenderTexture("normalBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+			var positionBuffer = new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+			var specularBuffer = new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f);
+			var lightingTexture = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+
 			//Framebuffers
 			framebuffers = new[] {
-				mainFramebuffer = new Framebuffer("mainBuffer")
-					.WithRenderTexture(new RenderTexture("colorBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var colorBuffer)
-					.WithRenderTexture(new RenderTexture("normalBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var normalBuffer)
-					.WithRenderTexture(new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var positionBuffer)
-					.WithRenderTexture(new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var emissionBuffer)
-					.WithRenderTexture(new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f),out var specularBuffer)
-					.WithRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment),
-
-				lightingFramebuffer = new Framebuffer("lightingBuffer")
-					.WithRenderTexture(new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f),out var lightingTexture)
-			};
-
-			//RenderPasses
-			renderPasses = new[] {
-				//Geometry
-				new GeometryPass("Geometry")
-					.WithFramebuffer(mainFramebuffer),
-				
-				//Lighting
-				new DeferredLightingPass("Lighting")
-					.WithFramebuffer(lightingFramebuffer)
-					.WithPassedTextures(
+				mainFramebuffer = Framebuffer.Create("mainBuffer",fb => {
+					fb.AttachRenderTextures(
+						colorBuffer,
 						normalBuffer,
 						positionBuffer,
 						emissionBuffer,
 						specularBuffer
-					)
-					.WithShaders(
+					);
+					fb.AttachRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment);
+				}),
+
+				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
+					fb.AttachRenderTexture(lightingTexture);
+				})
+			};
+
+			//RenderPasses
+			renderPasses = new RenderPass[] {
+				//Geometry
+				RenderPass.Create<GeometryPass>("Geometry",p => {
+					p.Framebuffer = mainFramebuffer;
+				}),
+				
+				//Lighting
+				RenderPass.Create<DeferredLightingPass>("Lighting",p => {
+					p.Framebuffer = lightingFramebuffer;
+					p.Shaders = new[] {
 						Resources.Find<Shader>("LightingPoint"),
 						Resources.Find<Shader>("LightingDirectional"),
 						null
-					),
+					};
+					p.PassedTextures = new[] {
+						normalBuffer,
+						positionBuffer,
+						emissionBuffer,
+						specularBuffer
+					};
+				}),
 				
 				//Composite
-				new PostProcessPass("Composite")
-					.WithFramebuffer(null)
-					.WithPassedTextures(
+				RenderPass.Create<PostProcessPass>("Composite",p => {
+					p.Shader = Resources.Find<Shader>("Composite");
+					p.PassedTextures = new[] {
 						colorBuffer,
 						emissionBuffer,
 						lightingTexture
-					)
-					.WithShaders(Resources.Find<Shader>("Composite")),
+					};
+				}),
 
 				//GUI
-				new GUIPass("GUI")
+				RenderPass.Create<GUIPass>("GUI")
 			};
 
 			Framebuffer.Bind(null);

@@ -4,8 +4,6 @@ namespace GameEngine.Graphics
 {
 	public class GUIPass : RenderPass
 	{
-		public GUIPass(string name) : base(name) {}
-
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(null);

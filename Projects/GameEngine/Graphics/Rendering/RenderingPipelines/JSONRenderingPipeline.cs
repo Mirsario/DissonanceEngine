@@ -55,7 +55,8 @@ namespace GameEngine.Graphics.RenderingPipelines
 				string fbName = fbPair.Key;
 				var fb = fbPair.Value;
 
-				var framebuffer = new Framebuffer(fbName);
+				var framebuffer = Framebuffer.Create(fbName);
+
 				Framebuffer.Bind(framebuffer);
 
 				//var textureList = new List<RenderTexture>();
@@ -176,6 +177,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 					}
 					string shaderName = pass.shader;
 					passShader = shaderName==null ? null : Resources.Find<Shader>(shaderName);
+
 					if(passShader==null) {
 						if(shaderName!=null) {
 							throw new GraphicsException("Couldn't find shader named ''"+shaderName+"''.");
@@ -189,7 +191,9 @@ namespace GameEngine.Graphics.RenderingPipelines
 					if(pass.shader!=null) {
 						throw new GraphicsException("Render pass type ''"+pass.type+"'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");
 					}
+
 					passShaders = new Shader[shadersArr.Length];
+
 					foreach(var pair in pass.shaders) {
 						int index = Array.IndexOf(shadersArr,pair.Key);
 						if(index<0) {
@@ -205,13 +209,17 @@ namespace GameEngine.Graphics.RenderingPipelines
 					}
 				}
 
-				var newPass = (RenderPass)Activator.CreateInstance(passType,passName); //newPass.name = passName;
-				newPass.framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower()!="none" ? FindFramebuffer(pass.framebuffer) : null;
-				newPass.passedTextures = textureList.ToArray();
-				newPass.renderbuffers = bufferList.ToArray();
-				newPass.passShader = passShader;
-				newPass.shaders = passShaders;
-				passList.Add(newPass);
+				passList.Add(RenderPass.Create(passType,passName,p => {
+					p.Framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower()!="none" ? FindFramebuffer(pass.framebuffer) : null;
+					p.PassedTextures = textureList.ToArray();
+					p.renderbuffers = bufferList.ToArray();
+
+					if(passShaders!=null) {
+						p.Shaders = passShaders;
+					} else if(passShader!=null) {
+						p.Shader = passShader;
+					}
+				}));
 			}
 
 			renderPasses = passList.ToArray();

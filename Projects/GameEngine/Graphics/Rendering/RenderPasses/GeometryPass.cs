@@ -4,8 +4,6 @@ namespace GameEngine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{
-		public GeometryPass(string name) : base(name) {}
-
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);

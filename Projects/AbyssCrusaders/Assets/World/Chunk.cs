@@ -13,7 +13,8 @@ namespace AbyssCrusaders
 
 		private static (Vector2Int pos,float distance)[] lightChecks;
 		
-		public Vector2Int pos;
+		public Vector2Int position;
+		public Vector2Int positionInTiles;
 		public World world;
 		public Tile[,] tiles;
 		public bool updateTexture;
@@ -27,7 +28,8 @@ namespace AbyssCrusaders
 		
 		public Chunk(World world,Vector2Int pos)
 		{
-			this.pos = pos;
+			position = pos;
+			positionInTiles = position*ChunkSize;
 			this.world = world;
 
 			tiles = new Tile[ChunkSize,ChunkSize];
@@ -95,8 +97,8 @@ namespace AbyssCrusaders
 			const int SizeInPixels = ChunkSize*Main.UnitSizeInPixels;
 
 			if(isVisible) {
-				int chunkTileX = pos.x*ChunkSize;
-				int chunkTileY = pos.y*ChunkSize;
+				int chunkTileX = position.x*ChunkSize;
+				int chunkTileY = position.y*ChunkSize;
 
 				var tileDrawLists = new Dictionary<ushort,List<Vector2Int>>();
 				var wallDrawLists = new Dictionary<ushort,List<Vector2Int>>();
@@ -137,13 +139,13 @@ namespace AbyssCrusaders
 				void ReadyLayerTexture(string layerName,ref RenderTexture texture,int xSize,int ySize,FilterMode filterMode = FilterMode.Point)
 				{
 					if(texture==null) {
-						texture = new RenderTexture($"Chunk_{pos.x}_{pos.y}_{layerName}",xSize,ySize,filterMode,TextureWrapMode.Clamp);
+						texture = new RenderTexture($"Chunk_{position.x}_{position.y}_{layerName}",xSize,ySize,filterMode,TextureWrapMode.Clamp);
 					}
 				}
 
 				static void Draw(string layerName,ref RenderTexture texture,int xSize,int ySize,Shader shader,Action action)
 				{
-					using var framebuffer = new Framebuffer("TempFramebuffer");
+					using var framebuffer = Framebuffer.Create("TempFramebuffer");
 
 					framebuffer.AttachRenderTexture(texture);
 					GLDraw.SetRenderTarget(framebuffer);
@@ -279,21 +281,20 @@ namespace AbyssCrusaders
 
 				#region Render Lighting
 				GLDraw.DrawDelayed(() => {
+					const int TexSize = ChunkSize+2;
+
 					var shader = Resources.Find<Shader>("BasicVertexColor");
 					
-					ReadyLayerTexture("Light",ref lightTexture,ChunkSize,ChunkSize,FilterMode.Bilinear);
+					ReadyLayerTexture("Light",ref lightTexture,TexSize,TexSize,FilterMode.Bilinear);
 
-					Draw("Light",ref lightTexture,ChunkSize,ChunkSize,shader,() => {
-						const float PixelSize = 1f/ChunkSize;
+					Draw("Light",ref lightTexture,TexSize,TexSize,shader,() => {
+						const float PixelSize = 1f/TexSize;
 
 						GLDraw.Begin(PrimitiveType.Points);
 
-						int chunkX = pos.x*ChunkSize;
-						int chunkY = pos.y*ChunkSize;
-
-						for(int y = 0;y<ChunkSize;y++) {
-							for(int x = 0;x<ChunkSize;x++) {
-								Tile tile = tiles[x,y];
+						for(int y = -1;y<=ChunkSize;y++) {
+							for(int x = -1;x<=ChunkSize;x++) {
+								Tile tile = (x<0 || y<0 || x>=ChunkSize || y>=ChunkSize) ? world[positionInTiles.x+x,positionInTiles.y+y] : tiles[x,y];
 
 								float lightLevel;
 								if(tile.type==0) {
@@ -309,9 +310,7 @@ namespace AbyssCrusaders
 										int xx = x+relativePos.x;
 										int yy = y+relativePos.y;
 
-										var thisTile = (xx<0 || yy<0 || xx>=ChunkSize || yy>=ChunkSize)
-											? world[chunkX+xx,chunkY+yy]
-											: tiles[xx,yy];
+										var thisTile = (xx<0 || yy<0 || xx>=ChunkSize || yy>=ChunkSize) ? world[positionInTiles.x+xx,positionInTiles.y+yy] : tiles[xx,yy];
 
 										if(thisTile.type==0) {
 											lightLevel = pointLightLevel;
@@ -322,9 +321,7 @@ namespace AbyssCrusaders
 
 								//GLDraw.Uniform4("color",new Vector4(lightLevel,0f,0f,0f));
 
-								//GLDraw.Color4(0f,0f,0f,0f);
-								float l = lightLevel;
-								GLDraw.VertexAttrib4(AttributeId.Color,new Vector4(l,l,l,1f));
+								GLDraw.VertexAttrib4(AttributeId.Color,new Vector4(lightLevel,lightLevel,lightLevel,1f));
 								GLDraw.Vertex2(-1f+x*PixelSize*2f,-1f+y*PixelSize*2f);
 							}
 						}
@@ -353,7 +350,7 @@ namespace AbyssCrusaders
 						return;
 					}
 
-					obj = GameObject2D.Instantiate<SpriteObject>(position:new Vector2((pos.x+0.5f)*ChunkSize,(pos.y+0.5f)*ChunkSize),depth:depth,scale:new Vector2(ChunkSize,ChunkSize));
+					obj = GameObject2D.Instantiate<SpriteObject>(position:new Vector2((position.x+0.5f)*ChunkSize,(position.y+0.5f)*ChunkSize),depth:depth,scale:new Vector2(ChunkSize,ChunkSize));
 
 					Material mat = new Material("Level",Resources.Find<Shader>(emissionMap!=null ? "Game/SpriteNegativeEmissive" : "Game/Sprite"));
 					mat.SetTexture("mainTex",texture);
@@ -389,6 +386,6 @@ namespace AbyssCrusaders
 			}
 		}
 
-		public Vector2Int LocalPointToWorld(int x,int y) => new Vector2Int(pos.x*ChunkSize+x,pos.y*ChunkSize+y);
+		public Vector2Int LocalPointToWorld(int x,int y) => new Vector2Int(position.x*ChunkSize+x,position.y*ChunkSize+y);
 	}
 }

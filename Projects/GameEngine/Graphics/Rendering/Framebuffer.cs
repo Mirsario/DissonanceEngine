@@ -28,29 +28,12 @@ namespace GameEngine.Graphics
 		internal int maxTextureWidth;
 		internal int maxTextureHeight;
 
-		public Framebuffer(string name)
+		protected Framebuffer(string name)
 		{
 			Name = name;
 			Id = GL.GenFramebuffer();
 		}
-		public void Dispose()
-		{
-			GL.DeleteFramebuffer(Id);
-			renderTextures = null;
-			renderbuffers = null;
-			drawBuffers = null;
-		}
 
-		public Framebuffer WithRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
-		{
-			AttachRenderTexture(texture,attachmentType);
-			return this;
-		}
-		public Framebuffer WithRenderTexture(RenderTexture texture,out RenderTexture textureOut,FramebufferAttachment? attachmentType = null)
-		{
-			AttachRenderTexture(textureOut = texture,attachmentType);
-			return this;
-		}
 		public void AttachRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
 		{
 			Bind(this);
@@ -68,16 +51,11 @@ namespace GameEngine.Graphics
 			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
 			maxTextureHeight = Math.Max(maxTextureHeight,texture.Height);
 		}
-
-		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
+		public void AttachRenderTextures(params RenderTexture[] textures)
 		{
-			AttachRenderbuffer(renderbuffer,attachmentType);
-			return this;
-		}
-		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,out Renderbuffer renderbufferOut,FramebufferAttachment? attachmentType = null)
-		{
-			AttachRenderbuffer(renderbufferOut = renderbuffer,attachmentType);
-			return this;
+			for(int i = 0;i<textures.Length;i++) {
+				AttachRenderTexture(textures[i]);
+			}
 		}
 		public void AttachRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
 		{
@@ -93,17 +71,45 @@ namespace GameEngine.Graphics
 				InternalUtils.ArrayAdd(ref drawBuffers,drawBuffersEnum);
 			}
 		}
-
 		public void PrepareAttachments()
 		{
 			if(renderTextures!=null) {
 				for(int i = 0;i<renderTextures.Length;i++) {
-					var tex = renderTextures[i];
-					tex.UpdateSize();
+					renderTextures[i].UpdateSize();
 				}
 			}
 		}
 
+		public Framebuffer WithRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
+		{
+			AttachRenderTexture(texture,attachmentType);
+			return this;
+		}
+		public Framebuffer WithRenderTextures(params RenderTexture[] textures)
+		{
+			AttachRenderTextures(textures);
+			return this;
+		}
+		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
+		{
+			AttachRenderbuffer(renderbuffer,attachmentType);
+			return this;
+		}
+
+		public void Dispose()
+		{
+			GL.DeleteFramebuffer(Id);
+			renderTextures = null;
+			renderbuffers = null;
+			drawBuffers = null;
+		}
+
+		public static Framebuffer Create(string name,Action<Framebuffer> initializer = null)
+		{
+			var fb = new Framebuffer(name);
+			initializer?.Invoke(fb);
+			return fb;
+		}
 		public static void Bind(Framebuffer fb,Target target = Target.Framebuffer)
 		{
 			GL.BindFramebuffer((FramebufferTarget)target,fb?.Id ?? 0);

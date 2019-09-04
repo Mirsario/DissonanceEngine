@@ -164,8 +164,11 @@ namespace GameEngine
 			if(!typeof(GameObject).IsAssignableFrom(type)) {
 				throw new ArgumentException("'type' must derive from GameObject class.");
 			}
+
 			var obj = (GameObject)FormatterServices.GetUninitializedObject(type);
+
 			obj.PreInit();
+
 			if(name!=default) {
 				obj.Name = name;
 			}
@@ -178,9 +181,11 @@ namespace GameEngine
 			if(scale.HasValue) {
 				obj.transform.LocalScale = scale.Value;
 			}
+
 			if(init) {
 				obj.Init();
 			}
+
 			return obj;
 		}
 		#endregion

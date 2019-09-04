@@ -169,7 +169,7 @@ namespace SurvivalGame
 			GLDraw.DrawDelayed(() => {
 				var res = new Vector2Int(ChunkSize*32,ChunkSize*32);
 
-				using(var framebuffer = new Framebuffer("TempFramebuffer")) {
+				using(var framebuffer = Framebuffer.Create("TempFramebuffer")) {
 					if(rtTexture==null) {
 						rtTexture = new RenderTexture($"Chunk_{position.x}_{position.y} RenderTexture",res.x,res.y,FilterMode.Point,TextureWrapMode.Clamp,true);
 					}

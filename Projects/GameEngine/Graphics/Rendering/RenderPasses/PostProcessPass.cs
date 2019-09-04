@@ -5,8 +5,6 @@ namespace GameEngine.Graphics
 {
 	public class PostProcessPass : RenderPass
 	{
-		public PostProcessPass(string name) : base(name) {}
-
 		public override void Render() //TODO: Make this apply uniforms properly
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);

@@ -26,7 +26,7 @@ namespace SurvivalGame
 			var resolution = new Vector2Int(32,32);
 			
 			GLDraw.DrawDelayed(() => {
-				using var framebuffer = new Framebuffer("Test");
+				using var framebuffer = Framebuffer.Create("Test");
 
 				var texture = new RenderTexture("test",resolution.x,resolution.y,FilterMode.Point,TextureWrapMode.Clamp,false);
 				framebuffer.AttachRenderTexture(texture);
