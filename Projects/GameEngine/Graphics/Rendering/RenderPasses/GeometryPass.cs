@@ -1,9 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using GameEngine.Physics;
+using OpenTK.Graphics.OpenGL;
 
 namespace GameEngine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{
+		public ulong? layerMask;
+
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
@@ -19,6 +22,9 @@ namespace GameEngine.Graphics
 
 			var cullMode = CullMode.Front;
 			var polygonMode = PolygonMode.Fill;
+
+			bool hasLayerMask = layerMask.HasValue;
+			ulong layerMaskValue = layerMask ?? 0;
 
 			#region CameraLoop
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
@@ -84,6 +90,11 @@ namespace GameEngine.Graphics
 						for(int r=0;r<rendererCount;r++) {
 							var renderer = material.rendererAttachments[r];
 							if(!renderer.Enabled) {
+								continue;
+							}
+
+							//TODO: To be optimized
+							if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.layer) & layerMaskValue)==0) {
 								continue;
 							}
 
