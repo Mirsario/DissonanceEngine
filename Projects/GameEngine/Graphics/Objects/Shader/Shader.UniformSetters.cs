@@ -6,15 +6,21 @@ namespace GameEngine.Graphics
 	{
 		//TODO: Finish this
 
-		public void SetFloat(string uniform,float value)
+		public void SetFloat(string uniformName,float value)
 		{
 			SetShader(this);
-			GL.Uniform1(uniforms[uniform].location,value);
+
+			if(uniforms.TryGetValue(uniformName,out var uniform)) {
+				GL.Uniform1(uniform.location,value);
+			}
 		}
-		public void SetVector2(string uniform,Vector2 value)
+		public void SetVector2(string uniformName,Vector2 value)
 		{
 			SetShader(this);
-			GL.Uniform2(uniforms[uniform].location,1,new[] { value.x,value.y });
+
+			if(uniforms.TryGetValue(uniformName,out var uniform)) {
+				GL.Uniform2(uniform.location,1,new[] { value.x,value.y });
+			}
 		}
 	}
 }
