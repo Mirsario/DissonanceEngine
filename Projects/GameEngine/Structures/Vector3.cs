@@ -205,6 +205,27 @@ namespace GameEngine
 			}
 			return vec;
 		}
+		public static Vector3 Floor(Vector3 vec)
+		{
+			vec.x = Mathf.Floor(vec.x);
+			vec.y = Mathf.Floor(vec.y);
+			vec.z = Mathf.Floor(vec.z);
+			return vec;
+		}
+		public static Vector3 Ceil(Vector3 vec)
+		{
+			vec.x = Mathf.Ceil(vec.x);
+			vec.y = Mathf.Ceil(vec.y);
+			vec.z = Mathf.Ceil(vec.z);
+			return vec;
+		}
+		public static Vector3 Round(Vector3 vec)
+		{
+			vec.x = Mathf.Round(vec.x);
+			vec.y = Mathf.Round(vec.y);
+			vec.z = Mathf.Round(vec.z);
+			return vec;
+		}
 		public static Vector3 Lerp(Vector3 from,Vector3 to,float t)
 		{
 			t = Mathf.Clamp01(t);

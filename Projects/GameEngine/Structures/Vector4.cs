@@ -148,7 +148,31 @@ namespace GameEngine
 		{
 			return (a-b).SqrMagnitude;
 		}
-		
+		public static Vector4 Floor(Vector4 vec)
+		{
+			vec.x = Mathf.Floor(vec.x);
+			vec.y = Mathf.Floor(vec.y);
+			vec.z = Mathf.Floor(vec.z);
+			vec.w = Mathf.Floor(vec.w);
+			return vec;
+		}
+		public static Vector4 Ceil(Vector4 vec)
+		{
+			vec.x = Mathf.Ceil(vec.x);
+			vec.y = Mathf.Ceil(vec.y);
+			vec.z = Mathf.Ceil(vec.z);
+			vec.w = Mathf.Ceil(vec.w);
+			return vec;
+		}
+		public static Vector4 Round(Vector4 vec)
+		{
+			vec.x = Mathf.Round(vec.x);
+			vec.y = Mathf.Round(vec.y);
+			vec.z = Mathf.Round(vec.z);
+			vec.w = Mathf.Round(vec.w);
+			return vec;
+		}
+
 		public static Vector4 operator+(Vector4 a,Vector4 b)
 		{
 			return new Vector4(a.x+b.x,a.y+b.y,a.z+b.z,a.w+b.w);

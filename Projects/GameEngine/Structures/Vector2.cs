@@ -105,6 +105,24 @@ namespace GameEngine
 			}
 			return vec;
 		}
+		public static Vector2 Floor(Vector2 vec)
+		{
+			vec.x = Mathf.Floor(vec.x);
+			vec.y = Mathf.Floor(vec.y);
+			return vec;
+		}
+		public static Vector2 Ceil(Vector2 vec)
+		{
+			vec.x = Mathf.Ceil(vec.x);
+			vec.y = Mathf.Ceil(vec.y);
+			return vec;
+		}
+		public static Vector2 Round(Vector2 vec)
+		{
+			vec.x = Mathf.Round(vec.x);
+			vec.y = Mathf.Round(vec.y);
+			return vec;
+		}
 		public static Vector2 Rotate(Vector2 vec,float angle)
 		{
 			float sin = Mathf.Sin(angle*Mathf.Deg2Rad);
