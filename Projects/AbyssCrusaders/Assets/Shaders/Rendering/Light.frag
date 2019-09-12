@@ -20,5 +20,6 @@ void main()
 {
 	float intensity = max(0f,1f-distance(vWorldPos,lightPosition)/(lightRange*0.5f));
 	intensity = intensity*intensity;
+	intensity = 1f;
 	oLight = vec3(lightColor*lightIntensity*intensity);
 }

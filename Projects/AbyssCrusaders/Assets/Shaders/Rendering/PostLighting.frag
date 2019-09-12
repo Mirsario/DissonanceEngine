@@ -1,10 +1,9 @@
 #version 330
 
-const int numColors = 32;
+const int numColors = 16;
 
 uniform sampler2D lightingBuffer;
-uniform sampler2D emissionBuffer;
-uniform vec2 screenResolution;
+uniform sampler2D lightingOcclusionBuffer;
 uniform vec3 ambientColor;
 uniform float zoom;
 
@@ -22,10 +21,9 @@ vec2 Divide01Vec(vec2 vector,float value)
 
 void main()
 {
-	vec4 lighting = texture2D(lightingBuffer,screenPos);
 	//vec4 emission = vec4(screenPos,0f,1f); //texture2D(emissionBuffer,screenPos); //vec4(0.5f,0.5f,0.5f,1.0); //
 	//vec4 emission = texture2D(emissionBuffer,screenPos);
-	vec4 emission = texture2D(emissionBuffer,screenPos);
+	//vec4 emission = texture2D(emissionBuffer,screenPos);
 	
 	/*vec4 blurredEmission = blurSampler(emissionBuffer,uv*screenResolution,screenResolution);
 	emission = vec4(
@@ -35,7 +33,9 @@ void main()
 		1f
 	);*/
 	
-	oLight = (emission.a==-1f ? lighting.rgb*emission.rgb : clamp(lighting.rgb+emission.rgb,0f,1f))+ambientColor;
+	oLight = texture2D(lightingBuffer,screenPos).rgb;
+	oLight *= 1f-texture2D(lightingOcclusionBuffer,screenPos).r;
+	oLight = clamp(oLight+ambientColor,0f,1f);
 	
 	/*oLight.rgb = vec3(
 		ceil(oLight.r*numColors)/numColors,

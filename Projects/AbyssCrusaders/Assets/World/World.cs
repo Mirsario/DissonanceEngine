@@ -23,12 +23,16 @@ namespace AbyssCrusaders
 			get {
 				x = x>=0 ? (x<width ? x : x%width) : (int.MaxValue+x+1)%width;
 				y = y>=0 ? (y<height ? y : y%height) : (int.MaxValue+y+1)%height;
+
 				int chunkX = x/Chunk.ChunkSize;
 				int chunkY = y/Chunk.ChunkSize;
+
 				ref var chunk = ref chunks[chunkX,chunkY];
+
 				if(chunk==null) {
 					chunk = new Chunk(this,new Vector2Int(chunkX,chunkY));
 				}
+
 				return ref chunk.tiles[x%Chunk.ChunkSize,y%Chunk.ChunkSize];
 			}
 		}

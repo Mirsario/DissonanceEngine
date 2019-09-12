@@ -4,6 +4,7 @@ using GameEngine;
 using GameEngine.Graphics;
 using AbyssCrusaders.UI.Menu;
 using GameEngine.Physics;
+using System.Collections.Generic;
 
 #pragma warning disable 219
 namespace AbyssCrusaders
@@ -27,6 +28,7 @@ namespace AbyssCrusaders
 		public static CameraObj camera;
 		public static MenuController menuController;
 		public static bool mainMenu;
+		public static Dictionary<string,string> debugStrings = new Dictionary<string,string>();
 
 		public static Vector2 MouseWorld { get; private set; }
 
@@ -35,7 +37,8 @@ namespace AbyssCrusaders
 			Texture.defaultFilterMode = FilterMode.Point;
 			Texture.defaultWrapMode = TextureWrapMode.Clamp;
 			Layers.AddLayers(
-				"World",
+				"Terrain",
+				"TerrainLightingOcclusion",
 				"Entity"
 			);
 			//Time.TargetRenderCount = 144;
@@ -99,6 +102,14 @@ namespace AbyssCrusaders
 				GUI.DrawText(Rect(),$"Logic FPS: {Time.LogicFramerate}");
 				GUI.DrawText(Rect(),$"Logic MS: {Time.LogicMs:0.00}");
 				GUI.DrawText(Rect(),$"Draw Calls Count: {Rendering.drawCallsCount}");
+
+				y++;
+
+				foreach(var pair in debugStrings) {
+					GUI.DrawText(Rect(),$"{pair.Key}: {pair.Value}");
+				}
+
+				debugStrings.Clear();
 			}
 		}
 	}

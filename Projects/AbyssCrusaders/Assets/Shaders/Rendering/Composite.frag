@@ -1,9 +1,12 @@
 #version 330
+
 uniform sampler2D colorBuffer;
 uniform sampler2D emissionBuffer;
 uniform sampler2D lightingBuffer;
 uniform vec3 ambientColor;
 uniform vec2 screenResolution;
+uniform vec2 lightingResolution;
+uniform vec2 lightingOffset;
 uniform vec2 cameraPos;
 uniform float zoom;
 
@@ -40,10 +43,30 @@ out vec3 oColor;
 
 void main()
 {
-	vec2 cameraTopLeftInPixels = (cameraPos-(screenResolution*0.5f/zoom))*10f;
-	vec2 offset = cameraTopLeftInPixels-floor(cameraTopLeftInPixels);
-	vec4 lighting = texture2D(lightingBuffer,screenPos+offset/(screenResolution/zoom));
+	//vec2 lightingRes = ceil(screenResolution/zoom);
+	vec2 upscaledLightingRes = lightingResolution*zoom;
+	vec2 resDiffScale = upscaledLightingRes/screenResolution;
+	
+	//vec2 cameraTopLeftInPixels = (cameraPos-(screenResolution*0.5f/zoom))*10f;
+	//vec2 offset = cameraTopLeftInPixels-floor(cameraTopLeftInPixels);
+	//offset /= screenResolution/zoom;
+	
+	/*vec2 pixelOffset = mod(floor(cameraPos*10f),zoom);
+	
+	vec2 offset = pixelOffset/screenResolution;
+	
+	vec2 screenPixelPos = screenPos*screenResolution;
+	if(screenPixelPos.x<64 && screenPixelPos.y<64) {
+		oColor = vec3(
+			float(pixelOffset.x)/zoom,
+			0f, //float(pixelOffset.y)/zoom,
+			0f
+		);
+		return;
+	}*/
+	
+	vec3 lighting = clamp(texture2D(lightingBuffer,screenPos).rgb + texture2D(emissionBuffer,screenPos).rgb,0f,1f);
 	
 	vec4 color = texture2D(colorBuffer,screenPos);
-	oColor = vec3(color.rgb*lighting.rgb);
+	oColor = vec3(color.rgb*lighting);
 }

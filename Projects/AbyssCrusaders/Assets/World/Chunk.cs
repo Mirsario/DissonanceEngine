@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace AbyssCrusaders
 {
@@ -11,7 +12,7 @@ namespace AbyssCrusaders
 	{
 		public const int ChunkSize = 64;
 
-		private static (Vector2Int pos,float distance)[] lightChecks;
+		private static (Vector2Int pos,float lightFactor)[] lightChecks;
 		
 		public Vector2Int position;
 		public Vector2Int positionInTiles;
@@ -25,7 +26,8 @@ namespace AbyssCrusaders
 		public RenderTexture lightTexture;
 		public SpriteObject tileSprite;
 		public SpriteObject wallSprite;
-		
+		public SpriteObject lightingOcclusionSprite;
+
 		public Chunk(World world,Vector2Int pos)
 		{
 			position = pos;
@@ -36,48 +38,10 @@ namespace AbyssCrusaders
 			updateTexture = true;
 
 			if(lightChecks==null) {
-				const int MaxDistance = 3;
-				const float MaxDistanceDiv = 1f/MaxDistance;
-
-				var finalChecks = new List<(Vector2Int,float)>();
-				
-				var pointsToCheck = new List<(Vector2Int point,int distance)> {
-					(default,0)
-				};
-				var points = new HashSet<Vector2Int> {
-					default
-				};
-
-				Vector2 vecCenter = default;
-				int i = 0;
-
-				while(i<pointsToCheck.Count) {
-					(var point,int distance) = pointsToCheck[i];
-
-					finalChecks.Add((point,1f-Math.Min(1f,Vector2.Distance(vecCenter,new Vector2(point.x+0.5f,point.y+0.5f))*MaxDistanceDiv)));
-
-					if(distance<MaxDistance) {
-						void TryAdd(int xx,int yy)
-						{
-							var ivec = new Vector2Int(xx,yy);
-							if(points.Add(ivec)) {
-								pointsToCheck.Add((ivec,distance+1));
-							}
-						}
-
-						TryAdd(point.x-1,point.y);
-						TryAdd(point.x,	 point.y-1);
-						TryAdd(point.x+1,point.y);
-						TryAdd(point.x,	 point.y+1);
-					}
-
-					i++;
-				}
-
-				lightChecks = finalChecks.ToArray();
+				PrepareLightChecks();
 			}
 		}
-		
+
 		public void UpdateIsVisible(bool isVisible)
 		{
 			if(updateTexture || (isVisible!=wasVisible)) {
@@ -85,6 +49,24 @@ namespace AbyssCrusaders
 			}
 			wasVisible = isVisible;
 		}
+		public void Save(BinaryWriter writer)
+		{
+			for(int y = 0;y<ChunkSize;y++) {
+				for(int x = 0;x<ChunkSize;x++) {
+					tiles[x,y].Save(writer);
+				}
+			}
+		}
+		public void Load(BinaryReader reader)
+		{
+			for(int y = 0;y<ChunkSize;y++) {
+				for(int x = 0;x<ChunkSize;x++) {
+					tiles[x,y].Load(reader);
+				}
+			}
+		}
+
+		public Vector2Int LocalPointToWorld(int x,int y) => new Vector2Int(position.x*ChunkSize+x,position.y*ChunkSize+y);
 
 		protected void UpdateSprites(bool isVisible)
 		{
@@ -104,8 +86,8 @@ namespace AbyssCrusaders
 				var wallDrawLists = new Dictionary<ushort,List<Vector2Int>>();
 
 				//Loop through tiles and write down what we need to render.
-				for(int y=-1;y<=ChunkSize;y++) {
-					for(int x=-1;x<=ChunkSize;x++) {
+				for(int y = -1;y<=ChunkSize;y++) {
+					for(int x = -1;x<=ChunkSize;x++) {
 						bool corner = x==-1 || y==-1 || x==ChunkSize || y==ChunkSize;
 
 						ref Tile tile = ref (corner ? ref world[chunkTileX+x,chunkTileY+y] : ref tiles[x,y]);
@@ -133,7 +115,7 @@ namespace AbyssCrusaders
 						}
 					}
 				}
-				
+
 				static bool TryGetTileTexture(TilePreset preset,ushort type,out Texture texture) => (texture = preset.Texture)!=null;
 
 				void ReadyLayerTexture(string layerName,ref RenderTexture texture,int xSize,int ySize,FilterMode filterMode = FilterMode.Point)
@@ -172,13 +154,13 @@ namespace AbyssCrusaders
 							foreach(var pair in tileDrawLists) {
 								ushort type = pair.Key;
 								var list = pair.Value;
-								
+
 								var tilePreset = TilePreset.byId[type];
 								var framesets = tilePreset?.frameset?.tileFramesets;
 								if(framesets==null || !TryGetTileTexture(tilePreset,type,out var tex)) {
 									continue;
 								}
-								
+
 								GLDraw.SetTextures(new Dictionary<string,Texture> {
 									{ "mainTex",tex },
 								});
@@ -208,10 +190,14 @@ namespace AbyssCrusaders
 										TileSizeFactor
 									);
 
-									GLDraw.TexCoord2(src.x,		src.Bottom);	GLDraw.Vertex2(dest.x,		dest.Bottom);
-									GLDraw.TexCoord2(src.x,		src.y);			GLDraw.Vertex2(dest.x,		dest.y);
-									GLDraw.TexCoord2(src.Right,	src.y);			GLDraw.Vertex2(dest.Right,	dest.y);
-									GLDraw.TexCoord2(src.Right,	src.Bottom);	GLDraw.Vertex2(dest.Right,	dest.Bottom);
+									GLDraw.TexCoord2(src.x,src.Bottom);
+									GLDraw.Vertex2(dest.x,dest.Bottom);
+									GLDraw.TexCoord2(src.x,src.y);
+									GLDraw.Vertex2(dest.x,dest.y);
+									GLDraw.TexCoord2(src.Right,src.y);
+									GLDraw.Vertex2(dest.Right,dest.y);
+									GLDraw.TexCoord2(src.Right,src.Bottom);
+									GLDraw.Vertex2(dest.Right,dest.Bottom);
 								}
 
 								GLDraw.End();
@@ -265,10 +251,14 @@ namespace AbyssCrusaders
 											step.srcHeight*TileSizeFactor
 										);
 
-										GLDraw.TexCoord2(src.x,		src.Bottom);	GLDraw.Vertex2(dest.x,		dest.Bottom);
-										GLDraw.TexCoord2(src.x,		src.y);			GLDraw.Vertex2(dest.x,		dest.y);
-										GLDraw.TexCoord2(src.Right,	src.y);			GLDraw.Vertex2(dest.Right,	dest.y);
-										GLDraw.TexCoord2(src.Right,	src.Bottom);	GLDraw.Vertex2(dest.Right,	dest.Bottom);
+										GLDraw.TexCoord2(src.x,src.Bottom);
+										GLDraw.Vertex2(dest.x,dest.Bottom);
+										GLDraw.TexCoord2(src.x,src.y);
+										GLDraw.Vertex2(dest.x,dest.y);
+										GLDraw.TexCoord2(src.Right,src.y);
+										GLDraw.Vertex2(dest.Right,dest.y);
+										GLDraw.TexCoord2(src.Right,src.Bottom);
+										GLDraw.Vertex2(dest.Right,dest.Bottom);
 									}
 								}
 
@@ -284,8 +274,8 @@ namespace AbyssCrusaders
 					const int TexSize = ChunkSize+2;
 
 					var shader = Resources.Find<Shader>("BasicVertexColor");
-					
-					ReadyLayerTexture("Light",ref lightTexture,TexSize,TexSize,FilterMode.Bilinear);
+
+					ReadyLayerTexture("Light",ref lightTexture,TexSize,TexSize,FilterMode.Point);
 
 					Draw("Light",ref lightTexture,TexSize,TexSize,shader,() => {
 						const float PixelSize = 1f/TexSize;
@@ -299,13 +289,13 @@ namespace AbyssCrusaders
 								float lightLevel;
 								if(tile.type==0) {
 									lightLevel = 1f;
-								}else{
+								} else {
 									lightLevel = 0f;
 
 									Vector2Int basePoint = LocalPointToWorld(x,y);
 
 									for(int i = 0;i<lightChecks.Length;i++) {
-										(var relativePos,float pointLightLevel) = lightChecks[i];
+										(var relativePos, float pointLightLevel) = lightChecks[i];
 
 										int xx = x+relativePos.x;
 										int yy = y+relativePos.y;
@@ -313,16 +303,14 @@ namespace AbyssCrusaders
 										var thisTile = (xx<0 || yy<0 || xx>=ChunkSize || yy>=ChunkSize) ? world[positionInTiles.x+xx,positionInTiles.y+yy] : tiles[xx,yy];
 
 										if(thisTile.type==0) {
-											lightLevel = pointLightLevel;
-											break;
+											lightLevel = Math.Max(lightLevel,pointLightLevel);
+											//break;
 										}
 									}
 								}
 
-								//GLDraw.Uniform4("color",new Vector4(lightLevel,0f,0f,0f));
-
-								GLDraw.VertexAttrib4(AttributeId.Color,new Vector4(lightLevel,lightLevel,lightLevel,1f));
-								GLDraw.Vertex2(-1f+x*PixelSize*2f,-1f+y*PixelSize*2f);
+								GLDraw.VertexAttrib1(AttributeId.Color,1f-lightLevel);
+								GLDraw.Vertex2(-1f+(x+1)*PixelSize*2f,-1f+(y+1)*PixelSize*2f);
 							}
 						}
 
@@ -332,7 +320,7 @@ namespace AbyssCrusaders
 				#endregion
 			}
 
-			void UpdateSprite(bool hasLayer,ref SpriteObject obj,ref RenderTexture texture,float depth,Texture emissionMap = null)
+			void UpdateSprite(bool hasLayer,ref SpriteObject obj,ref RenderTexture texture,float depth,string layer = "Terrain",string shader = "Game/Sprite")
 			{
 				if(!hasLayer) {
 					if(obj!=null) {
@@ -350,42 +338,64 @@ namespace AbyssCrusaders
 						return;
 					}
 
-					obj = GameObject2D.Instantiate<SpriteObject>(position:new Vector2((position.x+0.5f)*ChunkSize,(position.y+0.5f)*ChunkSize),depth:depth,scale:new Vector2(ChunkSize,ChunkSize));
+					obj = GameObject2D.Instantiate<SpriteObject>(position: new Vector2((position.x+0.5f)*ChunkSize,(position.y+0.5f)*ChunkSize),depth: depth,scale: new Vector2(ChunkSize,ChunkSize));
+					obj.layer = Layers.GetLayerIndex(layer);
 
-					Material mat = new Material("Level",Resources.Find<Shader>(emissionMap!=null ? "Game/SpriteNegativeEmissive" : "Game/Sprite"));
+					Material mat = new Material("Level",Resources.Find<Shader>(shader));
 					mat.SetTexture("mainTex",texture);
-					if(emissionMap!=null) {
-						mat.SetTexture("emissionMap",emissionMap);
-					}
 					obj.sprite.Material = mat;
 				}
 			}
 
 			GLDraw.DrawDelayed(() => {
-				UpdateSprite(hasTiles,ref tileSprite,ref tileTexture,10f,lightTexture);
+				UpdateSprite(hasTiles,ref tileSprite,ref tileTexture,10f);
 				UpdateSprite(hasWalls,ref wallSprite,ref wallTexture,-10f);
+
+				UpdateSprite(hasTiles,ref lightingOcclusionSprite,ref lightTexture,10f,"TerrainLightingOcclusion","Game/TerrainLightingOcclusion");
 			});
 
 			updateTexture = false;
 		}
 
-		public void Save(BinaryWriter writer)
+		private void PrepareLightChecks()
 		{
-			for(int y = 0;y<ChunkSize;y++) {
-				for(int x = 0;x<ChunkSize;x++) {
-					tiles[x,y].Save(writer);
-				}
-			}
-		}
-		public void Load(BinaryReader reader)
-		{
-			for(int y = 0;y<ChunkSize;y++) {
-				for(int x = 0;x<ChunkSize;x++) {
-					tiles[x,y].Load(reader);
-				}
-			}
-		}
+			const int MaxDistance = 2;
+			const float MaxDistanceDiv = 1f/MaxDistance;
 
-		public Vector2Int LocalPointToWorld(int x,int y) => new Vector2Int(position.x*ChunkSize+x,position.y*ChunkSize+y);
+			var finalChecks = new List<(Vector2Int,float)>();
+
+			var pointsToCheck = new List<Vector2Int> { default };
+			var points = new HashSet<Vector2Int> { default };
+
+			Vector2 vecCenter = default;
+			int i = 0;
+
+			while(i<pointsToCheck.Count) {
+				var point = pointsToCheck[i];
+
+				float actualDistance = Math.Max(0f,Vector2.Distance(vecCenter,new Vector2(point.x,point.y))-1f);
+
+				finalChecks.Add((point,1f-Math.Min(1f,actualDistance*MaxDistanceDiv)));
+
+				if(actualDistance<=MaxDistance) {
+					void TryAdd(int xx,int yy)
+					{
+						var ivec = new Vector2Int(xx,yy);
+						if(points.Add(ivec)) {
+							pointsToCheck.Add(ivec);
+						}
+					}
+
+					TryAdd(point.x-1,point.y);
+					TryAdd(point.x,point.y-1);
+					TryAdd(point.x+1,point.y);
+					TryAdd(point.x,point.y+1);
+				}
+
+				i++;
+			}
+
+			lightChecks = finalChecks.ToArray();
+		}
 	}
 }

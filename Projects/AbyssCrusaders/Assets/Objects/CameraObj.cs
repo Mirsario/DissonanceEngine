@@ -30,7 +30,17 @@ namespace AbyssCrusaders
 		{
 			if(followObject!=null) {
 				float step = Time.FixedDeltaTime*8f;
-				Position = pos = Vector2.Lerp(pos,followObject.Position,step); //zoom!=zoomGoal ? pos : Vector2.SnapToGrid(pos,1f/Main.UnitSizeInPixels/zoom);
+
+				pos = Vector2.Lerp(pos,followObject.Position,step);
+
+				var offset = (Input.MousePosition-Screen.Center)/Screen.Center*8f;
+
+				if(Input.GetKey(Keys.X)) {
+					offset.x = 0f;
+				}
+
+				Position = Vector2.SnapToGrid(pos+offset-rect.Size*0.5f,0.1f/zoom)+rect.Size*0.5f; //zoom!=zoomGoal ? pos : Vector2.SnapToGrid(pos,1f/Main.UnitSizeInPixels/zoom);
+
 				/*nextPos = Vector2.Lerp(pos,followObject.Position,step);
 				lastUpdateTime = Time.GameTime;
 				nextUpdateTime = Time.GameTime+Time.FixedDeltaTime;*/
@@ -56,7 +66,7 @@ namespace AbyssCrusaders
 				Mathf.Lerp(rect.y,rect.y+rect.height,mouseScreenPos.y/Screen.Height)
 			);
 
-			zoomGoal = Mathf.Clamp(zoomGoal+GameInput.zoom.Value,1f,4f);
+			zoomGoal = Mathf.Clamp(zoomGoal+GameInput.zoom.Value,1f,16f);
 			if(zoom!=zoomGoal) {
 				zoom = Mathf.Lerp(zoom,zoomGoal,Time.RenderDeltaTime*16f);
 

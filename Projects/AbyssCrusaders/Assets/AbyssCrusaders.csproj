@@ -59,6 +59,7 @@
     <Compile Include="Objects\Etc\CursorLightObj.cs" />
     <Compile Include="Objects\Etc\LightObj.cs" />
     <Compile Include="Objects\Etc\Skybox.cs" />
+    <Compile Include="Objects\Etc\SoundInstance.cs" />
     <Compile Include="Objects\GameObject2D.cs" />
     <Compile Include="Objects\SpriteObject.cs" />
     <Compile Include="SaveFile.cs" />

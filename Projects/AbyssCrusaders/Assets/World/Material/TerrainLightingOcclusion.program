@@ -1,0 +1,6 @@
+{
+	"Game/TerrainLightingOcclusion": {
+		"vertexShader": "Sprite.vert",
+		"fragmentShader": "TerrainLightingOcclusion.frag"
+	}
+}

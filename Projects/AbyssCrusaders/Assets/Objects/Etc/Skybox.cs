@@ -7,7 +7,12 @@ namespace AbyssCrusaders
 	{
 		public override void OnInit()
 		{
-			AddComponent<Sprite>(c => c.Material = Resources.Get<Material>("Skybox.material"));
+			AddComponent<Sprite>(c => {
+				var mat = Resources.Get<Material>("Skybox.material");
+				//mat.SetVector3("colorTop",Vector3.Zero);
+				//mat.SetVector3("colorBottom",new Vector3(59,36,93)/255f);
+				c.Material = mat;
+			});
 
 			Depth = -1000f;
 		}

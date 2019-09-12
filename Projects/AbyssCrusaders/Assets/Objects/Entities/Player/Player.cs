@@ -43,10 +43,12 @@ namespace AbyssCrusaders
 
 			var light = AddComponent<Light2D>(c => {
 				c.color = new Vector3(1f,0.75f,0.5f);
-				c.range = 320f;
+				c.range = 4f;
 			});
 
-			Instantiate<CursorLightObj>().light.color = Vector3.One;
+			//var cursorLight = Instantiate<CursorLightObj>().light;
+			//cursorLight.color = Vector3.One;
+			//cursorLight.range = 4f;
 		}
 		public override void FixedUpdate()
 		{
@@ -118,6 +120,9 @@ namespace AbyssCrusaders
 					}
 				}else if(teleport) {
 					Position = mouseWorld;
+					velocity = Vector2.Zero;
+
+					SoundInstance.Create("Audio/Teleport.ogg",Position,0.5f,is2D:true);
 				} else if(placeLight) {
 					Instantiate<LightObj>(position:mouseWorld);
 				}
@@ -137,7 +142,7 @@ namespace AbyssCrusaders
 			}
 			spriteObj.Position = tempSpriteOffset;
 		}
-		public override void OnGUI()
+		/*public override void OnGUI()
 		{
 			float y = 6.5f;
 			Vector2 pos = Position;
@@ -148,6 +153,6 @@ namespace AbyssCrusaders
 				float size = Main.UnitSizeInPixels*16f;
 				GUI.DrawTexture(new RectFloat(8,Screen.Height-8-size,size,size),texture);
 			}
-		}
+		}*/
 	}
 }
