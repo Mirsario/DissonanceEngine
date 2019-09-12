@@ -7,6 +7,29 @@ namespace GameEngine
 		public int width;
 		public int height;
 
+		public int Right {
+			get => x+width;
+			set => x = value-width;
+		}
+		public int Bottom {
+			get => y+height;
+			set => y = value-height;
+		}
+		public Vector2Int Position {
+			get => new Vector2Int(x,y);
+			set {
+				x = value.x;
+				y = value.y;
+			}
+		}
+		public Vector2Int Size {
+			get => new Vector2Int(width,height);
+			set {
+				width = value.x;
+				height = value.y;
+			}
+		}
+
 		public RectInt(Vector2Int position,Vector2Int size) : this(position.x,position.y,size.x,size.y) {}
 		public RectInt(Vector2Int position,int width,int height) : this(position.x,position.y,width,height) {}
 		public RectInt(int x,int y,Vector2Int size) : this(x,y,size.x,size.y) {}

@@ -15,6 +15,20 @@ namespace GameEngine
 			get => y+height;
 			set => y = value-height;
 		}
+		public Vector2 Position {
+			get => new Vector2(x,y);
+			set {
+				x = value.x;
+				y = value.y;
+			}
+		}
+		public Vector2 Size {
+			get => new Vector2(width,height);
+			set {
+				width = value.x;
+				height = value.y;
+			}
+		}
 
 		public RectFloat(float x,float y,float width,float height)
 		{
