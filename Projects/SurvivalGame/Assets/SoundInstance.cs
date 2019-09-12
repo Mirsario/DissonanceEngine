@@ -27,6 +27,7 @@ namespace SurvivalGame
 			(instance.source = instance.AddComponent<AudioSource>(c => {
 				c.Clip = Resources.Get<AudioClip>(sound);
 				c.Volume = volume;
+
 				if(is2D) {
 					c.Is2D = true;
 				}

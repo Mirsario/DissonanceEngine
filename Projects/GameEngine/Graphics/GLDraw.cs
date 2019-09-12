@@ -267,10 +267,8 @@ namespace GameEngine.Graphics
 		public static void Vertex2(float x,float y) => GL.Vertex2(x,y);
 		public static void Vertex2(double x,double y) => GL.Vertex2(x,y);
 		//VertexAttrib
-		public static void VertexAttrib4(AttributeId attribute,Vector4 vec4)
-		{
-			GL.VertexAttrib4((int)attribute,vec4);
-		}
+		public static void VertexAttrib1(AttributeId attribute,float val) => GL.VertexAttrib1((int)attribute,val);
+		public static void VertexAttrib4(AttributeId attribute,Vector4 vec4) => GL.VertexAttrib4((int)attribute,vec4);
 		//UV
 		public static void TexCoord2(Vector2 v)
 		{

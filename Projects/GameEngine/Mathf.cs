@@ -23,15 +23,18 @@ namespace GameEngine
 		{
 			if(goal>val) {
 				val += step;
+
 				if(val>goal) {
 					return goal;
 				}
 			}else if(goal<val) {
 				val -= step;
+
 				if(val<goal) {
 					return goal;
 				}
 			}
+
 			return val;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float SnapToGrid(float val,float step) => Ceil(val/step)*step;
