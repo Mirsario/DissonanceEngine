@@ -152,44 +152,31 @@ namespace GameEngine
 		}
 		public static Vector3 EulerToDirection(Vector3 euler)
 		{
-			euler *= Mathf.Deg2Rad;
+			float pitch = euler.x*Mathf.Deg2Rad;
+			float yaw = euler.y*Mathf.Deg2Rad;
 
-			float cX = Mathf.Cos(-euler.x);
-			float sX = Mathf.Sin(-euler.x);
-			float cY = Mathf.Cos(-euler.y);
-			float sY = Mathf.Sin(-euler.y);
-			float cZ = Mathf.Cos(euler.z);
-			float sZ = Mathf.Sin(euler.z); 
+			float cX = Mathf.Cos(pitch);
+			float sX = Mathf.Sin(pitch);
+			float cY = Mathf.Cos(yaw);
+			float sY = Mathf.Sin(yaw);
+
 			return new Vector3(
-				-cX*sY,
-				sX,
+				cX*sY,
+				-sX,
 				cX*cY
 			);
-			//euler *= Mathf.Deg2Rad;
-			//float cX = Mathf.Cos(euler.x);
-			//float sX = Mathf.Sin(euler.x);
-			//float cY = Mathf.Cos(euler.y);
-			//float sY = Mathf.Sin(euler.y);
-			//float cZ = Mathf.Cos(euler.z);
-			//float sZ = Mathf.Sin(euler.z);
-			//return-(new Vector3(-cX*sY,sX,cX*cY)*Mathf.Rad2Deg);
-			//return (new Vector3(cY*cX,sY*cX,sX)*Mathf.Rad2Deg);
 		}
 		public static Vector3 DirectionToEuler(Vector3 direction)
 		{
-			//direction = direction.Normalized;
+			float xzLength = Mathf.Sqrt(direction.x*direction.x+direction.z*direction.z);
+			float pitch = Mathf.Atan2(xzLength,direction.y)-Mathf.HalfPI;
+			float yaw = Mathf.Atan2(direction.x,direction.z);
 
-			//TODO: Redo this fucking garbage
-			//Matrix4x4 matrix = Matrix4x4.LookAt(zero,direction,up);
-			
-			return Matrix4x4.LookAt(Zero,direction.Normalized,Up).ExtractEuler();
-			/*float cX = Mathf.Cos(direction.x);
-			float sX = Mathf.Sin(direction.x);
-			float cY = Mathf.Cos(direction.y);
-			float sY = Mathf.Sin(direction.y);
-			float cZ = Mathf.Cos(direction.z);
-			float sZ = Mathf.Sin(direction.z);
-			return new Vector3(cY*cZ-sX*sY*sZ,cZ*sX*sY+cY*sZ,-cX*sY);*/
+			return new Vector3(
+				pitch*Mathf.Rad2Deg,
+				yaw*Mathf.Rad2Deg,
+				0f
+			);
 		}
 		public static Vector3 Repeat(Vector3 vec,float length) => new Vector3(
 			vec.x-Mathf.Floor(vec.x/length)*length,
