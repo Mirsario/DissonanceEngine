@@ -5,6 +5,7 @@ namespace GameEngine
 	public class InputBinding
 	{
 		public readonly string Input;
+		public readonly string InputLower;
 		public readonly int InputHash;
 
 		public float deadZone;
@@ -28,9 +29,11 @@ namespace GameEngine
 				}
 				input = input.Substring(1);
 			}
-			InputHash = input.ToLower().GetHashCode();
 
-			this.Input = input;
+			Input = input;
+			InputLower = input.ToLower();
+			InputHash = InputLower.GetHashCode();
+
 			this.sensitivity = sensitivity;
 			this.deadZone = deadZone;
 		}

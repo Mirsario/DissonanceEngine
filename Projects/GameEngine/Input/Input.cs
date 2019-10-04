@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using OpenTK;
 using OpenTK.Input;
 using TKMouseButton = OpenTK.Input.MouseButton;
@@ -8,20 +9,16 @@ namespace GameEngine
 {
 	public static class Input
 	{
-		#region Consts
 		public const int MaxMouseButtons = 12;
 		public const int MaxGamepads = 4;
-		#endregion
-		#region Fields
+
 		internal static InputVariables fixedTimeVars;
 		internal static InputVariables renderTimeVars;
 		internal static InputTrigger[] triggers;
 		internal static Dictionary<string,InputTrigger> triggersByName;
-		#endregion
-		#region Properties
+
 		internal static InputVariables Vars => Game.fixedUpdate ? fixedTimeVars : renderTimeVars;
 		public static InputTrigger[] Triggers => triggers;
-		public static int TriggerCount => triggers.Length;
 
 		//Mouse
 		public static Vector2 MouseDelta => Vars.mouseDelta;
@@ -30,7 +27,6 @@ namespace GameEngine
 
 		//Keyboard
 		public static string InputString => Vars.inputString;
-		#endregion
 
 		#region Initialization
 		internal static void Init()
@@ -39,6 +35,8 @@ namespace GameEngine
 			renderTimeVars = new InputVariables();
 			triggers = new InputTrigger[0];
 			triggersByName = new Dictionary<string,InputTrigger>();
+
+			SingletonInputTrigger.StaticInit();
 		}
 		#endregion
 		#region Update
@@ -46,6 +44,7 @@ namespace GameEngine
 		internal static void RenderUpdate() => Update();
 		internal static void LateFixedUpdate() => LateUpdate();
 		internal static void LateRenderUpdate() => LateUpdate();
+
 		private static void Update()
 		{
 			var vars = Vars;
@@ -77,6 +76,7 @@ namespace GameEngine
 					TriggerSet((float)buttons.Start,prefix+"button8");
 					TriggerSet((float)buttons.Back,prefix+"button9");
 					TriggerSet((float)buttons.BigButton,prefix+"button10");
+
 					var dpad = state.DPad;
 					TriggerSet((float)dpad.Up,prefix+"button11");
 					TriggerSet((float)dpad.Down,prefix+"button12");
@@ -84,9 +84,11 @@ namespace GameEngine
 					TriggerSet((float)dpad.Right,prefix+"button14");
 
 					var gamepadSticks = state.ThumbSticks;
+
 					Vector2 leftStick = gamepadSticks.Left;
 					TriggerSet(leftStick.x,prefix+"axis0");
 					TriggerSet(leftStick.y,prefix+"axis1");
+
 					Vector2 rightStick = gamepadSticks.Right;
 					TriggerSet(-rightStick.x,prefix+"axis3");
 					TriggerSet(rightStick.y,prefix+"axis4");
@@ -101,6 +103,7 @@ namespace GameEngine
 				vars.mouseDelta = Vector2.Zero;
 				vars.mouseWheel = 0;
 			}
+
 			TriggerSet(vars.mouseDelta.x,"mouse x",false);
 			TriggerSet(vars.mouseDelta.y,"mouse y",false);
 			TriggerSet(vars.mouseWheel,"mouse scrollwheel",false);
@@ -156,17 +159,28 @@ namespace GameEngine
 		#endregion
 
 		#region Triggers
-		public static InputTrigger RegisterTrigger(string name,InputBinding[] bindings,float minValue = float.MinValue,float maxValue = float.MaxValue)
+		//TODO: Improve design quality
+		public static InputTrigger RegisterTrigger(string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null)
+			=> RegisterTrigger(typeof(InputTrigger),name,bindings,minValue,maxValue);
+		//internal static T RegisterTrigger<T>(string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null) where T : InputTrigger
+		//	=> (T)RegisterTrigger(typeof(T),name,bindings,minValue,maxValue);
+		internal static InputTrigger RegisterTrigger(Type type,string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null)
 		{
 			if(!triggersByName.TryGetValue(name,out var trigger)) {
 				int id = triggers.Length;
-				trigger = new InputTrigger(id,name,bindings,minValue,maxValue);
+
+				trigger = (InputTrigger)Activator.CreateInstance(type,true); //new InputTrigger();
+				trigger.Init(id,name,bindings,minValue ?? InputTrigger.DefaultMinValue,maxValue ?? InputTrigger.DefaultMaxValue);
+
 				Array.Resize(ref triggers,id+1);
 				triggers[id] = trigger;
 				triggersByName[name] = trigger;
+
+				InputTrigger.Count = triggers.Length;
 			}else{
 				trigger.Bindings = bindings;
 			}
+
 			return trigger;
 		}
 		
@@ -175,28 +189,36 @@ namespace GameEngine
 			bool fixedTime = setBoth || Game.fixedUpdate;
 			bool renderTime = setBoth || !Game.fixedUpdate;
 			int hash = triggerName.GetHashCode();
+
 			for(int i = 0;i<triggers.Length;i++) {
 				var trigger = triggers[i];
 				float fixedSumm = 0f;
 				float renderSumm = 0f;
+
 				for(int j = 0;j<trigger.bindingCount;j++) {
 					ref var input = ref trigger.bindings[j];
-					if(trigger.bindingsHashes[j]==hash) {
+
+					if(hash==input.InputHash && triggerName==input.InputLower) {
 						float newValue = (input.inversed ? -value : value)*input.sensitivity;
+
 						if(fixedTime) {
 							input.fixedAnalogInput = newValue;
 						}
+
 						if(renderTime) {
 							input.renderAnalogInput = newValue;
 						}
 					}
+
 					if(fixedTime && (input.fixedAnalogInput>input.deadZone || input.fixedAnalogInput<-input.deadZone)) {
 						fixedSumm += input.fixedAnalogInput;
 					}
+
 					if(renderTime && (input.renderAnalogInput>input.deadZone || input.renderAnalogInput<-input.deadZone)) {
 						renderSumm += input.renderAnalogInput;
 					}
 				}
+
 				trigger.SetAnalogValue(fixedSumm,renderSumm);
 			}
 		}
@@ -209,7 +231,8 @@ namespace GameEngine
 				float renderSumm = 0f;
 				for(int j = 0;j<trigger.bindingCount;j++) {
 					ref var input = ref trigger.bindings[j];
-					if(trigger.bindingsHashes[j]==hash) {
+
+					if(hash==input.InputHash && triggerName==input.InputLower) {
 						input.fixedAnalogInput = 0f;
 						input.renderAnalogInput = 0f;
 					}else{
@@ -264,10 +287,6 @@ namespace GameEngine
 
 		#region Callbacks
 		#region Mouse
-		internal static void MouseMove(object sender,MouseMoveEventArgs e)
-		{
-			
-		}
 		internal static void MouseDown(object sender,MouseButtonEventArgs e)
 		{
 			#region Switch
