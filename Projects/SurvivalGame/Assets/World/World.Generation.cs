@@ -95,12 +95,53 @@ namespace SurvivalGame
 			}
 
 			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
-			playerPos.y = HeightAt(playerPos,false);
+			playerPos.y = HeightAt(playerPos,false)+30f;
 
-			Main.LocalEntity = Entity.Instantiate<Human>(this,position: playerPos); //Instantiate<Human>(null,new Vector3(xSizeInUnits*0.5f,56f,ySizeInUnits*0.5f));
+			for(int i = 0;i<Player.localPlayers.Length;i++) {
+				var player = Player.localPlayers[i];
+
+				/*var soul = Entity.Instantiate<HumanSoul>(this);
+				player.AttachProxy(soul);
+
+				var brain = Entity.Instantiate<HumanBrain>(this);
+				soul.AttachProxy(brain);*/
+
+				/*player.AttachProxy(
+					Entity.Instantiate<Human>(this,position:playerPos)
+						.AttachToProxy(Entity.Instantiate<HumanBrain>(this))
+						.AttachToProxy(Entity.Instantiate<HumanSoul>(this))
+				);*/
+
+				var soul = Entity.Instantiate<HumanSoul>(this,position:playerPos);
+				var brain = Entity.Instantiate<HumanBrain>(this,position:playerPos);
+				var body = Entity.Instantiate<Human>(this,position:playerPos);
+
+				//player.Entity = soul;
+				//soul.AttachProxy(brain.Proxy);
+				//body.Brain = brain;
+
+				player.Entity = soul;
+				soul.AttachTo(brain);
+				brain.AttachTo(body);
+
+				//player.AttachProxy(Entity.Instantiate<HumanSoul>(this))
+				//	.AttachProxy(Entity.Instantiate<HumanBrain>(this))
+				//	.AttachLiving(Entity.Instantiate<Human>(this,position:playerPos));
+
+				/*var soul = Entity.Instantiate<HumanSoul>(this);
+				player.AttachProxy(soul);
+
+				var brain = Entity.Instantiate<HumanBrain>(this);
+				var human = Entity.Instantiate<Human>(this,position:playerPos);*/
+			}
+
+			//Main.LocalEntity = Entity.Instantiate<Human>(this,position:playerPos);
 
 			Entity.Instantiate<StoneHatchet>(this,position: new Vector3(xSizeInUnits*0.5f-1f,45f,ySizeInUnits*0.5f));
+
 			Instantiate<AtmosphereSystem>();
+			Instantiate<DebugSystem>();
+
 			Instantiate<Sun>();
 			Instantiate<Skybox>(); //TODO: Implement a skybox inside the engine
 			Entity.Instantiate<Water>(this,position: new Vector3(xSizeInUnits*0.5f,32f,ySizeInUnits*0.5f));

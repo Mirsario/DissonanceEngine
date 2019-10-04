@@ -1,4 +1,5 @@
 using GameEngine;
+using ImmersionFramework;
 
 namespace SurvivalGame
 {

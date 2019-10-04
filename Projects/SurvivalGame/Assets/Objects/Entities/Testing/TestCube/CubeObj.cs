@@ -1,6 +1,7 @@
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Physics;
+using ImmersionFramework;
 
 namespace SurvivalGame
 {

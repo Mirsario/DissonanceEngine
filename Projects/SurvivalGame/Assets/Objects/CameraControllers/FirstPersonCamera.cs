@@ -1,4 +1,6 @@
 ﻿using GameEngine;
+using ImmersionFramework;
+using SurvivalGame.Inputs;
 
 namespace SurvivalGame
 {
@@ -29,21 +31,24 @@ namespace SurvivalGame
 
 		public override void RenderUpdate()
 		{
-			var brain = (Main.LocalEntity as Mob)?.brain;
-			bool controlling = brain==null || brain is PlayerBrain;
-			var delta = (GameEngine.Screen.lockCursor && controlling) ? new Vector2(GameInput.lookX.Value,GameInput.lookY.Value) : Vector2.Zero;
+			var inputSource = (entity as IInputProxyProvaider)?.Proxy;
+			//var delta = inputSource.Value<LookX,LookY>();
 
-			var newRotation = controlling ? rotation : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.RenderDeltaTime*2f);
-			newRotation.y -= delta.x;
+			var newRotation = inputSource.LookRotation; // : Vector3.LerpAngle(rotation,brain.Transform.EulerRot,Time.RenderDeltaTime*2f);
+			//newRotation.y -= delta.x;
 
 			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.RenderDeltaTime*10f);
 
-			newRotation.x = Mathf.Clamp(newRotation.x-delta.y,MinLockedPitch,MaxLockedPitch);
-			newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
+			//newRotation.x = Mathf.Clamp(newRotation.x,MinLockedPitch,MaxLockedPitch);
+			//newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
 
 			rotation = newRotation;
 
-			camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,MinLockedPitch,MaxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
+			//Debug.Log("c: "+inputSource.LookRotation);
+			//Debug.Log("d: "+rotation);
+
+			camera.Transform.EulerRot = new Vector3(rotation.x+smoothLocalVelocity.y*0.4f,rotation.y,rotation.z); //+bob*0.2f);
+			//camera.Transform.EulerRot = new Vector3(Mathf.Clamp(rotation.x+smoothLocalVelocity.y*0.4f,MinLockedPitch,MaxLockedPitch),rotation.y,rotation.z); //+bob*0.2f);
 
 			direction = Vector3.EulerToDirection(newRotation);
 
@@ -56,11 +61,13 @@ namespace SurvivalGame
 		public override void FixedUpdate()
 		{
 			Vector3 pos = entity.Transform.Position;
+
 			if(Vector3.SqrDistance(pos,prevPos)>64f*64f) {
 				prevPos = pos;
 			}else{
 				velocity = (pos-prevPos)*GameEngine.Game.targetUpdates;
 			}
+
 			prevPos = pos;
 		}
 	}

@@ -44,8 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameInput.cs" />
+    <Compile Include="Input\GameInput.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Input\Inputs\Crouch.cs" />
+    <Compile Include="Input\Inputs\Zoom.cs" />
+    <Compile Include="Input\Inputs\SecondaryUse.cs" />
+    <Compile Include="Input\Inputs\PrimaryUse.cs" />
+    <Compile Include="Input\Inputs\LookY.cs" />
+    <Compile Include="Input\Inputs\LookX.cs" />
+    <Compile Include="Input\Inputs\MoveY.cs" />
+    <Compile Include="Input\Inputs\MoveX.cs" />
+    <Compile Include="Input\Inputs\Sprint.cs" />
+    <Compile Include="Input\Inputs\Jump.cs" />
     <Compile Include="Interaction\IFootstepProvider.cs" />
     <Compile Include="Interaction\PhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\DirtPhysicMaterial.cs" />
@@ -53,21 +63,26 @@
     <Compile Include="Interaction\PhysicMaterials\StonePhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\WoodPhysicMaterial.cs" />
     <Compile Include="LightObj.cs" />
+    <Compile Include="MainLogic\InputSignal.cs" />
+    <Compile Include="MainLogic\Client.cs" />
+    <Compile Include="MainLogic\LocalPlayer.cs" />
+    <Compile Include="MainLogic\Player.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Netplay.cs" />
-    <Compile Include="Objects\Brains\Brain.cs" />
-    <Compile Include="Objects\Brains\BrainInput.cs" />
-    <Compile Include="Objects\Brains\PlayerBrain.cs" />
-    <Compile Include="Objects\Brains\TestBrain.cs" />
-    <Compile Include="Objects\CameraControllers\BasicThirdPersonCamera.cs" />
-    <Compile Include="Objects\CameraControllers\CameraController.cs" />
+    <Compile Include="Objects\Entities\InputProxyEntity.cs" />
+    <Compile Include="Objects\Entities\Brains\Brain.cs" />
+    <Compile Include="Objects\Entities\Brains\InputProxy.cs" />
+    <Compile Include="Objects\Entities\Brains\TestBrain.cs" />
     <Compile Include="Objects\CameraControllers\FirstPersonCamera.cs" />
-    <Compile Include="Objects\CameraControllers\Screenshakes\ScreenShake.cs" />
+    <Compile Include="Objects\Entities\Living\Human\Brain\HumanBrain.cs" />
+    <Compile Include="Objects\Entities\PhysicalEntity.cs" />
+    <Compile Include="Objects\Entities\LivingEntity.cs" />
     <Compile Include="Objects\Entities\Entity.cs" />
     <Compile Include="Objects\Entities\Items\Item.cs" />
     <Compile Include="Objects\Entities\Items\Tools\StoneHatchet\StoneHatchet.cs" />
-    <Compile Include="Objects\Entities\Mobs\Human\Human.cs" />
-    <Compile Include="Objects\Entities\Mobs\Mob.cs" />
+    <Compile Include="Objects\Entities\Living\Human\Body\Human.cs" />
+    <Compile Include="Objects\Entities\Souls\Soul.cs" />
+    <Compile Include="Objects\Entities\Living\Human\Soul\HumanSoul.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Minerals\Boulder.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Plants\BerryBush.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Trees\Spruce\Spruce.cs" />
@@ -77,7 +92,10 @@
     <Compile Include="Objects\Entities\Testing\Robot\Robot.cs" />
     <Compile Include="Objects\Entities\Testing\Rocket\Rocket.cs" />
     <Compile Include="Objects\Entities\Testing\Skybox.cs" />
+    <Compile Include="Objects\Entities\Testing\TestCube\BasicCube.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\CubeObj2.cs" />
+    <Compile Include="Objects\Tests\EulerDirectionTest.cs" />
+    <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="World\Chunk\Chunk.MeshGeneration.cs" />
     <Compile Include="World\Chunk\Chunk.IO.cs" />
     <Compile Include="World\Generation\GenPass.cs" />
@@ -95,7 +113,7 @@
     <Compile Include="Objects\Entities\Testing\TestSphere\TestSphere.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoundInstance.cs" />
-    <Compile Include="AtmosphereSystem.cs" />
+    <Compile Include="Systems\AtmosphereSystem.cs" />
     <Compile Include="World\Chunk\ChunkRenderer.cs" />
     <Compile Include="World\Chunk\Chunk.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
@@ -138,6 +156,10 @@
     <ProjectReference Include="..\..\GameEngine\GameEngine.csproj">
       <Project>{a7e44ef9-187f-4718-8fec-871f99bd27f9}</Project>
       <Name>GameEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ImmersionFramework\ImmersionFramework.csproj">
+      <Project>{753e1f7f-c787-497b-be7b-b70d223c8c5f}</Project>
+      <Name>ImmersionFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

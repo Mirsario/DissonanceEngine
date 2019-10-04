@@ -5,6 +5,7 @@ using System;
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Physics;
+using ImmersionFramework;
 
 #pragma warning disable 219
 namespace SurvivalGame
@@ -36,7 +37,6 @@ namespace SurvivalGame
 		public static string modsPath;
 		public static string sourcesPath;
 		public static string builtPath;
-		public static Camera camera;
 		public static World world;
 		public static bool shouldLockCursor;
 		public static bool enableMusic = false; //To be moved
@@ -45,7 +45,6 @@ namespace SurvivalGame
 		public static bool forceThirdPerson; //To be moved
 
 		private static Func<bool?,string> dynamicMenuSetup;
-		private static Type prevCameraControllerType; //To be moved
 
 		private WorldInfo[] worldList;
 		private string worldNameString = "";
@@ -63,21 +62,6 @@ namespace SurvivalGame
 					prevMenuState = MenuState.Main;
 				}
 				_mainMenu = value;
-			}
-		}
-		private static Entity localEntity;
-		public static Entity LocalEntity {
-			get => localEntity;
-			set {
-				if(localEntity==value) {
-					return;
-				}
-
-				localEntity?.UpdateIsPlayer(false);
-				value.UpdateIsPlayer(true);
-				localEntity = value;
-
-				CheckCamera(true);
 			}
 		}
 		public static bool EnableFXAA { //Test
@@ -117,15 +101,21 @@ namespace SurvivalGame
 			Console.BufferHeight = short.MaxValue-1;
 
 			GameInput.Initialize();
+
+			Player.Initialize();
+
+			//GameObject.Instantiate<EulerDirectionTest>();
 		}
 		public override void RenderUpdate()
 		{
+			Player.PlayerRenderUpdate();
+
 			ScreenShake.StaticRenderUpdate();
 		}
 		public override void FixedUpdate()
 		{
-			CheckCamera();
-			
+			Player.PlayerFixedUpdate();
+
 			if(Input.GetKeyDown(Keys.Escape)) {
 				if(Screen.lockCursor || !Screen.showCursor) {
 					Screen.lockCursor = false;
@@ -229,7 +219,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld<Overworld>(worldNameString,512,512);
+							world = World.NewWorld<Overworld>(worldNameString,256,256);
 							setMenuState = MenuState.Main;
 						}
 						break;
@@ -298,35 +288,6 @@ namespace SurvivalGame
 		{
 			Screen.lockCursor = shouldLockCursor;
 			Screen.showCursor = !shouldLockCursor;
-		}
-		private static Camera InstantiateCamera(CameraController controller)
-		{
-			controller.AddComponent<AudioListener>();
-			return controller.AddComponent<Camera>(c => c.fov = 110f);
-		}
-		private static void CheckCamera(bool forceRecreation = false)
-		{
-			if(localEntity==null) {
-				camera?.GameObject.Dispose();
-				camera = null;
-				return;
-			}
-			
-			var controllerType = localEntity.CameraControllerType;
-			if(forceRecreation || controllerType!=prevCameraControllerType) {
-				camera?.GameObject.Dispose();
-
-				if(controllerType==null || !typeof(CameraController).IsAssignableFrom(controllerType)) {
-					throw new Exception($"Invalid CameraControllerType return value, '{controllerType?.ToString() ?? "null"}' does not derive from CameraController class.");
-				}
-
-				var controller = (CameraController)GameObject.Instantiate(controllerType,init:false);
-				controller.camera = camera = InstantiateCamera(controller);
-				controller.entity = localEntity;
-				controller.Init();
-			}
-
-			prevCameraControllerType = controllerType;
 		}
 	}
 }

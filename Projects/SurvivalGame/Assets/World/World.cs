@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using GameEngine;
 using GameEngine.Physics;
+using ImmersionFramework;
 
 namespace SurvivalGame
 {
-	public abstract partial class World : GameObject
+	public abstract partial class World : GameObject, IWorld
 	{
 		public static readonly char[] FileHeader = { 'I','n','c','a','r','n','a','t','e',' ','W','o','r','l','d',' '};
 		
@@ -26,6 +27,8 @@ namespace SurvivalGame
 		public Tile[,] tiles; //Multiplayer non-host clients store tile arrays in Chunks instead.
 		public Chunk[,] chunks;
 		public Dictionary<Vector2Int,ChunkRenderer> chunkRenderers;
+
+		private bool forceChunkLoad = true;
 
 		public bool IsReady { protected set; get; }
 
@@ -83,11 +86,16 @@ namespace SurvivalGame
 		}
 		public override void FixedUpdate()
 		{
-			if(!Netplay.isClient || Main.camera==null || Time.FixedUpdateCount%60!=0) {
+			if(!Netplay.isClient || (!forceChunkLoad && Time.FixedUpdateCount%60!=0)) {
 				return;
 			}
-			
-			Vector2Int cameraPos = (Vector2Int)(Main.camera.Transform.Position.XZ/Chunk.ChunkWorldSize);
+
+			if(!Player.TryGetLocalPlayer(0,out var localPlayer) || !localPlayer.TryGetEntity(out var localPlayerEntity)) {
+				return;
+			}
+
+			Vector2Int cameraPos = (Vector2Int)(localPlayerEntity.Transform.Position.XZ/Chunk.ChunkWorldSize);
+			//Vector2Int cameraPos = (Vector2Int)(Main.camera.Transform.Position.XZ/Chunk.ChunkWorldSize);
 
 			const int Range = 24;
 
@@ -132,6 +140,8 @@ namespace SurvivalGame
 
 				Debug.Log($"Disposed {toDispose.Count} chunk renderers");
 			}
+
+			forceChunkLoad = false;
 		}
 
 		public void InitChunks()

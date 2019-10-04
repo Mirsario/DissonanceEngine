@@ -29,9 +29,10 @@ namespace SurvivalGame
 
 			t.EulerRot = new Vector3(60f,30f,0f);
 
-			if(Main.camera!=null) {
+			//TODO:
+			/*if(Main.camera!=null) {
 				t.Position = Main.camera.Transform.Position-Transform.Forward*100f;
-			}
+			}*/
         }
 	}
 }

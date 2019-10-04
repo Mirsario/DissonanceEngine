@@ -1,6 +1,7 @@
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Physics;
+using ImmersionFramework;
 
 namespace SurvivalGame
 {
@@ -20,6 +21,7 @@ namespace SurvivalGame
 				c.Mesh = Resources.Get<Mesh>($"{typeName}.obj");
 				c.Material = Resources.Find<Material>($"{typeName}");
 			});
+
 			collider = AddComponent<MeshCollider>(c => c.Mesh = Resources.Get<ConvexCollisionMesh>($"{typeName}.obj"));
 			rigidbody = AddComponent<Rigidbody>(c => c.Mass = 1f);
 		}

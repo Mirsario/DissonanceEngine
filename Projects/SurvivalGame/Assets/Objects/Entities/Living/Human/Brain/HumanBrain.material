@@ -1,0 +1,7 @@
+{
+	"name": "$FileName$",
+	"shader": "Diffuse",
+	"textures": {
+		"mainTex": "$FileName$.png"
+	}
+}

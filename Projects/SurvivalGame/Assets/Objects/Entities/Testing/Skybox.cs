@@ -14,8 +14,11 @@ namespace SurvivalGame
 		}
 		public override void RenderUpdate()
 		{
-			Transform.Position = Main.camera.Transform.Position;
-			Transform.LocalScale = Vector3.One*Main.camera.farClip;
+			//TODO:
+			/*if(Main.camera!=null) {
+				Transform.Position = Main.camera.Transform.Position;
+				Transform.LocalScale = Vector3.One*Main.camera.farClip;
+			}*/
 		}
 	}
 }
