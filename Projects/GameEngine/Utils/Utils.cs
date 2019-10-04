@@ -26,24 +26,11 @@ namespace GameEngine
 			}
 			return result;
 		}
-		
-		public static bool IsMicrosoftAssembly(Assembly assembly)
-		{
-			return assembly.Location.EndsWith("mscorlib.dll")
+
+		//TODO: Get rid of this
+		public static bool IsMicrosoftAssembly(Assembly assembly) => assembly.Location.EndsWith("mscorlib.dll")
 			|| assembly.FullName.Contains("PublicKeyToken = b77a5c561934e089")
 			|| assembly.FullName.Contains("PublicKeyToken = b03f5f7f11d50a3a")
 			|| assembly.FullName.Contains("PublicKeyToken = 31bf3856ad364e35");
-		}
-
-		public static void ArrayAdd<T>(ref T[] array,T value)
-		{
-			int arrayLength = array?.Length ?? 0;
-			T[] newArray = new T[arrayLength+1];
-			for(int i = 0;i<arrayLength;i++) {
-				newArray[i] = array[i];
-			}
-			newArray[arrayLength] = value;
-			array = newArray;
-		}
 	}
 }

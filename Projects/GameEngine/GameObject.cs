@@ -24,6 +24,8 @@ namespace GameEngine
 		internal Transform transform;
 		public Transform Transform => transform;
 
+		protected GameObject() {}
+
 		internal static void StaticInit()
 		{
 			gameObjects = new List<GameObject>();
@@ -156,16 +158,15 @@ namespace GameEngine
 			return count;
 		}
 
-		#region Instantiate
-		public static T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true) where T : GameObject => (T)Instantiate(typeof(T),name,position,rotation,scale,init);
-
+		public static T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true) where T : GameObject
+			=> (T)Instantiate(typeof(T),name,position,rotation,scale,init);
 		public static GameObject Instantiate(Type type,string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true)
 		{
 			if(!typeof(GameObject).IsAssignableFrom(type)) {
 				throw new ArgumentException("'type' must derive from GameObject class.");
 			}
 
-			var obj = (GameObject)FormatterServices.GetUninitializedObject(type);
+			var obj = (GameObject)Activator.CreateInstance(type,true);
 
 			obj.PreInit();
 
@@ -188,7 +189,6 @@ namespace GameEngine
 
 			return obj;
 		}
-		#endregion
 
 		public static IEnumerable<GameObject> GetGameObjects() => gameObjects;
 	}

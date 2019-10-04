@@ -31,18 +31,15 @@ namespace GameEngine
 			builtInAssets = new Dictionary<string,byte[]>(InternalUtils.strComparerInvariantIgnoreCase);
 
 			#region ContentManagers
+
 			#region RegisterManagers
-			//Get all assemblies which aren't referenced by engine and aren't default microsoft assemblies
-			var engineAssembly = Assembly.GetExecutingAssembly();
-			var references = engineAssembly.GetReferencedAssemblies();
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !InternalUtils.IsMicrosoftAssembly(a) && !references.Any(r => r.Name.Equals(a.GetName().Name))).ToList();
-			assemblies.Remove(engineAssembly);
-			assemblies.Insert(0,engineAssembly);
 
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
-			foreach(var type in ReflectionCache.engineTypes) {
+
+			foreach(var type in ReflectionCache.allTypes) {
 				if(!type.IsAbstract && typeof(AssetManager).IsAssignableFrom(type)) {
 					var manager = (AssetManager)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+
 					var generics = type?.BaseType.GetGenericArguments();
 					var returnType = generics?.Length==1 ? generics[0] : null;
 					if(returnType==null) {
@@ -55,53 +52,67 @@ namespace GameEngine
 					newOrder[0].Add(manager);
 				}
 			}
+
 			#endregion
 
 			#region SortLoadOrder
+
 			//Sort everything based on dependencies
 			for(int i=0;i<newOrder.Count;i++) {
 				var list = newOrder[i];
 				var move = new bool[list.Count];
 				bool moveAny = false;
+
 				for(int j=0;j<list.Count;j++) {
 					var aManager = list[j];
-					var aDependsOn = aManager.GetType().GetCustomAttributes<AutoloadRequirement>()?.Select(att => att.requirements).FirstOrDefault()?.ToArray();//Only for error checks
+					var aDependsOn = aManager.GetType().GetCustomAttributes<AutoloadRequirement>()?.Select(att => att.requirements).FirstOrDefault()?.ToArray(); //Only for error checks
+					
 					/*if(aDependsOn?.Length>0) {
 						Console.WriteLine(aManager.GetType().Name+" depends on type "+aDependsOn[0].Name);
 					}*/
+
 					var aType = aManager.GetType();
+
 					for(int k=0;k<list.Count;k++) {
 						var bManager = list[k];
-						var bDependsOn = bManager.GetType().GetCustomAttributes<AutoloadRequirement>()?.Select(att => att.requirements).FirstOrDefault()?.ToArray();//For sorting
+						var bDependsOn = bManager.GetType().GetCustomAttributes<AutoloadRequirement>()?.Select(att => att.requirements).FirstOrDefault()?.ToArray(); //For sorting
+
 						/*if(bDependsOn?.Length>0==true) {
 							Console.WriteLine(bManager.GetType().Name+" depends on type "+bDependsOn[0].Name);
 						}*/
+
 						var bType = bManager.GetType();
 						if(bDependsOn==null) {
 							continue;
 						}
+
 						if(bDependsOn.Any(t => t==aType)) {
 							if(aManager==bManager) {
 								throw new ArgumentException("AssetManager "+aType.Name+" can't require itself to be loaded first.");
 							}
+
 							if(aDependsOn!=null && aDependsOn.Any(t => t==bType)) {
 								throw new ArgumentException("AssetManagers '"+aType.Name+"' and '"+bType.Name+"' depend on each other in Autoload. This is unacceptable.");
 							}
+
 							move[k] = true;
 							moveAny = true;
 						}
 					}
 				}
+
 				if(moveAny) {
 					if(i+1==newOrder.Count) {
 						newOrder.Add(new List<AssetManager>());
 					}
+
 					var nextList = newOrder[i+1];
 					int movedNum = 0;
 					for(int j=0;j<move.Length;j++) {
 						if(move[j]) {
 							nextList.Add(list[j-movedNum]);
 							list.RemoveAt(j-movedNum);
+
 							movedNum++;
 						}
 					}
@@ -114,12 +125,16 @@ namespace GameEngine
 				list.Clear();
 				return array;
 			}).ToArray();
+
 			newOrder.Clear();
+
 			#endregion
+
 			#endregion
 
 			AutoloadResources();
 		}
+
 		private static void AutoloadResources()
 		{
 			bool GetAndCheckManager(string file,out AssetManager outManager)
@@ -229,7 +244,6 @@ namespace GameEngine
 			}
 			#endregion
 		}
-
 		private static void NameToPath(ref string filePath,out bool multiplePathsFound)
 		{
 			multiplePathsFound = false;

@@ -155,6 +155,7 @@
     <Compile Include="ImportExport\Physics\ConvexCollisionMeshManager.cs" />
     <Compile Include="Input\Input.cs" />
     <Compile Include="Input\InputBinding.cs" />
+    <Compile Include="Input\SingletonInputTrigger.cs" />
     <Compile Include="Input\InputTrigger.cs" />
     <Compile Include="Input\InputVariables.cs" />
     <Compile Include="Input\Keys.cs" />
@@ -188,6 +189,8 @@
     <Compile Include="Physics\RaycastHit.cs" />
     <Compile Include="Physics\RigidbodyInternal.cs" />
     <Compile Include="ProgrammableEntity.cs" />
+    <Compile Include="ProgrammableEntityHooks.cs" />
+    <Compile Include="ProgrammableEntityTypeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -213,7 +216,8 @@
     <Compile Include="Structures\Vector4Int.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utils\ArrayUtils.cs" />
+    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

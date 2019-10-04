@@ -10,16 +10,16 @@ namespace GameEngine
 
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector3));
 		public static readonly Vector3 Zero = default;
-		public static readonly Vector3 One = new Vector3( 1f,1f,1f);
-		public static readonly Vector3 UnitX = new Vector3( 1f,0f,0f);
-		public static readonly Vector3 UnitY = new Vector3( 0f,1f,0f);
-		public static readonly Vector3 UnitZ = new Vector3( 0f,0f,1f);
-		public static readonly Vector3 Up = new Vector3( 0f,1f,0f);
-		public static readonly Vector3 Down = new Vector3( 0f,-1f,0f);
-		public static readonly Vector3 Left = new Vector3(-1f,0f,0f);
-		public static readonly Vector3 Right = new Vector3( 1f,0f,0f);
-		public static readonly Vector3 Forward = new Vector3( 0f,0f,1f);
-		public static readonly Vector3 Backward = new Vector3( 0f,0f,-1f);
+		public static readonly Vector3 One = new Vector3( 1f, 1f, 1f);
+		public static readonly Vector3 UnitX = new Vector3( 1f, 0f, 0f);
+		public static readonly Vector3 UnitY = new Vector3( 0f, 1f, 0f);
+		public static readonly Vector3 UnitZ = new Vector3( 0f, 0f, 1f);
+		public static readonly Vector3 Up = new Vector3( 0f, 1f, 0f);
+		public static readonly Vector3 Down = new Vector3( 0f,-1f, 0f);
+		public static readonly Vector3 Left = new Vector3(-1f, 0f, 0f);
+		public static readonly Vector3 Right = new Vector3( 1f, 0f, 0f);
+		public static readonly Vector3 Forward = new Vector3( 0f, 0f,1f);
+		public static readonly Vector3 Backward = new Vector3( 0f, 0f,-1f);
 
 		public float x;
 		public float y;

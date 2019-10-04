@@ -8,6 +8,7 @@ using OpenTK.Graphics;
 using OpenTK.Input;
 using GameEngine.Graphics;
 using GameEngine.Physics;
+using System.Reflection;
 
 namespace GameEngine
 {
@@ -39,6 +40,7 @@ namespace GameEngine
 		internal static bool shouldQuit;
 		internal static bool preInitDone;
 		internal static bool fixedUpdate;
+		internal static Assembly[] assemblies;
 
 		public static bool HasFocus	{ get; internal set; } = true;
 

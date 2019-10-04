@@ -1,4 +1,5 @@
 using System;
+using GameEngine.Utils;
 using OpenTK.Graphics.OpenGL;
 
 using GLFramebufferAttachment = OpenTK.Graphics.OpenGL.FramebufferAttachment;
@@ -42,10 +43,11 @@ namespace GameEngine.Graphics
 			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,TextureTarget.Texture2D,texture.Id,0);
 			Rendering.CheckFramebufferStatus();
 			
-			InternalUtils.ArrayAdd(ref renderTextures,texture);
+			ArrayUtils.Add(ref renderTextures,texture);
+
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
-				InternalUtils.ArrayAdd(ref drawBuffers,drawBuffersEnum);
+				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
 			}
 
 			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
@@ -64,11 +66,12 @@ namespace GameEngine.Graphics
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,RenderbufferTarget.Renderbuffer,Id);
 			Rendering.CheckFramebufferStatus();
-			
-			InternalUtils.ArrayAdd(ref renderbuffers,renderbuffer);
+
+			ArrayUtils.Add(ref renderbuffers,renderbuffer);
+
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
-				InternalUtils.ArrayAdd(ref drawBuffers,drawBuffersEnum);
+				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
 			}
 		}
 		public void PrepareAttachments()
