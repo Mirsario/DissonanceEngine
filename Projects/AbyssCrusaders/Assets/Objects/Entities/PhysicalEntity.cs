@@ -3,24 +3,6 @@ using GameEngine;
 
 namespace AbyssCrusaders
 {
-	public struct CollisionInfo
-	{
-		public static readonly CollisionInfo Full = new CollisionInfo(true,true,true,true);
-		public static readonly CollisionInfo None = default;
-		
-		public bool up;
-		public bool down;
-		public bool left;
-		public bool right;
-
-		public CollisionInfo(bool up,bool down,bool left,bool right)
-		{
-			this.up = up;
-			this.down = down;
-			this.left = left;
-			this.right = right;
-		}
-	}
 	public class PhysicalEntity : Entity
 	{
 		public Vector2 velocity;
@@ -48,9 +30,8 @@ namespace AbyssCrusaders
 		protected Vector2 PhysicsStep(Vector2 position,ref Vector2 velocity)
 		{
 			Vector2 deltaVelocity = velocity*Time.FixedDeltaTime;
-			Vector2 nextPos = position+deltaVelocity;
 
-			int ceilWidth = Mathf.CeilToInt(width);
+			//int ceilWidth = Mathf.CeilToInt(width);
 			int ceilHeight = Mathf.CeilToInt(height);
 			float widthHalf = width*0.5f;
 			float heightHalf = height*0.5f;
@@ -129,6 +110,7 @@ namespace AbyssCrusaders
 							collisions.up = true;
 						}
 					}
+
 					if((preset.collision.left || preset.collision.right) && bottom>y && top<y+1) {
 						if(preset.collision.left && velocity.x>0f && right<=x && rightNext>x && rightNext<x+1) {
 							if(!TryClimb(1,ref velocity)) {
@@ -148,12 +130,9 @@ namespace AbyssCrusaders
 			}
 
 			position += deltaVelocity;
-			while(position.x<0f) {
-				position.x += world.width;
-			}
-			while(position.x>=world.width) {
-				position.x -= world.width;
-			}
+
+			position.x = Mathf.Repeat(position.x,world.width);
+
 			return position;
 		}
 		protected void ApplyFriction()
@@ -161,12 +140,15 @@ namespace AbyssCrusaders
 			float xSpeed = Mathf.Abs(velocity.x);
 			float drop = (xSpeed<stopSpeed ? stopSpeed : xSpeed)*(collisions.down ? friction : airFriction)*Time.FixedDeltaTime;
 			float newSpeed = xSpeed-drop;
+
 			if(newSpeed<0f) {
 				newSpeed = 0f;
 			}
+
 			if(newSpeed!=0f) {
 				newSpeed /= xSpeed;
 			}
+
 			velocity.x *= newSpeed;
 		}
 		protected void ApplyAcceleration(Vector2 acceleration,float? maxSpeed = null)
@@ -180,6 +162,7 @@ namespace AbyssCrusaders
 			float maxSpeedValue = maxSpeed ?? this.maxSpeed;
 			float currentSpeed = Vector2.Dot(velocity,direction);
 			float addSpeed = maxSpeedValue-currentSpeed;
+
 			if(addSpeed<=0f) {
 				return;
 			}

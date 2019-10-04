@@ -57,6 +57,7 @@ namespace AbyssCrusaders
 
 			if(moveX!=0f) {
 				Direction = moveX>0f ? 1 : -1;
+
 				if(collisions.down) {
 					if(GameInput.sprint.IsPressed) {
 						ApplyAcceleration(new Vector2(moveX*5f,0f),maxSpeed*1.5f);
@@ -142,6 +143,7 @@ namespace AbyssCrusaders
 			}
 			spriteObj.Position = tempSpriteOffset;
 		}
+
 		/*public override void OnGUI()
 		{
 			float y = 6.5f;

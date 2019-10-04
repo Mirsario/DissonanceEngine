@@ -36,8 +36,10 @@ namespace AbyssCrusaders
 				scale.HasValue ? new Vector3(scale.Value.x,scale.Value.y,1f) : (Vector3?)null,
 				init
 			);
+
 			result.position = position;
 			result.depth = depth;
+
 			return result;
 		}
 	}
