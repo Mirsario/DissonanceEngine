@@ -21,10 +21,13 @@ namespace GameEngine
 			maxDistanceSqr = maxDistance*maxDistance;
 		}
 	}
+
 	public class MeshRenderer : Renderer
 	{
+		internal MeshLOD[] lodMeshes;
+
 		private Mesh cachedRenderMesh;
-		
+
 		public virtual Mesh Mesh {
 			get => lodMeshes?[0]?.mesh;
 			set {
@@ -35,7 +38,6 @@ namespace GameEngine
 				}
 			}
 		}
-		internal MeshLOD[] lodMeshes;
 		public virtual MeshLOD[] LODMeshes {
 			get => lodMeshes;
 			set {
@@ -47,6 +49,7 @@ namespace GameEngine
 					if(value.Length==0) {
 						throw new Exception("Value cannot be an empty array. Set it to null instead.");
 					}
+
 					if(value.Any(l1 => l1==null ? hadNull = true : value.Count(l2 => l1.maxDistance==l2.maxDistance)>1)) {//dumb check
 						throw new Exception(hadNull ? "Array cannot contain null values" : "All maxDistance values must be unique.");
 					}

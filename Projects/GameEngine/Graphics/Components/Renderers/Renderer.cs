@@ -5,10 +5,11 @@ namespace GameEngine
 {
 	public abstract class Renderer : Component
 	{
+		internal MaterialCollection materials;
+
 		public Func<bool?> PreCullingModifyResult { get; set; }
 		public Func<bool,bool> PostCullingModifyResult { get; set; }
 		
-		internal MaterialCollection materials;
 		public MaterialCollection Materials {
 			get => materials;
 			set {
@@ -32,6 +33,7 @@ namespace GameEngine
 				materials = value;
 			}
 		}
+
 		public virtual Material Material {
 			get {
 				if(materials==null || materials.Count==0) {

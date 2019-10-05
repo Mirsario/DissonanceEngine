@@ -5,20 +5,25 @@ namespace SurvivalGame
 {
 	public class Skybox : GameObject
 	{
+		private static Skybox instance;
+
 		public override void OnInit()
 		{
+			instance = this;
+
 			AddComponent<MeshRenderer>(c => {
 				c.Mesh = PrimitiveMeshes.InvertedCube;
 				c.Material = Resources.Get<Material>("Skybox.material");
 			});
 		}
-		public override void RenderUpdate()
+
+		public static void OnRenderStart(Camera camera)
 		{
-			//TODO:
-			/*if(Main.camera!=null) {
-				Transform.Position = Main.camera.Transform.Position;
-				Transform.LocalScale = Vector3.One*Main.camera.farClip;
-			}*/
+			if(instance!=null) {
+				var t = instance.Transform;
+				t.Position = camera.Transform.Position;
+				t.LocalScale = Vector3.One*camera.farClip;
+			}
 		}
 	}
 }

@@ -92,6 +92,11 @@ namespace SurvivalGame
 			return controller.AddComponent<Camera>(c => {
 				c.fov = 110f;
 
+				c.OnRenderStart = camera => {
+					Skybox.OnRenderStart(camera);
+					Sun.OnRenderStart(camera);
+				};
+
 				//Unepic
 				c.view = LocalPlayerCount switch {
 					1 => new RectFloat(0f,0f,1f,1f),
