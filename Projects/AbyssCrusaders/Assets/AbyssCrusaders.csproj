@@ -53,6 +53,7 @@
     <Compile Include="GameInput.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Objects\CameraObj.cs" />
+    <Compile Include="Objects\Entities\CollisionInfo.cs" />
     <Compile Include="Objects\Entities\Entity.cs" />
     <Compile Include="Objects\Entities\PhysicalEntity.cs" />
     <Compile Include="Objects\Entities\Player\Player.cs" />
