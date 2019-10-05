@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GameEngine.Graphics
 {
@@ -17,26 +18,29 @@ namespace GameEngine.Graphics
 
 		internal void Init()
 		{
-			Setup(out var tempFramebuffers,out var tempRenderPasses);
+			var framebuffersList = new List<Framebuffer>();
+			var renderPassesList = new List<RenderPass>();
+
+			Setup(framebuffersList,renderPassesList);
 
 			Rendering.CheckGLErrors();
 
-			if(tempFramebuffers!=null) {
-				foreach(var framebuffer in tempFramebuffers) {
+			if(framebuffersList!=null) {
+				foreach(var framebuffer in framebuffersList) {
 					Framebuffer.Bind(framebuffer);
 					Rendering.CheckFramebufferStatus();
 				}
 			}
 
-			Framebuffers = tempFramebuffers;
-			RenderPasses = tempRenderPasses;
+			Framebuffers = framebuffersList.ToArray();
+			RenderPasses = renderPassesList.ToArray();
 
 			/*if(renderPasses==null || renderPasses.Length==0) {
 				throw new Exception($"Cannot initialize rendering pipeline {GetType().Name}: Pipeline must have 1 or more rendering passes.");
 			}*/
 		}
 
-		public abstract void Setup(out Framebuffer[] framebuffers,out RenderPass[] renderPasses); 
+		public abstract void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses); 
 		
 		public virtual void PreRender() {}
 		public virtual void PostRender() {}

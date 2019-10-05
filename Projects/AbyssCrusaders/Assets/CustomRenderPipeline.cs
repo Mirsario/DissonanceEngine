@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GameEngine;
 using GameEngine.Graphics;
 using GameEngine.Physics;
@@ -10,7 +11,7 @@ namespace AbyssCrusaders
 		private Shader postLightingShader;
 		private Shader compositeShader;
 		
-		public override void Setup(out Framebuffer[] framebuffers,out RenderPass[] renderPasses)
+		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			//Vector2Int ScreenSize() => new Vector2Int(Screen.Width,Screen.Height);
 
@@ -25,7 +26,7 @@ namespace AbyssCrusaders
 			var lightingBuffer = new RenderTexture("lightingBuffer",GetLightingResolution,textureFormat:TextureFormat.RGB8);
 
 			//Framebuffers
-			framebuffers = new[] {
+			framebuffers.AddRange(new[] {
 				mainFramebuffer = Framebuffer.Create("mainBuffer",fb => {
 					fb.AttachRenderTextures(
 						colorBuffer,
@@ -41,10 +42,10 @@ namespace AbyssCrusaders
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
 					fb.AttachRenderTexture(lightingBuffer);
 				})
-			};
+			});
 
 			//RenderPasses
-			renderPasses = new RenderPass[] {
+			renderPasses.AddRange(new RenderPass[] {
 				//Geometry
 				RenderPass.Create<GeometryPass>("Geometry",p => {
 					p.Framebuffer = mainFramebuffer;
@@ -88,7 +89,7 @@ namespace AbyssCrusaders
 
 				//GUI
 				RenderPass.Create<GUIPass>("GUI")
-			};
+			});
 		}
 
 		public override void PreRender()

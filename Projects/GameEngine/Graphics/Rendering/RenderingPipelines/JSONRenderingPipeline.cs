@@ -9,25 +9,23 @@ namespace GameEngine.Graphics.RenderingPipelines
 {
 	public class JSONRenderingPipeline : RenderingPipeline
 	{
-		public override void Setup(out Framebuffer[] buffers,out RenderPass[] passes)
+		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{	
 			const string FileName = "rendersettings.json";
 			string filePath = Directory.GetFiles("Assets","*.json").FirstOrDefault(file => Path.GetFileName(file).ToLower()==FileName) ?? Resources.builtInAssetsFolder+FileName;
 			string jsonText = Resources.ImportText(filePath);
 
-			ParseJSON(jsonText,out buffers,out passes);
+			ParseJSON(jsonText,framebuffers,renderPasses);
 		}
 
-		internal static void ParseJSON(string jsonText,out Framebuffer[] buffers,out RenderPass[] passes)
+		internal static void ParseJSON(string jsonText,List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			//TODO: Stop creating textures here, only make settings!
 			//TODO: Make textures be resizable btw.
 			var jsonSettings = JsonConvert.DeserializeObject<JSON_RenderSettings>(jsonText);
 
-			ParseJSONFramebuffers(jsonSettings,out buffers);
-			ParseJSONRenderPasses(jsonSettings,buffers,out passes);
-
-			Debug.Log("e");
+			ParseJSONFramebuffers(jsonSettings,framebuffers);
+			ParseJSONRenderPasses(jsonSettings,framebuffers,renderPasses);
 
 			//Make sure Renderbuffers are attached to all FBOs
 			//TODO: ^ this is weirdly located v
@@ -47,10 +45,9 @@ namespace GameEngine.Graphics.RenderingPipelines
 				}
 			}*/
 		}
-		internal static void ParseJSONFramebuffers(JSON_RenderSettings jsonSettings,out Framebuffer[] framebuffers)
+		internal static void ParseJSONFramebuffers(JSON_RenderSettings jsonSettings,List<Framebuffer> framebuffers)
 		{
 			//Framebuffers
-			var framebufferList = new List<Framebuffer>();
 			foreach(var fbPair in jsonSettings.framebuffers) {
 				string fbName = fbPair.Key;
 				var fb = fbPair.Value;
@@ -92,37 +89,38 @@ namespace GameEngine.Graphics.RenderingPipelines
 					var renderTexture = new RenderTexture(texName,Screen.Width,Screen.Height,textureFormat:tex.format);
 					framebuffer.AttachRenderTexture(renderTexture);
 					Rendering.CheckFramebufferStatus();
+
 					//textureList.Add(renderTexture);
 				}
 
 				//framebuffer.renderTextures = textureList.ToArray();
 				//framebuffer.drawBuffers = drawBuffers.ToArray();
 				//framebuffer.renderbuffers = renderbuffers.ToArray();
-				framebufferList.Add(framebuffer);
-			}
 
-			framebuffers = framebufferList.ToArray();
+				framebuffers.Add(framebuffer);
+			}
 		}
-		internal static void ParseJSONRenderPasses(JSON_RenderSettings jsonSettings,Framebuffer[] framebuffers,out RenderPass[] renderPasses)
+		internal static void ParseJSONRenderPasses(JSON_RenderSettings jsonSettings,List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			//TODO: Ignore case
 			//TODO: Is this needed anywhere else?
 			Framebuffer FindFramebuffer(string name,bool throwException = true)
 			{
 				Framebuffer framebuffer = null;
-				for(int i=0;i<framebuffers.Length;i++) {
+				for(int i=0;i<framebuffers.Count;i++) {
 					if(framebuffers[i].Name==name) {
 						framebuffer = framebuffers[i];
 					}
 				}
+
 				if(framebuffer==null && throwException) {
 					throw new Exception("Couldn't find framebuffer named "+name);
 				}
+
 				return framebuffer;
 			}
 
 			//RenderPasses
-			var passList = new List<RenderPass>();
 			foreach(var passPair in jsonSettings.pipeline) {
 				string passName = passPair.Key;
 				var pass = passPair.Value;
@@ -149,9 +147,11 @@ namespace GameEngine.Graphics.RenderingPipelines
 								break;
 							}
 						}
+
 						if(callContinue) {
 							continue;
 						}
+
 						for(int j=0;j<texFB.renderbuffers.Length;j++) {
 							if(texFB.renderbuffers[j].Name==texName) {
 								bufferList.Add(texFB.renderbuffers[j]);
@@ -159,9 +159,11 @@ namespace GameEngine.Graphics.RenderingPipelines
 								break;
 							}
 						}
+
 						if(callContinue) {
 							continue;
 						}
+
 						throw new Exception("Couldn't find texture or a renderbuffer named "+texName+" in framebuffer "+fbName);
 					}
 				}
@@ -209,7 +211,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 					}
 				}
 
-				passList.Add(RenderPass.Create(passType,passName,p => {
+				renderPasses.Add(RenderPass.Create(passType,passName,p => {
 					p.Framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower()!="none" ? FindFramebuffer(pass.framebuffer) : null;
 					p.PassedTextures = textureList.ToArray();
 					p.renderbuffers = bufferList.ToArray();
@@ -221,8 +223,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 					}
 				}));
 			}
-
-			renderPasses = passList.ToArray();
 		}
 	}
 }

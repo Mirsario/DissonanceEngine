@@ -1,8 +1,10 @@
-﻿namespace GameEngine.Graphics.RenderingPipelines
+﻿using System.Collections.Generic;
+
+namespace GameEngine.Graphics.RenderingPipelines
 {
 	public class DeferredRendering : RenderingPipeline
 	{
-		public override void Setup(out Framebuffer[] framebuffers,out RenderPass[] renderPasses)
+		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			//Vector2Int ScreenSize() => new Vector2Int(Screen.Width,Screen.Height);
 
@@ -20,7 +22,7 @@
 			var lightingTexture = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 
 			//Framebuffers
-			framebuffers = new[] {
+			framebuffers.AddRange(new[] {
 				mainFramebuffer = Framebuffer.Create("mainBuffer",fb => {
 					fb.AttachRenderTextures(
 						colorBuffer,
@@ -35,10 +37,10 @@
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
 					fb.AttachRenderTexture(lightingTexture);
 				})
-			};
+			});
 
 			//RenderPasses
-			renderPasses = new RenderPass[] {
+			renderPasses.AddRange(new RenderPass[] {
 				//Geometry
 				RenderPass.Create<GeometryPass>("Geometry",p => {
 					p.Framebuffer = mainFramebuffer;
@@ -72,7 +74,7 @@
 
 				//GUI
 				RenderPass.Create<GUIPass>("GUI")
-			};
+			});
 
 			Framebuffer.Bind(null);
 		}
