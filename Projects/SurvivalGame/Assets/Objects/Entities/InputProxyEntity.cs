@@ -38,6 +38,12 @@ namespace SurvivalGame
 				Proxy.AttachProxy(provaider.Proxy);
 			}
 		}
+		protected override void OnDetachedFrom(PhysicalEntity entity)
+		{
+			base.OnDetachedFrom(entity);
+
+			Proxy.DetachProxy();
+		}
 
 		//public T AttachTo<T>(T proxy) where T : InputProxy => Proxy.AttachProxy(proxy);
 		//public T AttachTo<T>(T provaider) where T : IInputProxyProvaider => Proxy.AttachProxy(provaider.Proxy);

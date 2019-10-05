@@ -40,7 +40,7 @@ namespace SurvivalGame
 			smoothLocalVelocity = Vector3.Lerp(smoothLocalVelocity,velocity.RotatedBy(0f,newRotation.y,0f),Time.RenderDeltaTime*10f);
 
 			//newRotation.x = Mathf.Clamp(newRotation.x,MinLockedPitch,MaxLockedPitch);
-			//newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
+			newRotation.z = Mathf.Clamp(smoothLocalVelocity.x*0.65f,-15f,15f);
 
 			rotation = newRotation;
 

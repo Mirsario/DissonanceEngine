@@ -88,7 +88,7 @@ namespace SurvivalGame
 
 			base.FixedUpdate();
 
-			Transform.EulerRot = new Vector3(0f,LookRotation.y,0f);
+			Transform.EulerRot = new Vector3(0f,Mathf.LerpAngle(Transform.EulerRot.y,LookRotation.y,Time.FixedDeltaTime*(OnGround ? 12f : 4f)),0f);
 			
 			if(this.JustActivated<Inputs.PrimaryUse>()) {
 				/*Vector3 direction = brain?.LookDirection ?? Vector3.Forward;

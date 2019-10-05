@@ -16,10 +16,11 @@ namespace SurvivalGame.Inputs
 			minValue = float.MinValue;
 			maxValue = float.MaxValue;
 
-			bindings = new InputBinding[] {
-				"-A",
-				"+D",
-				"GamePad0 Axis0"
+			bindings = new[] {
+				new InputBinding("Mouse X",GameSettings.MouseSensitivity,0f),
+				"GamePad0 Axis3",
+				"-Left",
+				"+Right"
 			};
 		}
 	}

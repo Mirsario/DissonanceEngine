@@ -20,7 +20,7 @@ namespace SurvivalGame
 		}
 		public int LocalId { get; set; }
 
-		public LocalPlayer(int id,int localId = -1) : base(id)
+		public LocalPlayer(int id,int localId) : base(id)
 		{
 			LocalId = localId;
 		}
@@ -29,6 +29,10 @@ namespace SurvivalGame
 		{
 			//Camera
 			CheckCamera();
+
+			if(Input.GetKey(Keys.Z) && LocalId!=0) {
+				return;
+			}
 
 			//Inputs
 			var inputs = Inputs;
@@ -45,8 +49,8 @@ namespace SurvivalGame
 
 			//Looks bad
 			Vector2 delta = new Vector2(
-				-inputs[SingletonInputTrigger.Info<LookX>.Id].value,
-				-inputs[SingletonInputTrigger.Info<LookY>.Id].value
+				-inputs[SingletonInputTrigger.Info<LookX>.Id].inputTrigger.Value,
+				-inputs[SingletonInputTrigger.Info<LookY>.Id].inputTrigger.Value
 			);
 
 			var rotation = LookRotation;
@@ -81,10 +85,37 @@ namespace SurvivalGame
 
 			prevCameraControllerType = controllerType;
 		}
-		private static Camera InstantiateCamera(CameraController controller) //TODO: Move
+		private Camera InstantiateCamera(CameraController controller) //TODO: Move
 		{
 			controller.AddComponent<AudioListener>();
-			return controller.AddComponent<Camera>(c => c.fov = 110f);
+
+			return controller.AddComponent<Camera>(c => {
+				c.fov = 110f;
+
+				//Unepic
+				c.view = LocalPlayerCount switch {
+					1 => new RectFloat(0f,0f,1f,1f),
+					2 => LocalId switch {
+						0 => new RectFloat(0.0f,0.0f,0.5f,1.0f),
+						1 => new RectFloat(0.5f,0.0f,0.5f,1.0f),
+						_ => throw new IndexOutOfRangeException()
+					},
+					3 => LocalId switch {
+						0 => new RectFloat(0.0f,0.5f,1.0f,0.5f),
+						1 => new RectFloat(0.0f,0.0f,0.5f,0.5f),
+						2 => new RectFloat(0.5f,0.0f,0.5f,0.5f),
+						_ => throw new IndexOutOfRangeException()
+					},
+					4 => LocalId switch {
+						0 => new RectFloat(0.0f,0.0f,0.5f,0.5f),
+						1 => new RectFloat(0.5f,0.0f,0.5f,0.5f),
+						2 => new RectFloat(0.0f,0.5f,0.5f,0.5f),
+						3 => new RectFloat(0.5f,0.5f,0.5f,0.5f),
+						_ => throw new IndexOutOfRangeException()
+					},
+					_ => throw new ArgumentException()
+				};
+			});
 		}
 	}
 }

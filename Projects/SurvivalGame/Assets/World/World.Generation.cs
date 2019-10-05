@@ -94,11 +94,12 @@ namespace SurvivalGame
 				}
 			}
 
-			var playerPos = new Vector3(xSizeInUnits*0.5f,0f,ySizeInUnits*0.5f);
-			playerPos.y = HeightAt(playerPos,false)+30f;
 
 			for(int i = 0;i<Player.localPlayers.Length;i++) {
 				var player = Player.localPlayers[i];
+
+				var playerPos = new Vector3(xSizeInUnits*0.5f+i*2f,0f,ySizeInUnits*0.5f);
+				playerPos.y = HeightAt(playerPos,false)+30f;
 
 				/*var soul = Entity.Instantiate<HumanSoul>(this);
 				player.AttachProxy(soul);

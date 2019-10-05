@@ -49,8 +49,7 @@ namespace ImmersionFramework
 		{
 			var sourceInputs = source.Inputs;
 
-			LookRotation = source.LookRotation;
-			//LookDirection = source.LookDirection;
+			LookRotation = source.LookRotation; //LookDirection = source.LookDirection;
 
 			int length = sourceInputs.Length;
 
@@ -83,6 +82,13 @@ namespace ImmersionFramework
 			Child = proxy;
 			proxy.Parent = this;
 			return proxy;
+		}
+		public void DetachProxy()
+		{
+			if(Child!=null) {
+				Child.Parent = null;
+				Child = null;
+			}
 		}
 	}
 }

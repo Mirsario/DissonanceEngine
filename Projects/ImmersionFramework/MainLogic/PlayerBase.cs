@@ -43,6 +43,7 @@ namespace ImmersionFramework
 			newEntity?.UpdateIsPlayer(true);
 		}
 
+
 		public static TPlayer GetPlayer(int index) => index>=0 && index<PlayerCount ? players[index] : null;
 		public static TLocalPlayer GetLocalPlayer(int index) => index>=0 && index<LocalPlayerCount ? localPlayers[index] : null;
 		public static bool TryGetPlayer(int index,out TPlayer player) => (player = GetPlayer(index))!=null;

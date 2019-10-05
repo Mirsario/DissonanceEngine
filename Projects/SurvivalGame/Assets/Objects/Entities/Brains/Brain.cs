@@ -10,6 +10,14 @@ namespace SurvivalGame
 {
 	public abstract class Brain : InputProxyEntity
 	{
+		protected override void OnDetachedFrom(PhysicalEntity entity)
+		{
+			base.OnDetachedFrom(entity);
+
+			if(Netplay.isClient) {
+				SoundInstance.Create($"Magic.ogg",Transform.Position);
+			}
+		}
 		/*protected override void OnAttachedTo(PhysicalEntity entity)
 		{
 			base.OnAttachedTo(entity);

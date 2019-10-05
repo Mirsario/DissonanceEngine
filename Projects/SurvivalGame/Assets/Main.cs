@@ -31,7 +31,6 @@ namespace SurvivalGame
 		
 		public static MenuState menuState;
 		public static MenuState prevMenuState;
-		public static GUISkin skin;
 		public static string docPath;
 		public static string savePath;
 		public static string modsPath;
@@ -100,8 +99,6 @@ namespace SurvivalGame
 
 			Console.BufferHeight = short.MaxValue-1;
 
-			GameInput.Initialize();
-
 			Player.Initialize();
 
 			//GameObject.Instantiate<EulerDirectionTest>();
@@ -147,6 +144,19 @@ namespace SurvivalGame
 			if(MainMenu) {
 				switch(menuState) {
 					case MenuState.Main: {
+						GUI.Button(new RectFloat(Screen.Width-448,Screen.Height-128,256,64),$"Player Count: {Player.LocalPlayerCount}");
+
+						if(GUI.Button(new RectFloat(Screen.Width-192,Screen.Height-128,64,64),"+") && Player.LocalPlayerCount<4) {
+							Player.AddLocalPlayer();
+						}
+						if(GUI.Button(new RectFloat(Screen.Width-128,Screen.Height-128,64,64),"-") && Player.LocalPlayerCount>1) {
+							Player.RemovePlayer(Player.localPlayers[Player.LocalPlayerCount-1]);
+						}
+
+						if(GUI.Button(new RectFloat(64,Screen.Height-256,256,64),"Play")) {
+							setMenuState = MenuState.WorldSelect;
+						}
+
 						if(GUI.Button(new RectFloat(64,Screen.Height-256,256,64),"Play")) {
 							setMenuState = MenuState.WorldSelect;
 						}

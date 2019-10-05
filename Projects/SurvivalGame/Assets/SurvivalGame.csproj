@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\GameInput.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Input\Inputs\Crouch.cs" />
     <Compile Include="Input\Inputs\Zoom.cs" />
