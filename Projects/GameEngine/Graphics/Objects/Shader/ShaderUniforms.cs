@@ -27,6 +27,7 @@ namespace GameEngine.Graphics
 			"time",
 			"color",
 			"mainTex",
+			"ambientColor"
 		};
 
 		//Matrices
@@ -52,7 +53,8 @@ namespace GameEngine.Graphics
 		public const int Time = 17;
 		public const int Color = 18;
 		public const int MainTex = 19;
+		public const int AmbientColor = 20;
 		//Count, important
-		public const int Count = 20;
+		public const int Count = 21;
 	}
 }

@@ -90,6 +90,9 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.Time]) {
 				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
 			}
+			if(hasDefaultUniform[DSU.AmbientColor]) {
+				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor],Rendering.ambientColor);
+			}
 		}
 		internal void SetupCameraUniforms(Camera camera,Vector3 cameraPos)
 		{
