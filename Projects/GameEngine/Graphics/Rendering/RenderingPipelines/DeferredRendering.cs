@@ -71,6 +71,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 					p.Shader = Resources.Find<Shader>("Composite");
 					p.PassedTextures = new[] {
 						colorBuffer,
+						normalBuffer,
 						emissionBuffer,
 						lightingBuffer
 					};

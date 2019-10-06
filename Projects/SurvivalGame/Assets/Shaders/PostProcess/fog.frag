@@ -39,7 +39,7 @@ void main()
 	
 	//oDiffuse = vec4(distance,distance,distance,1f); //texture(colorBuffer,screenPos).rgba;
 	//oDiffuse = vec4(texture(depthBuffer,screenPos).rgb,1f);
-	oColor = vec4(0.615,0.780,0.866,fogFactor);
+	oColor = vec4(0.701,0.807,0.843,fogFactor);
 	
 	//if(depth>0.99f) {
 	//	oDiffuse = vec4(1f,0.5f,0.5f,1f);

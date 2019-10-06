@@ -13,7 +13,7 @@ out vec4 oEmission;
 void main (void)  
 {
 	oDiffuse = texture(mainTex,uv)*col;
-	oNormal = vec3(1f,1f,1f);
+	oNormal = vec3(0f,0f,0f);
 	oPosition = worldPos;
 	oEmission = vec4(1f,1f,1f,1f);
 }

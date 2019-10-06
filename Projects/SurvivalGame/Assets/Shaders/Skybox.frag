@@ -14,8 +14,8 @@ out vec4 oEmission;
 
 void main (void)  
 {
-	oDiffuse=	vec4(mix(colorBottom,colorTop,min(1.0f,localPos.y*2.0)),1.0f);//*texture(mainTex,uv);
-	oPosition=	worldPos;
-	oNormal=	vec3(0.0,0.0,0.0);
-	oEmission=	vec4(1.0,1.0,1.0,1.0);
+	oDiffuse = vec4(mix(colorBottom,colorTop,min(1.0f,localPos.y*2.0)),1.0f);//*texture(mainTex,uv);
+	oNormal = vec3(0f,0f,0f);
+	oPosition = worldPos;
+	oEmission = vec4(1.0,1.0,1.0,1.0);
 }

@@ -28,7 +28,7 @@ namespace SurvivalGame
 
 		public static void OnRenderStart(Camera camera)
 		{
-			Rendering.ambientColor = new Vector3(0.5f);
+			Rendering.ambientColor = new Vector3(0.333f);
 
 			if(instance!=null) {
 				var t = instance.Transform;
