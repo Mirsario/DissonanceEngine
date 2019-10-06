@@ -8,6 +8,7 @@ using GameEngine.Physics;
 using ImmersionFramework;
 
 #pragma warning disable 219
+
 namespace SurvivalGame
 {
 	public static class Program
@@ -82,7 +83,7 @@ namespace SurvivalGame
 				"Entity"
 			);
 
-			Rendering.SetRenderingPipeline<GameEngine.Graphics.RenderingPipelines.DeferredRendering>();
+			Rendering.SetRenderingPipeline<CustomRenderingPipeline>();
 		}
 		public override void Start()
 		{
@@ -229,7 +230,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld<Overworld>(worldNameString,256,256);
+							world = World.NewWorld<Overworld>(worldNameString,512,512);
 							setMenuState = MenuState.Main;
 						}
 						break;

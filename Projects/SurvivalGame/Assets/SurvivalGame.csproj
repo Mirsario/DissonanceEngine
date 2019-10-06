@@ -95,6 +95,7 @@
     <Compile Include="Objects\Entities\Testing\TestCube\BasicCube.cs" />
     <Compile Include="Objects\Entities\Testing\TestCube\CubeObj2.cs" />
     <Compile Include="Objects\Tests\EulerDirectionTest.cs" />
+    <Compile Include="Rendering\CustomRenderingPipeline.cs" />
     <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="World\Chunk\Chunk.MeshGeneration.cs" />
     <Compile Include="World\Chunk\Chunk.IO.cs" />
