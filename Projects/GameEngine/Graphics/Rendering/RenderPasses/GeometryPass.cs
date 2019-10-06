@@ -29,6 +29,7 @@ namespace GameEngine.Graphics
 			#region CameraLoop
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
+
 				var viewport = GetViewport(camera);
 				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
@@ -119,7 +120,7 @@ namespace GameEngine.Graphics
 								uniformComputed[k] = false;
 							}
 
-							shader.SetupUniformsCached(ref camera,ref cameraPos,renderer.Transform,uniformComputed,
+							shader.SetupMatrixUniformsCached(camera,renderer.Transform,uniformComputed,
 								ref world,				ref worldInverse,
 								ref worldView,			ref worldViewInverse,
 								ref worldViewProj,		ref worldViewProjInverse,

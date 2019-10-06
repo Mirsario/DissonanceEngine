@@ -38,6 +38,7 @@ namespace GameEngine.Graphics
 
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
+
 				var viewRect = camera.ViewPixel;
 				GL.Viewport(viewRect.x,viewRect.y,viewRect.width,viewRect.height);
 
@@ -50,6 +51,9 @@ namespace GameEngine.Graphics
 					}
 
 					Shader.SetShader(activeShader);
+
+					activeShader.SetupCommonUniforms();
+					activeShader.SetupCameraUniforms(camera,cameraPos);
 
 					var lightType = (LightType)j;
 					
@@ -79,7 +83,7 @@ namespace GameEngine.Graphics
 
 						var world = Matrix4x4.CreateScale(light.range)*Matrix4x4.CreateTranslation(lightPosition);
 
-						activeShader.SetupUniforms(
+						activeShader.SetupMatrixUniforms(
 							ref camera,ref cameraPos,lightTransform,
 							ref world,ref worldInverse,
 							ref worldView,ref worldViewInverse,

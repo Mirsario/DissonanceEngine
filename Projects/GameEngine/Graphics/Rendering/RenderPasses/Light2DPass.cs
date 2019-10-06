@@ -18,14 +18,19 @@ namespace GameEngine.Graphics
 			worldView = default, worldViewInverse = default,
 			worldViewProj = default, worldViewProjInverse = default;
 
+			Shader.SetShader(passShader);
+
+			passShader.SetupCommonUniforms();
+
 			for(int i=0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
+
 				var viewport = GetViewport(camera);
 				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
 				var cameraPos = camera.Transform.Position;
 
-				Shader.SetShader(passShader);
+				passShader.SetupCameraUniforms(camera,cameraPos);
 
 				if(passedTextures!=null) {
 					for(int j=0;j<passedTextures.Length;j++) {
@@ -44,13 +49,13 @@ namespace GameEngine.Graphics
 				foreach(var light in Rendering.light2DList) {
 					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(light.Transform.Position);
 
-					passShader.SetupUniforms(
+					passShader.SetupMatrixUniforms(
 						ref camera,ref cameraPos,light.Transform,
-						ref world,ref worldInverse,
-						ref worldView,ref worldViewInverse,
-						ref worldViewProj,ref worldViewProjInverse,
-						ref camera.matrix_view,ref camera.matrix_viewInverse,
-						ref camera.matrix_proj,ref camera.matrix_projInverse,
+						ref world,				ref worldInverse,
+						ref worldView,			ref worldViewInverse,
+						ref worldViewProj,		ref worldViewProjInverse,
+						ref camera.matrix_view,	ref camera.matrix_viewInverse,
+						ref camera.matrix_proj,	ref camera.matrix_projInverse,
 						true
 					);
 					

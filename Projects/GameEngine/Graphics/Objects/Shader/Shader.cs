@@ -76,22 +76,8 @@ namespace GameEngine.Graphics
 			Rendering.CheckGLErrors();
 		}
 
-		internal void SetupUniformsCached(ref Camera camera,ref Vector3 cameraPos,Transform transform,bool[] uniformComputed,
-			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
-			ref Matrix4x4 worldView,		ref Matrix4x4 worldViewInverse,
-			ref Matrix4x4 worldViewProj,	ref Matrix4x4 worldViewProjInverse,
-			ref Matrix4x4 view,				ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj,				ref Matrix4x4 projInverse
-		){
-			//Heavily optimized shitcode below
-			//forgiv mi future me
-			//no
-			if(hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip],camera.nearClip);
-			}
-			if(hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip],camera.farClip);
-			}
+		internal void SetupCommonUniforms()
+		{
 			if(hasDefaultUniform[DSU.ScreenWidth]) {
 				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width);
 			}
@@ -101,19 +87,38 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ScreenResolution]) {
 				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],Screen.sizeFloat);
 			}
-			if(hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos);
-			}
-			if(hasDefaultUniform[DSU.CameraDirection])  {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
-			}
 			if(hasDefaultUniform[DSU.Time]) {
 				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
 			}
+		}
+		internal void SetupCameraUniforms(Camera camera,Vector3 cameraPos)
+		{
+			if(hasDefaultUniform[DSU.NearClip]) {
+				GL.Uniform1(defaultUniformIndex[DSU.NearClip],camera.nearClip);
+			}
+			if(hasDefaultUniform[DSU.FarClip]) {
+				GL.Uniform1(defaultUniformIndex[DSU.FarClip],camera.farClip);
+			}
+			if(hasDefaultUniform[DSU.CameraPosition]) {
+				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos);
+			}
+			if(hasDefaultUniform[DSU.CameraDirection]) {
+				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
+			}
+		}
+		internal void SetupMatrixUniformsCached(Camera camera,Transform transform,bool[] uniformComputed,
+			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
+			ref Matrix4x4 worldView,		ref Matrix4x4 worldViewInverse,
+			ref Matrix4x4 worldViewProj,	ref Matrix4x4 worldViewProjInverse,
+			ref Matrix4x4 view,				ref Matrix4x4 viewInverse,
+			ref Matrix4x4 proj,				ref Matrix4x4 projInverse
+		){
+			//Heavily optimized shitcode below, forgive me future me
+			//no
 
 			#region World
 			//bool needsWorld;
-			if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
+			if(hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 				//Check
 				if(!uniformComputed[DSU.World]) { world = transform.WorldMatrix; uniformComputed[DSU.World] = true; }
 
@@ -171,7 +176,7 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ProjInverse])	{ UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],	ref projInverse); }
 			#endregion
 		}
-		internal void SetupUniforms(ref Camera camera,ref Vector3 cameraPos,Transform transform,
+		internal void SetupMatrixUniforms(ref Camera camera,ref Vector3 cameraPos,Transform transform,
 			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView,		ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj,	ref Matrix4x4 worldViewProjInverse,
@@ -179,22 +184,7 @@ namespace GameEngine.Graphics
 			ref Matrix4x4 proj,				ref Matrix4x4 projInverse,
 			bool dontCalculateWorld = false
 		){
-			//Heavily optimized shitcode below
-			//forgiv mi future me
-			//again, no.
-			if(hasDefaultUniform[DSU.NearClip]) { GL.Uniform1(defaultUniformIndex[DSU.NearClip],camera.nearClip); }
-			if(hasDefaultUniform[DSU.FarClip]) { GL.Uniform1(defaultUniformIndex[DSU.FarClip],camera.farClip); }
-			if(hasDefaultUniform[DSU.ScreenWidth]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width); }
-			if(hasDefaultUniform[DSU.ScreenHeight]) { GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight],Screen.Height); }
-			if(hasDefaultUniform[DSU.CameraPosition]) { GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos); }
-			if(hasDefaultUniform[DSU.CameraDirection]) { GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward); }
-
-			if(hasDefaultUniform[DSU.Time]) {
-				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
-			}
-
 			#region World
-			//bool needsWorld;
 			if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 				if(!dontCalculateWorld) {
 					world = transform.WorldMatrix;
@@ -237,13 +227,23 @@ namespace GameEngine.Graphics
 				#endregion
 			}
 			#endregion
+
 			#region View
-			if(hasDefaultUniform[DSU.View])			{ UniformMatrix4(defaultUniformIndex[DSU.View],			ref view); }
-			if(hasDefaultUniform[DSU.ViewInverse])	{ UniformMatrix4(defaultUniformIndex[DSU.ViewInverse],	ref viewInverse); }
+			if(hasDefaultUniform[DSU.View]) {
+				UniformMatrix4(defaultUniformIndex[DSU.View],ref view);
+			}
+			if(hasDefaultUniform[DSU.ViewInverse]) {
+				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse],ref viewInverse);
+			}
 			#endregion
+
 			#region Proj
-			if(hasDefaultUniform[DSU.Proj])			{ UniformMatrix4(defaultUniformIndex[DSU.Proj],			ref proj); }
-			if(hasDefaultUniform[DSU.ProjInverse])	{ UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],	ref projInverse); }
+			if(hasDefaultUniform[DSU.Proj]) {
+				UniformMatrix4(defaultUniformIndex[DSU.Proj],ref proj);
+			}
+			if(hasDefaultUniform[DSU.ProjInverse]) {
+				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],ref projInverse);
+			}
 			#endregion
 		}
 
@@ -254,6 +254,7 @@ namespace GameEngine.Graphics
 				location = uniform.location;
 				return true;
 			}
+
 			location = -1;
 			return false;
 		}
@@ -263,8 +264,10 @@ namespace GameEngine.Graphics
 		internal void CompileShader(ShaderType type,string code,string shaderName = "")
 		{
 			code = code.Trim();
-			code = RegexCache.shaderFSuffixA.Replace(code,@"$1$2.0"); //Some broken Nvidia drivers don't support 'f' suffix, even though it was added in GLSL 1.2 decades ago. Zoinks.
+
+			//Some broken Nvidia drivers don't support 'f' suffix, even though it was added in GLSL 1.2 decades ago. Zoinks.
 			code = RegexCache.shaderFSuffixB.Replace(code,@"$1$2");
+			code = RegexCache.shaderFSuffixA.Replace(code,@"$1$2.0");
 			
 			int shader = GL.CreateShader((GLShaderType)type);
 			GL.ShaderSource(shader,code);
@@ -273,7 +276,7 @@ namespace GameEngine.Graphics
 			string info = GL.GetShaderInfoLog(shader);
 
 			if(!string.IsNullOrEmpty(info)) {
-				Debug.Log($"Error compilling shader: \r\n{info}\r\n\r\n{code}");
+				Debug.Log($"Error compilling shader:\r\n{info}\r\n\r\n{code}");
 
 				GL.DeleteShader(shader);
 
@@ -287,7 +290,7 @@ namespace GameEngine.Graphics
 			}
 
 			if(Rendering.CheckGLErrors(false)) {
-				throw new GraphicsException($"Unable to compile {type} shader '{shaderName}'");
+				throw new GraphicsException($"Unable to compile '{type}' shader '{shaderName}'");
 			}
 		}
 
