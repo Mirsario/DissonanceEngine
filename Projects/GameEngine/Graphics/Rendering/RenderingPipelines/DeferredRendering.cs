@@ -19,7 +19,10 @@ namespace GameEngine.Graphics.RenderingPipelines
 			var positionBuffer = new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 			var specularBuffer = new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f);
-			var lightingTexture = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+
+			var depthBuffer = new RenderTexture("depthBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.Depth32); //new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f);
+
+			var lightingBuffer = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 
 			//Framebuffers
 			framebuffers.AddRange(new[] {
@@ -31,11 +34,12 @@ namespace GameEngine.Graphics.RenderingPipelines
 						emissionBuffer,
 						specularBuffer
 					);
-					fb.AttachRenderbuffer(new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f),FramebufferAttachment.DepthAttachment);
+					fb.AttachRenderTexture(depthBuffer,FramebufferAttachment.DepthAttachment);
+					//fb.AttachRenderbuffer(depthBuffer,FramebufferAttachment.DepthAttachment);
 				}),
 
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
-					fb.AttachRenderTexture(lightingTexture);
+					fb.AttachRenderTexture(lightingBuffer);
 				})
 			});
 
@@ -68,7 +72,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 					p.PassedTextures = new[] {
 						colorBuffer,
 						emissionBuffer,
-						lightingTexture
+						lightingBuffer
 					};
 				}),
 
