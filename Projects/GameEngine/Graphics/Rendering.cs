@@ -146,14 +146,19 @@ namespace GameEngine.Graphics
 			//Calculate view and projection matrices, culling frustums
 			for(int i=0;i<cameraList.Count;i++) {
 				var camera = cameraList[i];
-				float aspectRatio = camera.ViewPixel.width/(float)camera.ViewPixel.height;
+
+				var viewSize = camera.ViewPixel;
+				float aspectRatio = viewSize.width/(float)viewSize.height;
+
 				camera.matrix_view = Matrix4x4.LookAt(camera.Transform.Position,camera.Transform.Position+camera.Transform.Forward,camera.Transform.Up);
+
 				if(camera.orthographic) {
 					float max = Mathf.Max(Screen.Width,Screen.Height);
 					camera.matrix_proj = Matrix4x4.CreateOrthographic(Screen.Width/max*camera.orthographicSize,Screen.Height/max*camera.orthographicSize,camera.nearClip,camera.farClip);
 				}else{
 					camera.matrix_proj = Matrix4x4.CreatePerspectiveFOV(camera.fov*Mathf.Deg2Rad,aspectRatio,camera.nearClip,camera.farClip);
 				}
+
 				camera.matrix_viewInverse = Matrix4x4.Invert(camera.matrix_view);
 				camera.matrix_projInverse = Matrix4x4.Invert(camera.matrix_proj);
 				camera.CalculateFrustum(camera.matrix_view*camera.matrix_proj);
@@ -197,15 +202,24 @@ namespace GameEngine.Graphics
 			if(Input.GetKey(Keys.F)) {
 				//TODO: This is completely temporarily
 				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
-				
+
+				var framebuffers = renderingPipeline.framebuffers;
+
 				int textureCount = 0;
-				for(int i=0;i<renderingPipeline.Framebuffers.Length;i++) {
-					for(int j=0;j<renderingPipeline.Framebuffers[i].renderTextures.Length;j++) {
-						var tex = renderingPipeline.Framebuffers[i].renderTextures[j];
-						if(!IsDepthTexture(tex)) { 
+				for(int i = 0;i<framebuffers.Length;i++) {
+					var fb = framebuffers[i];
+
+					for(int j = 0;j<fb.renderTextures.Length;j++) {
+						var tex = fb.renderTextures[j];
+
+						if(!IsDepthTexture(tex)) {
 							textureCount++;
 						}
 					}
+				}
+
+				if(Input.GetKey(Keys.LShift)) {
+					textureCount = Math.Min(textureCount,1);
 				}
 
 				int size = 1;
@@ -215,15 +229,18 @@ namespace GameEngine.Graphics
 				
 				int x = 0;
 				int y = 0;
-				for(int i=0;i<renderingPipeline.Framebuffers.Length;i++) {
-					var framebuffer = renderingPipeline.Framebuffers[i];
+				for(int i=0;i<framebuffers.Length;i++) {
+					var framebuffer = framebuffers[i];
+
 					Framebuffer.Bind(framebuffer,Framebuffer.Target.ReadFramebuffer);
 
 					for(int j=0;j<framebuffer.renderTextures.Length;j++) {
 						var tex = framebuffer.renderTextures[j];
+
 						if(IsDepthTexture(tex)) {
 							continue;
 						}
+
 						GL.ReadBuffer((ReadBufferMode)((int)ReadBufferMode.ColorAttachment0+j));
 
 						int wSize = Screen.width/size;

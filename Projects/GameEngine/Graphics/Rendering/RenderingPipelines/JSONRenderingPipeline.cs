@@ -26,24 +26,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			ParseJSONFramebuffers(jsonSettings,framebuffers);
 			ParseJSONRenderPasses(jsonSettings,framebuffers,renderPasses);
-
-			//Make sure Renderbuffers are attached to all FBOs
-			//TODO: ^ this is weirdly located v
-			//TODO: Also, is this something really really lazy? I don't remember.
-			/*for(int i=0;i<buffers.Length;i++) {
-				var fb = buffers[i];
-				for(int j=0;j<fb.renderbuffers.Length;j++) {
-					for(int k=0;k<buffers.Length;k++) {
-						if(i!=k) {
-							Framebuffer.Bind(buffers[k]);
-
-							var renderbuffer = fb.renderbuffers[j];
-							GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,FramebufferAttachment.DepthAttachment,RenderbufferTarget.Renderbuffer,renderbuffer.Id);
-							GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,FramebufferAttachment.StencilAttachment,RenderbufferTarget.Renderbuffer,renderbuffer.Id);
-						}
-					}
-				}
-			}*/
 		}
 		internal static void ParseJSONFramebuffers(JSON_RenderSettings jsonSettings,List<Framebuffer> framebuffers)
 		{
@@ -55,11 +37,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 				var framebuffer = Framebuffer.Create(fbName);
 
 				Framebuffer.Bind(framebuffer);
-
-				//var textureList = new List<RenderTexture>();
-				//var renderbuffers = new List<Renderbuffer>();
-				//var drawBuffers = new List<DrawBuffersEnum>();
-				//int colorTexAmount = 0;
 
 				foreach(var texPair in fb.textures) {
 					//bool noWrite = false;
@@ -73,29 +50,17 @@ namespace GameEngine.Graphics.RenderingPipelines
 							//noWrite = true;
 							break;
 						case TextureAttachmentType.DepthStencil: {
-							var renderbuffer = new Renderbuffer(texName,RenderbufferStorage.Depth24Stencil8);
-							framebuffer.AttachRenderbuffer(renderbuffer,FramebufferAttachment.DepthStencilAttachment);
-							//renderbuffers.Add(renderbuffer);
+							framebuffer.AttachRenderbuffer(new Renderbuffer(texName,RenderbufferStorage.Depth24Stencil8),FramebufferAttachment.DepthStencilAttachment);
 							continue;
 						}
 						default:
 							throw new NotImplementedException();
 					}
 
-					/*if(!noWrite) {
-						drawBuffers.Add((DrawBuffersEnum)attachmentType);
-					}*/
+					framebuffer.AttachRenderTexture(new RenderTexture(texName,Screen.Width,Screen.Height,textureFormat:tex.format));
 
-					var renderTexture = new RenderTexture(texName,Screen.Width,Screen.Height,textureFormat:tex.format);
-					framebuffer.AttachRenderTexture(renderTexture);
 					Rendering.CheckFramebufferStatus();
-
-					//textureList.Add(renderTexture);
 				}
-
-				//framebuffer.renderTextures = textureList.ToArray();
-				//framebuffer.drawBuffers = drawBuffers.ToArray();
-				//framebuffer.renderbuffers = renderbuffers.ToArray();
 
 				framebuffers.Add(framebuffer);
 			}
@@ -128,21 +93,25 @@ namespace GameEngine.Graphics.RenderingPipelines
 				if(!RenderPass.fullNameToType.TryGetValue(pass.type,out Type passType)) {
 					throw new Exception($"Couldn't find type {pass.type}, or it does not derive from RenderPass.");
 				}
+
 				var passInfo = RenderPass.fullNameToInfo[pass.type] ?? RenderPassInfoAttribute.Default;
-					
 				var textureList = new List<RenderTexture>();
 				var bufferList = new List<Renderbuffer>();
+
 				foreach(var texPair in pass.passedTextures) {
 					string fbName = texPair.Key;
 					var texArray = texPair.Value;
 					var texFB = FindFramebuffer(fbName);
 
-					for(int i=0;i<texArray.Length;i++) {
+					for(int i = 0;i<texArray.Length;i++) {
 						string texName = texArray[i];
 						bool callContinue = false;
-						for(int j=0;j<texFB.renderTextures.Length;j++) {
-							if(texFB.renderTextures[j].name==texName) {
-								textureList.Add(texFB.renderTextures[j]);
+
+						for(int j = 0;j<texFB.renderTextures.Length;j++) {
+							var fb = texFB.renderTextures[j];
+
+							if(fb.name==texName) {
+								textureList.Add(fb);
 								callContinue = true;
 								break;
 							}
@@ -152,9 +121,11 @@ namespace GameEngine.Graphics.RenderingPipelines
 							continue;
 						}
 
-						for(int j=0;j<texFB.renderbuffers.Length;j++) {
-							if(texFB.renderbuffers[j].Name==texName) {
-								bufferList.Add(texFB.renderbuffers[j]);
+						for(int j = 0;j<texFB.renderbuffers.Length;j++) {
+							var rb = texFB.renderbuffers[j];
+
+							if(rb.Name==texName) {
+								bufferList.Add(rb);
 								callContinue = true;
 								break;
 							}
@@ -164,7 +135,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 							continue;
 						}
 
-						throw new Exception("Couldn't find texture or a renderbuffer named "+texName+" in framebuffer "+fbName);
+						throw new Exception($"Couldn't find texture or a renderbuffer named '{texName}' in framebuffer '{fbName}'.");
 					}
 				}
 				var shadersArr = passInfo.acceptedShaderNames;
@@ -175,14 +146,15 @@ namespace GameEngine.Graphics.RenderingPipelines
 				if(shadersArr==null) {
 					//Single shader
 					if(pass.shaders!=null) {
-						throw new GraphicsException("Render pass type ''"+pass.type+"'' cannot have a ''shaders'' field -- only ''shader'' field is allowed.");
+						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shaders'' field -- only ''shader'' field is allowed.");
 					}
+
 					string shaderName = pass.shader;
 					passShader = shaderName==null ? null : Resources.Find<Shader>(shaderName);
 
 					if(passShader==null) {
 						if(shaderName!=null) {
-							throw new GraphicsException("Couldn't find shader named ''"+shaderName+"''.");
+							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
 						if(shaderRequired) {
 							throw new GraphicsException("Render pass type always requires a valid shader, provided in a ''shader'' field.");
@@ -191,7 +163,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 				}else{
 					//Multiple shaders
 					if(pass.shader!=null) {
-						throw new GraphicsException("Render pass type ''"+pass.type+"'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");
+						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");
 					}
 
 					passShaders = new Shader[shadersArr.Length];
@@ -201,12 +173,14 @@ namespace GameEngine.Graphics.RenderingPipelines
 						if(index<0) {
 							throw new GraphicsException($"Unknown shader type ''{pair.Key}'' for render pass {passName} ({pass.type}).");
 						}
+
 						string shaderName = pair.Value;
 						if(shaderName==null) {
 							continue;
 						}
+
 						if((passShaders[index] = Resources.Find<Shader>(shaderName))==null && shaderName!=null) {
-							throw new GraphicsException("Couldn't find shader named ''"+shaderName+"''.");
+							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
 					}
 				}

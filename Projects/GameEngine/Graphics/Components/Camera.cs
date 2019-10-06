@@ -1,4 +1,5 @@
 using System;
+using OpenTK.Graphics.OpenGL;
 using GameEngine.Graphics;
 
 namespace GameEngine
@@ -6,8 +7,23 @@ namespace GameEngine
 	public class Camera : Component
 	{
 		public RectFloat view = new RectFloat(0f,0f,1f,1f);
-		public RectInt ViewPixel
-		{
+
+		public bool orthographic;
+		public float orthographicSize = 16f;
+		public float nearClip = 0.01f;
+		public float farClip = 2000f;
+		public float fov = 90f;
+		public float[,] frustum = new float[6,4];
+
+		public Action<Camera> OnRenderStart;
+		public Action<Camera> OnRenderEnd;
+
+		internal Matrix4x4 matrix_view;
+		internal Matrix4x4 matrix_proj;
+		internal Matrix4x4 matrix_viewInverse;
+		internal Matrix4x4 matrix_projInverse;
+
+		public RectInt ViewPixel {
 			get => new RectInt(
 				(int)(view.x*Screen.Width),
 				(int)(view.y*Screen.Height),
@@ -21,20 +37,6 @@ namespace GameEngine
 				view.height = value.height/Screen.Height;
 			}
 		}
-		internal Matrix4x4 matrix_view;
-		internal Matrix4x4 matrix_proj;
-		internal Matrix4x4 matrix_viewInverse;
-		internal Matrix4x4 matrix_projInverse;
-
-		public bool orthographic;
-		public float orthographicSize = 16f;
-		public float nearClip = 0.01f;
-		public float farClip = 16000f;	
-		public float fov = 90f;
-		public float[,] frustum = new float[6,4];
-
-		public Action<Camera> OnRenderStart;
-		public Action<Camera> OnRenderEnd;
 
 		protected override void OnEnable() => Rendering.cameraList.Add(this);
 		protected override void OnDisable() => Rendering.cameraList.Remove(this);
@@ -44,6 +46,7 @@ namespace GameEngine
 		{
 			
 		}
+
 		public void CalculateFrustum(Matrix4x4 clip)
 		{
 			//Right
@@ -82,14 +85,6 @@ namespace GameEngine
 			frustum[5,2] = clip[11]+clip[10];
 			frustum[5,3] = clip[15]+clip[14];
 			NormalizePlane(5);
-		}
-		private void NormalizePlane(int side)
-		{
-			float magnitude = Mathf.Sqrt(frustum[side,0]*frustum[side,0]+frustum[side,1]*frustum[side,1]+frustum[side,2]*frustum[side,2]);
-			frustum[side,0] /= magnitude;
-			frustum[side,1] /= magnitude;
-			frustum[side,2] /= magnitude;
-			frustum[side,3] /= magnitude;
 		}
 		public bool PointInFrustum(Vector3 point)
 		{
@@ -136,6 +131,16 @@ namespace GameEngine
 				return false;
 			}
 			return true;
+		}
+
+		private void NormalizePlane(int side)
+		{
+			float magnitude = Mathf.Sqrt(frustum[side,0]*frustum[side,0]+frustum[side,1]*frustum[side,1]+frustum[side,2]*frustum[side,2]);
+
+			frustum[side,0] /= magnitude;
+			frustum[side,1] /= magnitude;
+			frustum[side,2] /= magnitude;
+			frustum[side,3] /= magnitude;
 		}
 	}
 }
