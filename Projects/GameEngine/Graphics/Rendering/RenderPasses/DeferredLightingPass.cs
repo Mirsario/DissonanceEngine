@@ -115,10 +115,12 @@ namespace GameEngine.Graphics
 
 						switch(lightType) {
 							case LightType.Point:
-								GL.BindBuffer(BufferTarget.ArrayBuffer,PrimitiveMeshes.icoSphere.vertexBufferId);
-								GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,PrimitiveMeshes.icoSphere.vertexSize,(IntPtr)0);
-								GL.BindBuffer(BufferTarget.ElementArrayBuffer,PrimitiveMeshes.icoSphere.indexBufferId);
-								GL.DrawElements(PrimitiveTypeGL.Triangles,PrimitiveMeshes.icoSphere.indexLength,DrawElementsType.UnsignedInt,0);
+								PrimitiveMeshes.icoSphere.DrawMesh(true);
+
+								//GL.BindBuffer(BufferTarget.ArrayBuffer,mesh.vertexBufferId);
+								//GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)0);
+								//GL.BindBuffer(BufferTarget.ElementArrayBuffer,mesh.indexBufferId);
+								//GL.DrawElements(PrimitiveTypeGL.Triangles,mesh.indexLength,DrawElementsType.UnsignedInt,0);
 								break;
 							case LightType.Directional:
 								//TODO: Draw like this should be made into a function

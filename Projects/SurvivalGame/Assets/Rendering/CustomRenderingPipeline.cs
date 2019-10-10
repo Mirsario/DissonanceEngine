@@ -23,11 +23,8 @@ namespace SurvivalGame
 
 				p.PassedTextures = new RenderTexture[] {
 					mainBuffer.renderTextures.First(rt => rt.name=="depthBuffer"),
-					mainBuffer.renderTextures.First(rt => rt.name=="colorBuffer"),
 					mainBuffer.renderTextures.First(rt => rt.name=="normalBuffer"),
-					mainBuffer.renderTextures.First(rt => rt.name=="positionBuffer"),
-					mainBuffer.renderTextures.First(rt => rt.name=="emissionBuffer"),
-					mainBuffer.renderTextures.First(rt => rt.name=="specularBuffer"),
+					mainBuffer.renderTextures.First(rt => rt.name=="positionBuffer")
 				};
 
 				//p.renderbuffers = new Renderbuffer[] {

@@ -41,8 +41,9 @@ namespace GameEngine
 				vertices = newVerts,
 				uv = newUVs,
 				normals = newNormals,
-				triangles = meshInfo.triangles
+				triangles = meshInfo.triangles //TODO: Does .obj support submeshes?
 			};
+
 			mesh.Apply();
 	
 			//mesh.RecalculateBounds();

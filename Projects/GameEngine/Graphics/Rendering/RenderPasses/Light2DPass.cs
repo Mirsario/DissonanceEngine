@@ -63,11 +63,8 @@ namespace GameEngine.Graphics
 					GL.Uniform3(uniformLightPosition,light.Transform.Position);
 					GL.Uniform1(uniformLightIntensity,light.intensity);
 					GL.Uniform3(uniformLightColor,new Vector3(light.color.x,light.color.y,light.color.z));
-					
-					GL.BindBuffer(BufferTarget.ArrayBuffer,PrimitiveMeshes.quad.vertexBufferId);
-					GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,PrimitiveMeshes.quad.vertexSize,(IntPtr)0);
-					GL.BindBuffer(BufferTarget.ElementArrayBuffer,PrimitiveMeshes.quad.indexBufferId);
-					GL.DrawElements(GLPrimitiveType.Triangles,PrimitiveMeshes.quad.indexLength,DrawElementsType.UnsignedInt,0);
+
+					PrimitiveMeshes.quad.DrawMesh(true);
 				}
 			}
 

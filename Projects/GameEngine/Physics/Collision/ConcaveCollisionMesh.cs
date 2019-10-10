@@ -13,8 +13,14 @@ namespace GameEngine.Physics
 		public override void SetupFromMesh(Mesh mesh)
 		{
 			var triMesh = new TriangleMesh();
-			for(int i = 0;i<mesh.triangles.Length;i += 3) {
-				triMesh.AddTriangle(mesh.vertices[mesh.triangles[i]],mesh.vertices[mesh.triangles[i+1]],mesh.vertices[mesh.triangles[i+2]]);
+
+			int i = 0;
+			while(i<mesh.triangles.Length) {
+				triMesh.AddTriangle(
+					mesh.vertices[mesh.triangles[i++]],
+					mesh.vertices[mesh.triangles[i++]],
+					mesh.vertices[mesh.triangles[i++]]
+				);
 			}
 
 			collShape = new BvhTriangleMeshShape(triMesh,true);

@@ -16,24 +16,29 @@ namespace GameEngine
 			var meshes = new List<Mesh>();
 			for(int i = 0;i<file.objects.Count;i++) {
 				var obj = file.objects[i];
+
 				var mesh = new Mesh {
 					vertices = obj.ReadVertices(NewVector3),
 					triangles = obj.ReadTriangles(),
 					normals = obj.ReadNormals(NewVector3),
 				};
+
 				meshes.Add(mesh);
 			}
 			return meshes.Count>0 ? meshes[0] : null;
 		}
 		public override void Export(Mesh mesh,Stream stream) //TODO: Bad design choices, read AssetManager.cs
 		{
-			using(var file = new SmartMeshFile()) {
-				var obj = new SmartMeshObject(mesh.name);
-				obj.WriteVertices(mesh.vertices,Vector3ToXYZ);
-				obj.WriteTriangles(mesh.triangles);
-				obj.WriteNormals(mesh.normals,Vector3ToXYZ);
-				file.objects.Add(obj);
-			}
+			using var file = new SmartMeshFile();
+
+			var obj = new SmartMeshObject(mesh.name);
+
+			obj.WriteVertices(mesh.vertices,Vector3ToXYZ);
+			obj.WriteTriangles(mesh.triangles);
+			obj.WriteNormals(mesh.normals,Vector3ToXYZ);
+
+			file.objects.Add(obj);
+
 			//file.Export(stream);
 		}
 

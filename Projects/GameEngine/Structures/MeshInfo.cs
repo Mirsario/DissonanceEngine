@@ -20,9 +20,11 @@ namespace GameEngine
 		{
 			mesh.vertices = vertices.ToArray();
 			mesh.triangles = triangles.ToArray();
+
 			if(normals!=null && normals.Count>0) {
 				mesh.normals = normals.ToArray();
 			}
+
 			if(uvs!=null && uvs.Count>0) {
 				mesh.uv = uvs.ToArray();
 			}

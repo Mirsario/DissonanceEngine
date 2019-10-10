@@ -141,13 +141,17 @@ namespace GameEngine
 				normals = normals,
 				tangents = tangents,
 				colors = colors,
-				boneWeights = boneWeights,
-				skeleton = skeleton
+				boneWeights = boneWeights
 			};
+
+			//skeleton = skeleton
+
 			//if(normals==null) {
 			//	mesh.RecalculateNormals();
 			//}
+
 			mesh.Apply();
+
 			return mesh;
 		}
 		public override void Export(Mesh mesh,Stream stream)
@@ -156,90 +160,101 @@ namespace GameEngine
 
 			int chunkAmount = 0;
 			long amountPos = writer.BaseStream.Position;
-			writer.Write(0);	//32 bit int to be rewritten at the end
-			writer.Write(mesh.vertices.Length);
-			writer.Write(mesh.triangles.Length);
 
-			#region Vertices
-			WriteChunk(writer,"vertices",w => {
-				for(int i=0;i<mesh.vertexCount;i++) {
+			writer.Write(0); //32 bit int to be rewritten at the end
+
+			int vertexCount = mesh.vertices.Length;
+			writer.Write(vertexCount);
+
+			int triangleCount = mesh.triangles.Length;
+			writer.Write(triangleCount);
+
+			void WriteChunk(string name,Action<BinaryWriter> writeAction)
+			{
+				MeshManager.WriteChunk(writer,name,writeAction);
+				chunkAmount++;
+			}
+
+			//Vertices
+			WriteChunk("vertices",w => {
+				for(int i=0;i<vertexCount;i++) {
 					w.Write(mesh.vertices[i]);
 				}
-				chunkAmount++;
 			});
-			#endregion
-			#region Triangles
-			WriteChunk(writer,"triangles",w => {
-				for(int i=0;i<mesh.triangles.Length;i++) {
+
+			//Triangles
+			WriteChunk("triangles",w => {
+				for(int i = 0;i<triangleCount;i++) {
 					w.Write(mesh.triangles[i]);
 				}
-				chunkAmount++;
 			});
-			#endregion
-			#region UV
+
+			//UV
 			if(mesh.uv?.Length>0==true) {
-				WriteChunk(writer,"uv0",w => {
-					for(int i=0;i<mesh.vertexCount;i++) {
+				WriteChunk("uv0",w => {
+					for(int i=0;i<vertexCount;i++) {
 						w.Write(mesh.uv[i]);
 					}
 				});
-				chunkAmount++;
 			}
-			#endregion
-			#region Normals
+
+			//Normals
 			if(mesh.normals?.Length>0==true) {
-				WriteChunk(writer,"normals",w => {
-					for(int i=0;i<mesh.vertexCount;i++) {
+				WriteChunk("normals",w => {
+					for(int i=0;i<vertexCount;i++) {
 						w.Write(mesh.normals[i]);
 					}
 				});
-				chunkAmount++;
 			}
-			#endregion
-			#region Tangents
+
+			//Tangents
 			if(mesh.tangents?.Length>0==true) {
-				WriteChunk(writer,"tangents",w => {
-					for(int i=0;i<mesh.vertexCount;i++) {
+				WriteChunk("tangents",w => {
+					for(int i=0;i<vertexCount;i++) {
 						w.Write(mesh.tangents[i]);
 					}
 				});
-				chunkAmount++;
 			}
-			#endregion
-			#region VertexColor
+
+			//VertexColor
 			if(mesh.colors?.Length>0==true) {
-				WriteChunk(writer,"colors",w => {
-					for(int i=0;i<mesh.vertexCount;i++) {
-						w.Write((byte)(mesh.colors[i].x*255));
-						w.Write((byte)(mesh.colors[i].y*255));
-						w.Write((byte)(mesh.colors[i].z*255));
-						w.Write((byte)(mesh.colors[i].w*255));
+				WriteChunk("colors",w => {
+					for(int i=0;i<vertexCount;i++) {
+						var c = mesh.colors[i];
+
+						w.Write((byte)(c.x*255));
+						w.Write((byte)(c.y*255));
+						w.Write((byte)(c.z*255));
+						w.Write((byte)(c.w*255));
 					}
 				});
-				chunkAmount++;
 			}
-			#endregion
-			#region BoneWeights
+
+			//BoneWeights
 			if(mesh.boneWeights?.Length>0==true) {
-				WriteChunk(writer,"boneWeights",w => {
-					for(int i=0;i<mesh.vertexCount;i++) {
-						w.Write(mesh.boneWeights[i].boneIndex0);
-						w.Write(mesh.boneWeights[i].boneIndex1);
-						w.Write(mesh.boneWeights[i].boneIndex2);
-						w.Write(mesh.boneWeights[i].boneIndex3);
-						w.Write(mesh.boneWeights[i].weight0);
-						w.Write(mesh.boneWeights[i].weight1);
-						w.Write(mesh.boneWeights[i].weight2);
-						w.Write(mesh.boneWeights[i].weight3);
+				WriteChunk("boneWeights",w => {
+					for(int i=0;i<vertexCount;i++) {
+						var weight = mesh.boneWeights[i];
+
+						w.Write(weight.boneIndex0);
+						w.Write(weight.boneIndex1);
+						w.Write(weight.boneIndex2);
+						w.Write(weight.boneIndex3);
+
+						w.Write(weight.weight0);
+						w.Write(weight.weight1);
+						w.Write(weight.weight2);
+						w.Write(weight.weight3);
 					}
 				});
-				chunkAmount++;
 			}
-			#endregion
+
 			long prevPos = writer.BaseStream.Position;
+
 			writer.BaseStream.Position = amountPos;
 			writer.Write(chunkAmount);
 			writer.BaseStream.Position = prevPos;
+
 			writer.Dispose();
 		}
 

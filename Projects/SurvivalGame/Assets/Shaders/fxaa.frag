@@ -48,11 +48,13 @@ vec4 fxaa(sampler2D tex,vec2 fragCoord,vec2 resolution,vec4 rgbaM,vec3 rgbNW,vec
     vec3 rgbB = rgbA*0.5+0.25*(texture2D(tex,fragCoord*inverseVP+dir*-0.5).rgb+texture2D(tex,fragCoord*inverseVP+dir*0.5).rgb);
 
     float lumaB = dot(rgbB,luma);
+	
     if((lumaB < lumaMin) || (lumaB > lumaMax)) {
         color = vec4(rgbA,rgbaM.a);
 	}else{
         color = vec4(rgbB,rgbaM.a);
 	}
+	
     return color;
 }
 
@@ -65,6 +67,7 @@ void main()
 {
 	vec2 resolution = vec2(screenWidth,screenHeight);
 	vec2 inverseVP = 1.0/resolution;
+	
 	oDiffuse = fxaa(
 		colorBuffer, //tex
 		screenPos*resolution, //fragCoord
@@ -75,6 +78,7 @@ void main()
 		texture2D(colorBuffer,screenPos+vec2(-inverseVP.x, inverseVP.y)).rgb, //v_rgbSW
 		texture2D(colorBuffer,screenPos+vec2( inverseVP.x, inverseVP.y)).rgb //v_rgbSE
 	);
+	
 	oNormal = texture2D(normalBuffer,screenPos).xyz;
 	oPosition = texture2D(positionBuffer,screenPos).xyz;
 	oEmission = texture2D(emissionBuffer,screenPos);

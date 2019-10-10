@@ -101,7 +101,7 @@ namespace GameEngine.Graphics
 
 							var meshPos = renderer.Transform.Position;
 							var mesh = renderer.GetRenderMeshInternal(meshPos,cameraPos);
-							if(mesh==null || !mesh.IsReady) {
+							if(mesh==null || !mesh.isReady) {
 								continue;
 							}
 

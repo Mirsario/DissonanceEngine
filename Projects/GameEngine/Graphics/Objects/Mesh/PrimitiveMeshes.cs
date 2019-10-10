@@ -112,14 +112,12 @@
 					int bottomLeft = vertexMap[x,y+1];
 					int bottomRight = vertexMap[x+1,y+1];
 
-					newMesh.triangles[triangle] = bottomLeft;
-					newMesh.triangles[triangle+1] = topRight;
-					newMesh.triangles[triangle+2] = topLeft;
-					newMesh.triangles[triangle+3] = bottomLeft;
-					newMesh.triangles[triangle+4] = bottomRight;
-					newMesh.triangles[triangle+5] = topRight;
-
-					triangle += 6;
+					newMesh.triangles[triangle++] = bottomLeft;
+					newMesh.triangles[triangle++] = topRight;
+					newMesh.triangles[triangle++] = topLeft;
+					newMesh.triangles[triangle++] = bottomLeft;
+					newMesh.triangles[triangle++] = bottomRight;
+					newMesh.triangles[triangle++] = topRight;
 				}
 			}
 
@@ -264,20 +262,21 @@
 					SphereVertex(x+1,y,vertexIndex+2);
 					SphereVertex(x+1,y+1,vertexIndex+3);
 
-					newMesh.triangles[triangleIndex] = vertexIndex;
-					newMesh.triangles[triangleIndex+1] = vertexIndex+1;
-					newMesh.triangles[triangleIndex+2] = vertexIndex+3;
-					newMesh.triangles[triangleIndex+3] = vertexIndex+2;
-					newMesh.triangles[triangleIndex+4] = vertexIndex;
-					newMesh.triangles[triangleIndex+5] = vertexIndex+3;
+					newMesh.triangles[triangleIndex++] = vertexIndex;
+					newMesh.triangles[triangleIndex++] = vertexIndex+1;
+					newMesh.triangles[triangleIndex++] = vertexIndex+3;
+					newMesh.triangles[triangleIndex++] = vertexIndex+2;
+					newMesh.triangles[triangleIndex++] = vertexIndex;
+					newMesh.triangles[triangleIndex++] = vertexIndex+3;
 
 					vertexIndex += 4;
-					triangleIndex += 6;
 				}
 			}
+
 			if(apply) {
 				newMesh.Apply();
 			}
+
 			return newMesh;
 		}
 		public static Mesh GenerateIcoSphere(float size = 1f,bool inverted = false,bool addNormals = true,bool addTangents = true,bool apply = true)

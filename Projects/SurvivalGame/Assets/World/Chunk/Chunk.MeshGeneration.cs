@@ -52,11 +52,12 @@ namespace SurvivalGame
 
 			mesh = new Mesh() {
 				vertices = new Vector3[vertexCount],
+				triangles = new int[triIndexCount],
 				normals = new Vector3[vertexCount],
-				uv = noGraphics ? null : new Vector2[vertexCount],
-				triangles = new int[triIndexCount]
+				uv = noGraphics ? null : new Vector2[vertexCount]
 			};
 
+			//Calculate vertices && UVs
 			Tile tile;
 			int vertex = 0;
 			var vertice2D = new int[size+1,size+1];
@@ -65,6 +66,7 @@ namespace SurvivalGame
 					tile = this[x*div,y*div];
 
 					mesh.vertices[vertex] = new Vector3(x*TileSize*div,tile.height,y*TileSize*div);
+
 					if(!noGraphics) {
 						mesh.uv[vertex] = new Vector2((y/(float)size),1f-(x/(float)size));
 					}
@@ -73,6 +75,7 @@ namespace SurvivalGame
 				}
 			}
 
+			//Calculate normals
 			vertex = 0;
 
 			for(int y = 0;y<=size;y++) {
@@ -95,6 +98,7 @@ namespace SurvivalGame
 				}
 			}
 
+			//Triangles
 			int triIndex = 0;
 
 			for(int y = 0;y<size;y++) {

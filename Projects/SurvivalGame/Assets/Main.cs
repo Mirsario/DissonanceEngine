@@ -125,9 +125,6 @@ namespace SurvivalGame
 				UpdateCursor();
 			}
 
-			if(Input.GetKeyDown(Keys.Y)) {
-				EnableFXAA = !EnableFXAA;
-			}
 			if(Input.GetKeyDown(Keys.F1)) {
 				hideUI = !hideUI;
 			}
@@ -254,7 +251,7 @@ namespace SurvivalGame
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Render MS: {Time.RenderMs:0.00}");
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic FPS: {Time.LogicFramerate}");
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic MS: {Time.LogicMs:0.00}");
-				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"FXAA: {(EnableFXAA ? "Enabled" : "Disabled")} ([Y] - Toggle)");
+				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Draw Calls Count: {Rendering.drawCallsCount}");
 			}
 
 			prevMenuState = menuState;

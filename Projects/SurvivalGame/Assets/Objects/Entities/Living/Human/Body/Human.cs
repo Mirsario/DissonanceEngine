@@ -1,4 +1,4 @@
-#define STRAFE_JUMPING
+//#define STRAFE_JUMPING
 
 using System;
 using System.Linq;
@@ -157,7 +157,7 @@ namespace SurvivalGame
 			audioSource.Is2D = isPlayer;
 		}
 
-	//Movement
+		//Movement
 		public void Movement()
 		{
 			velocity = rigidbody.Velocity;
@@ -210,7 +210,9 @@ namespace SurvivalGame
 					Movement_Move(Acceleration,MoveSpeed,Friction,forward,right);
 
 					if(!wasOnGround) {
-						//Footstep("Land",0.8f);
+						if((Time.GameTime-lastLand)>=0.5f) {
+							Footstep("Land",0.8f);
+						}
 
 						float magnitude = prevVelocity.Magnitude-velocity.Magnitude;
 						const float minSpeed = 8.5f;
@@ -224,7 +226,7 @@ namespace SurvivalGame
 					}
 				}
 
-				lastLand = Time.FixedDeltaTime;
+				lastLand = Time.GameTime;
 				wasOnGround = true;
 			} else {
 				UpdateWalk(false);
