@@ -6,11 +6,11 @@ namespace SurvivalGame
 {
 	public class Robot : Entity
 	{
-		public SkinnedMeshRenderer renderer;
+		public MeshRenderer renderer;
 
 		public override void OnInit()
 		{
-			renderer = AddComponent<SkinnedMeshRenderer>(c => {
+			renderer = AddComponent<MeshRenderer>(c => {
 				c.Mesh = Resources.Import<Mesh>("Robot.mesh");
 				c.Material = Resources.Find<Material>("DualSided");
 			});

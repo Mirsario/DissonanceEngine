@@ -1,11 +1,11 @@
-using OpenTK.Graphics.OpenGL;
+/*using OpenTK.Graphics.OpenGL;
 using GameEngine.Graphics;
 
 namespace GameEngine
 {
 	public class SkinnedMeshRenderer : MeshRenderer
 	{
-		/*public AnimationSkeleton skeleton;
+		public AnimationSkeleton skeleton;
 
 		public override Mesh Mesh {
 			get => mesh;
@@ -41,6 +41,6 @@ namespace GameEngine
 					Shader.UniformMatrix4(GL.GetUniformLocation(shader.program,$"boneMatrices[{i}]"),ref matrix);
 				}
 			}
-		}*/
+		}
 	}
-}
+}*/
