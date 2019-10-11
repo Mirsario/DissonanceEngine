@@ -108,7 +108,9 @@ namespace GameEngine
 			TriggerSet(vars.mouseDelta.y,"mouse y",false);
 			TriggerSet(vars.mouseWheel,"mouse scrollwheel",false);
 
-			CheckSpecialCombinations();
+			if(Game.fixedUpdate) {
+				CheckSpecialCombinations();
+			}
 		}
 		private static void LateUpdate()
 		{

@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,4 +51,4 @@ namespace GameEngine
 
 		public static implicit operator MaterialCollection(Material[] array) => new MaterialCollection(array);
 	}
-}
+}*/

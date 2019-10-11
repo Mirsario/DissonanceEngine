@@ -83,6 +83,9 @@ namespace SurvivalGame
 			if(Netplay.isClient) {
 				chunkRenderers = new Dictionary<Vector2Int,ChunkRenderer>();
 			}
+
+			//temp
+			InitChunks();
 		}
 		public override void FixedUpdate()
 		{
@@ -146,13 +149,21 @@ namespace SurvivalGame
 
 		public void InitChunks()
 		{
-			for(int y=0;y<ySizeInChunks;y++) {
-				for(int x=0;x<xSizeInChunks;x++) {
+			for(int y = 0;y<ySizeInChunks;y++) {
+				for(int x = 0;x<xSizeInChunks;x++) {
 					chunks[x,y] = Chunk.Create(this,x,y);
 				}
 			}
 		}
-		
+		public void FinishChunkInit()
+		{
+			for(int y = 0;y<ySizeInChunks;y++) {
+				for(int x = 0;x<xSizeInChunks;x++) {
+					chunks[x,y].FinishInit();
+				}
+			}
+		}
+
 		public void RepeatTilePos(ref int x,ref int y)
 		{
 			//bad
@@ -230,8 +241,10 @@ namespace SurvivalGame
 			var world = Instantiate<T>(name,xSize,ySize,path);
 
 			world.Generate(seed ?? ((int)DateTime.Now.Ticks));
-			world.InitChunks();
+			world.FinishChunkInit();
+
 			Main.MainMenu = false;
+
 			return world;
 		}
 	}

@@ -123,7 +123,44 @@ namespace SurvivalGame
 
 			mesh.Apply();
 
+			GenerateStaticEntityMeshes();
+
 			return mesh;
+		}
+		private void GenerateStaticEntityMeshes()
+		{
+			var meshesByMaterial = new Dictionary<Material,List<(Mesh mesh,Vector3 position)>>();
+
+			var chunkPosition = Transform.Position;
+
+			for(int i = 0;i<staticEntities.Count;i++) {
+				var entity = staticEntities[i];
+				var renderers = entity.RendererData;
+
+				var entityPosition = entity.Transform.Position;
+
+				for(int j = 0;j<renderers.Length;j++) {
+					var rendererData = renderers[j];
+
+					if(!meshesByMaterial.TryGetValue(rendererData.material,out var list)) {
+						meshesByMaterial[rendererData.material] = list = new List<(Mesh mesh,Vector3 position)>();
+					}
+
+					list.Add((rendererData.mesh,entityPosition-chunkPosition));
+				}
+			}
+
+			foreach(var pair in meshesByMaterial) {
+				var material = pair.Key;
+				var meshes = pair.Value;
+
+				var mergedMesh = Mesh.CombineMeshes(meshes.ToArray());
+
+				AddComponent<MeshRenderer>(r => {
+					r.Mesh = mergedMesh;
+					r.Material = material;
+				});
+			}
 		}
 		private void GenerateTexture()
 		{

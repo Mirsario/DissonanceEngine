@@ -1,12 +1,28 @@
 ﻿using GameEngine.Physics;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Diagnostics;
 
 namespace GameEngine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{
+		protected struct RenderQueueEntry
+		{
+			public Shader shader;
+			public Material material;
+			public Renderer renderer;
+			public Mesh mesh;
+		}
+
 		public ulong? layerMask;
 
+		private Stopwatch sw;
+
+		public override void OnInit()
+		{
+			sw = new Stopwatch();
+		}
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
@@ -20,76 +36,61 @@ namespace GameEngine.Graphics
 			worldView = default, worldViewInverse = default,
 			worldViewProj = default, worldViewProjInverse = default;
 
-			var cullMode = CullMode.Front;
-			var polygonMode = PolygonMode.Fill;
-
 			bool hasLayerMask = layerMask.HasValue;
 			ulong layerMaskValue = layerMask ?? 0;
 
-			#region CameraLoop
-			for(int i=0;i<Rendering.cameraList.Count;i++) {
-				var camera = Rendering.cameraList[i];
+			//Render cache
+			Shader lastShader = null;
+			Material lastMaterial = null;
+			var lastCullMode = CullMode.Front;
+			var lastPolygonMode = PolygonMode.Fill;
 
-				var viewport = GetViewport(camera);
-				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
+			int rendererCount = Rendering.rendererList.Count;
+			var renderQueue = new RenderQueueEntry[rendererCount];
 
-				camera.OnRenderStart?.Invoke(camera);
+			sw.Restart();
 
-				var cameraPos = camera.Transform.Position;
-				
-				GL.EnableVertexAttribArray((int)AttributeId.Vertex);
+			void UseStopwatch(ref long addTo,Action action)
+			{
+				long tempMs = sw.ElapsedTicks;
 
-				#region ShaderLoop
-				int shaderCount = Shader.shaders.Count;
-				for(int s=0;s<shaderCount;s++) {
-					var shader = Shader.shaders[s];
-					if(shader==null) {
+				action();
+
+				addTo += sw.ElapsedTicks-tempMs;
+			}
+
+			long rendererLoopMs = 0;
+			long sortingMs = 0;
+			long renderMs = 0;
+			long totalMs = 0;
+
+			bool doSort = !Input.GetKey(Keys.U);
+
+			//CameraLoop
+			UseStopwatch(ref totalMs,() => {
+				for(int c = 0;c<Rendering.cameraList.Count;c++) {
+					var camera = Rendering.cameraList[c];
+
+					var viewport = GetViewport(camera);
+					GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
+
+					camera.OnRenderStart?.Invoke(camera);
+
+					var cameraPos = camera.Transform.Position;
+
+					GL.EnableVertexAttribArray((int)AttributeId.Vertex);
+
+					//RendererLoop
+					if(rendererCount==0) {
 						continue;
 					}
 
-					int materialCount = shader.materialAttachments.Count;
-					if(materialCount==0) {
-						continue;
-					}
+					int numToRenderer = 0;
 
-					if(cullMode!=shader.cullMode) {
-						if(shader.cullMode==CullMode.Off) {
-							GL.Disable(EnableCap.CullFace);
-						}else{
-							if(cullMode==CullMode.Off) {
-								GL.Enable(EnableCap.CullFace);
-							}
-							GL.CullFace((CullFaceMode)shader.cullMode);
-						}
-						cullMode = shader.cullMode;
-					}
+					UseStopwatch(ref rendererLoopMs,() => {
+						for(int r = 0;r<rendererCount;r++) {
+							var renderer = Rendering.rendererList[r];
 
-					if(polygonMode!=shader.polygonMode) {
-						GL.PolygonMode(MaterialFace.FrontAndBack,(OpenTK.Graphics.OpenGL.PolygonMode)(polygonMode = shader.polygonMode));
-					}
-
-					if(Shader.activeShader!=shader) {
-						Shader.SetShader(shader);
-					}
-					
-					#region MaterialLoop
-					for(int m=0;m<materialCount;m++) {
-						var material = shader.materialAttachments[m];
-						if(material==null) {
-							continue;
-						}
-
-						int rendererCount = material.rendererAttachments.Count;
-						if(rendererCount==0) {
-							continue;
-						}
-
-						material.ApplyTextures(shader);
-						material.ApplyUniforms(shader);
-						
-						#region RendererLoop
-						for(int r=0;r<rendererCount;r++) {
-							var renderer = material.rendererAttachments[r];
 							if(!renderer.Enabled) {
 								continue;
 							}
@@ -100,8 +101,15 @@ namespace GameEngine.Graphics
 							}
 
 							var meshPos = renderer.Transform.Position;
-							var mesh = renderer.GetRenderMeshInternal(meshPos,cameraPos);
+
+							renderer.GetRenderDataInternal(meshPos,cameraPos,out var mesh,out var material);
+
 							if(mesh==null || !mesh.isReady) {
+								continue;
+							}
+
+							var shader = material.Shader;
+							if(shader==null) {
 								continue;
 							}
 
@@ -111,37 +119,117 @@ namespace GameEngine.Graphics
 								cullResult = postCullResult.Value;
 							}
 
-							if(!cullResult) {
-								continue;
+							if(cullResult) {
+								renderQueue[numToRenderer++] = new RenderQueueEntry {
+									shader = shader,
+									material = material,
+									renderer = renderer,
+									mesh = mesh
+								};
 							}
 
+							//shaderRenderQueue[shader.Id] = (shader,new (Material material, (Renderer renderer, Mesh mesh)[])[shader.materialAttachments.Count]);
+						}
+					});
+					 
+					//Sort the render queue
+					UseStopwatch(ref sortingMs,() => {
+						if(doSort) {
+							for(int i = 0;i<numToRenderer-1;i++) {
+								for(int j = i+1;j<numToRenderer;j++) {
+									ref var iTuple = ref renderQueue[i];
+									ref var jTuple = ref renderQueue[j];
+
+									if(iTuple.shader.Id<jTuple.shader.Id || iTuple.material.Id<jTuple.material.Id) {
+										var temp = iTuple;
+										iTuple = jTuple;
+										jTuple = temp;
+									}
+								}
+							}
+						}
+					});
+
+					//Render
+					UseStopwatch(ref renderMs,() => {
+						for(int i = 0;i<numToRenderer;i++) {
+							var entry = renderQueue[i];
+							var shader = entry.shader;
+							var material = entry.material;
+							var renderer = entry.renderer;
+							var mesh = entry.mesh;
+
+							//Update Shader
+							if(lastShader!=shader) {
+								Shader.SetShader(shader);
+
+								//Update CullMode
+								if(lastCullMode!=shader.cullMode) {
+									if(shader.cullMode==CullMode.Off) {
+										GL.Disable(EnableCap.CullFace);
+									} else {
+										if(lastCullMode==CullMode.Off) {
+											GL.Enable(EnableCap.CullFace);
+										}
+
+										GL.CullFace((CullFaceMode)shader.cullMode);
+									}
+
+									lastCullMode = shader.cullMode;
+								}
+
+								//Update PolygonMode
+								if(lastPolygonMode!=shader.polygonMode) {
+									GL.PolygonMode(MaterialFace.FrontAndBack,(OpenTK.Graphics.OpenGL.PolygonMode)(lastPolygonMode = shader.polygonMode));
+								}
+
+								lastShader = shader;
+							}
+
+							//Update Material
+							if(lastMaterial!=material) {
+								material.ApplyTextures(shader);
+								material.ApplyUniforms(shader);
+
+								lastMaterial = material;
+							}
+
+							//Render mesh
+
 							//Mark matrices for recalculation
-							for(int k=DefaultShaderUniforms.World;k<=DefaultShaderUniforms.ProjInverse;k++) {
+							for(int k = DefaultShaderUniforms.World;k<=DefaultShaderUniforms.ProjInverse;k++) {
 								uniformComputed[k] = false;
 							}
 
 							shader.SetupMatrixUniformsCached(camera,renderer.Transform,uniformComputed,
-								ref world,				ref worldInverse,
-								ref worldView,			ref worldViewInverse,
-								ref worldViewProj,		ref worldViewProjInverse,
-								ref camera.matrix_view,	ref camera.matrix_viewInverse,
-								ref camera.matrix_proj,	ref camera.matrix_projInverse
+								ref world,ref worldInverse,
+								ref worldView,ref worldViewInverse,
+								ref worldViewProj,ref worldViewProjInverse,
+								ref camera.matrix_view,ref camera.matrix_viewInverse,
+								ref camera.matrix_proj,ref camera.matrix_projInverse
 							);
 							renderer.ApplyUniforms(shader);
 
 							mesh.DrawMesh();
-							
+
 							Rendering.drawCallsCount++;
 						}
-						#endregion
-					}
-					#endregion
-				}
-				#endregion
+					});
 
-				camera.OnRenderEnd?.Invoke(camera);
+					camera.OnRenderEnd?.Invoke(camera);
+				}
+			});
+
+			if(Input.GetKeyDown(Keys.Y)) {
+				void LogStat(string name,long ticks,int tabs = 2) => Debug.Log($"{name}: {new string('\t',tabs)}{ticks} ticks \t({(ticks/(float)totalMs)*100f:0.00}%)");
+
+				Debug.Log($"RENDER STATS:");
+				LogStat(nameof(totalMs),totalMs);
+				LogStat(nameof(rendererLoopMs),rendererLoopMs,1);
+				LogStat(nameof(sortingMs),sortingMs);
+				LogStat(nameof(renderMs),renderMs);
+				Debug.Log($"");
 			}
-			#endregion
 
 			GL.PolygonMode(MaterialFace.FrontAndBack,OpenTK.Graphics.OpenGL.PolygonMode.Fill);
 			GL.CullFace(CullFaceMode.Front);

@@ -73,7 +73,8 @@ namespace GameEngine.Graphics
 
 		public abstract void Render();
 		
-		public virtual void Dispose() {}
+		public virtual void OnInit() {}
+		public virtual void Dispose() { }
 
 		protected virtual RectInt GetViewport(Camera camera)
 			=> viewportFunc?.Invoke(camera) ?? (camera?.ViewPixel ?? (framebuffer!=null ? new RectInt(0,0,framebuffer.maxTextureWidth,framebuffer.maxTextureHeight) : new RectInt(0,0,Screen.Width,Screen.Height)));
@@ -85,6 +86,8 @@ namespace GameEngine.Graphics
 			};
 
 			initializer?.Invoke(pass);
+
+			pass.OnInit();
 
 			return pass;
 		}

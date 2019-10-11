@@ -227,7 +227,7 @@ namespace SurvivalGame
 
 						bool active = !string.IsNullOrWhiteSpace(worldNameString);
 						if(GUI.Button(new RectFloat(Screen.Width*0.5f,Screen.Height/2+32,128,64),"Create",active) || (Input.GetKeyDown(Keys.Enter) && active)) {
-							world = World.NewWorld<Overworld>(worldNameString,384,384);
+							world = World.NewWorld<Overworld>(worldNameString,512,512);
 							setMenuState = MenuState.Main;
 						}
 						break;
@@ -249,8 +249,8 @@ namespace SurvivalGame
 				int i = 0;
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Render FPS: {Time.RenderFramerate}");
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Render MS: {Time.RenderMs:0.00}");
-				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic FPS: {Time.LogicFramerate}");
-				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic MS: {Time.LogicMs:0.00}");
+				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic FPS: {Time.FixedFramerate}");
+				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Logic MS: {Time.FixedMs:0.00}");
 				GUI.DrawText(new RectFloat(8,8+(i++*16),128,8),$"Draw Calls Count: {Rendering.drawCallsCount}");
 			}
 

@@ -1,4 +1,6 @@
 using GameEngine;
+using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {
@@ -8,7 +10,8 @@ namespace SurvivalGame
 		public Chunk chunk;
 		public uint idInChunk;
 
-		public virtual Mesh GetCollisionMesh() => null;
+		public abstract CollisionMesh CollisionMesh { get; }
+		public abstract (Mesh mesh, Material material)[] RendererData { get; }
 
 		public override void OnInit()
 		{
@@ -19,12 +22,16 @@ namespace SurvivalGame
 		{
 			var pos = Transform.Position;
 			Chunk newChunk = world.GetChunkAt(pos.x,pos.z);
+
 			if(chunk==newChunk) {
 				return;
 			}
+
 			chunk?.staticEntities.Remove(this);
+
 			chunk = newChunk;
-			newChunk?.staticEntities.Add(this);
+
+			chunk?.staticEntities.Add(this);
 		}
 	}
 }

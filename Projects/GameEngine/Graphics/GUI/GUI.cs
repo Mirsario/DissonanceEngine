@@ -123,7 +123,7 @@ namespace GameEngine
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 			
-			int index = GL.GetAttribLocation(Shader.activeShader.program,"uv");
+			int index = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
 			if(style==null || style.border.left==0) {
 				GL.Begin(PrimitiveTypeGL.Quads);
 					GL.VertexAttrib2(index,0.0f,0.0f);	GL.Vertex2(vector.x,1f-vector.y);
@@ -194,7 +194,7 @@ namespace GameEngine
 			float yPos = position.y/Screen.Height;
 			float width = font.charSize.x/Screen.Width*scale;
 			float height = font.charSize.y/Screen.Height*scale;
-			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.program,"uv");
+			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
 
 			GL.Begin(PrimitiveTypeGL.Quads);
 

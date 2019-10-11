@@ -207,10 +207,10 @@ namespace GameEngine.Graphics
 		public static void End() => GL.End();
 
 		//uniforms
-		public static void Uniform1(string uniformName,int value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,uniformName),value);
-		public static void Uniform1(string uniformName,float value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,uniformName),value);
-		public static void Uniform4(string uniformName,Vector4 vec) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),vec);
-		public static void Uniform4(string uniformName,Vector4[] array) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.program,uniformName),array.Length,array.SelectMany(v => v.ToArray()).ToArray());
+		public static void Uniform1(string uniformName,int value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.Id,uniformName),value);
+		public static void Uniform1(string uniformName,float value) => GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.Id,uniformName),value);
+		public static void Uniform4(string uniformName,Vector4 vec) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.Id,uniformName),vec);
+		public static void Uniform4(string uniformName,Vector4[] array) => GL.Uniform4(GL.GetUniformLocation(Shader.activeShader.Id,uniformName),array.Length,array.SelectMany(v => v.ToArray()).ToArray());
 
 		public static void Clear(ClearMask mask) => GL.Clear((ClearBufferMask)mask);
 		public static void ClearColor(Vector4 color) => GL.ClearColor(color.x,color.y,color.z,color.w);
@@ -256,7 +256,7 @@ namespace GameEngine.Graphics
 				
 				GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+i));
 				GL.BindTexture(TextureTarget.Texture2D,texture.Id);
-				GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.program,textureName),i);
+				GL.Uniform1(GL.GetUniformLocation(Shader.activeShader.Id,textureName),i);
 			}
 		}
 		#endregion

@@ -33,7 +33,7 @@ namespace GameEngine.Graphics
 						GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 
 						if(passShader!=null) {
-							GL.Uniform1(GL.GetUniformLocation(passShader.program,texture.name),j);
+							GL.Uniform1(GL.GetUniformLocation(passShader.Id,texture.name),j);
 						}
 					}
 				}

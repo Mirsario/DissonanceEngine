@@ -27,8 +27,8 @@ void main()
 	
 	float distance = distance(iPosition,cameraPosition);
 	
-	float fogStart = 0f;
-	float fogEnd = 256f;
+	float fogStart = 128f;
+	float fogEnd = 1024f;
 	float fogFactor = 1f-(clamp((fogEnd-distance)/(fogEnd-fogStart),0f,1f));
 	//fogFactor = max(0f,fogFactor-((iEmission.r+iEmission.g+iEmission.b)/3f));
 	

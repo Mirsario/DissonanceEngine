@@ -10,16 +10,21 @@ namespace GameEngine
 		protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
 
 		public virtual string GetAssetName() => null;
+		public virtual void Dispose() { }
+
 		internal void InitAsset()
 		{
 			string name = GetAssetName();
 			if(name!=null) {
 				var type = GetType();
-				(Resources.cacheByName.TryGetValue(type,out var dict) ? dict : Resources.cacheByName[type] = new Dictionary<string,object>())[name] = this;
+
+				if(!Resources.cacheByName.TryGetValue(type,out var dict)) {
+					Resources.cacheByName[type] = dict = new Dictionary<string,object>();
+				}
+
+				dict[name] = this;
 			}
 		}
-
-		public virtual void Dispose() {}
 	}
 
 	public class IgnoreInCloning : Attribute {} // ???

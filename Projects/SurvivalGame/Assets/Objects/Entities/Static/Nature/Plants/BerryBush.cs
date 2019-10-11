@@ -1,13 +1,19 @@
 using GameEngine;
 using GameEngine.Graphics;
+using GameEngine.Physics;
 
 namespace SurvivalGame
 {
 	public class BerryBush : StaticEntity, IHasMaterial
 	{
 		public MeshRenderer renderer;
-		
-		public override void OnInit()
+
+		public override CollisionMesh CollisionMesh => null;
+		public override (Mesh mesh, Material material)[] RendererData => new[] {
+			(Resources.Get<Mesh>($"{GetType().Name}.obj"),Resources.Find<Material>(GetType().Name))
+		};
+
+		/*public override void OnInit()
 		{
 			base.OnInit();
 			
@@ -18,7 +24,7 @@ namespace SurvivalGame
 				};
 				c.Material = Resources.Find<Material>($"{GetType().Name}");
 			});
-		}
+		}*/
 
 		//private float soundPlayDelay;
 		/*public override void FixedUpdate()

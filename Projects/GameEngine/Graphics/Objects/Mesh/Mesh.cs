@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GameEngine.Graphics;
 using GameEngine.Utils;
@@ -339,6 +340,18 @@ namespace GameEngine
 		}
 
 		public static Mesh CombineMeshes(params Mesh[] meshes)
+			=> CombineMeshesInternal(meshes,(i,srcVertices,srcIndex,dstVertices,dstIndex,length) => Array.Copy(srcVertices,srcIndex,dstVertices,dstIndex,length));
+		public static Mesh CombineMeshes(params (Mesh mesh,Vector3 offset)[] meshesWithOffsets)
+		{
+			return CombineMeshesInternal(meshesWithOffsets.Select(t => t.mesh),(meshIndex,srcVertices,srcIndex,dstVertices,dstIndex,length) => {
+				var offset = meshesWithOffsets[meshIndex].offset;
+				for(int i = 0;i<length;i++) {
+					dstVertices[dstIndex+i] = srcVertices[srcIndex+i]+offset;
+				}
+			});
+		}
+
+		internal static Mesh CombineMeshesInternal(IEnumerable<Mesh> meshes,Action<int,Vector3[],int,Vector3[],int,int> vertexCopyAction)
 		{
 			int newVertexCount = meshes.Sum(m => m.vertices.Length);
 			int newTriangleCount = meshes.Sum(m => m.triangles.Length);
@@ -352,14 +365,13 @@ namespace GameEngine
 
 			int vertex = 0;
 			int triangleIndex = 0;
+			int meshIndex = 0;
 
-			for(int i = 0;i<meshes.Length;i++) {
-				var mesh = meshes[i];
-
+			foreach(var mesh in meshes) {
 				//Vertices
 				int vertexCount = mesh.vertices.Length;
 
-				Array.Copy(mesh.vertices,0,newMesh.vertices,vertex,vertexCount);
+				vertexCopyAction(meshIndex,mesh.vertices,0,newMesh.vertices,vertex,vertexCount); //Array.Copy(mesh.vertices,0,newMesh.vertices,vertex,vertexCount);
 				Array.Copy(mesh.normals,0,newMesh.normals,vertex,vertexCount);
 				Array.Copy(mesh.uv,0,newMesh.uv,vertex,vertexCount);
 
@@ -376,6 +388,8 @@ namespace GameEngine
 
 				vertex += vertexCount;
 				triangleIndex += triangleIndexCount;
+
+				meshIndex++;
 			}
 
 			newMesh.Apply();

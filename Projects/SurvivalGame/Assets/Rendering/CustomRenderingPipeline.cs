@@ -11,6 +11,8 @@ namespace SurvivalGame
 {
 	public class CustomRenderingPipeline : DeferredRendering
 	{
+		public PostProcessPass fogPass;
+
 		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			base.Setup(framebuffers,renderPasses);
@@ -18,7 +20,7 @@ namespace SurvivalGame
 			int guiIndex = renderPasses.FindIndex(p => p.name=="GUI");
 			var mainBuffer = framebuffers.Find(p => p.Name=="mainBuffer");
 
-			renderPasses.Insert(guiIndex,RenderPass.Create<PostProcessPass>("Fog",p => {
+			fogPass = RenderPass.Create<PostProcessPass>("Fog",p => {
 				p.Shader = Resources.Find<Shader>("Fog");
 
 				p.PassedTextures = new RenderTexture[] {
@@ -32,7 +34,15 @@ namespace SurvivalGame
 				//};
 
 				//p.Framebuffer = mainBuffer;
-			}));
+			});
+
+			renderPasses.Insert(guiIndex,fogPass);
+		}
+		public override void PreRender()
+		{
+			base.PreRender();
+
+			fogPass.enabled = !Input.GetKey(Keys.T);
 		}
 	}
 }

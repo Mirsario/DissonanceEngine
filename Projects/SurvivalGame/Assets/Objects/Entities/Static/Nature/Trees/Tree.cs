@@ -6,40 +6,48 @@ namespace SurvivalGame
 {
 	public abstract class Tree : StaticEntity, IHasMaterial
 	{
-		public MeshRenderer bark; //TODO: Combine these when submeshes are added
-		public MeshRenderer branches;
+		public MeshRenderer[] renderers; //TODO: Combine these when submeshes are added
 		public MeshCollider collider;
-		
+
+		public override CollisionMesh CollisionMesh => Resources.Get<ConvexCollisionMesh>($"{GetType().Name}Bark.obj");
+		public override (Mesh mesh, Material material)[] RendererData => new[] {
+			(Resources.Get<Mesh>($"{GetType().Name}Bark.obj"),Resources.Find<Material>($"{GetType().Name}Bark")),
+			(Resources.Get<Mesh>($"{GetType().Name}Branches.obj"),Resources.Find<Material>($"{GetType().Name}Branch"))
+		};
+
 		public override void OnInit()
 		{
 			base.OnInit();
 
-			string typeName = GetType().Name;
+			/*string typeName = GetType().Name;
+
 			string barkMeshPath = $"{typeName}Bark.obj";
-
-			if(Netplay.isClient) {
-				bark = AddComponent<MeshRenderer>(c => {
-					c.LODMesh = new MeshLOD(Resources.Get<Mesh>(barkMeshPath),384f);
-					c.Material = Resources.Find<Material>($"{typeName}Bark");
-				});
-
-				branches = AddComponent<MeshRenderer>(c => {
-					c.LODMesh = new MeshLOD(Resources.Get<Mesh>($"{typeName}Branches.obj"),192f);
-					c.Material = Resources.Find<Material>($"{typeName}Branch");
-				});
-			}
+			string branchesMeshPath = $"{typeName}Branches.obj";
 
 			collider = AddComponent<MeshCollider>(c => {
 				c.Mesh = Resources.Get<ConvexCollisionMesh>(barkMeshPath);
 			});
+
+			if(Netplay.isClient) {
+				renderers = new[] {
+					AddComponent<MeshRenderer>(c => {
+						c.LODMesh = new MeshLOD(Resources.Get<Mesh>(barkMeshPath),Resources.Find<Material>($"{typeName}Bark"),384f);
+					}),
+					AddComponent<MeshRenderer>(c => {
+						c.LODMesh = new MeshLOD(Resources.Get<Mesh>(branchesMeshPath),Resources.Find<Material>($"{typeName}Branch"),192f);
+					})
+				};
+			}*/
 		}
+
 		/*public override void FixedUpdate()
 		{
 			if(Rand.Next(10000)==0) {
 				SoundInstance.Create($"Sounds/Atmosphere/Nature/Birds/Bird{Rand.Range(1,10)}.ogg",Transform.Position,2f);
 			}
-		}*/
-		/*private float soundPlayDelay;
+		}
+
+		private float soundPlayDelay;
 		public override void FixedUpdate()
 		{
 			if(soundPlayDelay>0f) {

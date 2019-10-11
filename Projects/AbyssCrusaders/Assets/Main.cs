@@ -99,8 +99,8 @@ namespace AbyssCrusaders
 
 				GUI.DrawText(Rect(),$"Render FPS: {Time.RenderFramerate }");
 				GUI.DrawText(Rect(),$"Render MS: {Time.RenderMs:0.00}");
-				GUI.DrawText(Rect(),$"Logic FPS: {Time.LogicFramerate}");
-				GUI.DrawText(Rect(),$"Logic MS: {Time.LogicMs:0.00}");
+				GUI.DrawText(Rect(),$"Logic FPS: {Time.FixedFramerate}");
+				GUI.DrawText(Rect(),$"Logic MS: {Time.FixedMs:0.00}");
 				GUI.DrawText(Rect(),$"Draw Calls Count: {Rendering.drawCallsCount}");
 
 				y++;

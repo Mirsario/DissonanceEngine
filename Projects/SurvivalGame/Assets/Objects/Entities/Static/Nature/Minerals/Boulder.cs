@@ -6,22 +6,10 @@ namespace SurvivalGame
 {
 	public class Boulder : StaticEntity, IHasMaterial
 	{
-		public override void OnInit()
-		{
-			base.OnInit();
-
-			string typeName = GetType().Name;
-			string meshPath = $"{typeName}.obj";
-
-			AddComponent<MeshRenderer>(c => {
-				c.Mesh = Resources.Get<Mesh>(meshPath);
-				c.Material = Resources.Find<Material>(typeName);
-			});
-
-			AddComponent<MeshCollider>(c => {
-				c.Mesh = Resources.Get<ConvexCollisionMesh>(meshPath);
-			});
-		}
+		public override CollisionMesh CollisionMesh => Resources.Get<ConvexCollisionMesh>($"{GetType().Name}.obj");
+		public override (Mesh mesh,Material material)[] RendererData => new[] {
+			(Resources.Get<Mesh>($"{GetType().Name}.obj"),Resources.Find<Material>(GetType().Name))
+		};
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<StonePhysicMaterial>();
 	}

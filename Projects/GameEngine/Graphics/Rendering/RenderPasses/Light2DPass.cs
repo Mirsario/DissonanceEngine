@@ -37,14 +37,14 @@ namespace GameEngine.Graphics
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+j));
 						GL.BindTexture(TextureTarget.Texture2D,passedTextures[j].Id);
 
-						GL.Uniform1(GL.GetUniformLocation(passShader.program,passedTextures[j].name),j);
+						GL.Uniform1(GL.GetUniformLocation(passShader.Id,passedTextures[j].name),j);
 					}
 				}
 
-				int uniformLightRange = GL.GetUniformLocation(passShader.program,"lightRange");
-				int uniformLightPosition = GL.GetUniformLocation(passShader.program,"lightPosition");
-				int uniformLightIntensity = GL.GetUniformLocation(passShader.program,"lightIntensity");
-				int uniformLightColor = GL.GetUniformLocation(passShader.program,"lightColor");
+				int uniformLightRange = GL.GetUniformLocation(passShader.Id,"lightRange");
+				int uniformLightPosition = GL.GetUniformLocation(passShader.Id,"lightPosition");
+				int uniformLightIntensity = GL.GetUniformLocation(passShader.Id,"lightIntensity");
+				int uniformLightColor = GL.GetUniformLocation(passShader.Id,"lightColor");
 				
 				foreach(var light in Rendering.light2DList) {
 					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(light.Transform.Position);

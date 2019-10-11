@@ -11,7 +11,8 @@ namespace SurvivalGame
 		public Chunk chunk;
 		public Vector2Int position;
 		public MeshRenderer renderer;
-		public MeshRenderer[] grassRenderers;
+		public MeshRenderer[] entityRenderers;
+		//public MeshRenderer[] grassRenderers;
 
 		public override void OnInit()
 		{

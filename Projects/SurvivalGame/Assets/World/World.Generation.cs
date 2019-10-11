@@ -44,7 +44,7 @@ namespace SurvivalGame
 				LineLoop(posA+new Vector2Int(1,0),posB+new Vector2Int(1,0),pos => this[pos.x,pos.y].type = dirt);
 			}*/
 
-			var genRoster = new (int maxRand, Action<Tile,int,int,Vector3> action)[] {
+			/*var genRoster = new (int maxRand, Action<Tile,int,int,Vector3> action)[] {
 				(25,(t,x,y,spawnPos) => {
 					if(spawnPos.y<=beachLevel) {
 						return;
@@ -79,8 +79,7 @@ namespace SurvivalGame
 						Entity.Instantiate<StoneHatchet>(this,position:spawnPos+new Vector3(Rand.Range(-2f,2f),Rand.Range(5f,7f),Rand.Range(-2f,2f)));
 					}
 				}),
-			};
-
+			};*/
 
 			//Random stone pikes
 			int spikeAmount = xSize*ySize/200;
@@ -93,7 +92,6 @@ namespace SurvivalGame
 					tiles[x-1,y].type = tiles[x,y-1].type = tiles[x-1,y-1].type = tile.type = stone;
 				}
 			}
-
 
 			for(int i = 0;i<Player.localPlayers.Length;i++) {
 				var player = Player.localPlayers[i];

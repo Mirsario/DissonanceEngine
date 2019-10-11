@@ -25,7 +25,7 @@ namespace GameEngine.Graphics
 				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 			
-			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.program,"uv");
+			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
 			var vector = new Vector4(
 				rect.x,
 				rect.y,

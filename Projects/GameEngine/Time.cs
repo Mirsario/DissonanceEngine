@@ -5,30 +5,11 @@ namespace GameEngine
 {
 	public static class Time
 	{
-		internal static uint targetUpdateCount;
-		public static uint TargetUpdateCount {
-			get => targetUpdateCount;
-			set {
-				targetUpdateCount = value;
-
-				if(Game.window!=null) {
-					Game.window.TargetUpdateFrequency = value;
-				}
-			}
-		}
-		internal static uint targetRenderCount;
-		public static uint TargetRenderCount {
-			get => targetRenderCount;
-			set {
-				targetRenderCount = value;
-
-				if(Game.window!=null) {
-					Game.window.TargetRenderFrequency = targetRenderCount;
-				}
-			}
-		}
-		
+		//Target Framerate
+		internal static uint targetUpdateFrequency = 60;
+		internal static uint targetRenderFrequency = 0;
 		//Time
+		internal static float timeScale = 1f;
 		internal static float fixedTime; //Fixed time
 		internal static float fixedTimePrev;
 		internal static float fixedTimeReal;
@@ -54,6 +35,7 @@ namespace GameEngine
 		private static uint renderFrame;
 		private static uint renderFPS;
 
+		//Time
 		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
 		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
 		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
@@ -62,12 +44,12 @@ namespace GameEngine
 		public static uint FixedUpdateCount => fixedUpdateCount;
 		public static uint RenderUpdateCount => renderUpdateCount;
 		//Framerate
-		public static uint LogicFramerate => fixedFPS;
-		public static float LogicMs => fixedMs;
+		public static uint FixedFramerate => fixedFPS;
+		public static float FixedMs => fixedMs;
 		public static uint RenderFramerate => renderFPS;
 		public static float RenderMs => renderMs;
 
-		internal static float timeScale = 1f;
+		//Time
 		public static float TimeScale {
 			get => timeScale;
 			set {
@@ -77,11 +59,32 @@ namespace GameEngine
 				timeScale = value;
 			}
 		}
-		
+		//Target Framerate
+		public static uint TargetUpdateFrequency {
+			get => targetUpdateFrequency;
+			set {
+				if(value<=0) {
+					throw new ArgumentOutOfRangeException(nameof(value),"Value has to be more than zero.");
+				}
+
+				Game.window.TargetUpdateFrequency = targetUpdateFrequency = value;
+			}
+		}
+		public static uint TargetRenderFrequency {
+			get => targetRenderFrequency;
+			set {
+				if(value<0) {
+					throw new ArgumentOutOfRangeException(nameof(value),"Value has to be more than or equal to zero.");
+				}
+
+				Game.window.TargetRenderFrequency = targetRenderFrequency = value;
+			}
+		}
+
 		internal static void PreInit()
 		{
-			targetRenderCount = 0;
-			targetUpdateCount = 60;
+			targetRenderFrequency = 0;
+			targetUpdateFrequency = 60;
 		}
 		internal static void Init()
 		{

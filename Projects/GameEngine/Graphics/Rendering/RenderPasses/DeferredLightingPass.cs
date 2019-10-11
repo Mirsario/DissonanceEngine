@@ -63,7 +63,7 @@ namespace GameEngine.Graphics
 						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
 
 						if(activeShader!=null) {
-							GL.Uniform1(GL.GetUniformLocation(activeShader.program,tex.name),k);
+							GL.Uniform1(GL.GetUniformLocation(activeShader.Id,tex.name),k);
 						}
 					}
 

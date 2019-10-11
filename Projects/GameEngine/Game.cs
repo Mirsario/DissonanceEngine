@@ -14,7 +14,6 @@ namespace GameEngine
 {
 	//TODO: Finish .smartmesh format
 	//TODO: Add animations
-	//TODO: Add submeshes
 	//TODO: Add proper built-in skybox rendering
 	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
 	//TODO: Add occlusion culling
@@ -28,8 +27,6 @@ namespace GameEngine
 		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
 		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;	
 
-		public static int targetUpdates = 60;
-		public static int targetFPS = 0;
 		public static string name = "UntitledGame";
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
@@ -74,7 +71,7 @@ namespace GameEngine
 			//var device = DisplayDevice.Default;
 			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
 			
-			window.VSync = VSyncMode.Off;
+			window.VSync = VSyncMode.On;
 			
 			window.Load += (obj,e) => Init();
 			window.Resize += Rendering.Resize;
@@ -92,7 +89,7 @@ namespace GameEngine
 			window.FocusedChanged += OnFocusChange;
 			window.Closing += ApplicationQuit;
 
-			window.Run(Time.targetUpdateCount,Time.targetRenderCount);
+			window.Run(Time.TargetUpdateFrequency,Time.TargetRenderFrequency);
 		}
 		public void Dispose()
 		{
@@ -179,7 +176,7 @@ namespace GameEngine
 			window.CursorVisible = Screen.showCursor || !window.Focused;
 			Screen.UpdateValues(window);
 
-			Time.UpdateFixed(1.0/targetUpdates);
+			Time.UpdateFixed(1.0/Time.TargetUpdateFrequency);
 			Input.FixedUpdate();
 
 			FixedUpdate();

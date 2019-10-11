@@ -20,9 +20,9 @@ namespace GameEngine.Graphics
 		internal int[] defaultUniformIndex = new int[DSU.Count];
 		internal List<Material> materialAttachments = new List<Material>();
 
+		public readonly int Id;
 		public readonly string Name;
 
-		public int program;
 		public int vertexShader;
 		public int fragmentShader;
 		public int geometryShader;
@@ -39,7 +39,8 @@ namespace GameEngine.Graphics
 
 		private Shader(string name)
 		{
-			this.Name = name;
+			Name = name;
+			Id = GL.CreateProgram();
 		}
 
 		public override string ToString() => Name;
@@ -56,12 +57,12 @@ namespace GameEngine.Graphics
 
 			//Set uniform locations
 			uniforms = new Dictionary<string,ShaderUniform>();
-			GL.GetProgram(program,GetProgramParameterName.ActiveUniforms,out int uniformCount);
+			GL.GetProgram(Id,GetProgramParameterName.ActiveUniforms,out int uniformCount);
 
 			const int MaxUniformNameLength = 32;
 
 			for(int location = 0;location<uniformCount;location++) {
-				GL.GetActiveUniform(program,location,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
+				GL.GetActiveUniform(Id,location,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
 
 				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,location));
 				
@@ -284,12 +285,12 @@ namespace GameEngine.Graphics
 				GL.DeleteShader(shader);
 
 				if(type==ShaderType.Vertex) {
-					GL.AttachShader(program,ErrorShader.vertexShader);
+					GL.AttachShader(Id,ErrorShader.vertexShader);
 				}else if(type==ShaderType.Fragment) {
-					GL.AttachShader(program,ErrorShader.fragmentShader);
+					GL.AttachShader(Id,ErrorShader.fragmentShader);
 				}
 			}else{
-				GL.AttachShader(program,shader);
+				GL.AttachShader(Id,shader);
 			}
 
 			if(Rendering.CheckGLErrors(false)) {
@@ -301,7 +302,7 @@ namespace GameEngine.Graphics
 		{
 			if(shader!=null) {
 				if(shader!=activeShader) {
-					GL.UseProgram(shader.program);
+					GL.UseProgram(shader.Id);
 					activeShader = shader;
 
 					Rendering.SetBlendFunc(shader.blendFactorSrc,shader.blendFactorDst);
@@ -346,8 +347,7 @@ namespace GameEngine.Graphics
 			}
 
 			var shader = new Shader(name) {
-				defines = defines,
-				program = GL.CreateProgram()
+				defines = defines
 			};
 
 			void TryCompileCode(Shader s,ShaderType shaderType,string code)
@@ -361,15 +361,15 @@ namespace GameEngine.Graphics
 			TryCompileCode(shader,ShaderType.Fragment,fragmentCode);
 			TryCompileCode(shader,ShaderType.Geometry,geometryCode);
 
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Vertex,"vertex");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Normal,"normal");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Tangent,"tangent");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Color,"color");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneIndices,"boneIndices");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.BoneWeights,"boneWeights");
-			GL.BindAttribLocation(shader.program,(int)AttributeId.Uv0,"uv0");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.Vertex,"vertex");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.Normal,"normal");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.Tangent,"tangent");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.Color,"color");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.BoneIndices,"boneIndices");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.BoneWeights,"boneWeights");
+			GL.BindAttribLocation(shader.Id,(int)AttributeId.Uv0,"uv0");
 			
-			GL.LinkProgram(shader.program);
+			GL.LinkProgram(shader.Id);
 
 			shader.Init();
 

@@ -11,42 +11,28 @@ namespace SurvivalGame
 		public Light light;
 		public AudioSource audioSource;
 		private float lightScale;
-		
+
+		public override CollisionMesh CollisionMesh => Resources.Get<ConvexCollisionMesh>($"{GetType().Name}.obj");
+		public override (Mesh mesh, Material material)[] RendererData => new[] {
+			(Resources.Get<Mesh>($"{GetType().Name}.obj"),Resources.Find<Material>($"{GetType().Name}"))
+		};
+
 		public override void OnInit()
 		{
 			base.OnInit();
 			
-			string typeName = GetType().Name;
-			string meshPath = $"{typeName}.obj";
-
-			collider = AddComponent<MeshCollider>(c => {
-				c.Mesh = Resources.Get<ConvexCollisionMesh>(meshPath);
-			});
-
 			if(Netplay.isClient) {
-				renderer = AddComponent<MeshRenderer>(c => {
-					c.Mesh = Resources.Get<Mesh>(meshPath);
-					c.Material = Resources.Find<Material>($"{GetType().Name}");
-				});
-
 				light = Instantiate<LightObj>(world).GetComponent<Light>();
+
 				light.color = new Vector3(1f,0.8f,0f);
 				light.intensity = 2f;
 				light.Transform.parent = Transform;
 				light.Transform.LocalPosition = new Vector3(0f,1.25f,0f);
-
-				/*audioSource = AddComponent<AudioSource>();
-				var clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
-				audioSource.Clip = clip;
-				audioSource.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
-				audioSource.Loop = true;
-				audioSource.RefDistance = 0.1f;
-				audioSource.Play();*/
 			}
 		}
 		public override void FixedUpdate()
 		{
-			if(Time.FixedUpdateCount%(Time.TargetUpdateCount/6)==0) {
+			if(Time.FixedUpdateCount%(Time.TargetUpdateFrequency/6)==0) {
 				lightScale = Rand.Range(0f,1f);
 			}
 		}

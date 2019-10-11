@@ -11,22 +11,27 @@ namespace GameEngine
 		}
 
 		public SpriteEffects spriteEffects;
-		
-		//TODO: is dis slew
-		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
+
+		internal Material material;
+
+		public override Material Material {
+			get => material;
+			set => material = value;
+		}
+
+		protected override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material)
 		{
-			bool flipX = ((int)spriteEffects&1)==1;
-			bool flipY = ((int)spriteEffects&2)==2;
-			if(flipX && flipY) {
-				return PrimitiveMeshes.quadXYFlipped;
-			}
-			if(flipX) {
-				return PrimitiveMeshes.quadXFlipped;
-			}
-			if(flipY) {
-				return PrimitiveMeshes.quadYFlipped;
-			}
-			return PrimitiveMeshes.quad;
+			//TODO: Cache this?
+			mesh = spriteEffects switch {
+				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => PrimitiveMeshes.quadXYFlipped,
+				SpriteEffects.FlipHorizontally => PrimitiveMeshes.quadXFlipped,
+				SpriteEffects.FlipVertically => PrimitiveMeshes.quadXFlipped,
+				_ => PrimitiveMeshes.quad
+			};
+
+			material = this.material;
+
+			return true;
 		}
 	}
 }

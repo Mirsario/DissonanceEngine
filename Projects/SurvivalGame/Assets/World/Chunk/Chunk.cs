@@ -97,10 +97,6 @@ namespace SurvivalGame
 					}
 				}
 			}
-
-			collider = AddComponent<MeshCollider>(c => {
-				c.Mesh = (ConcaveCollisionMesh)GetMesh();
-			});
 		}
 		public override void OnDispose()
 		{
@@ -108,13 +104,24 @@ namespace SurvivalGame
 			mesh?.Dispose();
 		}
 
-		public static Chunk Create(World world,int x,int y)
+		public void FinishInit()
+		{
+			collider = AddComponent<MeshCollider>(c => {
+				c.Mesh = (ConcaveCollisionMesh)GetMesh();
+			});
+		}
+
+		public static Chunk Create(World world,int x,int y,bool init = true)
 		{
 			//var w = new World(name,xSize,ySize);
 			var chunk = Instantiate<Chunk>(init:false);
 			chunk.world = world;
 			chunk.position = new Vector2Int(x,y);
-			chunk.Init();
+
+			if(init) {
+				chunk.Init();
+			}
+
 			return chunk;
 		}
 

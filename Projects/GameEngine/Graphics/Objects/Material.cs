@@ -9,12 +9,18 @@ namespace GameEngine.Graphics
 	//TODO: Implement OnDispose
 	public class Material : Asset<Material>
 	{
-		private static Dictionary<string,Material> materials = new Dictionary<string,Material>();
+		private static readonly List<Material> ById = new List<Material>();
+		private static readonly Dictionary<string,Material> ByName = new Dictionary<string,Material>();
+
 		public static Material defaultMat;
 
+		private readonly Dictionary<string,(byte vecSize, float[] data)> UniformsFloat;
+		private readonly List<KeyValuePair<string,Texture>> Textures;
+
+		public readonly int Id;
+
 		public string name;
-		private Dictionary<string,(byte vecSize,float[] data)> uniformsFloat;
-		private List<KeyValuePair<string,Texture>> textures;
+
 		internal List<Renderer> rendererAttachments;
 
 		protected Shader shader;
@@ -24,42 +30,45 @@ namespace GameEngine.Graphics
 				if(shader==value) {
 					return;
 				}
-				if(shader!=null) {
-					shader.MaterialDetach(this);
-				}
-				if(value!=null) {
-					value.MaterialAttach(this);
-				}
+
+				shader?.MaterialDetach(this);
+
 				shader = value;
+
+				shader?.MaterialAttach(this);
 			}
 		}
 
 		public Material(string name,Shader shader)
 		{
 			this.name = name;
+
+			Id = InternalUtils.GenContentId(this,ById);
+
 			Shader = shader;
-			materials[name] = this;
-			uniformsFloat = new Dictionary<string,(byte,float[])>();
-			textures = new List<KeyValuePair<string,Texture>>();
-			rendererAttachments = new List<Renderer>();
+
+			ByName[name] = this;
+
+			UniformsFloat = new Dictionary<string,(byte,float[])>();
+			Textures = new List<KeyValuePair<string,Texture>>();
 		}
 
+		public override string GetAssetName() => name;
 		public override Material Clone()
 		{
 			var clone = new Material(name,Shader);
-			uniformsFloat.CopyTo(clone.uniformsFloat);
-			clone.textures.AddRange(textures);
+			UniformsFloat.CopyTo(clone.UniformsFloat);
+			clone.Textures.AddRange(Textures);
 			return clone;
 		}
-		public override string GetAssetName() => name;
 
 		internal void ApplyTextures(Shader shader)
 		{
 			ShaderUniform uniform;
-			if(textures.Count>0) {
-				for(int i=0;i<textures.Count && i<32;i++) {
-					string textureName = textures[i].Key;
-					var texture = textures[i].Value;
+			if(Textures.Count>0) {
+				for(int i=0;i<Textures.Count && i<32;i++) {
+					string textureName = Textures[i].Key;
+					var texture = Textures[i].Value;
 					if(texture==null || !shader.uniforms.TryGetValue(textureName,out uniform)) {
 						continue;
 					}
@@ -75,7 +84,7 @@ namespace GameEngine.Graphics
 		}
 		internal void ApplyUniforms(Shader shader)
 		{
-			foreach(var pair in uniformsFloat) {
+			foreach(var pair in UniformsFloat) {
 				(byte vecSize,var data) = pair.Value;
 				int location = shader.uniforms[pair.Key].location;
 
@@ -86,14 +95,6 @@ namespace GameEngine.Graphics
 					case 4: GL.Uniform4(location,data.Length/4,data); break;
 				}
 			}
-		}
-		internal void RendererDetach(Renderer renderer)
-		{
-			rendererAttachments.Remove(renderer);
-		}
-		internal void RendererAttach(Renderer renderer)
-		{
-			rendererAttachments.Add(renderer);
 		}
 
 		private void CheckUniform(string name,string methodName)
@@ -112,18 +113,18 @@ namespace GameEngine.Graphics
 		public void SetFloat(string name,float value)
 		{
 			CheckUniform(name,"SetFloat");
-			uniformsFloat[name] = (1,new[] { value });
+			UniformsFloat[name] = (1,new[] { value });
 		}
 		public void SetFloat(string name,params float[] values)
 		{
 			CheckUniform(name,"SetFloat");
-			uniformsFloat[name] = (1,values);
+			UniformsFloat[name] = (1,values);
 		}
 		#region Vector2
 		public void SetVector2(string name,Vector2 value)
 		{
 			CheckUniform(name,"SetVector2");
-			uniformsFloat[name] = (2,new[] { value.x,value.y });
+			UniformsFloat[name] = (2,new[] { value.x,value.y });
 		}
 		public void SetVector2(string name,params Vector2[] values)
 		{
@@ -137,14 +138,14 @@ namespace GameEngine.Graphics
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
 			}
-			uniformsFloat[name] = (vecLength,data);
+			UniformsFloat[name] = (vecLength,data);
 		}
 		#endregion
 		#region Vector3
 		public void SetVector3(string name,Vector3 value)
 		{
 			CheckUniform(name,"SetVector3");
-			uniformsFloat[name] = (3,new[] { value.x,value.y,value.z });
+			UniformsFloat[name] = (3,new[] { value.x,value.y,value.z });
 		}
 		public void SetVector3(string name,params Vector3[] values)
 		{
@@ -159,14 +160,14 @@ namespace GameEngine.Graphics
 				data[iBase+1] = values[i].y;
 				data[iBase+2] = values[i].z;
 			}
-			uniformsFloat[name] = (vecLength,data);
+			UniformsFloat[name] = (vecLength,data);
 		}
 		#endregion
 		#region Vector4
 		public void SetVector4(string name,Vector4 value)
 		{
 			CheckUniform(name,"SetVector4");
-			uniformsFloat[name] = (4,new[] { value.x,value.y,value.z,value.w });
+			UniformsFloat[name] = (4,new[] { value.x,value.y,value.z,value.w });
 		}
 		public void SetVector4(string name,params Vector4[] values)
 		{
@@ -182,7 +183,7 @@ namespace GameEngine.Graphics
 				data[iBase+2] = values[i].z;
 				data[iBase+3] = values[i].w;
 			}
-			uniformsFloat[name] = (vecLength,data);
+			UniformsFloat[name] = (vecLength,data);
 		}
 		#endregion
 		public void SetVector(string name,float[] val)
@@ -206,19 +207,19 @@ namespace GameEngine.Graphics
 		public void SetTexture(string name,Texture texture)
 		{
 			CheckUniform(name,"SetTexture");
-			for(int i=0;i<textures.Count;i++) {
-				if(textures[i].Key==name) {
-					textures[i] = new KeyValuePair<string,Texture>(name,texture);
+			for(int i=0;i<Textures.Count;i++) {
+				if(Textures[i].Key==name) {
+					Textures[i] = new KeyValuePair<string,Texture>(name,texture);
 					return;
 				}
 			}
-			textures.Add(new KeyValuePair<string,Texture>(name,texture));
+			Textures.Add(new KeyValuePair<string,Texture>(name,texture));
 		}
 		#endregion
 		#region GetVariable
 		public bool GetTexture(string name,out Texture texture)
 		{
-			return (texture = textures.FirstOrDefault(pair => pair.Key==name).Value)!=null;
+			return (texture = Textures.FirstOrDefault(pair => pair.Key==name).Value)!=null;
 		}
 		#endregion
 	}

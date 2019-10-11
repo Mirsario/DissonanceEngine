@@ -1,43 +1,13 @@
+using GameEngine.Graphics;
 using System;
 using System.Linq;
-using GameEngine.Graphics;
 
 namespace GameEngine
 {
-	public class MeshLOD
-	{
-		public Mesh mesh;
-		public float maxDistance;
-		internal float maxDistanceSqr;
-		
-		public MeshLOD(Mesh mesh)
-		{
-			this.mesh = mesh;
-		}
-		public MeshLOD(Mesh mesh,float maxDistance)
-		{
-			this.mesh = mesh;
-			this.maxDistance = maxDistance;
-			maxDistanceSqr = maxDistance*maxDistance;
-		}
-	}
-
 	public class MeshRenderer : Renderer
 	{
-		internal MeshLOD[] lodMeshes;
+		internal MeshLOD[] lodMeshes = new MeshLOD[1] { new MeshLOD(null,null) };
 
-		private Mesh cachedRenderMesh;
-
-		public virtual Mesh Mesh {
-			get => lodMeshes?[0]?.mesh;
-			set {
-				if(lodMeshes!=null) {
-					lodMeshes[0].mesh = value;
-				}else{
-					LODMeshes = new[] { new MeshLOD(value) };
-				}
-			}
-		}
 		public virtual MeshLOD[] LODMeshes {
 			get => lodMeshes;
 			set {
@@ -50,7 +20,7 @@ namespace GameEngine
 						throw new Exception("Value cannot be an empty array. Set it to null instead.");
 					}
 
-					if(value.Any(l1 => l1==null ? hadNull = true : value.Count(l2 => l1.maxDistance==l2.maxDistance)>1)) {//dumb check
+					if(value.Any(l1 => l1==null ? hadNull = true : value.Count(l2 => l1.maxDistance==l2.maxDistance)>1)) { //TODO: dumb check
 						throw new Exception(hadNull ? "Array cannot contain null values" : "All maxDistance values must be unique.");
 					}
 
@@ -75,38 +45,46 @@ namespace GameEngine
 				}
 			}
 		}
-
-		protected override void OnDispose()
-		{
-			base.OnDispose();
-
-			cachedRenderMesh = null;
+		public virtual Mesh Mesh {
+			get => lodMeshes[0].mesh;
+			set => lodMeshes[0].mesh = value;
 		}
 
-		protected override Mesh GetRenderMesh(Vector3 rendererPosition,Vector3 cameraPosition)
+		public override Material Material {
+			get => lodMeshes[0].material;
+			set => lodMeshes[0].material = value;
+		}
+
+		protected override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material)
 		{
-			if(cachedRenderMesh!=null && Time.renderUpdateCount%60!=0) {
-				return cachedRenderMesh;
-			}
-
 			var lods = LODMeshes;
-			if(lods==null) {
-				return null;
-			}
+			if(lods!=null) {
+				if(lods.Length==1) {
+					var lod = lods[0];
 
-			if(lods.Length==1) {
-				return cachedRenderMesh = lods[0].mesh;
-			}
+					mesh = lod.mesh;
+					material = lod.material;
 
-			float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
-			for(int k=0;k<lods.Length;k++) {
-				MeshLOD lodTemp = lods[k];
-				if(sqrDist<=lodTemp.maxDistanceSqr || lodTemp.maxDistance==0f) {
-					return cachedRenderMesh = lodTemp.mesh;
+					return true;
+				}
+
+				float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
+				for(int i = 0;i<lods.Length;i++) {
+					var lod = lods[i];
+
+					if(sqrDist<=lod.maxDistanceSqr || lod.maxDistance==0f) {
+						mesh = lod.mesh;
+						material = lod.material;
+
+						return true;
+					}
 				}
 			}
 
-			return null;
+			mesh = null;
+			material = null;
+
+			return false;
 		}
 	}
 }
