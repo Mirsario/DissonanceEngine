@@ -47,6 +47,10 @@ namespace SurvivalGame
 		{
 			base.RenderUpdate();
 
+			if(Input.GetKey(Keys.Z) && LocalId!=0) {
+				return;
+			}
+
 			//Looks bad
 			Vector2 delta = new Vector2(
 				-inputs[SingletonInputTrigger.Info<LookX>.Id].inputTrigger.Value,
@@ -57,6 +61,8 @@ namespace SurvivalGame
 			rotation.x = Mathf.Clamp(rotation.x+delta.y,CameraController.MinLockedPitch,CameraController.MaxLockedPitch);
 			rotation.y = Mathf.Repeat(rotation.y+delta.x,360f);
 			LookRotation = rotation;
+
+			CopyInputs();
 
 			//Debug.Log($"\r\nRotation:\r\n{rotation}\r\nDirection:\r\n{LookDirection}");
 		}

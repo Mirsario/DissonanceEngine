@@ -65,7 +65,7 @@ namespace SurvivalGame
 			if(Vector3.SqrDistance(pos,prevPos)>64f*64f) {
 				prevPos = pos;
 			}else{
-				velocity = (pos-prevPos)*Time.TargetUpdateFrequency;
+				velocity = (pos-prevPos)/Time.FixedDeltaTime;
 			}
 
 			prevPos = pos;
