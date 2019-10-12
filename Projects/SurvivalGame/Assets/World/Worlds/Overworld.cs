@@ -16,7 +16,8 @@ namespace SurvivalGame
 			list.Add(new HeightTileTypeGenPass());
 			list.Add(new AngleTileTypeGenPass(waterLevel));
 
-			list.Add(new NoiseChunkEntityGenPass<Spruce>(100,10,0.25f,heightmapFrequency,new Vector2(waterLevel+2f,float.MaxValue)));
+			list.Add(new NoiseChunkEntityGenPass<Spruce>(100,10,0.25f,heightmapFrequency,new Vector2(waterLevel+3f,float.MaxValue)));
+			list.Add(new NoiseChunkEntityGenPass<BerryBush>(800,100,0.25f,heightmapFrequency,new Vector2(waterLevel+3f,float.MaxValue)));
 			list.Add(new NoiseChunkEntityGenPass<Boulder>(400,50,0.5f,heightmapFrequency,new Vector2(waterLevel-2f,float.MaxValue)));
 		}
 	}

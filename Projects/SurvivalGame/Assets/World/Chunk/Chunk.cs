@@ -130,11 +130,13 @@ namespace SurvivalGame
 			if(!atPoint.HasValue) {
 				return PhysicMaterial.GetMaterial<StonePhysicMaterial>();
 			}
+
 			var atP = atPoint.Value;
 			var tempVec = new Vector2(atP.x,atP.z)/TileSize;
 			var tilePoint = new Vector2Int(Mathf.FloorToInt(tempVec.x),Mathf.FloorToInt(tempVec.y));
 			var tile = world[tilePoint.x,tilePoint.y];
 			var type = TileType.byId[tile.type];
+
 			return type.GetMaterial(atPoint);
 		}
 	}
