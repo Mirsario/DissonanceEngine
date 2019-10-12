@@ -1,3 +1,4 @@
+using OpenTK;
 using System;
 using System.Diagnostics;
 
@@ -6,8 +7,8 @@ namespace GameEngine
 	public static class Time
 	{
 		//Target Framerate
-		internal static uint targetUpdateFrequency = 60;
-		internal static uint targetRenderFrequency = 0;
+		internal static double targetUpdateFrequency = 60;
+		internal static double targetRenderFrequency = 0;
 		//Time
 		internal static float timeScale = 1f;
 		internal static float fixedTime; //Fixed time
@@ -60,7 +61,7 @@ namespace GameEngine
 			}
 		}
 		//Target Framerate
-		public static uint TargetUpdateFrequency {
+		public static double TargetUpdateFrequency {
 			get => targetUpdateFrequency;
 			set {
 				if(value<=0) {
@@ -70,7 +71,7 @@ namespace GameEngine
 				Game.window.TargetUpdateFrequency = targetUpdateFrequency = value;
 			}
 		}
-		public static uint TargetRenderFrequency {
+		public static double TargetRenderFrequency {
 			get => targetRenderFrequency;
 			set {
 				if(value<0) {
@@ -83,7 +84,9 @@ namespace GameEngine
 
 		internal static void PreInit()
 		{
-			targetRenderFrequency = 0;
+			var device = DisplayDevice.Default;
+
+			targetRenderFrequency = device.RefreshRate;
 			targetUpdateFrequency = 60;
 		}
 		internal static void Init()
