@@ -68,10 +68,9 @@ namespace GameEngine
 			PreInit();
 			preInitDone = true;
 
-			//var device = DisplayDevice.Default;
 			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
 			
-			window.VSync = VSyncMode.On;
+			//window.VSync = VSyncMode.On;
 			
 			window.Load += (obj,e) => Init();
 			window.Resize += Rendering.Resize;

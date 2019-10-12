@@ -31,13 +31,7 @@ namespace GameEngine
 
 		public static bool Fullscreen {
 			get => Rendering.window.WindowState==WindowState.Fullscreen;
-			set {
-				if(value) {
-					Rendering.window.WindowState = WindowState.Fullscreen;
-				} else {
-					Rendering.window.WindowState = WindowState.Normal;
-				}
-			}
+			set => Rendering.window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
 		}
 
 		internal static void UpdateValues(GameWindow window)

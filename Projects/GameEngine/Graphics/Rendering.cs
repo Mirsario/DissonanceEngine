@@ -263,8 +263,8 @@ namespace GameEngine.Graphics
 
 			Rendering.CheckGLErrors();
 
-			//GL.Finish();
-			window.SwapBuffers();
+			GL.Flush();
+			//window.SwapBuffers(); //TODO: After upgrading to OpenTK 4.0, see if fullscreen is still bugged on multi-monitor setup when using this SwapBuffers() call instead of GL.Finish/Flush().
 
 			Rendering.CheckGLErrors();
 		}
