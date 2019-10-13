@@ -57,16 +57,18 @@ namespace GameEngine.Graphics
 
 					var lightType = (LightType)j;
 					
+					//TODO: Update & optimize this
 					for(int k=0;k<passedTextures.Length;k++) {
 						var tex = passedTextures[k];
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+k));
 						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
 
-						if(activeShader!=null) {
-							GL.Uniform1(GL.GetUniformLocation(activeShader.Id,tex.name),k);
+						if(activeShader.TryGetUniformLocation(tex.name,out int location)) {
+							GL.Uniform1(location,k);
 						}
 					}
 
+					//TODO: Update & optimize this
 					activeShader.TryGetUniformLocation("lightRange",out int uniformLightRange);
 					activeShader.TryGetUniformLocation("lightPosition",out int uniformLightPosition);
 					activeShader.TryGetUniformLocation("lightDirection",out int uniformLightDirection);

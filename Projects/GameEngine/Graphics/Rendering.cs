@@ -141,8 +141,6 @@ namespace GameEngine.Graphics
 		{
 			drawCallsCount = 0;
 
-			Rendering.CheckGLErrors();
-
 			//Calculate view and projection matrices, culling frustums
 			for(int i=0;i<cameraList.Count;i++) {
 				var camera = cameraList[i];
@@ -260,8 +258,6 @@ namespace GameEngine.Graphics
 				}
 			}
 			#endregion
-
-			Rendering.CheckGLErrors();
 
 			GL.Flush();
 			//window.SwapBuffers(); //TODO: After upgrading to OpenTK 4.0, see if fullscreen is still bugged on multi-monitor setup when using this SwapBuffers() call instead of GL.Finish/Flush().
