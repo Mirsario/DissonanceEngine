@@ -779,9 +779,9 @@ namespace GameEngine
 		public static Vector3 operator *(Matrix4x4 m,Vector3 v)
 		{
 			Vector3 result;
-			result.x = m.m00*v.x+m.m01*v.y+m.m02*v.z;
-			result.y = m.m10*v.x+m.m11*v.y+m.m12*v.z;
-			result.z = m.m20*v.x+m.m21*v.y+m.m22*v.z;
+			result.x = m.m00*v.x+m.m01*v.y+m.m02*v.z+m.m30;
+			result.y = m.m10*v.x+m.m11*v.y+m.m12*v.z+m.m31;
+			result.z = m.m20*v.x+m.m21*v.y+m.m22*v.z+m.m32;
 			return result;
 		}
 		public static Vector4 operator *(Matrix4x4 lhs,Vector4 v) => new Vector4(
