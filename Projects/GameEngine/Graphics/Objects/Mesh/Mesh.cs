@@ -24,7 +24,7 @@ namespace GameEngine
 
 	public class Mesh : Asset<Mesh>
 	{
-		//TODO: Implement OnDispose
+		public delegate void ArrayCopyDelegate<T>(int meshIndex,T[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length);
 
 		public string name;
 		public int[] triangles;
@@ -339,8 +339,7 @@ namespace GameEngine
 
 		}
 
-		public static Mesh CombineMeshes(params Mesh[] meshes)
-			=> CombineMeshesInternal(meshes,(i,srcVertices,srcIndex,dstVertices,dstIndex,length) => Array.Copy(srcVertices,srcIndex,dstVertices,dstIndex,length));
+		public static Mesh CombineMeshes(params Mesh[] meshes) => CombineMeshesInternal(meshes);
 		public static Mesh CombineMeshes(params (Mesh mesh,Vector3 offset)[] meshesWithOffsets)
 		{
 			return CombineMeshesInternal(meshesWithOffsets.Select(t => t.mesh),(meshIndex,srcVertices,srcIndex,dstVertices,dstIndex,length) => {
@@ -350,9 +349,39 @@ namespace GameEngine
 				}
 			});
 		}
-
-		internal static Mesh CombineMeshesInternal(IEnumerable<Mesh> meshes,Action<int,Vector3[],int,Vector3[],int,int> vertexCopyAction)
+		public static Mesh CombineMeshes(params (Mesh mesh,Matrix4x4 matrix)[] meshesWithMatrices)
 		{
+			void CopyVertices(int meshIndex,Vector3[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length)
+			{
+				var matrix = meshesWithMatrices[meshIndex].matrix;
+
+				for(int i = 0;i<length;i++) {
+					dstArray[dstIndex+i] = matrix*srcArray[srcIndex+i];
+				}
+			}
+			void CopyNormals(int meshIndex,Vector3[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length)
+			{
+				var matrix = meshesWithMatrices[meshIndex].matrix;
+
+				matrix.ClearScale();
+				matrix.ClearTranslation();
+
+				for(int i = 0;i<length;i++) {
+					dstArray[dstIndex+i] = matrix*srcArray[srcIndex+i];
+				}
+			}
+
+			return CombineMeshesInternal(meshesWithMatrices.Select(t => t.mesh),CopyVertices,CopyNormals);
+		}
+
+		internal static Mesh CombineMeshesInternal(IEnumerable<Mesh> meshes,ArrayCopyDelegate<Vector3> vertexCopyAction = null,ArrayCopyDelegate<Vector3> normalCopyAction = null)
+		{
+			static void DefaultCopyAction<T>(int meshIndex,T[] srcArray,int srcIndex,T[] dstArray,int dstIndex,int length)
+				=> Array.Copy(srcArray,srcIndex,dstArray,dstIndex,length);
+
+			vertexCopyAction ??= DefaultCopyAction;
+			normalCopyAction ??= DefaultCopyAction;
+
 			int newVertexCount = meshes.Sum(m => m.vertices.Length);
 			int newTriangleCount = meshes.Sum(m => m.triangles.Length);
 
@@ -372,7 +401,7 @@ namespace GameEngine
 				int vertexCount = mesh.vertices.Length;
 
 				vertexCopyAction(meshIndex,mesh.vertices,0,newMesh.vertices,vertex,vertexCount); //Array.Copy(mesh.vertices,0,newMesh.vertices,vertex,vertexCount);
-				Array.Copy(mesh.normals,0,newMesh.normals,vertex,vertexCount);
+				normalCopyAction(meshIndex,mesh.normals,0,newMesh.normals,vertex,vertexCount); //Array.Copy(mesh.normals,0,newMesh.normals,vertex,vertexCount);
 				Array.Copy(mesh.uv,0,newMesh.uv,vertex,vertexCount);
 
 				//Triangles
