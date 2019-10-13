@@ -19,6 +19,12 @@ namespace SurvivalGame
 		{
 			base.OnInit();
 
+			static float Random() => (Rand.Next(1f)+Rand.Next(1f))*0.5f;
+			static float TiltRotation() => Mathf.Lerp(-5f,5f,Random());
+
+			Transform.LocalScale = Vector3.One*Mathf.Lerp(0.5f,2f,Random());
+			Transform.EulerRot = new Vector3(TiltRotation(),Rand.Next(360f),TiltRotation());
+
 			/*string typeName = GetType().Name;
 
 			string barkMeshPath = $"{typeName}Bark.obj";

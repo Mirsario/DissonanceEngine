@@ -58,6 +58,7 @@
     <Compile Include="Input\Inputs\Jump.cs" />
     <Compile Include="Interaction\IFootstepProvider.cs" />
     <Compile Include="Interaction\PhysicMaterial.cs" />
+    <Compile Include="Interaction\PhysicMaterials\SandPhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\DirtPhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\GrassPhysicMaterial.cs" />
     <Compile Include="Interaction\PhysicMaterials\StonePhysicMaterial.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="World\Generation\GenPasses\AngleTileTypeGenPass.cs" />
     <Compile Include="World\Generation\GenPasses\HeightTileTypeGenPass.cs" />
     <Compile Include="World\Generation\GenPasses\NoiseChunkEntityGenPass.cs" />
+    <Compile Include="World\Generation\GenPasses\CustomNoiseGenPass.cs" />
     <Compile Include="World\Generation\GenPasses\NoiseHeightmapGenPass.cs" />
     <Compile Include="World\Generation\GenUtils.cs" />
     <Compile Include="World\Sun\Sun.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="World\Chunk\Chunk.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
     <Compile Include="World\Tiles\Types\Dirt.cs" />
+    <Compile Include="World\Tiles\Types\WetSand.cs" />
     <Compile Include="World\Tiles\Types\Sand.cs" />
     <Compile Include="World\Tiles\Types\Grass.cs" />
     <Compile Include="World\Tiles\Types\Stone.cs" />

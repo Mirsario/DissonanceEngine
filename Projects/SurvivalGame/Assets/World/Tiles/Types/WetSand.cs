@@ -2,13 +2,13 @@ using GameEngine;
 
 namespace SurvivalGame
 {
-	public class Sand : TileType
+	public class WetSand : TileType
 	{
 		protected override string[] Variants => new[] {
-			"Sand1.png",
-			"Sand2.png",
-			"Sand3.png",
-			"Sand4.png"
+			"WetSand1.png",
+			"WetSand2.png",
+			"WetSand3.png",
+			"WetSand4.png"
 		};
 
 		public override PhysicMaterial GetMaterial(Vector3? atPoint = null) => PhysicMaterial.GetMaterial<SandPhysicMaterial>();

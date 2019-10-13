@@ -129,32 +129,32 @@ namespace SurvivalGame
 		}
 		private void GenerateStaticEntityMeshes()
 		{
-			var meshesByMaterial = new Dictionary<Material,List<(Mesh mesh,Vector3 position)>>();
+			var meshesByMaterial = new Dictionary<Material,List<(Mesh mesh,Matrix4x4 matrix)>>();
 
-			var chunkPosition = Transform.Position;
+			var chunkTranslationMatrix = Matrix4x4.CreateTranslation(-Transform.Position);
 
 			for(int i = 0;i<staticEntities.Count;i++) {
 				var entity = staticEntities[i];
 				var renderers = entity.RendererData;
 
-				var entityPosition = entity.Transform.Position;
+				var entityMatrix = entity.Transform.Matrix;
 
 				for(int j = 0;j<renderers.Length;j++) {
 					var rendererData = renderers[j];
 
 					if(!meshesByMaterial.TryGetValue(rendererData.material,out var list)) {
-						meshesByMaterial[rendererData.material] = list = new List<(Mesh mesh,Vector3 position)>();
+						meshesByMaterial[rendererData.material] = list = new List<(Mesh, Matrix4x4)>();
 					}
 
-					list.Add((rendererData.mesh,entityPosition-chunkPosition));
+					list.Add((rendererData.mesh,entityMatrix*chunkTranslationMatrix));
 				}
 			}
 
 			foreach(var pair in meshesByMaterial) {
 				var material = pair.Key;
-				var meshes = pair.Value;
+				var meshesWithMatrices = pair.Value;
 
-				var mergedMesh = Mesh.CombineMeshes(meshes.ToArray());
+				var mergedMesh = Mesh.CombineMeshes(meshesWithMatrices.ToArray());
 
 				AddComponent<MeshRenderer>(r => {
 					r.Mesh = mergedMesh;

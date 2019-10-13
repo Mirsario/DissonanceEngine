@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace SurvivalGame
 {
-	public class NoiseHeightmapGenPass : GenPass
+	public class CustomNoiseGenPass : GenPass
 	{
-		public float maxHeight;
-		public float frequency;
+		public delegate void TileAction(ref Tile existingTile,float noiseValue);
 
-		public NoiseHeightmapGenPass(float maxHeight,float frequency)
+		public float frequency;
+		public TileAction tileAction;
+
+		public CustomNoiseGenPass(float frequency,TileAction tileAction)
 		{
-			this.maxHeight = maxHeight;
 			this.frequency = frequency;
+			this.tileAction = tileAction;
 		}
 
 		public override void Run(World world,int seed,int index)
@@ -27,7 +29,9 @@ namespace SurvivalGame
 
 			for(int y = 0;y<world.ySize;y++) {
 				for(int x = 0;x<world.xSize;x++) {
-					world[x,y].height = noise.GetValue(x*divX,0f,y*divY)*maxHeight;
+					ref var tile = ref world[x,y];
+
+					tileAction(ref tile,noise.GetValue(x*divX,0f,y*divY));
 				}
 			}
 		}

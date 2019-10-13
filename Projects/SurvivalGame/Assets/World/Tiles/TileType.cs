@@ -10,6 +10,12 @@ namespace SurvivalGame
 {
 	public abstract class TileType : ICloneable, IDisposable, IHasMaterial
 	{
+		public static class IDs<T> where T : TileType
+		{
+			public static readonly int Id;
+			public static readonly ushort IdUShort;
+		}
+
 		//Static
 		public static bool initialized;
 		public static ushort typeCount;
@@ -50,24 +56,40 @@ namespace SurvivalGame
 		public virtual void OnInit() { }
 		public virtual void ModifyGrassMesh(Chunk chunk,Tile tile,Vector2Int tilePos,Vector3 localPos,Vector3 tileNormal,MeshInfo mesh) => throw new NotImplementedException();
 
+		public object Clone() => MemberwiseClone();
+		public void Dispose() {}
+
 		public static void Initialize()
 		{
 			if(initialized) {
 				return;
 			}
+
 			var assembly = Assembly.GetCallingAssembly();
 			var thisType = typeof(TileType);
 			var tileTypes = assembly.GetTypes().Where(t => t!=thisType && !t.IsAbstract && thisType.IsAssignableFrom(t)).ToArray();
+
 			typeCount = (ushort)tileTypes.Length;
 			byId = new TileType[typeCount];
 			byName = new Dictionary<string,TileType>();
-			for(ushort i=0;i<tileTypes.Length;i++) {
+
+			var idType = typeof(IDs<>);
+
+			for(ushort i = 0;i<tileTypes.Length;i++) {
 				var type = tileTypes[i];
 				var instance = (TileType)Activator.CreateInstance(type);
 				instance.type = i;
-				byName[instance.name] = instance;
+
+				var flags = BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic;
+
+				var idTypeGeneric = idType.MakeGenericType(type);
+				idTypeGeneric.GetField(nameof(IDs<TileType>.Id),flags).SetValue(null,i);
+				idTypeGeneric.GetField(nameof(IDs<TileType>.IdUShort),flags).SetValue(null,i);
+
 				byId[i] = instance;
+				byName[instance.name] = instance;
 			}
+
 			if(Netplay.isClient) {
 				GenerateTexture();
 			}
@@ -77,20 +99,24 @@ namespace SurvivalGame
 		public static void GenerateTexture() 
 		{
 			int tileLength = 2;
+
 			int totalVariants = byId.Sum(t => t.numVariants);
 			while(tileLength*tileLength<=totalVariants) {
 				tileLength *= tileLength;
 			}
+
 			int sizePerTile = 32;
 			int fullSize = tileLength*sizePerTile;
 			int x = 0;
 			int y = 0;
 			var pixels = new Pixel[fullSize,fullSize];
+
 			for(int yy = 0;yy<fullSize;yy++) {
 				for(int xx = 0;xx<fullSize;xx++) {
 					pixels[xx,yy] = new Pixel(255,0,255,255);
 				}
 			}
+
 			for(var i=0;i<typeCount;i++) {
 				var tile = byId[i];
 				for(int j=0;j<tile.numVariants;j++) {
@@ -104,18 +130,12 @@ namespace SurvivalGame
 					}
 				}
 			}
+
 			tileAtlas = new Texture(fullSize,fullSize,wrapMode:TextureWrapMode.Clamp);
 			tileAtlas.SetPixels(pixels);
 			tileAtlas.Save("tileBatch.png");
 		}
-
-		public object Clone()
-		{
-			return MemberwiseClone();
-		}
-		public void Dispose()
-		{
-
-		}
+		public static T Get<T>() where T : TileType => (T)byId[IDs<T>.Id];
+		public static ushort GetId<T>() where T : TileType => IDs<T>.IdUShort;
 	}
 }

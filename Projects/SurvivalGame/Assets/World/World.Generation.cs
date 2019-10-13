@@ -15,13 +15,10 @@ namespace SurvivalGame
 
 		public void Generate(int seed)
 		{
-			ushort grassFlowers = TileType.byName["GrassFlowers"].type;
 			ushort dirt = TileType.byName["Dirt"].type;
 			ushort stone = TileType.byName["Stone"].type;
 
 			waterLevel = 32f;
-
-			float beachLevel = waterLevel+1.5f;
 
 			var list = new List<GenPass>();
 
@@ -32,7 +29,7 @@ namespace SurvivalGame
 
 				Debug.Log($"Executing generation task {task.GetType().Name}...");
 
-				task.Run(this,seed);
+				task.Run(this,seed,i);
 
 				Debug.Log("Done...");
 			}

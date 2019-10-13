@@ -9,7 +9,7 @@ namespace SurvivalGame
 {
 	public class HeightTileTypeGenPass : GenPass
 	{
-		public override void Run(World world,int seed)
+		public override void Run(World world,int seed,int index)
 		{
 			ushort sand = TileType.byName["Sand"].type;
 			ushort dirt = TileType.byName["Dirt"].type;

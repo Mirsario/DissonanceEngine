@@ -16,7 +16,7 @@ namespace SurvivalGame
 			this.minHeight = minHeight;
 		}
 
-		public override void Run(World world,int seed)
+		public override void Run(World world,int seed,int index)
 		{
 			ushort dirt = TileType.byName["Dirt"].type;
 			ushort stone = TileType.byName["Stone"].type;

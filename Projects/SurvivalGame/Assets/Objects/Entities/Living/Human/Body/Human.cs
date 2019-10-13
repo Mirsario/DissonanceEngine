@@ -30,10 +30,10 @@ namespace SurvivalGame
 		public Vector3 size = Vector3.One;
 		public AudioSource audioSource;
 		public bool isSprinting;
-		public bool onGroundCached;
+		public bool onGround;
+		public Vector3 groundNormal;
 
-		public bool OnGround => rigidbody.Collisions.Any(c => c.Contacts.Any(p => p.point.y>=Transform.Position.y-0.1f));
-		public float MoveSpeed => (isSprinting && onGroundCached) ? 12f : 7.5f;
+		public float MoveSpeed => (isSprinting && onGround) ? 12f : 7.5f;
 		public float Acceleration => 4.25f;
 
 		public override Type CameraControllerType => Main.forceThirdPerson ? typeof(BasicThirdPersonCamera) : typeof(FirstPersonCamera);
@@ -78,6 +78,8 @@ namespace SurvivalGame
 				renderer.Enabled = Main.forceThirdPerson;
 			}*/
 
+			PreMovement();
+
 			moveInput = this.Value<Inputs.MoveX,Inputs.MoveY>();
 
 			if(moveInput.x==0f && moveInput.y<=0f) {
@@ -88,15 +90,15 @@ namespace SurvivalGame
 
 			base.FixedUpdate();
 
-			Transform.EulerRot = new Vector3(0f,Mathf.LerpAngle(Transform.EulerRot.y,LookRotation.y,Time.FixedDeltaTime*(OnGround ? 12f : 4f)),0f);
-			
-			if(this.JustActivated<Inputs.PrimaryUse>()) {
-				/*Vector3 direction = brain?.LookDirection ?? Vector3.Forward;
+			Transform.EulerRot = new Vector3(0f,Mathf.LerpAngle(Transform.EulerRot.y,LookRotation.y,Time.FixedDeltaTime*(onGround ? 12f : 4f)),0f);
+
+			/*if(this.JustActivated<Inputs.PrimaryUse>()) {
+				Vector3 direction = brain?.LookDirection ?? Vector3.Forward;
 				Rocket rocket = Instantiate<Rocket>(world,position:camera.Transform.Position+direction);
 				rocket.velocity = direction*25f;
 				rocket.owner = this;
-				SoundInstance.Create("Sounds/rocketFire.wav",camera.Transform.Position);*/
-			}
+				SoundInstance.Create("Sounds/rocketFire.wav",camera.Transform.Position);
+			}*/
 
 			if(this.JustActivated<Inputs.Jump>()) {
 				jumpPress = 0.25f;
@@ -116,6 +118,8 @@ namespace SurvivalGame
 			if(Transform.Position!=tempPos) {
 				Transform.Position = tempPos;
 			}
+
+			PostMovement();
 		}
 		public override void RenderUpdate()
 		{
@@ -158,12 +162,32 @@ namespace SurvivalGame
 		}
 
 		//Movement
-		public void Movement()
+		public void PreMovement()
 		{
 			velocity = rigidbody.Velocity;
 
-			onGroundCached = OnGround;
+			var firstColl = rigidbody.Collisions.FirstOrDefault(c => c.Contacts.Any(p => p.point.y>=Transform.Position.y-0.1f));
 
+			float lowY = Transform.Position.y-0.1f;
+
+			onGround = false;
+
+			foreach(var collision in rigidbody.Collisions) {
+				foreach(var contact in collision.Contacts) {
+					if(contact.point.y>=lowY) {
+						onGround = true;
+						groundNormal = contact.normal;
+						break;
+					}
+				}
+
+				if(onGround) {
+					break;
+				}
+			}
+		}
+		public void Movement()
+		{
 			var forwardUnlimited = Transform.Forward;
 			var rightUnlimited = Transform.Right;
 			var forward = forwardUnlimited;
@@ -199,7 +223,7 @@ namespace SurvivalGame
 				}
 			}
 
-			if(onGroundCached && forceAirMove<=0f && !inWater) {
+			if(onGround && forceAirMove<=0f && !inWater) {
 				UpdateWalk(moveInput!=default);
 
 				if(Movement_CheckJump()) {
@@ -245,7 +269,9 @@ namespace SurvivalGame
 
 				velocity.y += (inWater ? 2f : -18f)*Time.FixedDeltaTime;
 			}
-
+		}
+		public void PostMovement()
+		{
 			rigidbody.Velocity = velocity;
 			prevVelocity = velocity;
 		}
@@ -254,6 +280,12 @@ namespace SurvivalGame
 			Movement_Friction(friction);
 
 			var wishDirection = (forward*moveInput.y)+(right*moveInput.x);
+
+			if(wishDirection!=Vector3.Zero) {
+				float angleDiff = Vector3.Angle(wishDirection,groundNormal)-90f;
+
+				Debug.Log(angleDiff);
+			}
 
 			Movement_Acceleration(wishDirection,moveSpeed,acceleration);
 		}
@@ -279,7 +311,7 @@ namespace SurvivalGame
 			float speed = tempVec.Magnitude;
 			float drop = 0f;
 
-			if(onGroundCached) {
+			if(onGround) {
 				drop = (speed<StopSpeed ? StopSpeed : speed)*friction*Time.FixedDeltaTime;
 			}
 
@@ -312,10 +344,12 @@ namespace SurvivalGame
 			var wishVelocity = wishDirection*wishSpeed;
 			var pushDirection = wishVelocity-velocity;
 			pushDirection.Normalize(out float pushLength);
+
 			float accelSpeed = acceleration*wishSpeed*Time.FixedDeltaTime;
 			if(accelSpeed>pushLength) {
 				accelSpeed = pushLength;
 			}
+
 			velocity += pushDirection*accelSpeed;
 #endif
 		}
@@ -331,11 +365,11 @@ namespace SurvivalGame
 		public void Footstep(string actionType,float volume)
 		{
 			var atPoint = Transform.Position;
-			// ReSharper disable once SuspiciousTypeConversion.Global
 			var providers = rigidbody.Collisions.SelectIgnoreNull(c => c.GameObject as IFootstepProvider ?? ((c.GameObject as IHasMaterial)?.GetMaterial(atPoint))).ToArray();
+
 			if(providers.Length>0) {
-				var provider = providers[0];
-				provider.GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);
+				providers[0].GetFootstepInfo(atPoint,out string surfaceType,ref actionType,out int numSoundVariants);
+
 				SoundInstance.Create($"Footstep{surfaceType}{actionType}{(numSoundVariants>0 ? Rand.Range(1,numSoundVariants+1).ToString() : null)}.ogg",atPoint+(velocity*Time.DeltaTime),volume,Transform,IsLocalPlayer);
 			}
 		}
