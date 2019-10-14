@@ -83,6 +83,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			Framebuffer.Bind(null);
 		}
+
 		/*public override void Resize()
 		{
 			//Vector2Int screenSize = Screen.size;

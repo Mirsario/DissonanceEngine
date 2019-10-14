@@ -163,6 +163,9 @@ namespace GameEngine.Graphics
 							if(lastShader!=shader) {
 								Shader.SetShader(shader);
 
+								shader.SetupCommonUniforms();
+								shader.SetupCameraUniforms(camera,cameraPos);
+
 								//Update CullMode
 								if(lastCullMode!=shader.cullMode) {
 									if(shader.cullMode==CullMode.Off) {
@@ -208,6 +211,7 @@ namespace GameEngine.Graphics
 								ref camera.matrix_view,ref camera.matrix_viewInverse,
 								ref camera.matrix_proj,ref camera.matrix_projInverse
 							);
+
 							renderer.ApplyUniforms(shader);
 
 							mesh.DrawMesh();
