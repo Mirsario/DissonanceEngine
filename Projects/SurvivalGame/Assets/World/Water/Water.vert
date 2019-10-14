@@ -31,7 +31,7 @@ void main(void)
 	
 	worldPos = (world*newVertex).xyz;
 	
-	//newVertex.y += mix(-0.2,0.2,getDisplacement(worldPos,uv0));
+	newVertex.y += mix(-0.2,0.2,getDisplacement(worldPos,uv0));
 	
 	worldPos = (world*newVertex).xyz;
 	

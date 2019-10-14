@@ -198,7 +198,7 @@ namespace SurvivalGame
 			forward.Normalize();
 			right.Normalize();
 
-			bool inWater = false; //position.y+1.5f<=world.GetWaterLevelAt(position);
+			bool inWater = Transform.Position.y+1.5f<=world.GetWaterLevelAt(Transform.Position);
 
 			void UpdateWalk(bool walking)
 			{

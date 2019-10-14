@@ -15,7 +15,7 @@ namespace SurvivalGame
 
 			light = AddComponent<Light>(c => {
 				c.type = LightType.Directional;
-				c.intensity = 1.5f;
+				c.intensity = 1.25f;
 				c.color = new Vector3(1f,0.85f,0.75f); //Sun
 				//c.color = new Vector3(0.66f,0.33f,1f)*0.25f; //Moon
 			});
@@ -24,6 +24,8 @@ namespace SurvivalGame
 				c.Mesh = PrimitiveMeshes.Sphere;
 				c.Material = Resources.Get<Material>("Sun.material");
 			});
+
+			Transform.LocalScale = Vector3.One*10f;
 		}
 
 		public static void OnRenderStart(Camera camera)
@@ -33,7 +35,7 @@ namespace SurvivalGame
 			if(instance!=null) {
 				var t = instance.Transform;
 				t.EulerRot = new Vector3(60f,30f,0f);
-				t.Position = camera.Transform.Position-t.Forward*100f;
+				t.Position = camera.Transform.Position-t.Forward*250f;
 			}
 		}
 	}

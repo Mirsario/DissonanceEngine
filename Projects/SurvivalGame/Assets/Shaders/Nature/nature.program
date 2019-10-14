@@ -1,7 +1,8 @@
 {
-	"DualSided": { //Diffuse
-		"vertexShader": "BuiltInAssets/Shaders/default.vert",
+	"Nature": {
+		"vertexShader": "nature.vert",
 		"fragmentShader":	"BuiltInAssets/Shaders/default.frag",
+		"shaderDefines": ["ALPHATEST"],
 		"cullMode": "Off"
 	}
 }

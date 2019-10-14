@@ -127,6 +127,7 @@
     <Compile Include="World\Tiles\Types\Stone.cs" />
     <Compile Include="World\Tiles\TileType.cs" />
     <Compile Include="World\Water\Water.cs" />
+    <Compile Include="World\Weathers\Weather.cs" />
     <Compile Include="World\World.Generation.cs" />
     <Compile Include="World\World.IO.cs" />
     <Compile Include="World\World.cs" />

@@ -1,6 +1,6 @@
 {
 	"name": "$FileName$",
-	"shader": "Transparent/Cutout/DiffuseDualSided",
+	"shader": "Nature",
 	"floats": {
 		"cutoff": 0.5
 	},
