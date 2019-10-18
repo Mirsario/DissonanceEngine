@@ -15,18 +15,20 @@ namespace SurvivalGame
 	}
 	public static class Netplay
 	{
-		private static NetMode _netMode = NetMode.Singleplayer;
-		public static NetMode NetMode {
-			get => _netMode;
-			set {
-				_netMode = value;
-				isClient = NetMode!=NetMode.DedicatedServer;	
-				isHost = NetMode!=NetMode.MultiplayerClient;	
-				isMultiplayer = NetMode!=NetMode.Singleplayer;		
-			}
-		}
 		public static bool isClient = true;	//Does this instance of the game need to do rendering & audio?
 		public static bool isHost = true; //Does this instance of the game own the currently loaded worlds?
 		public static bool isMultiplayer; //Does this instance of the game have to deal with networking?
+
+		private static NetMode netMode = NetMode.Singleplayer;
+
+		public static NetMode NetMode {
+			get => netMode;
+			set {
+				netMode = value;
+				isClient = NetMode!=NetMode.DedicatedServer;
+				isHost = NetMode!=NetMode.MultiplayerClient;
+				isMultiplayer = NetMode!=NetMode.Singleplayer;
+			}
+		}
 	}
 }

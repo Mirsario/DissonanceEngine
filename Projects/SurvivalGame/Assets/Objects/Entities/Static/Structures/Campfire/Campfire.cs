@@ -23,11 +23,22 @@ namespace SurvivalGame
 			
 			if(Netplay.isClient) {
 				light = Instantiate<LightObj>(world).GetComponent<Light>();
-
 				light.color = new Vector3(1f,0.8f,0f);
-				light.intensity = 2f;
+
 				light.Transform.parent = Transform;
 				light.Transform.LocalPosition = new Vector3(0f,1.25f,0f);
+
+				/*audioSource = AddComponent<AudioSource>(s => {
+					var clip = Resources.Get<AudioClip>("Sounds/FireLoop.ogg");
+
+					s.Clip = clip;
+					s.Loop = true;
+					s.MaxDistance = 64f;
+					s.Volume = 0.2f;
+					s.PlaybackOffset = Rand.Next(clip.LengthInSeconds);
+				});
+
+				audioSource.Play();*/
 			}
 		}
 		public override void FixedUpdate()
@@ -39,7 +50,7 @@ namespace SurvivalGame
 		public override void RenderUpdate()
 		{
 			light.range = Mathf.Lerp(light.range,Mathf.Lerp(10f,15f,lightScale),Time.RenderDeltaTime*4f);
-			light.intensity = Mathf.Lerp(light.intensity,Mathf.Lerp(0.75f,1.75f,lightScale),Time.RenderDeltaTime*4f);
+			light.intensity = Mathf.Lerp(light.intensity,Mathf.Lerp(1f,3f,lightScale),Time.RenderDeltaTime*4f);
 		}
 
 		PhysicMaterial IHasMaterial.GetMaterial(Vector3? atPoint) => PhysicMaterial.GetMaterial<WoodPhysicMaterial>();

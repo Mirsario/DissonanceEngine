@@ -76,6 +76,7 @@
     <Compile Include="Objects\Entities\Brains\TestBrain.cs" />
     <Compile Include="Objects\CameraControllers\FirstPersonCamera.cs" />
     <Compile Include="Objects\Entities\Living\Human\Brain\HumanBrain.cs" />
+    <Compile Include="Objects\Entities\Living\Slug\Slug.cs" />
     <Compile Include="Objects\Entities\PhysicalEntity.cs" />
     <Compile Include="Objects\Entities\LivingEntity.cs" />
     <Compile Include="Objects\Entities\Entity.cs" />
@@ -85,7 +86,8 @@
     <Compile Include="Objects\Entities\Souls\Soul.cs" />
     <Compile Include="Objects\Entities\Living\Human\Soul\HumanSoul.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Minerals\Boulder.cs" />
-    <Compile Include="Objects\Entities\Static\Nature\Plants\BerryBush.cs" />
+    <Compile Include="Objects\Entities\Static\Nature\Plants\BerryBush\BerryBush.cs" />
+    <Compile Include="Objects\Entities\Static\Nature\Plants\Sapling\Sapling.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Trees\Spruce\Spruce.cs" />
     <Compile Include="Objects\Entities\Static\Nature\Trees\Tree.cs" />
     <Compile Include="Objects\Entities\Static\StaticEntity.cs" />
@@ -139,8 +141,6 @@
     <None Include="gamesettings.json" />
     <None Include="Objects\Entities\Items\Tools\StoneHatchet\StoneHatchet.obj" />
     <None Include="Objects\Entities\Static\Nature\Minerals\Boulder.obj" />
-    <None Include="Objects\Entities\Static\Nature\Plants\BerryBush.obj" />
-    <None Include="Objects\Entities\Static\Nature\Plants\BerryBushLOD2.obj" />
     <None Include="Objects\Entities\Static\Nature\Trees\Spruce\SpruceBark.obj" />
     <None Include="Objects\Entities\Static\Nature\Trees\Spruce\SpruceBranch2.ase" />
     <None Include="Objects\Entities\Static\Nature\Trees\Spruce\SpruceBranches.obj" />

@@ -38,16 +38,19 @@ namespace SurvivalGame
 
 		public ref Tile this[int x,int y] {
 			get {
-				RepeatTilePos(ref x,ref y);
+				//RepeatTilePos(ref x,ref y);
+
+				x = x>=0 ? (x<xSize ? x : x%xSize) : (int.MaxValue+x+1)%xSize;
+				y = y>=0 ? (y<ySize ? y : y%ySize) : (int.MaxValue+y+1)%ySize;
 
 				if(Netplay.isHost) {
 					return ref tiles[x,y];
 				}
 
-				var chunkPoint = new Vector2Int(x/Chunk.ChunkSize,y/Chunk.ChunkSize);
-				var relativePos = new Vector2Int(x-(chunkPoint.x*Chunk.ChunkSize),y-(chunkPoint.y*Chunk.ChunkSize));
-				var chunk = chunks[x/Chunk.ChunkSize,y/Chunk.ChunkSize];
-				return ref chunk.tiles[relativePos.x,relativePos.y];
+				int chunkX = x/Chunk.ChunkSize;
+				int chunkY = y/Chunk.ChunkSize;
+
+				return ref chunks[chunkX,chunkY].tiles[x-(chunkX*Chunk.ChunkSize),y-(chunkY*Chunk.ChunkSize)];
 			}
 		}
 
@@ -100,7 +103,7 @@ namespace SurvivalGame
 			Vector2Int cameraPos = (Vector2Int)(localPlayerEntity.Transform.Position.XZ/Chunk.ChunkWorldSize);
 			//Vector2Int cameraPos = (Vector2Int)(Main.camera.Transform.Position.XZ/Chunk.ChunkWorldSize);
 
-			const int Range = 24;
+			const int Range = 8;
 
 #if LOOP_WORLD
 			int xStart = cameraPos.x-Range;
@@ -130,7 +133,13 @@ namespace SurvivalGame
 					RepeatChunkPos(ref chunkPos.x,ref chunkPos.y);
 #endif
 
-					chunkRenderers[vecPos] = ChunkRenderer.Create(chunks[chunkPos.x,chunkPos.y],vecPos.x,vecPos.y);
+					var chunk = chunks[chunkPos.x,chunkPos.y];
+
+					chunk.collider ??= chunk.AddComponent<MeshCollider>(c => {
+						c.Mesh = (ConcaveCollisionMesh)chunk.GetMesh();
+					});
+
+					chunkRenderers[vecPos] = ChunkRenderer.Create(chunk,vecPos.x,vecPos.y);
 				}
 			}
 
@@ -223,7 +232,7 @@ namespace SurvivalGame
 			return chunks[X,Y];
 		}
 		public float GetWaterLevelAt(Vector3 position) => GetWaterLevelAt(position.x,position.z);
-		public float GetWaterLevelAt(float x,float z) => waterLevel+Mathf.Lerp(-2f,2f,Mathf.Sin(Time.GameTime+(x+z)*0.1f)*0.5f+0.5f);
+		public float GetWaterLevelAt(float x,float z) => waterLevel+Mathf.Lerp(-0.2f,0.2f,Mathf.Sin(Time.GameTime+(x+z)*0.01f)*0.5f+0.5f);
 
 		public static T Instantiate<T>(string name,int xSize,int ySize,string path = null) where T : World
 		{

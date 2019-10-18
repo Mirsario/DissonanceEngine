@@ -188,11 +188,14 @@ namespace SurvivalGame
 		}
 		public void Movement()
 		{
-			var forwardUnlimited = Transform.Forward;
+			var forwardUnlimited = LookDirection;
 			var rightUnlimited = Transform.Right;
+
 			var forward = forwardUnlimited;
 			var right = rightUnlimited;
+
 			forwardUnlimited.Normalize();
+			rightUnlimited.Normalize();
 			forward.y = 0f;
 			right.y = 0f;
 			forward.Normalize();
@@ -258,16 +261,16 @@ namespace SurvivalGame
 				forceAirMove = Mathf.StepTowards(forceAirMove,0f,Time.FixedDeltaTime);
 
 				if(inWater) {
-					Movement_Move(AirAcceleration,MoveSpeed,10f,forwardUnlimited,rightUnlimited);
+					Movement_Move(AirAcceleration,MoveSpeed,3f,forwardUnlimited,rightUnlimited);
 
-					Movement_Acceleration(Vector3.Backward+Vector3.Left,4f,0.5f);
+					//Movement_Acceleration(Vector3.Backward+Vector3.Left,4f,0.5f);
 				} else {
 					Movement_Move(AirAcceleration,MoveSpeed,Friction,forward,right);
 				}
 
 				wasOnGround = false;
 
-				velocity.y += (inWater ? 2f : -18f)*Time.FixedDeltaTime;
+				velocity.y += (inWater ? 0f : -18f)*Time.FixedDeltaTime;
 			}
 		}
 		public void PostMovement()

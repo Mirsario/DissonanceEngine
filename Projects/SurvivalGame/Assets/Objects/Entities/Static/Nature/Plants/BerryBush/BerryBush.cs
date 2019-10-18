@@ -6,8 +6,6 @@ namespace SurvivalGame
 {
 	public class BerryBush : StaticEntity, IHasMaterial
 	{
-		public MeshRenderer renderer;
-
 		public override CollisionMesh CollisionMesh => null;
 		public override (Mesh mesh, Material material)[] RendererData => new[] {
 			(Resources.Get<Mesh>($"{GetType().Name}.obj"),Resources.Find<Material>(GetType().Name))

@@ -106,9 +106,9 @@ namespace SurvivalGame
 
 		public void FinishInit()
 		{
-			collider = AddComponent<MeshCollider>(c => {
+			/*collider = AddComponent<MeshCollider>(c => {
 				c.Mesh = (ConcaveCollisionMesh)GetMesh();
-			});
+			});*/
 		}
 
 		public static Chunk Create(World world,int x,int y,bool init = true)

@@ -11,7 +11,7 @@ namespace SurvivalGame
 	{
 		public override void ModifyGenTasks(List<GenPass> list)
 		{
-			float heightmapFrequency = xSize*ySize/(1024f*256f);
+			float heightmapFrequency = 0.04f;// xSize*ySize/(1024f*256f);
 
 			ushort sand = TileType.GetId<Sand>();
 			ushort wetSand = TileType.GetId<WetSand>();
@@ -39,8 +39,8 @@ namespace SurvivalGame
 			list.Add(new AngleTileTypeGenPass(waterLevel));
 
 			//Deserts
-			list.Add(new CustomNoiseGenPass(heightmapFrequency,(ref Tile tile,float noiseValue) => {
-				if(tile.height>=waterLevel+5f) {
+			list.Add(new CustomNoiseGenPass(0.001f,(ref Tile tile,float noiseValue) => {
+				if(tile.height>=waterLevel) {
 					if(noiseValue<0.4f) {
 						tile.type = sand;
 					} else if(noiseValue<0.42f) {
@@ -53,10 +53,16 @@ namespace SurvivalGame
 			list.Add(new NoiseChunkEntityGenPass<Spruce>(100,20,0.25f,heightmapFrequency,t => t.height>waterLevel+3f && t.type==grass));
 
 			//Berry Bushes
-			list.Add(new NoiseChunkEntityGenPass<BerryBush>(200,50,0.25f,heightmapFrequency,t => t.height>waterLevel+3f && (t.type==grass || t.type==sand)));
+			list.Add(new NoiseChunkEntityGenPass<BerryBush>(200,30,0.25f,heightmapFrequency,t => t.height>waterLevel+3f && (t.type==grass || t.type==sand)));
+
+			//Saplings
+			list.Add(new NoiseChunkEntityGenPass<Sapling>(400,60,0.25f,heightmapFrequency,t => t.height>waterLevel+3f));
 
 			//Boulders
 			list.Add(new NoiseChunkEntityGenPass<Boulder>(400,50,0.5f,heightmapFrequency,t => t.height>waterLevel-2f));
+
+			//Campfires
+			list.Add(new NoiseChunkEntityGenPass<Campfire>(10000,10000,0.1f,heightmapFrequency,t => t.height>waterLevel+3f));
 		}
 	}
 }

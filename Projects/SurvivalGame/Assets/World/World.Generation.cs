@@ -4,14 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using GameEngine;
 using GameEngine.Physics;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace SurvivalGame
 {
 	public partial class World
 	{
 		public abstract void ModifyGenTasks(List<GenPass> list);
+		//public abstract void ModifyGenTasks(List<IEnumerable<GenPass>> list);
 
 		public void Generate(int seed)
 		{
@@ -20,19 +24,44 @@ namespace SurvivalGame
 
 			waterLevel = 32f;
 
+			//var list = new List<IEnumerable<GenPass>>();
 			var list = new List<GenPass>();
 
 			ModifyGenTasks(list);
 
+			var sw = new Stopwatch();
+			sw.Start();
+
 			for(int i = 0;i<list.Count;i++) {
-				var task = list[i];
+				//var passes = list[i];
+				//var tasks = new List<Task>();
 
-				Debug.Log($"Executing generation task {task.GetType().Name}...");
+				//foreach(var pass in passes) {
+				//	tasks.Add(Task.Run(() => {
 
-				task.Run(this,seed,i);
+				var pass = list[i];
+
+				Debug.Log($"Executing generation task {pass.GetType().Name}...");
+
+				pass.Run(this,seed,i);
 
 				Debug.Log("Done...");
+
+				//	}));
+				//}
+
+				//foreach(var task in tasks) {
+				//	task.Wait();
+				//}
 			}
+
+			sw.Stop();
+
+			Debug.Log($"{xSize}x{ySize} ({xSizeInUnits}x{ySizeInUnits} in meters) generation took {sw.Elapsed.TotalSeconds:0.00}s");
+
+			GC.Collect();
+
+			Debug.Log("Called GC");
 
 			/*for(int i=0;i<5;i++) {
 				var posA = new Vector2Int(Rand.Next(xSize),Rand.Next(ySize));
@@ -90,35 +119,31 @@ namespace SurvivalGame
 				}
 			}
 
+			Vector3 GetPos(float x,float z,float yOffset = 0f)
+			{
+				var pos = new Vector3(x,0f,z);
+				pos.y = HeightAt(pos,false)+yOffset;
+				return pos;
+			}
+
+			//Entity.Instantiate<Slug>(this,position:GetPos(xSizeInUnits*0.5f-1f,ySizeInUnits*0.5f-1f));
+
 			for(int i = 0;i<Player.localPlayers.Length;i++) {
 				var player = Player.localPlayers[i];
 
-				var playerPos = new Vector3(xSizeInUnits*0.5f+i*2f,0f,ySizeInUnits*0.5f);
-				playerPos.y = HeightAt(playerPos,false)+30f;
+				var playerPos = GetPos(xSizeInUnits*0.5f+i*2f,ySizeInUnits*0.5f,30f);
 
-				/*var soul = Entity.Instantiate<HumanSoul>(this);
-				player.AttachProxy(soul);
+				if(i==0) {
+					var soul = Entity.Instantiate<HumanSoul>(this,position: playerPos);
+					var brain = Entity.Instantiate<HumanBrain>(this,position: playerPos);
+					var body = Entity.Instantiate<Human>(this,position: playerPos);
 
-				var brain = Entity.Instantiate<HumanBrain>(this);
-				soul.AttachProxy(brain);*/
-
-				/*player.AttachProxy(
-					Entity.Instantiate<Human>(this,position:playerPos)
-						.AttachToProxy(Entity.Instantiate<HumanBrain>(this))
-						.AttachToProxy(Entity.Instantiate<HumanSoul>(this))
-				);*/
-
-				var soul = Entity.Instantiate<HumanSoul>(this,position:playerPos);
-				var brain = Entity.Instantiate<HumanBrain>(this,position:playerPos);
-				var body = Entity.Instantiate<Human>(this,position:playerPos);
-
-				//player.Entity = soul;
-				//soul.AttachProxy(brain.Proxy);
-				//body.Brain = brain;
-
-				player.Entity = soul;
-				soul.AttachTo(brain);
-				brain.AttachTo(body);
+					player.Entity = soul;
+					soul.AttachTo(brain);
+					brain.AttachTo(body);
+				} else {
+					player.Entity = Entity.Instantiate<Slug>(this,position: playerPos);
+				}
 
 				//player.AttachProxy(Entity.Instantiate<HumanSoul>(this))
 				//	.AttachProxy(Entity.Instantiate<HumanBrain>(this))

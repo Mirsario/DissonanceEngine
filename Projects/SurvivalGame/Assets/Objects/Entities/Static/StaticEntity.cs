@@ -27,11 +27,19 @@ namespace SurvivalGame
 				return;
 			}
 
-			chunk?.staticEntities.Remove(this);
+			if(chunk!=null) {
+				lock(chunk.staticEntities) {
+					chunk.staticEntities.Remove(this);
+				}
+			}
 
 			chunk = newChunk;
 
-			chunk?.staticEntities.Add(this);
+			if(chunk!=null) {
+				lock(chunk.staticEntities) {
+					chunk.staticEntities.Add(this);
+				}
+			}
 		}
 	}
 }
