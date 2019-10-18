@@ -4,7 +4,7 @@ namespace AbyssCrusaders.Generation.GenPasses
 {
 	public class TileFramePass : GenPass
 	{
-		public override void Run(World world)
+		public override void Run(int seed,int index,World world)
 		{
 			for(int y = 0;y<world.height;y++) {
 				for(int x = 0;x<world.width;x++) {

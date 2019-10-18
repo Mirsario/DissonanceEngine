@@ -25,7 +25,7 @@ namespace AbyssCrusaders.Generation.GenPasses
 			this.tileType = tileType;
 		}
 		
-		public override void Run(World world)
+		public override void Run(int seed,int index,World world)
 		{
 			//ushort wood = TilePreset.GetTypeId<Wood>();
 			//GenUtils.Ellipse(world,128,128,32,32,(ref Tile t) => t.type = wood);

@@ -63,6 +63,7 @@
     <Compile Include="Objects\Etc\SoundInstance.cs" />
     <Compile Include="Objects\GameObject2D.cs" />
     <Compile Include="Objects\SpriteObject.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="SaveFile.cs" />
     <Compile Include="UI\Menu\MainMenuController.cs" />
     <Compile Include="UI\Menu\MainMenuState.cs" />
@@ -73,10 +74,12 @@
     <Compile Include="Utils.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Generation\GenPass.cs" />
+    <Compile Include="World\Generation\GenPasses\NoiseTileReplacePass.cs" />
     <Compile Include="World\Generation\GenPasses\GrassPass.cs" />
     <Compile Include="World\Generation\GenPasses\OverworldTerrainPass.cs" />
     <Compile Include="World\Generation\GenPasses\RandomChunksPass.cs" />
     <Compile Include="World\Generation\GenPasses\TileFramePass.cs" />
+    <Compile Include="World\Generation\GenPasses\CavePass.cs" />
     <Compile Include="World\Generation\GenPasses\TunnelsPass.cs" />
     <Compile Include="World\Generation\GenUtils.cs" />
     <Compile Include="World\ISaveable.cs" />

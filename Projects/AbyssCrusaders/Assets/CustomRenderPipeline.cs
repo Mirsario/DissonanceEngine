@@ -8,7 +8,6 @@ namespace AbyssCrusaders
 {
 	public class CustomRenderPipeline : RenderingPipeline
 	{
-		private Shader postLightingShader;
 		private Shader compositeShader;
 		
 		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
@@ -17,13 +16,16 @@ namespace AbyssCrusaders
 
 			Framebuffer mainFramebuffer,lightingOcclusionFramebuffer,lightingFramebuffer;
 
-			var colorBuffer = new RenderTexture("colorBuffer",GetScreenSize,FilterMode.Bilinear);
-			var emissionBuffer = new RenderTexture("emissionBuffer",GetScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f);
+			//RenderBuffers
 			var depthBuffer = new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f);
 
-			var lightingOcclusionBuffer = new RenderTexture("lightingOcclusionBuffer",GetLightingResolution,textureFormat:TextureFormat.R8);
+			//Screen Buffers
+			var colorBuffer = new RenderTexture("colorBuffer",GetScreenSize,FilterMode.Bilinear);
+			var emissionBuffer = new RenderTexture("emissionBuffer",GetScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f);
 
-			var lightingBuffer = new RenderTexture("lightingBuffer",GetLightingResolution,textureFormat:TextureFormat.RGB8);
+			//Lighting Buffers
+			var lightingBuffer = new RenderTexture("lightingBuffer",GetLightingResolution,FilterMode.Point,textureFormat:TextureFormat.RGB8);
+			//var lightingOcclusionBuffer = new RenderTexture("lightingOcclusionBuffer",GetLightingResolution,textureFormat:TextureFormat.R8);
 
 			//Framebuffers
 			framebuffers.AddRange(new[] {
@@ -35,9 +37,9 @@ namespace AbyssCrusaders
 					fb.AttachRenderbuffer(depthBuffer,FramebufferAttachment.DepthAttachment);
 				}),
 
-				lightingOcclusionFramebuffer = Framebuffer.Create("lightingOcclusionFramebuffer",fb => {
-					fb.AttachRenderTexture(lightingOcclusionBuffer);
-				}),
+				//lightingOcclusionFramebuffer = Framebuffer.Create("lightingOcclusionFramebuffer",fb => {
+				//	fb.AttachRenderTexture(lightingOcclusionBuffer);
+				//}),
 
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
 					fb.AttachRenderTexture(lightingBuffer);
@@ -62,7 +64,7 @@ namespace AbyssCrusaders
 				//Lights
 				RenderPass.Create<Light2DPass>("Lighting",p => {
 					p.Framebuffer = lightingFramebuffer;
-					p.ViewportFunc = c => new RectInt(default,GetLightingResolution());
+					p.ViewportFunc = c => new RectInt(default,GetLightingResolution(true));
 					p.Shader = Resources.Find<Shader>("Game/Light");
 				}),
 
@@ -131,10 +133,16 @@ namespace AbyssCrusaders
 		}
 
 		private static Vector2Int GetScreenSize() => Screen.Size;
-		private static Vector2Int GetLightingResolution()
+		private static Vector2Int GetLightingResolution() => GetLightingResolution(false);
+		private static Vector2Int GetLightingResolution(bool floor)
 		{
 			float zoom = Main.camera?.zoomGoal ?? 1f;
-			return new Vector2Int((int)Math.Ceiling(Screen.Width/zoom),(int)Math.Ceiling(Screen.Height/zoom));
+			float width = Screen.Width/zoom;
+			float height = Screen.Height/zoom;
+			return new Vector2Int(
+				(int)(floor ? Math.Floor(width) : Math.Ceiling(width)),
+				(int)(floor ? Math.Floor(height) : Math.Ceiling(height))
+			);
 		}
 	}
 }

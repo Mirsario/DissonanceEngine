@@ -2,6 +2,6 @@
 {
 	public abstract class GenPass
 	{
-		public abstract void Run(World world);
+		public abstract void Run(int seed,int index,World world);
 	}
 }

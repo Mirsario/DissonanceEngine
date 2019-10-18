@@ -9,15 +9,6 @@ using System.Collections.Generic;
 #pragma warning disable 219
 namespace AbyssCrusaders
 {
-	public static class Program
-	{
-		public static void Main(string[] args)
-		{
-			using(var main = new Main()) {
-				main.Run(args);
-			}
-		}
-	}
 	public class Main : Game
 	{
 		public const int UnitSizeInPixels = 10;
@@ -36,12 +27,13 @@ namespace AbyssCrusaders
 		{
 			Texture.defaultFilterMode = FilterMode.Point;
 			Texture.defaultWrapMode = TextureWrapMode.Clamp;
+
 			Layers.AddLayers(
 				"Terrain",
 				"TerrainLightingOcclusion",
 				"Entity"
 			);
-			//Time.TargetRenderCount = 144;
+
 			Rendering.SetRenderingPipeline<CustomRenderPipeline>(); //ForwardRendering
 		}
 		public override void Start()

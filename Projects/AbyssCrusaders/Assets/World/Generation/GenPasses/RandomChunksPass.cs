@@ -33,7 +33,7 @@ namespace AbyssCrusaders.Generation.GenPasses
 			this.maxY = maxY;
 		}
 		
-		public override void Run(World world)
+		public override void Run(int seed,int index,World world)
 		{
 			for(int i = 0;i<numChunks;i++) {
 				int x = Rand.Next(world.width);

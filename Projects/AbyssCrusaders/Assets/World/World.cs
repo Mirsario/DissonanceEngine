@@ -87,9 +87,10 @@ namespace AbyssCrusaders
 
 		public abstract void ModifyGenTasks(List<GenPass> list);
 
-		public virtual void Generate()
+		public virtual void Generate(int seed)
 		{
 			Debug.Log("Resetting Tile Array");
+
 			for(int y = 0;y<height;y++) {
 				for(int x = 0;x<width;x++) {
 					this[x,y] = default;
@@ -97,23 +98,27 @@ namespace AbyssCrusaders
 			}
 
 			var list = new List<GenPass>();
+
 			ModifyGenTasks(list);
 
 			for(int i = 0;i<list.Count;i++) {
 				var task = list[i];
+
 				Debug.Log($"Executing generation task {task.GetType().Name}...");
-				task.Run(this);
+
+				task.Run(seed,i,this);
+
 				Debug.Log("Done...");
 			}
 		}
 		
-		public static T Create<T>(int width,int height) where T : World
+		public static T Create<T>(int width,int height,int? seed = null) where T : World
 		{
 			var world = Instantiate<T>(init:false);
 			world.width = width;
 			world.height = height;
 			world.Init();
-			world.Generate();
+			world.Generate(seed ?? (int)DateTime.Now.Ticks);
 			return world;
 		}
 	}

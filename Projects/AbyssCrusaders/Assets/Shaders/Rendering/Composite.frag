@@ -44,8 +44,8 @@ out vec3 oColor;
 void main()
 {
 	//vec2 lightingRes = ceil(screenResolution/zoom);
-	vec2 upscaledLightingRes = lightingResolution*zoom;
-	vec2 resDiffScale = upscaledLightingRes/screenResolution;
+	//vec2 upscaledLightingRes = lightingResolution*zoom;
+	//vec2 resDiffScale = upscaledLightingRes/screenResolution;
 	
 	//vec2 cameraTopLeftInPixels = (cameraPos-(screenResolution*0.5f/zoom))*10f;
 	//vec2 offset = cameraTopLeftInPixels-floor(cameraTopLeftInPixels);
@@ -65,7 +65,9 @@ void main()
 		return;
 	}*/
 	
-	vec3 lighting = clamp(texture2D(lightingBuffer,screenPos).rgb + texture2D(emissionBuffer,screenPos).rgb,0f,1f);
+	vec2 lightingPos = screenPos;
+	
+	vec3 lighting = clamp(texture2D(lightingBuffer,lightingPos).rgb+texture2D(emissionBuffer,screenPos).rgb,0f,1f);
 	
 	vec4 color = texture2D(colorBuffer,screenPos);
 	oColor = vec3(color.rgb*lighting);

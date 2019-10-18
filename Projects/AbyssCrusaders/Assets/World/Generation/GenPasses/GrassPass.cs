@@ -4,7 +4,7 @@ namespace AbyssCrusaders.Generation.GenPasses
 {
 	public class GrassPass : GenPass
 	{
-		public override void Run(World world)
+		public override void Run(int seed,int index,World world)
 		{
 			ushort dirt = TilePreset.GetTypeId<Dirt>();
 			ushort grass = TilePreset.GetTypeId<Grass>();
