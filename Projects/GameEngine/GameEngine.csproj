@@ -79,6 +79,7 @@
     <Compile Include="DebugInternal.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Utils\FastNoise.cs" />
     <Compile Include="Graphics\Components\Renderers\MeshLOD.cs" />
     <Compile Include="Graphics\Enums\BlendingFactor.cs" />
     <Compile Include="Graphics\Enums\PolygonMode.cs" />
@@ -163,8 +164,6 @@
     <Compile Include="Input\MouseButton.cs" />
     <Compile Include="Mathf.cs" />
     <Compile Include="Graphics\Objects\Mesh\Mesh.cs" />
-    <Compile Include="PerlinNoiseDouble.cs" />
-    <Compile Include="PerlinNoiseFloat.cs" />
     <Compile Include="Physics\Collision\Collision.cs" />
     <Compile Include="Physics\Collision\Collision2D.cs" />
     <Compile Include="Physics\Collision\ConcaveCollisionMesh.cs" />
@@ -218,6 +217,8 @@
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Utils\ArrayUtils.cs" />
+    <Compile Include="Utils\FastNoise.Float2.cs" />
+    <Compile Include="Utils\FastNoise.Float3.cs" />
     <Compile Include="Utils\InternalUtils.cs" />
   </ItemGroup>
   <ItemGroup>
