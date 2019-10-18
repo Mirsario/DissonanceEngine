@@ -204,7 +204,8 @@ namespace GameEngine.Graphics
 								uniformComputed[k] = false;
 							}
 
-							shader.SetupMatrixUniformsCached(camera,renderer.Transform,uniformComputed,
+							shader.SetupMatrixUniformsCached(
+								renderer.Transform,uniformComputed,
 								ref world,ref worldInverse,
 								ref worldView,ref worldViewInverse,
 								ref worldViewProj,ref worldViewProjInverse,

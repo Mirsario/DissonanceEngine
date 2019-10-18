@@ -86,7 +86,7 @@ namespace GameEngine.Graphics
 						var world = Matrix4x4.CreateScale(light.range)*Matrix4x4.CreateTranslation(lightPosition);
 
 						activeShader.SetupMatrixUniforms(
-							ref camera,ref cameraPos,lightTransform,
+							lightTransform,
 							ref world,ref worldInverse,
 							ref worldView,ref worldViewInverse,
 							ref worldViewProj,ref worldViewProjInverse,
@@ -127,14 +127,12 @@ namespace GameEngine.Graphics
 							case LightType.Directional:
 								//TODO: Draw like this should be made into a function
 								GL.Begin(PrimitiveTypeGL.Quads);
-								GL.Vertex2(	 -1f,-1f);
-								GL.TexCoord2( 0f, 0f);
-								GL.Vertex2(	 -1f, 1f);
-								GL.TexCoord2( 0f, 1f);
-								GL.Vertex2(	  1f, 1f);
-								GL.TexCoord2( 1f, 1f);
-								GL.Vertex2(	  1f,-1f);
-								GL.TexCoord2( 1f, 0f);
+
+								GL.Vertex2(-1f,-1f); GL.TexCoord2(0f,0f);
+								GL.Vertex2(-1f, 1f); GL.TexCoord2(0f,1f);
+								GL.Vertex2( 1f, 1f); GL.TexCoord2(1f,1f);
+								GL.Vertex2( 1f,-1f); GL.TexCoord2(1f,0f);
+
 								GL.End();
 								break;
 						}

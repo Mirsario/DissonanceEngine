@@ -110,7 +110,7 @@ namespace GameEngine.Graphics
 				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
 			}
 		}
-		internal void SetupMatrixUniformsCached(Camera camera,Transform transform,bool[] uniformComputed,
+		internal void SetupMatrixUniformsCached(Transform transform,bool[] uniformComputed,
 			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView,		ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj,	ref Matrix4x4 worldViewProjInverse,
@@ -139,7 +139,7 @@ namespace GameEngine.Graphics
 				#region WorldView
 				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 					//Check
-					if(!uniformComputed[DSU.WorldView]) { worldView = world*camera.matrix_view; uniformComputed[DSU.WorldView] = true; }
+					if(!uniformComputed[DSU.WorldView]) { worldView = world*view; uniformComputed[DSU.WorldView] = true; }
 
 					if(hasDefaultUniform[DSU.WorldView]) {
 						//Assign
@@ -154,7 +154,7 @@ namespace GameEngine.Graphics
 					#region WorldViewProj
 					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 						//Check
-						if(!uniformComputed[DSU.WorldViewProj]) { worldViewProj = worldView*camera.matrix_proj; uniformComputed[DSU.WorldViewProj] = true; }
+						if(!uniformComputed[DSU.WorldViewProj]) { worldViewProj = worldView*proj; uniformComputed[DSU.WorldViewProj] = true; }
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
 							//Assign
@@ -180,7 +180,7 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ProjInverse])	{ UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],	ref projInverse); }
 			#endregion
 		}
-		internal void SetupMatrixUniforms(ref Camera camera,ref Vector3 cameraPos,Transform transform,
+		internal void SetupMatrixUniforms(Transform transform,
 			ref Matrix4x4 world,			ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView,		ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj,	ref Matrix4x4 worldViewProjInverse,
@@ -204,7 +204,7 @@ namespace GameEngine.Graphics
 
 				#region WorldView
 				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-					worldView = world*camera.matrix_view;
+					worldView = world*view;
 
 					if(hasDefaultUniform[DSU.WorldView]) {
 						UniformMatrix4(defaultUniformIndex[DSU.WorldView],ref worldView);
@@ -216,7 +216,7 @@ namespace GameEngine.Graphics
 
 					#region WorldViewProj
 					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-						worldViewProj = worldView*camera.matrix_proj;
+						worldViewProj = worldView*proj;
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
 							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj],ref worldViewProj);

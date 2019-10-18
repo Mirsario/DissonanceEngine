@@ -50,7 +50,7 @@ namespace GameEngine.Graphics
 					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(light.Transform.Position);
 
 					passShader.SetupMatrixUniforms(
-						ref camera,ref cameraPos,light.Transform,
+						light.Transform,
 						ref world,				ref worldInverse,
 						ref worldView,			ref worldViewInverse,
 						ref worldViewProj,		ref worldViewProjInverse,
