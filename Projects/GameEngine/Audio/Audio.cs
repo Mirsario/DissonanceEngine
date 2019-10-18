@@ -22,7 +22,7 @@ namespace GameEngine
 
 			CheckALErrors();
 			
-			AL.DistanceModel(ALDistanceModel.InverseDistance);
+			AL.DistanceModel(ALDistanceModel.LinearDistanceClamped);
 			
 			CheckALErrors();
 		}

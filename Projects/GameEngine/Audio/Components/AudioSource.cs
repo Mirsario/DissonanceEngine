@@ -10,8 +10,8 @@ namespace GameEngine
 		protected AudioClip clip;
 		protected bool is2D;
 		protected bool loop;
-		protected float refDistance = 1f;
-		protected float maxDistance = float.MaxValue;
+		protected float refDistance = 0f;
+		protected float maxDistance = 32f;
 		protected float volume = 1f;
 		protected float playbackOffset;
 		protected bool updateClip;
