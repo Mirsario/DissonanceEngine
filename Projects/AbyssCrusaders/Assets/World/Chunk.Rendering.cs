@@ -237,7 +237,12 @@ namespace AbyssCrusaders
 
 						ref Tile tile = ref tiles[x,y];
 
-						var frame = tilePreset.frameset.tileFramesets[tile.style][tile.tileFrame]*tilePreset.frameset.tileTextureFrameSize;
+						if(tile.style>=framesets.Length) {
+							tile.style = (byte)(framesets.Length-1);
+						}
+
+						var frame = framesets[tile.style][tile.tileFrame]*tilePreset.frameset.tileTextureFrameSize;
+
 						RectFloat src = new RectFloat(
 							frame.x*textureSizeDiv.x,
 							frame.y*textureSizeDiv.y,
@@ -253,14 +258,10 @@ namespace AbyssCrusaders
 							TileSizeFactor
 						);
 
-						GLDraw.TexCoord2(src.x,src.Bottom);
-						GLDraw.Vertex2(dest.x,dest.Bottom);
-						GLDraw.TexCoord2(src.x,src.y);
-						GLDraw.Vertex2(dest.x,dest.y);
-						GLDraw.TexCoord2(src.Right,src.y);
-						GLDraw.Vertex2(dest.Right,dest.y);
-						GLDraw.TexCoord2(src.Right,src.Bottom);
-						GLDraw.Vertex2(dest.Right,dest.Bottom);
+						GLDraw.TexCoord2(src.x,src.Bottom);		GLDraw.Vertex2(dest.x,dest.Bottom);
+						GLDraw.TexCoord2(src.x,src.y);			GLDraw.Vertex2(dest.x,dest.y);
+						GLDraw.TexCoord2(src.Right,src.y);		GLDraw.Vertex2(dest.Right,dest.y);
+						GLDraw.TexCoord2(src.Right,src.Bottom);	GLDraw.Vertex2(dest.Right,dest.Bottom);
 					}
 
 					GLDraw.End();
