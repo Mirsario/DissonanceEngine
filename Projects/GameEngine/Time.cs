@@ -68,7 +68,11 @@ namespace GameEngine
 					throw new ArgumentOutOfRangeException(nameof(value),"Value has to be more than zero.");
 				}
 
-				Game.window.TargetUpdateFrequency = targetUpdateFrequency = value;
+				targetUpdateFrequency = value;
+
+				if(Game.window!=null) {
+					Game.window.TargetUpdateFrequency = targetUpdateFrequency;
+				}
 			}
 		}
 		public static double TargetRenderFrequency {
@@ -78,7 +82,11 @@ namespace GameEngine
 					throw new ArgumentOutOfRangeException(nameof(value),"Value has to be more than or equal to zero.");
 				}
 
-				Game.window.TargetRenderFrequency = targetRenderFrequency = value;
+				targetRenderFrequency = value;
+
+				if(Game.window!=null) {
+					Game.window.TargetRenderFrequency = targetRenderFrequency;
+				}
 			}
 		}
 
