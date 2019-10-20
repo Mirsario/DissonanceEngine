@@ -41,10 +41,17 @@ namespace AbyssCrusaders
 			spriteObj.Transform.LocalScale = new Vector3(texture.Width*Main.PixelSizeInUnits,texture.Height*Main.PixelSizeInUnits,1f);
 			spriteObj.Position = Vector2.Zero;
 
-			var light = AddComponent<Light2D>(c => {
-				c.color = new Vector3(1f,0.75f,0.5f);
+			/*AddComponent<Light2D>(c => {
+				c.color = new Vector3(1f,1f,1f);
+				c.intensity = 0.8f;
 				c.range = 4f;
-			});
+			});*/
+
+			/*AddComponent<Light2D>(c => {
+				c.color = new Vector3(1f,1f,1f);
+				c.intensity = 1f;
+				c.range = 16f;
+			});*/
 
 			//var cursorLight = Instantiate<CursorLightObj>().light;
 			//cursorLight.color = Vector3.One;
@@ -60,9 +67,9 @@ namespace AbyssCrusaders
 
 				if(collisions.down) {
 					if(GameInput.sprint.IsPressed) {
-						ApplyAcceleration(new Vector2(moveX*5f,0f),maxSpeed*1.5f);
+						ApplyAcceleration(new Vector2(moveX*2f,0f),maxSpeed*1.5f);
 					}else{
-						ApplyAcceleration(new Vector2(moveX*5f,0f));
+						ApplyAcceleration(new Vector2(moveX*2f,0f));
 					}
 				}else{
 					ApplyAcceleration(new Vector2(moveX*2.5f,0f));

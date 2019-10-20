@@ -30,11 +30,13 @@ namespace AbyssCrusaders
 
 			Layers.AddLayers(
 				"Terrain",
-				"TerrainLightingOcclusion",
+				"TerrainLighting",
 				"Entity"
 			);
 
-			Rendering.SetRenderingPipeline<CustomRenderPipeline>(); //ForwardRendering
+			Time.TargetRenderFrequency = 60;
+
+			Rendering.SetRenderingPipeline<CustomRenderingPipeline>(); //ForwardRendering
 		}
 		public override void Start()
 		{
@@ -57,7 +59,7 @@ namespace AbyssCrusaders
 			camera = GameObject.Instantiate<CameraObj>("Camera",new Vector3(0f,0f,10f));
 			GameObject.Instantiate<Skybox>();
 
-			Rendering.ambientColor = new Vector3(0.02f,0.02f,0.02f);
+			Rendering.ambientColor = Vector3.Zero;
 
 			/*var world = World.Create<Overworld>(4096,2048); //World.Create<Overworld>(8192,4096);
 			var player = Entity.Instantiate<Player>(world,"Player",(Vector2)world.spawnPoint);

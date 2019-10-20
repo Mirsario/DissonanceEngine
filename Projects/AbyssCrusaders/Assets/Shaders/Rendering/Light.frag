@@ -16,10 +16,25 @@ in vec3 vWorldPos;
 
 out vec3 oLight;
 
+float Snap(float value,float step)
+{
+	return floor(value/step)*step;
+}
+vec2 Snap(vec2 value,float step)
+{
+	return vec2(
+		Snap(value.x,step),
+		Snap(value.y,step)
+	);
+}
+
 void main()
 {
-	float intensity = max(0f,1f-distance(vWorldPos,lightPosition)/(lightRange*0.5f));
+	const float Step = 0.1f;
+	
+	float intensity = max(0f,1f-distance(Snap(vWorldPos.xy,Step),Snap(lightPosition.xy,Step))/(lightRange*0.5f));
+	
 	intensity = intensity*intensity;
-	intensity = 1f;
+	
 	oLight = vec3(lightColor*lightIntensity*intensity);
 }

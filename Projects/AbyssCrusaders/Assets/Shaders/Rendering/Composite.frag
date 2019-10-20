@@ -65,9 +65,7 @@ void main()
 		return;
 	}*/
 	
-	vec2 lightingPos = screenPos;
-	
-	vec3 lighting = clamp(texture2D(lightingBuffer,lightingPos).rgb+texture2D(emissionBuffer,screenPos).rgb,0f,1f);
+	vec3 lighting = clamp(texture2D(lightingBuffer,screenPos).rgb+texture2D(emissionBuffer,screenPos).rgb,0f,1f);
 	
 	vec4 color = texture2D(colorBuffer,screenPos);
 	oColor = vec3(color.rgb*lighting);

@@ -62,6 +62,7 @@ namespace AbyssCrusaders
 			for(int y = y1;y<=y2;y++) {
 				for(int x = x1;x<=x2;x++) {
 					var chunk = chunks[x,y] ?? (chunks[x,y] = new Chunk(this,new Vector2Int(x,y)));
+
 					if(resetFrames) {
 						int xEnd = (x+1)*Chunk.ChunkSize;
 						int yEnd = (y+1)*Chunk.ChunkSize;
@@ -71,6 +72,7 @@ namespace AbyssCrusaders
 							}
 						}
 					}
+
 					chunk.UpdateIsVisible(true);
 					newVisibleChunks.Add(chunk);
 					noLongerVisibleChunks.Remove(chunk);

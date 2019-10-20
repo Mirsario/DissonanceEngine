@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GameEngine;
 using GameEngine.Graphics;
 
 namespace AbyssCrusaders
@@ -24,12 +25,12 @@ namespace AbyssCrusaders
 		public ushort Id { get; private set; }
 
 		protected abstract TileFrameset Frameset { get; }
-		public virtual Texture Texture => null;
+		public virtual Texture Texture => Resources.Get<Texture>($"{GetType().Name}.png");
 
 		protected TilePreset()
 		{
 			Name = GetType().Name;
-			collision = CollisionInfo.Full;
+			collision = CollisionInfo.None;
 			frameset = Frameset;
 
 			OnInit();
@@ -37,9 +38,10 @@ namespace AbyssCrusaders
 
 		public virtual void OnInit() {}
 		public virtual void Dispose() {}
-
 		public virtual bool BlendsWithTile(Tile thisTile,Tile otherTile) => false;
-		
+
+		public bool TryGetTexture(out Texture texture) => (texture = Texture)!=null;
+
 		public static void Initialize()
 		{
 			Assembly assembly = Assembly.GetCallingAssembly();

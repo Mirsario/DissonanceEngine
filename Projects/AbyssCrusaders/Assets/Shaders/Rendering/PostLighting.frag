@@ -3,7 +3,7 @@
 const int numColors = 16;
 
 uniform sampler2D lightingBuffer;
-uniform sampler2D lightingOcclusionBuffer;
+uniform sampler2D terrainLightingDataBuffer;
 uniform vec3 ambientColor;
 uniform float zoom;
 
@@ -33,13 +33,15 @@ void main()
 		1f
 	);*/
 	
-	oLight = texture2D(lightingBuffer,screenPos).rgb;
-	oLight *= 1f-texture2D(lightingOcclusionBuffer,screenPos).r;
+	vec4 lightingData = texture2D(terrainLightingDataBuffer,screenPos);
+	
+	oLight = texture2D(lightingBuffer,screenPos).rgb+lightingData.y;
+	oLight *= 1f-lightingData.x;
 	oLight = clamp(oLight+ambientColor,0f,1f);
 	
 	/*oLight.rgb = vec3(
-		ceil(oLight.r*numColors)/numColors,
-		ceil(oLight.g*numColors)/numColors,
-		ceil(oLight.b*numColors)/numColors
+		round(oLight.r*numColors)/numColors,
+		round(oLight.g*numColors)/numColors,
+		round(oLight.b*numColors)/numColors
 	);*/
 }

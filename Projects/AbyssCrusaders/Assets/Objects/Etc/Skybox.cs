@@ -20,7 +20,7 @@ namespace AbyssCrusaders
 		{
 			if(Main.camera!=null) {
 				Position = Main.camera.Position;
-				Transform.LocalScale = new Vector3(Main.camera.rect.width,Main.camera.rect.height,1f);
+				Transform.LocalScale = new Vector3(Main.camera.zoomedRectInPixels.width,Main.camera.zoomedRectInPixels.height,1f);
 			}
 		}
 	}

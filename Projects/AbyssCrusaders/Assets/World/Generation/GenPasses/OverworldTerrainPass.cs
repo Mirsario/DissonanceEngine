@@ -27,21 +27,28 @@ namespace AbyssCrusaders.Generation.GenPasses
 
 			const float SurfaceVariance = 128f;
 
+			int GetSurfaceHeight(int x) => halfHeight+(int)(noise.GetNoise(x,0f)*SurfaceVariance);
+
 			for(int x = 0;x<world.width;x++) {
-				int surfaceLayer = halfHeight+(int)(noise.GetNoise(x,0f)*SurfaceVariance);
+				int surfaceLayerLeft = GetSurfaceHeight(x-1);
+				int surfaceLayerMiddle = GetSurfaceHeight(x);
+				int surfaceLayerRight = GetSurfaceHeight(x+1);
+
 				//int stoneLayer = (int)(Mathf.Min(1f,perlinNoise.GetValue(x*xDiv,0.5f,0f)*2f)*world.height);
 
 				if(x==halfWidth) {
-					world.spawnPoint = new Vector2Int(x,surfaceLayer-2);
+					world.spawnPoint = new Vector2Int(x,surfaceLayerMiddle-2);
 				}
 				
 				for(int y = 0;y<world.height;y++) {
 					ref var tile = ref world[x,y];
 
-					if(y>surfaceLayer) {
+					if(y>surfaceLayerMiddle) {
 						tile.type = dirt;
 
-						if(y>surfaceLayer+1) {
+						int yMinus = y-1;
+
+						if(yMinus>surfaceLayerMiddle && yMinus>surfaceLayerLeft && yMinus>surfaceLayerRight) {
 							tile.wall = dirt;
 						}
 					}

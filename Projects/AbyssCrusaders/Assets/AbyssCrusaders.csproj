@@ -47,7 +47,7 @@
     <Compile Include="Attributes\ForceIDAttribute.cs" />
     <Compile Include="CubeObj.cs" />
     <Compile Include="CubeObj2.cs" />
-    <Compile Include="CustomRenderPipeline.cs" />
+    <Compile Include="CustomRenderingPipeline.cs" />
     <Compile Include="DataStructures\BitsByte.cs" />
     <Compile Include="DataStructures\WallDrawInfo.cs" />
     <Compile Include="GameInput.cs" />
@@ -72,6 +72,7 @@
     <Compile Include="UI\Menu\WorldCreate.cs" />
     <Compile Include="UI\Menu\WorldSelect.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="World\Chunk.Rendering.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Generation\GenPass.cs" />
     <Compile Include="World\Generation\GenPasses\NoiseTileReplacePass.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="World\TileFramesets\DefaultFrameset.cs" />
     <Compile Include="World\TileFramesets\PlatformFrameset.cs" />
     <Compile Include="World\TileFramesets\TerrariaFrameset.cs" />
+    <Compile Include="World\TileFramesets\TallGrassFrameset.cs" />
     <Compile Include="World\TileFramesets\TestFrameset.cs" />
     <Compile Include="World\TileFramesets\TileFrameset.cs" />
     <Compile Include="World\TileNeighbouring.cs" />
@@ -97,8 +99,9 @@
     <Compile Include="World\Tiles\Types\Platforms\WoodPlatform.cs" />
     <Compile Include="World\Tiles\Types\Solid\Building\Wood.cs" />
     <Compile Include="World\Tiles\Types\Solid\Natural\Clay.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Dirt.cs" />
     <Compile Include="World\Tiles\Types\Solid\Natural\Grass.cs" />
+    <Compile Include="World\Tiles\Types\Solid\Natural\Dirt.cs" />
+    <Compile Include="World\Tiles\Types\NonSolid\Nature\TallGrass.cs" />
     <Compile Include="World\Tiles\Types\Solid\Natural\Ores\CopperOre.cs" />
     <Compile Include="World\Tiles\Types\Solid\Natural\Ores\GoldOre.cs" />
     <Compile Include="World\Tiles\Types\Solid\Natural\Ores\IronOre.cs" />

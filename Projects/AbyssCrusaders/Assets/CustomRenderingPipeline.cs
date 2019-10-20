@@ -6,26 +6,29 @@ using GameEngine.Physics;
 
 namespace AbyssCrusaders
 {
-	public class CustomRenderPipeline : RenderingPipeline
+	public class CustomRenderingPipeline : RenderingPipeline
 	{
 		private Shader compositeShader;
 		
 		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
-			//Vector2Int ScreenSize() => new Vector2Int(Screen.Width,Screen.Height);
+			static Vector2Int ScreenSize() => Screen.Size;
 
 			Framebuffer mainFramebuffer,lightingOcclusionFramebuffer,lightingFramebuffer;
 
 			//RenderBuffers
-			var depthBuffer = new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f);
+			var depthBuffer = new RenderTexture("depthBuffer",ScreenSize,useMipmaps:false,textureFormat: TextureFormat.Depth32);
 
 			//Screen Buffers
-			var colorBuffer = new RenderTexture("colorBuffer",GetScreenSize,FilterMode.Bilinear);
-			var emissionBuffer = new RenderTexture("emissionBuffer",GetScreenSize,FilterMode.Bilinear,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f);
+			var colorBuffer = new RenderTexture("colorBuffer",ScreenSize,FilterMode.Point);
+			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,FilterMode.Point,TextureWrapMode.Clamp,false,TextureFormat.RGBA32f);
+
+			//Terrain
+			var terrainLightingDataBuffer = new RenderTexture("terrainLightingDataBuffer",ScreenSize,FilterMode.Bilinear,textureFormat:TextureFormat.RG8);
 
 			//Lighting Buffers
-			var lightingBuffer = new RenderTexture("lightingBuffer",GetLightingResolution,FilterMode.Point,textureFormat:TextureFormat.RGB8);
-			//var lightingOcclusionBuffer = new RenderTexture("lightingOcclusionBuffer",GetLightingResolution,textureFormat:TextureFormat.R8);
+			var lightingBuffer = new RenderTexture("lightingBuffer",ScreenSize,FilterMode.Point,textureFormat:TextureFormat.RGB8);
+
 
 			//Framebuffers
 			framebuffers.AddRange(new[] {
@@ -34,12 +37,12 @@ namespace AbyssCrusaders
 						colorBuffer,
 						emissionBuffer
 					);
-					fb.AttachRenderbuffer(depthBuffer,FramebufferAttachment.DepthAttachment);
+					fb.AttachRenderTexture(depthBuffer,FramebufferAttachment.DepthAttachment);
 				}),
 
-				//lightingOcclusionFramebuffer = Framebuffer.Create("lightingOcclusionFramebuffer",fb => {
-				//	fb.AttachRenderTexture(lightingOcclusionBuffer);
-				//}),
+				lightingOcclusionFramebuffer = Framebuffer.Create("lightingOcclusionFramebuffer",fb => {
+					fb.AttachRenderTexture(terrainLightingDataBuffer);
+				}),
 
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {
 					fb.AttachRenderTexture(lightingBuffer);
@@ -51,33 +54,33 @@ namespace AbyssCrusaders
 				//Geometry
 				RenderPass.Create<GeometryPass>("Geometry",p => {
 					p.Framebuffer = mainFramebuffer;
-					p.layerMask = ulong.MaxValue^Layers.GetLayerMask("TerrainLightingOcclusion");
+					p.layerMask = ulong.MaxValue^Layers.GetLayerMask("TerrainLighting");
 				}),
 
 				//Terrain Lighting Occlusion
-				/*RenderPass.Create<GeometryPass>("TerrainLightingOcclusion",p => {
+				RenderPass.Create<GeometryPass>("TerrainLighting",p => {
 					p.Framebuffer = lightingOcclusionFramebuffer;
-					p.ViewportFunc = c => new RectInt(default,GetLightingResolution());
-					p.layerMask = Layers.GetLayerMask("TerrainLightingOcclusion");
-				}),*/
+					p.layerMask = Layers.GetLayerMask("TerrainLighting");
+					//p.ViewportFunc = c => new RectInt(default,GetLightingResolution());
+				}),
 				
 				//Lights
 				RenderPass.Create<Light2DPass>("Lighting",p => {
 					p.Framebuffer = lightingFramebuffer;
-					p.ViewportFunc = c => new RectInt(default,GetLightingResolution(true));
 					p.Shader = Resources.Find<Shader>("Game/Light");
+					//p.ViewportFunc = c => new RectInt(default,GetLightingResolution(true));
 				}),
 
 				//Post Lighting
-				/*RenderPass.Create<PostProcessPass>("PostLighting",p => {
+				RenderPass.Create<PostProcessPass>("PostLighting",p => {
 					p.Framebuffer = lightingFramebuffer;
-					p.ViewportFunc = c => new RectInt(default,GetLightingResolution());
-					p.Shader = postLightingShader = Resources.Find<Shader>("Game/PostLighting");
+					p.Shader = Resources.Find<Shader>("Game/PostLighting");
 					p.PassedTextures = new[] {
 						lightingBuffer,
-						lightingOcclusionBuffer
+						terrainLightingDataBuffer
 					};
-				}),*/
+					//p.ViewportFunc = c => new RectInt(default,GetLightingResolution());
+				}),
 				
 				//Composite
 				RenderPass.Create<PostProcessPass>("Composite",p => {
@@ -99,7 +102,7 @@ namespace AbyssCrusaders
 			//postLightingShader.SetFloat("zoom",Main.camera.zoomGoal);
 			//postLightingShader.SetVector2("cameraPos",Main.camera.Position);
 
-			float zoomGoal = Main.camera.zoomGoal;
+			/*float zoomGoal = Main.camera.zoomGoal;
 			compositeShader.SetFloat("zoom",zoomGoal);
 
 			var lightingRes = (Vector2)GetLightingResolution();
@@ -120,7 +123,6 @@ namespace AbyssCrusaders
 			Main.debugStrings[nameof(cameraPixelPos)] = cameraPixelPos.ToString();
 			Main.debugStrings[nameof(cameraPixelPosSnapped)] = cameraPixelPosSnapped.ToString();
 
-			//var offset = (cameraPixelPos-cameraPixelPosSnapped)*zoomGoal; //()/lightingRes*resDiffScale
 			var offset = new Vector2(
 				cameraPixelPosSnapped.x%zoomGoal,
 				cameraPixelPosSnapped.y%zoomGoal
@@ -129,11 +131,9 @@ namespace AbyssCrusaders
 			//offset = Vector2.Floor(offset);
 			Main.debugStrings[nameof(offset)] = offset.ToString();
 			offset /= lightingResUpscaled;
-			compositeShader.SetVector2("lightingOffset",Input.GetKey(Keys.Z) ? Vector2.Zero : -offset);
+			compositeShader.SetVector2("lightingOffset",Input.GetKey(Keys.Z) ? Vector2.Zero : -offset);*/
 		}
-
-		private static Vector2Int GetScreenSize() => Screen.Size;
-		private static Vector2Int GetLightingResolution() => GetLightingResolution(false);
+		/*private static Vector2Int GetLightingResolution() => GetLightingResolution(false);
 		private static Vector2Int GetLightingResolution(bool floor)
 		{
 			float zoom = Main.camera?.zoomGoal ?? 1f;
@@ -143,6 +143,6 @@ namespace AbyssCrusaders
 				(int)(floor ? Math.Floor(width) : Math.Ceiling(width)),
 				(int)(floor ? Math.Floor(height) : Math.Ceiling(height))
 			);
-		}
+		}*/
 	}
 }

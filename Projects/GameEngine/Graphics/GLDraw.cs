@@ -179,14 +179,10 @@ namespace GameEngine.Graphics
 			//test
 			/*DrawDelayed(delegate {
 				Begin(PrimitiveType.Quads);
-				Vertex2(-0.5f,0.5f);
-				Color3(1f,1f,1f);
-				Vertex2(-0.5f,-0.5f);
-				Color3(1f,0f,0f);
-				Vertex2(0.5f,-0.5f);
-				Color3(0f,1f,0f);
-				Vertex2(0.5f,0.5f);
-				Color3(0f,0f,1f);
+				Vertex2(-0.5f,0.5f);	Color3(1f,1f,1f);
+				Vertex2(-0.5f,-0.5f);	Color3(1f,0f,0f);
+				Vertex2(0.5f,-0.5f);	Color3(0f,1f,0f);
+				Vertex2(0.5f,0.5f);		Color3(0f,0f,1f);
 				End();
 			});*/
 

@@ -21,7 +21,6 @@ namespace AbyssCrusaders
 			int caveHeight = height/2+128;
 			
 			list.Add(new OverworldTerrainPass());
-			list.Add(new GrassPass());
 			//list.Add(new RandomTileChunksPass(null,stone,width*height/1024,8,24,(int)(height*0.75f),height)); //Random stone walls
 
 			//list.Add(new RandomTileChunksPass(clay,clay,width*height/4096,64,256,0,(int)(height*0.65f)));
@@ -65,6 +64,8 @@ namespace AbyssCrusaders
 			list.Add(new NoiseTileReplacePass(silverOre,tile => tile.type>0,(x,y) => 0.985f,(seed,index) => OreNoise(0.2f,seed,index)));
 			//Gold Ore
 			list.Add(new NoiseTileReplacePass(goldOre,tile => tile.type>0,(x,y) => 0.990f,(seed,index) => OreNoise(0.2f,seed,index)));
+
+			list.Add(new GrassPass());
 
 			list.Add(new TileFramePass());
 		}

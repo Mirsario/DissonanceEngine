@@ -6,6 +6,8 @@ namespace AbyssCrusaders.Tiles
 
 		public override void OnInit()
 		{
+			base.OnInit();
+
 			canBeWall = false;
 		}
 	}

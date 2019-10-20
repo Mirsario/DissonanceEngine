@@ -23,6 +23,8 @@ namespace AbyssCrusaders
 		{
 			Name = GetType().Name;
 
+			tileTextureSize = tileTextureFrameSize = 10;
+
 			OnInit();
 
 			if(tileTextureSize<=0) {
@@ -40,6 +42,15 @@ namespace AbyssCrusaders
 			tileFramesets = null;
 			wallFrameset = null;
 		}
+
+		/*public WallDrawInfo[] GetWallDrawInfo(int x,int y,byte frame)
+		{
+			var variants = wallFrameset[frame];
+
+			var drawInfo = variants[0]; //TODO:
+
+			return drawInfo;
+		}*/
 
 		public static void Initialize()
 		{

@@ -102,6 +102,7 @@ namespace GameEngine.Graphics
 		public void Dispose()
 		{
 			GL.DeleteFramebuffer(Id);
+
 			renderTextures = null;
 			renderbuffers = null;
 			drawBuffers = null;

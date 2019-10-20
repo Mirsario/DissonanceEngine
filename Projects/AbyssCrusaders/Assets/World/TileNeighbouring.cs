@@ -46,19 +46,25 @@ namespace AbyssCrusaders
 
 			return bytes.Select(bb => (byte)bb).ToArray();
 		}
-		public static Vector2UShort[] CreateTileset(Vector2UShort defaultFrame,Dictionary<Vector2UShort,byte[]> frameDictionary)
+		public static Vector2UShort[] CreateTileset(Vector2UShort defaultFrame,Dictionary<Vector2UShort,byte[]> frameDictionary = null)
 		{
 			var array = new Vector2UShort[byte.MaxValue+1];
+
 			for(int i = 0;i<array.Length;i++) {
 				array[i] = defaultFrame;
 			}
-			foreach(var pair in frameDictionary) {
-				Vector2UShort frame = pair.Key;
-				byte[] arr = pair.Value;
-				for(int i = 0;i<arr.Length;i++) {
-					array[arr[i]] = frame;
+
+			if(frameDictionary!=null) {
+				foreach(var pair in frameDictionary) {
+					Vector2UShort frame = pair.Key;
+					byte[] arr = pair.Value;
+
+					for(int i = 0;i<arr.Length;i++) {
+						array[arr[i]] = frame;
+					}
 				}
 			}
+
 			return array;
 		}
 
@@ -94,6 +100,18 @@ namespace AbyssCrusaders
 						result[mask[i]] = drawSteps;
 					}
 				}
+			}
+
+			return result;
+		}
+
+		public static Vector2UShort[] FrameArray(params (ushort x,ushort y)[] tuples)
+		{
+			var result = new Vector2UShort[tuples.Length];
+
+			for(int i = 0;i<tuples.Length;i++) {
+				(ushort x, ushort y) = tuples[i];
+				result[i] = new Vector2UShort(x,y);
 			}
 
 			return result;
