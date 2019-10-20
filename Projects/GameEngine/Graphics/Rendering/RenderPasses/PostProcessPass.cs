@@ -21,7 +21,6 @@ namespace GameEngine.Graphics
 				var camera = Rendering.cameraList[i];
 
 				var viewport = GetViewport(camera);
-				//GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
 				passShader.SetupCameraUniforms(camera,camera.Transform.Position);
 

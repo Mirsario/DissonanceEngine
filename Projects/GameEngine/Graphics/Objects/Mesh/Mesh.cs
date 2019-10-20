@@ -34,8 +34,7 @@ namespace GameEngine
 		public Vector4[] colors;
 		public Vector4[] tangents;
 		public BoneWeight[] boneWeights;
-		public Vector3 boundsCenter;
-		public Vector3 boundsExtent;
+		public Bounds bounds;
 
 		internal int vertexBufferId = -1;
 		internal int indexBufferId = -1;
@@ -216,13 +215,14 @@ namespace GameEngine
 				}
 			}
 
-			boundsCenter = new Vector3((xMin+xMax)*0.5f,(yMin+yMax)*0.5f,(zMin+zMax)*0.5f);
-
-			boundsExtent = new Vector3(
+			var boundsCenter = new Vector3((xMin+xMax)*0.5f,(yMin+yMax)*0.5f,(zMin+zMax)*0.5f);
+			var boundsExtents = new Vector3(
 				Mathf.Max(Mathf.Abs(xMin),Mathf.Abs(xMax))-boundsCenter.x,
 				Mathf.Max(Mathf.Abs(yMin),Mathf.Abs(yMax))-boundsCenter.y,
 				Mathf.Max(Mathf.Abs(zMin),Mathf.Abs(zMax))-boundsCenter.z
 			);
+
+			bounds = new Bounds(boundsCenter,boundsExtents);
 
 			static void PushData<T>(BufferTarget bufferTarget,ref int bufferId,int size,T[] data,BufferUsageHint usageHint) where T : struct
 			{

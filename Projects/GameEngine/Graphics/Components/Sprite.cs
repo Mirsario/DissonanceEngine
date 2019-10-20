@@ -12,17 +12,16 @@ namespace GameEngine
 
 		public SpriteEffects spriteEffects;
 
-		internal Material material;
+		protected Material material;
 
 		public override Material Material {
 			get => material;
 			set => material = value;
 		}
 
-		protected override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material)
+		public override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Material material,out Bounds bounds,out object renderObject)
 		{
-			//TODO: Cache this?
-			mesh = spriteEffects switch {
+			var mesh = spriteEffects switch {
 				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => PrimitiveMeshes.quadXYFlipped,
 				SpriteEffects.FlipHorizontally => PrimitiveMeshes.quadXFlipped,
 				SpriteEffects.FlipVertically => PrimitiveMeshes.quadXFlipped,
@@ -30,8 +29,11 @@ namespace GameEngine
 			};
 
 			material = this.material;
+			bounds = mesh.bounds;
+			renderObject = mesh;
 
 			return true;
 		}
+		public override void Render(object renderObject) => ((Mesh)renderObject).DrawMesh();
 	}
 }

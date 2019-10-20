@@ -55,15 +55,16 @@ namespace GameEngine
 			set => lodMeshes[0].material = value;
 		}
 
-		protected override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material)
+		public override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Material material,out Bounds bounds,out object renderObject)
 		{
 			var lods = LODMeshes;
 			if(lods!=null) {
 				if(lods.Length==1) {
 					var lod = lods[0];
 
-					mesh = lod.mesh;
 					material = lod.material;
+					bounds = lod.mesh.bounds;
+					renderObject = lod.mesh;
 
 					return true;
 				}
@@ -73,18 +74,21 @@ namespace GameEngine
 					var lod = lods[i];
 
 					if(sqrDist<=lod.maxDistanceSqr || lod.maxDistance==0f) {
-						mesh = lod.mesh;
 						material = lod.material;
+						bounds = lod.mesh.bounds;
+						renderObject = lod.mesh;
 
 						return true;
 					}
 				}
 			}
 
-			mesh = null;
 			material = null;
+			bounds = default;
+			renderObject = null;
 
 			return false;
 		}
+		public override void Render(object renderObject) => ((Mesh)renderObject).DrawMesh();
 	}
 }

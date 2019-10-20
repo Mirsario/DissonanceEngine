@@ -12,7 +12,7 @@ namespace GameEngine.Graphics
 			public Shader shader;
 			public Material material;
 			public Renderer renderer;
-			public Mesh mesh;
+			public object renderObject;
 		}
 
 		public ulong? layerMask;
@@ -102,9 +102,7 @@ namespace GameEngine.Graphics
 
 							var meshPos = renderer.Transform.Position;
 
-							renderer.GetRenderDataInternal(meshPos,cameraPos,out var mesh,out var material);
-
-							if(mesh==null || !mesh.isReady) {
+							if(!renderer.GetRenderData(meshPos,cameraPos,out var material,out var bounds,out var renderObject)) {
 								continue;
 							}
 
@@ -113,22 +111,19 @@ namespace GameEngine.Graphics
 								continue;
 							}
 
-							bool cullResult = renderer.PreCullingModifyResult?.Invoke() ?? camera.orthographic || camera.BoxInFrustum(meshPos+mesh.boundsCenter,mesh.boundsExtent*renderer.Transform.LocalScale);
+							bool cullResult = renderer.PreCullingModifyResult?.Invoke() ?? camera.orthographic || camera.BoxInFrustum(meshPos+bounds.center,bounds.extents*renderer.Transform.LocalScale);
 							var postCullResult = renderer.PostCullingModifyResult?.Invoke(cullResult);
 							if(postCullResult!=null) {
 								cullResult = postCullResult.Value;
 							}
 
 							if(cullResult) {
-								renderQueue[numToRenderer++] = new RenderQueueEntry {
-									shader = shader,
-									material = material,
-									renderer = renderer,
-									mesh = mesh
-								};
+								ref var entry = ref renderQueue[numToRenderer++];
+								entry.shader = shader;
+								entry.material = material;
+								entry.renderer = renderer;
+								entry.renderObject = renderObject;
 							}
-
-							//shaderRenderQueue[shader.Id] = (shader,new (Material material, (Renderer renderer, Mesh mesh)[])[shader.materialAttachments.Count]);
 						}
 					});
 					 
@@ -157,7 +152,7 @@ namespace GameEngine.Graphics
 							var shader = entry.shader;
 							var material = entry.material;
 							var renderer = entry.renderer;
-							var mesh = entry.mesh;
+							var renderObject = entry.renderObject;
 
 							//Update Shader
 							if(lastShader!=shader) {
@@ -215,7 +210,8 @@ namespace GameEngine.Graphics
 
 							renderer.ApplyUniforms(shader);
 
-							mesh.DrawMesh();
+							//mesh.DrawMesh();
+							renderer.Render(renderObject);
 
 							Rendering.drawCallsCount++;
 						}

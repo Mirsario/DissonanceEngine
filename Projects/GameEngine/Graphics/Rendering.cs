@@ -148,7 +148,10 @@ namespace GameEngine.Graphics
 				var viewSize = camera.ViewPixel;
 				float aspectRatio = viewSize.width/(float)viewSize.height;
 
-				camera.matrix_view = Matrix4x4.LookAt(camera.Transform.Position,camera.Transform.Position+camera.Transform.Forward,camera.Transform.Up);
+				var cameraTransform = camera.Transform;
+				var cameraPosition = cameraTransform.Position;
+
+				camera.matrix_view = Matrix4x4.LookAt(cameraPosition,cameraPosition+cameraTransform.Forward,cameraTransform.Up);
 
 				if(camera.orthographic) {
 					float max = Mathf.Max(Screen.Width,Screen.Height);

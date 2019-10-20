@@ -21,8 +21,7 @@ namespace GameEngine
 
 		public virtual void ApplyUniforms(Shader shader) {}
 
-		protected abstract bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material);
-
-		internal void GetRenderDataInternal(Vector3 rendererPosition,Vector3 cameraPosition,out Mesh mesh,out Material material) => GetRenderData(rendererPosition,cameraPosition,out mesh,out material);
+		public abstract bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Material material,out Bounds bounds,out object renderObject);
+		public abstract void Render(object renderObject);
 	}
 }
