@@ -63,10 +63,10 @@ namespace GameEngine
 					var lod = lods[0];
 
 					material = lod.material;
-					bounds = lod.mesh.bounds;
 					renderObject = lod.mesh;
+					bounds = lod.mesh?.bounds ?? default;
 
-					return true;
+					return lod.mesh!=null && lod.mesh.isReady;
 				}
 
 				float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
@@ -75,10 +75,10 @@ namespace GameEngine
 
 					if(sqrDist<=lod.maxDistanceSqr || lod.maxDistance==0f) {
 						material = lod.material;
-						bounds = lod.mesh.bounds;
 						renderObject = lod.mesh;
+						bounds = lod.mesh?.bounds ?? default;
 
-						return true;
+						return lod.mesh!=null && lod.mesh.isReady;
 					}
 				}
 			}
