@@ -5,13 +5,15 @@ namespace GameEngine
 {
 	public class AudioSource : Component
 	{
+		public static float defaultMaxDistance = 32f;
+
 		internal uint sourceId;
 
 		protected AudioClip clip;
 		protected bool is2D;
 		protected bool loop;
 		protected float refDistance = 0f;
-		protected float maxDistance = 32f;
+		protected float maxDistance = defaultMaxDistance;
 		protected float volume = 1f;
 		protected float playbackOffset;
 		protected bool updateClip;
