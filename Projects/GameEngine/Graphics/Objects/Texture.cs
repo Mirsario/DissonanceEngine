@@ -103,8 +103,25 @@ namespace GameEngine.Graphics
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,Id);
+
+			//TODO: Unhardcode this
 			GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat.Rgba,PixelType.UnsignedByte,pixels1D);
-			GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+			if(useMipmaps) {
+				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+			}
+		}
+		public void SetPixels(byte[] data,TextureFormat format = TextureFormat.RGBA8)
+		{
+			var (formatGeneral,_,pixelType,_)= Rendering.textureFormatInfo[format];
+
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D,Id);
+
+			//TODO: Unhardcode this
+			GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,formatGeneral,pixelType,data);
+			if(useMipmaps) {
+				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+			}
 		}
 		public void Save(string path)
 		{
