@@ -45,14 +45,7 @@ namespace GameEngine.Graphics
 				);
 				var vpPointsB = (vpPointsA*2f)-Vector4.One;
 
-				GL.Begin(PrimitiveTypeGL.Quads);
-
-				GL.Vertex2(vpPointsB.x,vpPointsB.w); GL.TexCoord2(vpPointsA.x,vpPointsA.w);
-				GL.Vertex2(vpPointsB.x,vpPointsB.y); GL.TexCoord2(vpPointsA.x,vpPointsA.y);
-				GL.Vertex2(vpPointsB.z,vpPointsB.y); GL.TexCoord2(vpPointsA.z,vpPointsA.y);
-				GL.Vertex2(vpPointsB.z,vpPointsB.w); GL.TexCoord2(vpPointsA.z,vpPointsA.w);
-
-				GL.End();
+				GLUtils.DrawQuadUV(vpPointsB,vpPointsA);
 			}
 
 			GL.Disable(EnableCap.Blend);

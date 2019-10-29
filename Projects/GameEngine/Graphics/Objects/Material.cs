@@ -207,12 +207,14 @@ namespace GameEngine.Graphics
 		public void SetTexture(string name,Texture texture)
 		{
 			CheckUniform(name,"SetTexture");
+
 			for(int i=0;i<Textures.Count;i++) {
 				if(Textures[i].Key==name) {
 					Textures[i] = new KeyValuePair<string,Texture>(name,texture);
 					return;
 				}
 			}
+
 			Textures.Add(new KeyValuePair<string,Texture>(name,texture));
 		}
 		#endregion

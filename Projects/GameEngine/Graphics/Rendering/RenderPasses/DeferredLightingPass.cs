@@ -126,6 +126,7 @@ namespace GameEngine.Graphics
 								break;
 							case LightType.Directional:
 								//TODO: Draw like this should be made into a function
+
 								GL.Begin(PrimitiveTypeGL.Quads);
 
 								GL.Vertex2(-1f,-1f); GL.TexCoord2(0f,0f);

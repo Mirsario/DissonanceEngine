@@ -79,6 +79,7 @@
     <Compile Include="DebugInternal.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Graphics\Rendering\Utils\GLUtils.cs" />
     <Compile Include="Structures\Bounds.cs" />
     <Compile Include="Utils\FastNoise.cs" />
     <Compile Include="Graphics\Components\Renderers\MeshLOD.cs" />

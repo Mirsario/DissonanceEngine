@@ -138,6 +138,7 @@ namespace GameEngine.Graphics
 
 			return new Texture(id,width,height);
 		}
+
 		internal static void SetupFiltering(FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)
 		{
 			filterMode ??= defaultFilterMode;
