@@ -2,6 +2,9 @@ namespace GameEngine
 {
 	public struct RectFloat
 	{
+		public static readonly RectFloat Default = new RectFloat(0f,0f,1f,1f);
+		public static readonly RectFloat Empty = new RectFloat(0f,0f,0f,0f);
+
 		public float x;
 		public float y;
 		public float width;
