@@ -12,6 +12,21 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -44,27 +59,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ForceIDAttribute.cs" />
+    <Compile Include="Content\Tiles\Building\Platforms\WoodPlatform.cs" />
+    <Compile Include="Core\Attributes\ForceIDAttribute.cs" />
+    <Compile Include="Content\TileEntities\Crafting\RepairTable\RepairTable.cs" />
+    <Compile Include="Core\World\World.TileEntities.cs" />
     <Compile Include="CubeObj.cs" />
     <Compile Include="CubeObj2.cs" />
     <Compile Include="CustomRenderingPipeline.cs" />
-    <Compile Include="DataStructures\BitsByte.cs" />
-    <Compile Include="DataStructures\WallDrawInfo.cs" />
+    <Compile Include="Core\DataStructures\BitsByte.cs" />
+    <Compile Include="Core\DataStructures\WallDrawInfo.cs" />
     <Compile Include="GameInput.cs" />
+    <Compile Include="Core\Interaction\IFootstepProvider.cs" />
+    <Compile Include="Core\Interaction\IHasMaterial.cs" />
+    <Compile Include="Core\Interaction\PhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\DirtPhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\GrassPhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\SandPhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\MetalPhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\StonePhysicMaterial.cs" />
+    <Compile Include="Content\PhysicMaterials\WoodPhysicMaterial.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Objects\CameraObj.cs" />
-    <Compile Include="Objects\Entities\CollisionInfo.cs" />
-    <Compile Include="Objects\Entities\Entity.cs" />
-    <Compile Include="Objects\Entities\PhysicalEntity.cs" />
-    <Compile Include="Objects\Entities\Player\Player.cs" />
-    <Compile Include="Objects\Etc\CursorLightObj.cs" />
-    <Compile Include="Objects\Etc\LightObj.cs" />
-    <Compile Include="Objects\Etc\Skybox.cs" />
-    <Compile Include="Objects\Etc\SoundInstance.cs" />
-    <Compile Include="Objects\GameObject2D.cs" />
-    <Compile Include="Objects\SpriteObject.cs" />
+    <Compile Include="Netplay.cs" />
+    <Compile Include="Core\Objects\CameraObj.cs" />
+    <Compile Include="Core\DataStructures\CollisionInfo.cs" />
+    <Compile Include="Core\Objects\Entities\Entity.cs" />
+    <Compile Include="Core\Objects\Entities\PhysicalEntity.cs" />
+    <Compile Include="Content\Entities\Player\Player.Dodgerolls.cs" />
+    <Compile Include="Content\Entities\Player\Player.cs" />
+    <Compile Include="Core\Objects\Entities\TileEntity.cs" />
+    <Compile Include="Core\Objects\Tests\CursorSoundObj.cs" />
+    <Compile Include="Core\Objects\Tests\CursorLightObj.cs" />
+    <Compile Include="Core\Objects\Etc\LightObj.cs" />
+    <Compile Include="Core\Objects\Etc\Skybox.cs" />
+    <Compile Include="Core\Objects\Etc\SoundInstance.cs" />
+    <Compile Include="Core\Objects\GameObject2D.cs" />
+    <Compile Include="Core\Objects\SpriteObject.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="SaveFile.cs" />
     <Compile Include="UI\Menu\MainMenuController.cs" />
     <Compile Include="UI\Menu\MainMenuState.cs" />
     <Compile Include="UI\Menu\MenuController.cs" />
@@ -72,52 +102,48 @@
     <Compile Include="UI\Menu\WorldCreate.cs" />
     <Compile Include="UI\Menu\WorldSelect.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="World\Chunk.Rendering.cs" />
-    <Compile Include="World\Chunk.cs" />
-    <Compile Include="World\Generation\GenPass.cs" />
-    <Compile Include="World\Generation\GenPasses\NoiseTileReplacePass.cs" />
-    <Compile Include="World\Generation\GenPasses\GrassPass.cs" />
-    <Compile Include="World\Generation\GenPasses\OverworldTerrainPass.cs" />
-    <Compile Include="World\Generation\GenPasses\RandomChunksPass.cs" />
-    <Compile Include="World\Generation\GenPasses\TileFramePass.cs" />
-    <Compile Include="World\Generation\GenPasses\CavePass.cs" />
-    <Compile Include="World\Generation\GenPasses\TunnelsPass.cs" />
-    <Compile Include="World\Generation\GenUtils.cs" />
-    <Compile Include="World\ISaveable.cs" />
-    <Compile Include="World\Overworld.cs" />
-    <Compile Include="World\TileFramesets\DefaultFrameset.cs" />
-    <Compile Include="World\TileFramesets\PlatformFrameset.cs" />
-    <Compile Include="World\TileFramesets\TerrariaFrameset.cs" />
-    <Compile Include="World\TileFramesets\TallGrassFrameset.cs" />
-    <Compile Include="World\TileFramesets\TestFrameset.cs" />
-    <Compile Include="World\TileFramesets\TileFrameset.cs" />
-    <Compile Include="World\TileNeighbouring.cs" />
-    <Compile Include="World\Tiles\Tile.cs" />
-    <Compile Include="World\Tiles\TilePreset.cs" />
-    <Compile Include="World\Tiles\Types\Air.cs" />
-    <Compile Include="World\Tiles\Types\Platforms\PlatformTileBase.cs" />
-    <Compile Include="World\Tiles\Types\Platforms\WoodPlatform.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Building\Wood.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Clay.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Grass.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Dirt.cs" />
-    <Compile Include="World\Tiles\Types\NonSolid\Nature\TallGrass.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Ores\CopperOre.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Ores\GoldOre.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Ores\IronOre.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Ores\SilverOre.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Sand.cs" />
-    <Compile Include="World\Tiles\Types\Solid\Natural\Stone.cs" />
-    <Compile Include="World\Tiles\Types\Solid\SolidTileBase.cs" />
-    <Compile Include="World\World.cs" />
-    <Compile Include="World\WorldInfo.cs" />
-    <Compile Include="World\World_IO.cs" />
-    <Compile Include="World\World_Tiles.cs" />
-    <Compile Include="World\World_Utils.cs" />
+    <Compile Include="Core\World\Chunk\Chunk.Rendering.cs" />
+    <Compile Include="Core\World\Chunk\Chunk.cs" />
+    <Compile Include="Core\World\Generation\GenPass.cs" />
+    <Compile Include="Core\World\Generation\Default\NoiseTileReplacePass.cs" />
+    <Compile Include="Content\World\Common\GenPasses\GrassPass.cs" />
+    <Compile Include="Content\World\Overworld\GenPasses\OverworldTerrainPass.cs" />
+    <Compile Include="Core\World\Generation\Default\TileFramePass.cs" />
+    <Compile Include="Content\World\Common\GenPasses\CavePass.cs" />
+    <Compile Include="Core\World\Generation\GenUtils.cs" />
+    <Compile Include="Core\Interfaces\ISaveable.cs" />
+    <Compile Include="Content\World\Overworld\Overworld.cs" />
+    <Compile Include="Content\TileFramesets\DefaultFrameset.cs" />
+    <Compile Include="Content\TileFramesets\PlatformFrameset.cs" />
+    <Compile Include="Content\TileFramesets\TerrariaFrameset.cs" />
+    <Compile Include="Content\TileFramesets\TallGrassFrameset.cs" />
+    <Compile Include="Content\TileFramesets\TestFrameset.cs" />
+    <Compile Include="Core\World\Tiles\TileFrameset.cs" />
+    <Compile Include="Core\World\Tiles\TileNeighbouring.cs" />
+    <Compile Include="Core\World\Tiles\Tile.cs" />
+    <Compile Include="Core\World\Tiles\TilePreset.cs" />
+    <Compile Include="Content\Tiles\Air.cs" />
+    <Compile Include="Content\Tiles\Common\PlatformTileBase.cs" />
+    <Compile Include="Content\Tiles\Building\Wood.cs" />
+    <Compile Include="Content\Tiles\Natural\Clay.cs" />
+    <Compile Include="Content\Tiles\Natural\Grass.cs" />
+    <Compile Include="Content\Tiles\Natural\Dirt.cs" />
+    <Compile Include="Content\Tiles\Natural\Nature\TallGrass.cs" />
+    <Compile Include="Content\Tiles\Natural\Ores\CopperOre.cs" />
+    <Compile Include="Content\Tiles\Natural\Ores\GoldOre.cs" />
+    <Compile Include="Content\Tiles\Natural\Ores\IronOre.cs" />
+    <Compile Include="Content\Tiles\Natural\Ores\SilverOre.cs" />
+    <Compile Include="Content\Tiles\Natural\Sand.cs" />
+    <Compile Include="Content\Tiles\Natural\Stone.cs" />
+    <Compile Include="Content\Tiles\Common\SolidTileBase.cs" />
+    <Compile Include="Core\World\World.cs" />
+    <Compile Include="Core\World\WorldInfo.cs" />
+    <Compile Include="Core\World\World.IO.cs" />
+    <Compile Include="Core\World\World.Tiles.cs" />
+    <Compile Include="Core\World\World.Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Audio\Music\Test.ogg" />
+    <None Include="Content\Common\Audio\Music\Test.ogg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GameEngine\GameEngine.csproj">
@@ -127,6 +153,18 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

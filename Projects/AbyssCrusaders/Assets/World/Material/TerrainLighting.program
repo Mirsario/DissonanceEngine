@@ -1,6 +1,0 @@
-{
-	"Game/TerrainLighting": {
-		"vertexShader": "Sprite.vert",
-		"fragmentShader": "TerrainLighting.frag"
-	}
-}

@@ -5,6 +5,7 @@ using GameEngine.Graphics;
 using AbyssCrusaders.UI.Menu;
 using GameEngine.Physics;
 using System.Collections.Generic;
+using AbyssCrusaders.Core;
 
 #pragma warning disable 219
 namespace AbyssCrusaders
