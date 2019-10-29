@@ -27,6 +27,7 @@ namespace GameEngine.Graphics
 		public int fragmentShader;
 		public int geometryShader;
 		public string[] defines;
+		public uint stencilMask;
 		public BlendingFactor blendFactorSrc;
 		public BlendingFactor blendFactorDst;
 		public CullMode cullMode = CullMode.Front;
@@ -305,6 +306,7 @@ namespace GameEngine.Graphics
 					GL.UseProgram(shader.Id);
 					activeShader = shader;
 
+					Rendering.SetStencilMask(shader.stencilMask);
 					Rendering.SetBlendFunc(shader.blendFactorSrc,shader.blendFactorDst);
 				}
 			}else if(activeShader!=null) {

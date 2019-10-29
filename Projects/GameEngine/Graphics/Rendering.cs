@@ -90,6 +90,7 @@ namespace GameEngine.Graphics
 		internal static Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
+		internal static uint currentStencilMask;
 
 		internal static RenderingPipeline renderingPipeline;
 		public static RenderingPipeline RenderingPipeline => renderingPipeline;

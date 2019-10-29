@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
+using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace GameEngine.Graphics
 {
@@ -71,6 +72,12 @@ namespace GameEngine.Graphics
 			}
 		}
 
+		internal static void SetStencilMask(uint stencilMask)
+		{
+			if(stencilMask!=currentStencilMask) {
+				GL.StencilMask(currentStencilMask = stencilMask);
+			}
+		}
 		internal static void SetBlendFunc(BlendingFactor blendFactorSrc,BlendingFactor blendFactorDst)
 		{
 			if(blendFactorSrc!=currentBlendFactorSrc || blendFactorDst!=currentBlendFactorDst) {
