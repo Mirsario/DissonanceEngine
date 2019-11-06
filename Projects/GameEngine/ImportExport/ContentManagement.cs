@@ -150,20 +150,22 @@ namespace GameEngine
 			AssetManager manager;
 			#region BuiltInAssets
 			importingBuiltInAssets = true;
-			#region Unzip
+
+			//Unzip
 			using(var stream = new MemoryStream(Properties.Resources.DefaultResources)) {
-				using(var zipFile = ZipFile.Read(stream)) {
-					foreach(var zipEntry in zipFile) {
-						string filePath = zipEntry.FileName;
-						using(var entryStream = new MemoryStream()) {
-							zipEntry.Extract(entryStream);
-							builtInAssets[builtInAssetsFolder+filePath] = entryStream.ToArray();
-						}
+				using var zipFile = ZipFile.Read(stream);
+
+				foreach(var zipEntry in zipFile) {
+					string filePath = zipEntry.FileName;
+					using(var entryStream = new MemoryStream()) {
+						zipEntry.Extract(entryStream);
+						builtInAssets[builtInAssetsFolder+filePath] = entryStream.ToArray();
 					}
 				}
 			}
-			#endregion
-			#region Autoload
+
+			//Autoload
+
 			//Save assets which could be imported with an AssetManager into a dictionary,with AssetManagers being the keys.
 			var engineAssetsByManager = new Dictionary<AssetManager,List<KeyValuePair<string,byte[]>>>();
 			foreach(var pair in builtInAssets) {
@@ -197,10 +199,11 @@ namespace GameEngine
 			}
 			engineAssetsByManager.Clear();
 			#endregion
+
 			importingBuiltInAssets = false;
-			#endregion
+
 			#region GameResources
-			//Save assets which could be imported with an AssetManager into a dictionary,with AssetManagers being the keys.
+			//Save assets which could be imported with an AssetManager into a dictionary, with AssetManagers being the keys.
 			var allGameFiles = Directory.GetFiles(Game.assetsPath,"*.*",SearchOption.AllDirectories);
 			var gameAssetsByManager = new Dictionary<AssetManager,List<string>>();
 			for(int i=0;i<allGameFiles.Length;i++) {
@@ -484,6 +487,7 @@ namespace GameEngine
 			where T2 : Asset
 		{
 			var type = typeof(T1);
+
 			foreach(var pair in assetManagers) {
 				foreach(var assetManager in pair.Value) {
 					if(assetManager.GetType()==type) {
@@ -491,6 +495,7 @@ namespace GameEngine
 					}
 				}
 			}
+
 			return null;
 		}
 		public static void RegisterFormats<T>(AssetManager<T> importer,string[] formats,bool allowOverwriting = false) where T : class
