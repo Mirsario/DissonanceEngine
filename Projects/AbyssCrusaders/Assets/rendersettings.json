@@ -1,8 +1,0 @@
-{
-	"pipeline": {
-		"geometry": {
-			"type": "GameEngine.GeometryPass",
-			"framebuffer": "none"
-		}
-	}
-}

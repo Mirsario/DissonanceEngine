@@ -11,11 +11,13 @@ namespace AbyssCrusaders.Content.Entities
 		public const int FrameWidth = 40;
 		public const int FrameHeight = 40;
 
-		public SpriteObject spriteObj;
+		public Sprite sprite;
 		public ushort currentTile;
 		public float defaultWidth;
 		public float defaultHeight;
 		public Vector2 moveInput;
+		public int animationFrame;
+		public int animationFrameCount;
 
 		protected float rotationOffset;
 
@@ -29,7 +31,7 @@ namespace AbyssCrusaders.Content.Entities
 			get => direction;
 			set {
 				direction = (sbyte)value;
-				spriteObj.sprite.spriteEffects = direction==-1 ? Sprite.SpriteEffects.FlipHorizontally : 0;
+				sprite.spriteEffects = direction==-1 ? Sprite.SpriteEffects.FlipHorizontally : 0;
 				//Transform.EulerRot = new Vector3(value==1 ? 0f : 180f,0f,rotation);
 			}
 		}
@@ -45,18 +47,16 @@ namespace AbyssCrusaders.Content.Entities
 			stopSpeed = 0.1f;
 			maxSpeed = 12f;
 
+			animationFrameCount = 18;
+
 			currentTile = TilePreset.GetTypeId<Wood>();
 
-			var texture = Resources.Get<Texture>("Player.png");
+			sprite = AddComponent<Sprite>(c => {
+				c.Material = Resources.Find<Material>("Player").Clone();
+				c.FrameSize = new Vector2(FrameWidth,FrameHeight);
+			});
 
-			spriteObj = SpriteObject.Create(this,"Player.png",new Material("Player",Resources.Find<Shader>("Game/SpriteColor")),new Vector2Int(FrameWidth,FrameHeight));
-			spriteObj.sprite.SourceRectangle = new RectFloat(0f,0f,0.5f,0.5f);
-
-			/*AddComponent<Light2D>(c => {
-				c.color = new Vector3(1f,1f,1f);
-				c.intensity = 0.8f;
-				c.range = 4f;
-			});*/
+			UpdateSprites();
 
 			light = AddComponent<Light2D>(c => {
 				c.color = new Vector3(1f,0.75f,0.25f);
@@ -64,10 +64,6 @@ namespace AbyssCrusaders.Content.Entities
 			});
 
 			Instantiate<CursorSoundObj>();
-
-			//var cursorLight = Instantiate<CursorLightObj>().light;
-			//cursorLight.color = Vector3.One;
-			//cursorLight.range = 4f;
 		}
 		public override void FixedUpdate()
 		{
@@ -140,7 +136,7 @@ namespace AbyssCrusaders.Content.Entities
 			}
 
 			if(Input.GetKeyDown(Keys.O)) {
-				var pos = (Vector2Int)Position;
+				var pos = new Vector2Int((int)Position.x,(int)Position.y-1);
 
 				world.PlaceTileEntity<TileEntities.Crafting.RepairTable>(pos.x,pos.y);
 			}
@@ -211,39 +207,13 @@ namespace AbyssCrusaders.Content.Entities
 
 			rotationOffset += Mathf.Clamp(velocity.x*0.5f,-5f,5f);
 
-			spriteObj.Rotation = rotationOffset;
+			Rotation = rotationOffset;
 
 			if(tempSpriteOffset!=default) {
 				tempSpriteOffset = Vector2.StepTowards(tempSpriteOffset,default,Time.RenderDeltaTime*Mathf.Max(8f,Mathf.Abs(velocity.x)));
 			}
 
-			const int FrameCount = 18;
-			const float FrameSize = 1f/FrameCount;
-
-			int frame = GameInput.moveY.Value<0f ? 17 : (GameInput.moveY.Value>0f ? 15 : 0);
-
-			if(isDodging) {
-				frame = Mathf.Min(17,5+Mathf.FloorToInt(Mathf.Min(1f,dodgerollProgress)*14f));
-			} else{
-				if(!collisions.down) {
-					frame = velocity.y<0f ? 2 : 3;
-				} else {
-					if(GameInput.moveX.Value!=0f || !collisions.down) {
-						frame = 1+(int)Time.FixedUpdateCount/5%3;
-					}
-				}
-			}
-
-			//(Time.GameTime-lastTimeOnGround<0.05f) ? ((GameInput.moveX.Value==0f && collisions.down) ? 0f : 0.25f*(1f+(Time.FixedUpdateCount/5)%3)) : (velocity.y<0f ? 0.5f : 0.75f)
-
-			spriteObj.sprite.SourceRectangle = new RectFloat(
-				frame/(float)FrameCount,
-				0f,
-				FrameSize,
-				1f
-			);
-
-			spriteObj.Position = tempSpriteOffset+new Vector2(0f,(height-(FrameHeight*Main.PixelSizeInUnits))*0.5f);
+			UpdateSprites();
 		}
 		public override void OnGUI()
 		{
@@ -259,6 +229,34 @@ namespace AbyssCrusaders.Content.Entities
 				float size = Main.UnitSizeInPixels*16f;
 				GUI.DrawTexture(new RectFloat(8,Screen.Height-8-size,size,size),texture);
 			}
+		}
+
+		public void UpdateSprites()
+		{
+			if(isDodging) {
+				animationFrame = Mathf.Min(17,5+Mathf.FloorToInt(Mathf.Min(1f,dodgerollProgress)*14f));
+			} else if(!collisions.down) {
+				animationFrame = velocity.y<0f ? 2 : 3;
+			} else if(GameInput.moveX.Value!=0f || !collisions.down) {
+				animationFrame = 1+(int)Time.FixedUpdateCount/5%3;
+			} else {
+				animationFrame = GameInput.moveY.Value<0f ? 17 : (GameInput.moveY.Value>0f ? 15 : 0);
+			}
+
+			sprite.SourceRectangle = new RectFloat(
+				animationFrame/(float)animationFrameCount,
+				0f,
+				1f/(float)animationFrameCount,
+				1f
+			);
+
+			var usedOffset = -tempSpriteOffset*Main.UnitSizeInPixels;
+			usedOffset.y += (FrameHeight-(height*Main.UnitSizeInPixels))*0.5f;
+
+			sprite.Origin = new Vector2(
+				0.5f+usedOffset.x/FrameWidth,
+				0.5f+usedOffset.y/FrameHeight
+			);
 		}
 
 		public void Footstep(string actionType,float volume = 1f)

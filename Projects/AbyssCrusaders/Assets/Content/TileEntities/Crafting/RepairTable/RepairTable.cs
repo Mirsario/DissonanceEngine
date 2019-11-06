@@ -13,6 +13,7 @@ namespace AbyssCrusaders.TileEntities.Crafting
 
 			var sprite = AddComponent<Sprite>(c => {
 				c.Material = Resources.Get<Material>("RepairTable.material");
+				c.Origin = Vector2.Zero;
 			});
 		}
 	}

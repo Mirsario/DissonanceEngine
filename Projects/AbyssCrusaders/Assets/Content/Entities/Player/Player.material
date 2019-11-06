@@ -1,0 +1,7 @@
+{
+	"name": "$FileName$",
+	"shader": "Game/SpriteColor",
+	"textures": {
+		"mainTex": "$FileName$.png"
+	}
+}

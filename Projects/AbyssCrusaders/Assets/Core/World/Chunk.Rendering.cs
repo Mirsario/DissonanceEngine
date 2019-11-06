@@ -61,11 +61,16 @@ namespace AbyssCrusaders.Core
 					return;
 				}
 
-				obj = GameObject2D.Instantiate<SpriteObject>(position: new Vector2((position.x+0.5f)*ChunkSize,(position.y+0.5f)*ChunkSize),depth: depth,scale: new Vector2(ChunkSize,ChunkSize));
+				obj = GameObject2D.Instantiate<SpriteObject>(position:new Vector2((position.x)*ChunkSize,(position.y)*ChunkSize),depth:depth);
 				obj.layer = Layers.GetLayerIndex(layer);
+				obj.sprite.FrameSizeInUnits = new Vector2(ChunkSize,ChunkSize);
+				obj.sprite.Origin = Vector2.Zero;
+
 				var material = new Material("Level",Resources.Find<Shader>(shader));
 				material.SetTexture("mainTex",texture);
+
 				onMaterialInit?.Invoke(material);
+
 				obj.sprite.Material = material;
 			}
 

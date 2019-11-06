@@ -1,4 +1,5 @@
 ﻿using GameEngine;
+using System;
 
 namespace AbyssCrusaders.Core
 {
@@ -28,14 +29,22 @@ namespace AbyssCrusaders.Core
 		}
 
 		public static T Instantiate<T>(string name = default,Vector2 position = default,float depth = 0f,float rotation = default,Vector2? scale = null,bool init = true) where T : GameObject2D
+			=> (T)Instantiate(typeof(T),name,position,depth,rotation,scale,init);
+		public static GameObject Instantiate(Type type,string name = default,Vector2 position = default,float depth = 0f,float rotation = default,Vector2? scale = null,bool init = true)
 		{
-			T result = (T)Instantiate(
-				typeof(T),name,
-				new Vector3(position.x,-position.y,depth),
-				rotation==0f ? default : Quaternion.FromEuler(0f,0f,rotation),
-				scale.HasValue ? new Vector3(scale.Value.x,scale.Value.y,1f) : (Vector3?)null,
-				init
-			);
+			if(type==null) {
+				throw new ArgumentNullException(nameof(type));
+			}
+
+			if(!typeof(GameObject2D).IsAssignableFrom(type)) {
+				throw new ArgumentException($"Type does not derive from '{nameof(GameObject2D)}'.",nameof(type));
+			}
+
+			Quaternion qRotation = rotation==0f ? default : Quaternion.FromEuler(0f,0f,rotation);
+			Vector3 vec3Position = new Vector3(position.x,-position.y,depth);
+			Vector3? vec3Scale = scale.HasValue ? new Vector3(scale.Value.x,scale.Value.y,1f) : (Vector3?)null;
+
+			GameObject2D result = (GameObject2D)Instantiate(type,name,vec3Position,qRotation,vec3Scale,init);
 
 			result.position = position;
 			result.depth = depth;

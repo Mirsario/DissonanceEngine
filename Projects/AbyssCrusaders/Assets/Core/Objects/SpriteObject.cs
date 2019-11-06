@@ -15,10 +15,6 @@ namespace AbyssCrusaders.Core
 			get => texture;
 			set {
 				sprite.Material.SetTexture("mainTex",texture = value);
-
-				if(texture!=null) {
-					Transform.LocalScale = new Vector3(frameSize.x*Main.PixelSizeInUnits,frameSize.y*Main.PixelSizeInUnits,1f);
-				}
 			}
 		}
 		public Vector2Int FrameSize {

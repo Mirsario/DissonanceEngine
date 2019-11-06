@@ -29,6 +29,8 @@ namespace AbyssCrusaders
 			Texture.defaultFilterMode = FilterMode.Point;
 			Texture.defaultWrapMode = TextureWrapMode.Clamp;
 
+			Sprite.DefaultPixelSize = PixelSizeInUnits;
+
 			Layers.AddLayers(
 				"Terrain",
 				"TerrainLighting",

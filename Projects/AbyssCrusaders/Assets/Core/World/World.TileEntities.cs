@@ -12,7 +12,7 @@ namespace AbyssCrusaders.Core
 
 			var position = new Vector2Int(x,y);
 
-			var entity = Entity.Instantiate<T>(this,position:(Vector2)position);
+			var entity = Entity.Instantiate<T>(this,position:(Vector2)position,init:false);
 
 			ushort? idInChunk = null;
 
@@ -30,22 +30,8 @@ namespace AbyssCrusaders.Core
 				chunk.tileEntities.Add(entity);
 			}
 
-			entity.Init(chunk,idInChunk.Value,new Vector2Int(x,y));
-
-			/*ref var tile = ref this[x,y];
-
-			if(tile.type==type) {
-				return;
-			}
-
-			tile.type = type;
-			tile.tileDamage = 0;
-
-			if(Netplay.isClient && playSound) {
-				tile.PlayTileSound(x,y,"Place");
-			}
-
-			SquareTileFrame(x,y);*/
+			entity.PreInit(chunk,idInChunk.Value,new Vector2Int(x,y));
+			entity.Init();
 		}
 	}
 }

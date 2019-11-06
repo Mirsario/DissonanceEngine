@@ -62,6 +62,8 @@
     <Compile Include="Content\Tiles\Building\Platforms\WoodPlatform.cs" />
     <Compile Include="Core\Attributes\ForceIDAttribute.cs" />
     <Compile Include="Content\TileEntities\Crafting\RepairTable\RepairTable.cs" />
+    <Compile Include="Core\Item\Item.cs" />
+    <Compile Include="Core\World\PlacingRule.cs" />
     <Compile Include="Core\World\World.TileEntities.cs" />
     <Compile Include="CubeObj.cs" />
     <Compile Include="CubeObj2.cs" />
@@ -102,8 +104,8 @@
     <Compile Include="UI\Menu\WorldCreate.cs" />
     <Compile Include="UI\Menu\WorldSelect.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Core\World\Chunk\Chunk.Rendering.cs" />
-    <Compile Include="Core\World\Chunk\Chunk.cs" />
+    <Compile Include="Core\World\Chunk.Rendering.cs" />
+    <Compile Include="Core\World\Chunk.cs" />
     <Compile Include="Core\World\Generation\GenPass.cs" />
     <Compile Include="Core\World\Generation\Default\NoiseTileReplacePass.cs" />
     <Compile Include="Content\World\Common\GenPasses\GrassPass.cs" />
@@ -118,10 +120,10 @@
     <Compile Include="Content\TileFramesets\TerrariaFrameset.cs" />
     <Compile Include="Content\TileFramesets\TallGrassFrameset.cs" />
     <Compile Include="Content\TileFramesets\TestFrameset.cs" />
-    <Compile Include="Core\World\Tiles\TileFrameset.cs" />
-    <Compile Include="Core\World\Tiles\TileNeighbouring.cs" />
-    <Compile Include="Core\World\Tiles\Tile.cs" />
-    <Compile Include="Core\World\Tiles\TilePreset.cs" />
+    <Compile Include="Core\World\TileFrameset.cs" />
+    <Compile Include="Core\World\TileNeighbouring.cs" />
+    <Compile Include="Core\World\Tile.cs" />
+    <Compile Include="Core\World\TilePreset.cs" />
     <Compile Include="Content\Tiles\Air.cs" />
     <Compile Include="Content\Tiles\Common\PlatformTileBase.cs" />
     <Compile Include="Content\Tiles\Building\Wood.cs" />

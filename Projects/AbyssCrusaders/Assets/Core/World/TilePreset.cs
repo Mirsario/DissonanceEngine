@@ -46,9 +46,8 @@ namespace AbyssCrusaders.Core
 		public static void Initialize()
 		{
 			Assembly assembly = Assembly.GetCallingAssembly();
-			Type thisType = typeof(TilePreset);
 
-			Type[] tileTypes = assembly.GetTypes().Where(t => t!=thisType && !t.IsAbstract && thisType.IsAssignableFrom(t)).ToArray();
+			Type[] tileTypes = assembly.GetTypes().Where(t => !t.IsAbstract && typeof(TilePreset).IsAssignableFrom(t)).ToArray();
 
 			typeCount = (ushort)tileTypes.Length;
 

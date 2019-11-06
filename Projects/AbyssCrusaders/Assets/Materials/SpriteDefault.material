@@ -1,0 +1,7 @@
+{
+	"name": "Game/SpriteDefault",
+	"shader": "Game/SpriteColor",
+	"textures": {
+		"mainTex": "NoTexture.png"
+	}
+}
