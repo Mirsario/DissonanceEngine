@@ -12,7 +12,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{	
 			const string FileName = "rendersettings.json";
-			string filePath = Directory.GetFiles("Assets","*.json").FirstOrDefault(file => Path.GetFileName(file).ToLower()==FileName) ?? Resources.builtInAssetsFolder+FileName;
+			string filePath = Directory.GetFiles("Assets","*.json").FirstOrDefault(file => Path.GetFileName(file).ToLower()==FileName) ?? Resources.BuiltInAssetsFolder+FileName;
 			string jsonText = Resources.ImportText(filePath);
 
 			ParseJSON(jsonText,framebuffers,renderPasses);
