@@ -24,8 +24,8 @@ namespace GameEngine
 		//Debug
 		private const bool BigScreen = true;
 
-		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;	
-		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;	
+		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;
+		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;
 
 		public static string name = "UntitledGame";
 		public static string displayName = "Untitled Game";
@@ -37,7 +37,6 @@ namespace GameEngine
 		internal static bool shouldQuit;
 		internal static bool preInitDone;
 		internal static bool fixedUpdate;
-		internal static Assembly[] assemblies;
 
 		public static bool HasFocus	{ get; internal set; } = true;
 

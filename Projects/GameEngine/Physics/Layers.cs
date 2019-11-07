@@ -12,9 +12,11 @@ namespace GameEngine.Physics
 		{
 			indexToMask = new ulong[64];
 			indexToName = new string[64];
+
 			AddLayers("Default");
 		}
 
+		public static void AddLayers<T>() where T : Enum => AddLayers(Enum.GetNames(typeof(T)));
 		public static void AddLayers(params string[] layerNames)
 		{
 			if(Game.preInitDone) {
@@ -26,26 +28,20 @@ namespace GameEngine.Physics
 				throw new Exception("Cannot add more than 64 layers.");
 			}
 
-			int j = layerCount;
-			for(int i = 0;i<layerNames.Length;i++, j++) {
+			for(int i = 0,j = layerCount;i<layerNames.Length;i++,j++) {
 				indexToMask[j] = (ulong)1 << j;
 				indexToName[j] = layerNames[i];
 			}
+
 			layerCount += layerNames.Length;
 		}
-		/*public static void AddLayers(Type enumType)
-		{
-			if(!enumType.IsEnum) {
-				throw new Exception("This overload expects an Enum type as parameter.");
-			}
-			AddLayers(Enum.GetNames(enumType));
-		}*/
 
 		public static ulong GetLayerMask(int index)
 		{
 			if(index<0 || index>=layerCount) {
 				throw new IndexOutOfRangeException();
 			}
+
 			return indexToMask[index];
 		}
 		public static ulong GetLayerMask(string name)
@@ -56,7 +52,7 @@ namespace GameEngine.Physics
 				}
 			}
 
-			throw new Exception("Could not find any layers named ''"+name+"''");
+			throw new Exception($"Could not find any layers named '{name}'.");
 		}
 
 		public static string GetLayerName(int index)
@@ -64,6 +60,7 @@ namespace GameEngine.Physics
 			if(index<0 || index>=layerCount) {
 				throw new IndexOutOfRangeException();
 			}
+
 			return indexToName[index];
 		}
 		public static string GetLayerName(ulong flag)
@@ -73,7 +70,8 @@ namespace GameEngine.Physics
 					return indexToName[i];
 				}
 			}
-			throw new Exception("Could not find any layers with flag ''"+flag+"''");
+
+			throw new Exception($"Could not find any layers with flag '{flag}'.");
 		}
 
 		public static byte GetLayerIndex(string name)
@@ -83,7 +81,8 @@ namespace GameEngine.Physics
 					return (byte)i;
 				}
 			}
-			throw new Exception("Could not find any layers named ''"+name+"''");
+
+			throw new Exception($"Could not find any layers named '{name}'.");
 		}
 		public static byte GetLayerIndex(ulong flag)
 		{
@@ -92,7 +91,8 @@ namespace GameEngine.Physics
 					return (byte)i;
 				}
 			}
-			throw new Exception("Could not find any layers with flag ''"+flag+"''");
+
+			throw new Exception($"Could not find any layers with flag '{flag}'.");
 		}
 	}
 }

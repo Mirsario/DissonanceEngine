@@ -17,14 +17,18 @@ namespace GameEngine
 			
 			Type type = typeof(ProgrammableEntity);
 			var methods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+
 			int id = 0;
+
 			for(int i = 0;i<methods.Length;i++) {
 				var method = methods[i];
 				if(method.IsVirtual) {
-					hookNameToId[methods[i].Name] = id++;
+					hookNameToId[method.Name] = id++;
 				}
 			}
+
 			hooks = new List<Action>[hookNameToId.Count];
+
 			for(int i = 0;i<hooks.Length;i++) {
 				hooks[i] = new List<Action>();
 			}
@@ -32,16 +36,16 @@ namespace GameEngine
 		public static void SubscribeEntity(ProgrammableEntity entity)
 		{
 			var type = entity.GetType();
+
 			if(!typeToInfo.TryGetValue(type,out var info)) {
 				typeToInfo[type] = info = new ProgrammableEntityTypeInfo(type);
 			}
 
 			for(int i = 0;i<info.methodInfos.Length;i++) {
 				var methodInfo = info.methodInfos[i];
-				if(methodInfo==null) {
-					continue;
+				if(methodInfo!=null) {
+					hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
 				}
-				hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
 			}
 		}
 		public static void UnsubscribeEntity(ProgrammableEntity entity)
@@ -53,13 +57,14 @@ namespace GameEngine
 
 			for(int i = 0;i<info.methodInfos.Length;i++) {
 				var methodInfo = info.methodInfos[i];
+
 				if(methodInfo==null) {
 					return;
 				}
+
 				var arr = hooks[i];
 				for(int j = 0;j<arr.Count;j++) {
-					var action = arr[j];
-					if(action.Target==entity) {
+					if(arr[j].Target==entity) {
 						arr.RemoveAt(j--);
 					}
 				}
@@ -69,6 +74,7 @@ namespace GameEngine
 		public static void InvokeHook(int id)
 		{
 			var list = hooks[id];
+
 			for(int i = 0;i<list.Count;i++) {
 				list[i]();
 			}

@@ -10,19 +10,20 @@ namespace GameEngine
 	{
 		internal static List<GameObject> gameObjects;
 
+		public byte layer;
+		public string name;
+
+		internal bool initialized;
 		internal List<Component> components;
 		internal Dictionary<int,List<Component>> componentsByNameHash;
 		internal RigidbodyInternal rigidbodyInternal;
-		internal bool initialized;
-		public byte layer;
-		
-		public string name;
+		internal Transform transform;
+
+		public Transform Transform => transform;
 		public string Name {
 			get => name;
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
 		}
-		internal Transform transform;
-		public Transform Transform => transform;
 
 		protected GameObject() {}
 
@@ -46,9 +47,13 @@ namespace GameEngine
 			if(initialized) {
 				return;
 			}
+
 			gameObjects.Add(this);
+
 			ProgrammableEntityHooks.SubscribeEntity(this);
+
 			OnInit();
+
 			initialized = true;
 		}
 		public void Dispose()
@@ -60,6 +65,7 @@ namespace GameEngine
 			for(int i = 0;i<components.Count;i++) {
 				components[i].Dispose();
 			}
+
 			components.Clear();
 			components = null;
 
@@ -122,39 +128,48 @@ namespace GameEngine
 		public T GetComponent<T>(bool noSubclasses = false) where T : Component
 		{
 			var type = typeof(T);
+
 			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
+
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
 					return (T)component;
 				}
 			}
+
 			return null;
 		}
 		public IEnumerable<T> GetComponents<T>(bool noSubclasses = false) where T : Component
 		{
 			var list = new List<T>();
 			var type = typeof(T);
+
 			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
+
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
 					list.Add((T)component);
 				}
 			}
+
 			return list;
 		}
 		public int CountComponents<T>(bool noSubclasses = false) where T : Component
 		{
 			int count = 0;
 			var type = typeof(T);
+
 			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
+
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
 					count++;
 				}
 			}
+
 			return count;
 		}
 
