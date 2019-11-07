@@ -42,24 +42,15 @@ namespace AbyssCrusaders.Content.Worlds.Overworld
 				Frequency = 0.1f
 			}));
 
-			static FastNoise OreNoise(float frequency,int seed,int index)
-			{
-				var noise = new FastNoise(seed^index) {
-					NoiseType = FastNoise.NoiseTypes.Cellular,
-					Frequency = frequency
-				};
-
-				noise.SetCellularDistanceFunction(FastNoise.CellularDistanceFunction.Natural);
-				noise.SetCellularJitter(0.3f);
-
-				var subNoise = new FastNoise(seed^index+1) {
+			static FastNoise OreNoise(float frequency,int seed,int index) => new FastNoise(seed^index) {
+				NoiseType = FastNoise.NoiseTypes.Cellular,
+				Frequency = frequency,
+				CellularJitter = 0.3f,
+				CellularDistanceFunction = FastNoise.CellularDistanceFunctions.Natural,
+				CellularReturnType = FastNoise.CellularReturnTypes.NoiseLookup,
+				CellularNoiseLookup = new FastNoise(seed^index+1) {
 					NoiseType = FastNoise.NoiseTypes.WhiteNoise
-				};
-
-				noise.SetCellularReturnType(FastNoise.CellularReturnType.NoiseLookup);
-				noise.SetCellularNoiseLookup(subNoise);
-
-				return noise;
+				}
 			};
 
 			//Copper Ore

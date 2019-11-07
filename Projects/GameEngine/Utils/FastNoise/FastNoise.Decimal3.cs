@@ -7,14 +7,15 @@ namespace GameEngine.Utils
 {
 	public partial class FastNoise
 	{
-		private struct Float2
+		private struct Decimal3
 		{
-			public readonly DECIMAL x,y;
+			public readonly DECIMAL x,y,z;
 
-			public Float2(DECIMAL x,DECIMAL y)
+			public Decimal3(DECIMAL x,DECIMAL y,DECIMAL z)
 			{
 				this.x = x;
 				this.y = y;
+				this.z = z;
 			}
 		}
 	}

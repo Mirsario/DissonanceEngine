@@ -30,8 +30,9 @@ namespace GameEngine
 
 			if(!(obj is ICollection objCollection)) {
 				if(throwError) {
-					throw new Exception("The ''obj'' argument's type isn't "+typeof(T)+" nor a collection.");
+					throw new Exception($"The '{nameof(obj)}' argument's type isn't '{typeof(T).Name}' nor a collection.");
 				}
+
 				return false;
 			}
 

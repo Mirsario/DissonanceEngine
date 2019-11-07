@@ -9,6 +9,7 @@ using Ionic.Zip;
 namespace GameEngine
 {
 	//TODO: Still refactoring...
+	//TODO: AssetManager getter methods aren't finished.
 	public static partial class Resources
 	{
 		public const string BuiltInAssetsFolder = "BuiltInAssets/";
@@ -64,12 +65,13 @@ namespace GameEngine
 			outManager = list[0];
 			return outManager.Autoload(file);
 		}
-		public static T1 GetAssetManager<T1, T2>()
+		public static T1 GetAssetManager<T1,T2>()
 			where T1 : AssetManager<T2>
 			where T2 : Asset
 		{
 			var type = typeof(T1);
 
+			//TODO: This loop is idiotic. Cache data for this exact method.
 			foreach(var pair in assetManagers) {
 				foreach(var assetManager in pair.Value) {
 					if(assetManager.GetType()==type) {

@@ -15,6 +15,7 @@ namespace GameEngine
 		internal void InitAsset()
 		{
 			string name = GetAssetName();
+
 			if(name!=null) {
 				var type = GetType();
 
@@ -26,8 +27,6 @@ namespace GameEngine
 			}
 		}
 	}
-
-	public class IgnoreInCloning : Attribute {} // ???
 
 	public abstract class Asset<T> : Asset where T : class
 	{
@@ -41,22 +40,28 @@ namespace GameEngine
 			if(obj==null) {
 				return null;
 			}
+
 			var type = obj.GetType();
 			if(IsPrimitive(type)) {
 				return obj;
 			}
+
 			var clone = CloneMethod.Invoke(obj,null);
+
 			RecreateArraysRecursive(obj,clone,type);
+
 			return clone;
 		}
 		private static void RecreateArraysRecursive(object originalObject,object cloneObject,Type reflectionType)
 		{
 			foreach(var fieldInfo in reflectionType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy)) {
-				if(IsPrimitive(fieldInfo.FieldType) || fieldInfo.CustomAttributes.Any(a => a.AttributeType==typeof(IgnoreInCloning))) {
+				if(IsPrimitive(fieldInfo.FieldType)) {
 					continue;
 				}
+
 				var originalFieldValue = fieldInfo.GetValue(originalObject);
 				var clonedFieldValue = InternalClone(originalFieldValue);
+
 				fieldInfo.SetValue(cloneObject,clonedFieldValue);
 			}
 		}
@@ -68,27 +73,36 @@ namespace GameEngine
 			if(originalObject==null) {
 				return null;
 			}
+
 			var reflectionType = originalObject.GetType();
 			if(IsPrimitive(reflectionType)) {
 				return originalObject;
 			}
+
 			if(visited.ContainsKey(originalObject)) {
 				return visited[originalObject];
 			}
+
 			if(typeof(Delegate).IsAssignableFrom(reflectionType)) {
 				return null;
 			}
+
 			var cloneObject = CloneMethod.Invoke(originalObject,null);
 			if(reflectionType.IsArray) {
 				var arrayType = reflectionType.GetElementType();
-				if(IsPrimitive(arrayType)==false) {
+
+				if(!IsPrimitive(arrayType)) {
 					var clonedArray = (Array)cloneObject;
+
 					clonedArray.ForEach((array,indices)=>array.SetValue(InternalDeepClone(clonedArray.GetValue(indices),visited),indices));
 				}
 			}
+
 			visited.Add(originalObject,cloneObject);
+
 			CopyFields(originalObject,visited,cloneObject,reflectionType);
 			RecursiveCopyBaseTypePrivateFields(originalObject,visited,cloneObject,reflectionType);
+
 			return cloneObject;
 		}
 		private static void RecursiveCopyBaseTypePrivateFields(object originalObject,IDictionary<object,object> visited,object cloneObject,Type reflectionType)
@@ -101,17 +115,19 @@ namespace GameEngine
 		private static void CopyFields(object originalObject,IDictionary<object,object> visited,object cloneObject,Type reflectionType,BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,Func<FieldInfo,bool> filter = null)
 		{
 			foreach(var fieldInfo in reflectionType.GetFields(bindingFlags)) {
-				if(filter!=null && filter(fieldInfo)==false || IsPrimitive(fieldInfo.FieldType)) {
+				if(IsPrimitive(fieldInfo.FieldType) || (filter!=null && !filter(fieldInfo))) {
 					continue;
 				}
+
 				var originalFieldValue = fieldInfo.GetValue(originalObject);
 				var clonedFieldValue = InternalDeepClone(originalFieldValue,visited);
+
 				fieldInfo.SetValue(cloneObject,clonedFieldValue);
 			}
 		}
 		#endregion
 
-		public static bool IsPrimitive(Type type) => type==typeof(string) || type.IsValueType & type.IsPrimitive;
+		private static bool IsPrimitive(Type type) => type==typeof(string) || type.IsValueType & type.IsPrimitive;
 	}
 
 	//TODO: Move all these to their own files, jeez
@@ -127,11 +143,12 @@ namespace GameEngine
 			if(array.LongLength==0) {
 				return;
 			}
+
 			var walker = new ArrayTraverse(array);
+
 			do action(array,walker.position);
 			while(walker.Step());
 		}
-
 
 		private class ArrayTraverse
 		{
@@ -142,9 +159,11 @@ namespace GameEngine
 			public ArrayTraverse(Array array)
 			{
 				MaxLengths = new int[array.Rank];
+
 				for(int i = 0;i < array.Rank;++i) {
 					MaxLengths[i] = array.GetLength(i)-1;
 				}
+
 				position = new int[array.Rank];
 			}
 			public bool Step()
@@ -152,12 +171,15 @@ namespace GameEngine
 				for(int i = 0;i < position.Length;++i) {
 					if(position[i] < MaxLengths[i]) {
 						position[i]++;
+
 						for(int j = 0;j < i;j++) {
 							position[j] = 0;
 						}
+
 						return true;
 					}
 				}
+
 				return false;
 			}
 		}

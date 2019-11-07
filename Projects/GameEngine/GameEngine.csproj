@@ -82,7 +82,16 @@
     <Compile Include="Graphics\Rendering\Utils\GLUtils.cs" />
     <Compile Include="ImportExport\Resources.Functions.cs" />
     <Compile Include="Structures\Bounds.cs" />
-    <Compile Include="Utils\FastNoise.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Enums.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCellular.Cells.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCellular.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseCubic.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoisePerlin.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseValue.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Hashing.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseWhite.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.NoiseSimplex.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.cs" />
     <Compile Include="Graphics\Components\Renderers\MeshLOD.cs" />
     <Compile Include="Graphics\Enums\BlendingFactor.cs" />
     <Compile Include="Graphics\Enums\PolygonMode.cs" />
@@ -220,8 +229,8 @@
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Utils\ArrayUtils.cs" />
-    <Compile Include="Utils\FastNoise.Float2.cs" />
-    <Compile Include="Utils\FastNoise.Float3.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Decimal2.cs" />
+    <Compile Include="Utils\FastNoise\FastNoise.Decimal3.cs" />
     <Compile Include="Utils\InternalUtils.cs" />
   </ItemGroup>
   <ItemGroup>

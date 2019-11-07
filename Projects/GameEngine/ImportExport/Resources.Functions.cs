@@ -23,26 +23,28 @@ namespace GameEngine
 			if(assetManager==null) {
 				if(fileName==null) {
 					throw new ArgumentException(
-						"Could not figure out an AssetManager for import, since ''fileName'' parameter is null."+
-						"\nProvide a proper file name, or provide an AssetManager with the ''assetManager'' parameter."
+						$"Could not figure out an AssetManager for import, since '{nameof(fileName)}' parameter is null."+
+						$"\r\nProvide a proper file name, or provide an AssetManager with the '{nameof(assetManager)}' parameter."
 					);
 				}
 
 				string ext = Path.GetExtension(fileName).ToLower();
 				if(!assetManagers.TryGetValue(ext,out var managers)) {
-					throw new NotImplementedException("Could not find any asset managers for the ''"+ext+"'' extension.");
+					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
 				}
 
 				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
 				if(results.Length==0) {
-					throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers which would return a "+type.Name+".");
+					throw new NotImplementedException($"Could not find any '{ext}' asset managers which would return a '{type.Name}'.");
 				}
 
 				assetManager = results[0];
 			}
 
 			var output = assetManager.Import(stream,fileName);
+
 			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.InitAsset(),false);
+
 			return output;
 		}
 		public static string ImportText(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<string>)assetManagers[".txt"][0],throwOnFail);
