@@ -42,7 +42,7 @@ namespace GameEngine.Physics
 		}
 		public static void UpdateFixed()
 		{
-			for(int i=0;i<rigidbodies.Count;i++) {
+			for(int i = 0;i<rigidbodies.Count;i++) {
 				var rigidbody = rigidbodies[i];
 				if(!rigidbody.enabled) {
 					continue;
@@ -117,13 +117,13 @@ namespace GameEngine.Physics
 			collidersToUpdate?.Clear();
 
 			if(collisionShapes!=null) {
-				for(int i=0;i<collisionShapes.Count;i++) {
+				for(int i = 0;i<collisionShapes.Count;i++) {
 					collisionShapes[i].Dispose();
 				}
 			}
 
 			if(rigidbodies!=null) {
-				for(int i=0;i<rigidbodies.Count;i++) {
+				for(int i = 0;i<rigidbodies.Count;i++) {
 					rigidbodies[i].Dispose();
 				}
 				rigidbodies.Clear();
@@ -174,11 +174,11 @@ namespace GameEngine.Physics
 			var worldDispatcher = world.Dispatcher;
 			int numManifolds = worldDispatcher.NumManifolds;
 			
-			for(int i=0;i<rigidbodies.Count;i++) {
+			for(int i = 0;i<rigidbodies.Count;i++) {
 				rigidbodies[i].collisions.Clear();
 			}
 
-			for(int i=0;i<numManifolds;i++) {
+			for(int i = 0;i<numManifolds;i++) {
 				var contactManifold = worldDispatcher.GetManifoldByIndexInternal(i);
 				int numContacts = contactManifold.NumContacts;
 				if(numContacts==0) {
@@ -191,14 +191,14 @@ namespace GameEngine.Physics
 					throw new Exception("UserObject wasn't a '"+typeof(RigidbodyInternal).FullName+"'.");
 				}
 
-				for(int j=0;j<2;j++) {
+				for(int j = 0;j<2;j++) {
 					bool doingA = j==0;
 					var thisRB = doingA ? rigidBodyA : rigidbodyB;
 					var otherRB = doingA ? rigidbodyB : rigidBodyA;
 
 					if(thisRB.rigidbody is Rigidbody rigidbody) {
 						var contacts = new ContactPoint[numContacts];
-						for(int k=0;k<numContacts;k++) {
+						for(int k = 0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
 							contacts[k] = new ContactPoint {
 								point = doingA ? cPoint.PositionWorldOnB : cPoint.PositionWorldOnA,	//Should ContactPoint have two pairs of vectors?
@@ -211,7 +211,7 @@ namespace GameEngine.Physics
 						thisRB.collisions.Add(collision);
 					}else if(thisRB.rigidbody is Rigidbody2D rigidbody2D) {
 						var contacts = new ContactPoint2D[numContacts];
-						for(int k=0;k<numContacts;k++) {
+						for(int k = 0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
 							contacts[k] = new ContactPoint2D {
 								point = doingA ? ((Vector3)cPoint.PositionWorldOnB).XY : ((Vector3)cPoint.PositionWorldOnA).XY,	//Should ContactPoint have two pairs of vectors?

@@ -44,7 +44,7 @@ namespace GameEngine
 		{
 			var header = new DDSHeader();
 			var sign = reader.ReadBytes(4);
-			for(int i=0;i<4;i++){
+			for(int i = 0;i<4;i++){
 				if(sign[i]!=Signature[i]){
 					throw new Exception("File's signature is wrong");
 				}
@@ -67,7 +67,7 @@ namespace GameEngine
 			header.alphabitdepth = reader.ReadUInt32();
 
 			header.reserved = new uint[10];
-			for(int i=0;i<10;i++){
+			for(int i = 0;i<10;i++){
 				header.reserved[i] = reader.ReadUInt32();
 			}
 
@@ -106,8 +106,8 @@ namespace GameEngine
 				var mem = new MemoryStream((int)compSize);
 
 				byte[] temp;
-				for(int z=0;z<header.depth;z++){
-					for(int y=0;y<header.height;y++){
+				for(int z = 0;z<header.depth;z++){
+					for(int y = 0;y<header.height;y++){
 						temp = reader.ReadBytes((int)bps);
 						mem.Write(temp,0,temp.Length);
 					}
@@ -131,7 +131,7 @@ namespace GameEngine
 
 			unsafe {
 				var p = (byte*)scan;
-				for(int i=0;i<size;i += 4){
+				for(int i = 0;i<size;i += 4){
 					//iterate through bytes.
 					//Bitmap stores it's data in RGBA order.
 					//DDS stores it's data in BGRA order.
@@ -363,7 +363,7 @@ namespace GameEngine
 			}
 			public static void CorrectPremult(uint pixnum,ref byte[] buffer)
 			{
-				for(uint i=	0;i<pixnum;i++)
+				for(uint i = 	0;i<pixnum;i++)
 				{
 					byte alpha = buffer[i+3];
 					if(alpha==0)continue;
@@ -711,9 +711,9 @@ namespace GameEngine
 				colors[2].alpha = 0xFF;
 				fixed(byte*bytePtr = data){
 					var temp = bytePtr;
-					for(int z=0;z<depth;z++){
-						for(int y=0;y<height;y += 4){
-							for(int x=0;x<width;x += 4){
+					for(int z = 0;z<depth;z++){
+						for(int y = 0;y<height;y += 4){
+							for(int x = 0;x<width;x += 4){
 								ushort colour0=	*(ushort*)temp;
 								ushort colour1=	*(ushort*)(temp+2);
 								DDSHelper.DxtcReadColor(colour0,ref colors[0]);
@@ -737,8 +737,8 @@ namespace GameEngine
 									colors[3].red = (byte)((colors[0].red+2*colors[1].red+1)/3);
 									colors[3].alpha = 0x00;
 								}
-								for(int j=0,k=0;j<4;j++){
-									for(int i=0;i<4;i++,k++){
+								for(int j = 0,k=0;j<4;j++){
+									for(int i = 0;i<4;i++,k++){
 										int select = (int)((bitmask & 0x03 << k*2)>> k*2);
 										var col = colors[select];
 										if(x+i<width&&y+j<height){
@@ -777,9 +777,9 @@ namespace GameEngine
 				var colors = new Color8888[4];
 				fixed(byte*bytePtr = data){
 					var temp = bytePtr;
-					for(int z=0;z<depth;z++){
-						for(int y=0;y<height;y += 4){
-							for(int x=0;x<width;x += 4){
+					for(int z = 0;z<depth;z++){
+						for(int y = 0;y<height;y += 4){
+							for(int x = 0;x<width;x += 4){
 								var alpha = temp;
 								temp += 8;
 								DDSHelper.DxtcReadColors(temp,ref colors);
@@ -792,8 +792,8 @@ namespace GameEngine
 								colors[3].blue = (byte)((colors[0].blue+2*colors[1].blue+1)/3);
 								colors[3].green = (byte)((colors[0].green+2*colors[1].green+1)/3);
 								colors[3].red = (byte)((colors[0].red+2*colors[1].red+1)/3);
-								for(int j=0,k=0;j<4;j++){
-									for(int i=	0;i<4;k++,i++){
+								for(int j = 0,k=0;j<4;j++){
+									for(int i = 	0;i<4;k++,i++){
 										int select = (int)((bitmask & 0x03 << k*2)>> k*2);
 										if(x+i<width&&y+j<height)
 										{
@@ -804,10 +804,10 @@ namespace GameEngine
 										}
 									}
 								}
-								for(int j=0;j<4;j++)
+								for(int j = 0;j<4;j++)
 								{
 									ushort word = (ushort)(alpha[2*j] | alpha[2*j+1] << 8);
-									for(int i=0;i<4;i++){
+									for(int i = 0;i<4;i++){
 										if(x+i<width&&y+j<height){
 											uint offset = (uint)(z*sizeofplane+(y+j)*bps+(x+i)*bpp+3);
 											rawData[offset] = (byte)(word & 0x0F);
@@ -844,9 +844,9 @@ namespace GameEngine
 				var alphas = new ushort[8];
 				fixed(byte*bytePtr = data){
 					var temp = bytePtr;
-					for(int z=0;z<depth;z++){
-						for(int y=0;y<height;y += 4){
-							for(int x=0;x<width;x += 4){
+					for(int z = 0;z<depth;z++){
+						for(int y = 0;y<height;y += 4){
+							for(int x = 0;x<width;x += 4){
 								if(y>=height || x>=width){
 									break;
 								}
@@ -864,8 +864,8 @@ namespace GameEngine
 								colors[3].green = (byte)((colors[0].green+2*colors[1].green+1)/3);
 								colors[3].red = (byte)((colors[0].red+2*colors[1].red+1)/3);
 								int k = 0;
-								for(int j=0;j<4;j++){
-									for(int i=0;i<4;k++,i++){
+								for(int j = 0;j<4;j++){
+									for(int i = 0;i<4;k++,i++){
 										int select = (int)((bitmask & 0x03 << k*2)>> k*2);
 										var col = colors[select];
 										if(x+i<width&&y+j<height)
@@ -893,8 +893,8 @@ namespace GameEngine
 									alphas[7] = 0xFF;
 								}
 								uint bits = (uint)(alphamask[0]|alphamask[1] << 8|alphamask[2] << 16);
-								for(int j=0;j<2;j++){
-									for(int i=0;i<4;i++){
+								for(int j = 0;j<2;j++){
+									for(int i = 0;i<4;i++){
 										if(x+i<width&&y+j<height){
 											uint offset = (uint)(z*sizeofplane+(y+j)*bps+(x+i)*bpp+3);
 											rawData[offset] = (byte)alphas[bits & 0x07];
@@ -903,8 +903,8 @@ namespace GameEngine
 									}
 								}
 								bits = (uint)(alphamask[3]|alphamask[4] << 8|alphamask[5] << 16);
-								for(int j=2;j<4;j++){
-									for(int i=0;i<4;i++){
+								for(int j = 2;j<4;j++){
+									for(int i = 0;i<4;i++){
 										if(x+i<width&&y+j<height){
 											uint offset = (uint)(z*sizeofplane+(y+j)*bps+(x+i)*bpp+3);
 											rawData[offset] = (byte)alphas[bits & 0x07];
@@ -943,7 +943,7 @@ namespace GameEngine
 					var temp = bytePtr;
 					while(pixnum-->0)
 					{
-						uint px=	*(uint*)temp& valMask;
+						uint px = 	*(uint*)temp& valMask;
 						temp += pixSize;
 						uint pxc = px & header.pixelformat.rbitmask;
 						rawData[offset+0] = (byte)((pxc >> rShift1)*rMul>> rShift2);
@@ -983,7 +983,7 @@ namespace GameEngine
 					var temp = bytePtr;
 					while(pixnum-->0)
 					{
-						uint px=	*(uint*)temp& valMask;
+						uint px = 	*(uint*)temp& valMask;
 						temp += pixSize;
 						uint pxc = px & header.pixelformat.rbitmask;
 						rawData[offset+0] = (byte)((pxc >> rShift1)*rMul>> rShift2);
@@ -1013,21 +1013,21 @@ namespace GameEngine
 				fixed(byte*bytePtr = data)
 				{
 					var temp = bytePtr;
-					for(int z=	0;z<depth;z++)
+					for(int z = 	0;z<depth;z++)
 					{
-						for(int y=	0;y<height;y += 4)
+						for(int y = 	0;y<height;y += 4)
 						{
-							for(int x=	0;x<width;x += 4)
+							for(int x = 	0;x<width;x += 4)
 							{
 								var temp2 = temp+8;
 								int t1 = yColours[0] = temp[0];
 								int t2 = yColours[1] = temp[1];
 								temp += 2;
 								if(t1>t2)
-									for(int i=	2;i<8;++i)
+									for(int i = 	2;i<8;++i)
 										yColours[i] = (byte)(t1+(t2-t1)*(i-1)/7);else
 								{
-									for(int i=	2;i<6;++i)
+									for(int i = 	2;i<6;++i)
 										yColours[i] = (byte)(t1+(t2-t1)*(i-1)/5);
 									yColours[6] = 0;
 									yColours[7] = 255;
@@ -1036,24 +1036,24 @@ namespace GameEngine
 								t2 = xColours[1] = temp2[1];
 								temp2 += 2;
 								if(t1>t2)
-									for(int i=	2;i<8;++i)
+									for(int i = 	2;i<8;++i)
 										xColours[i] = (byte)(t1+(t2-t1)*(i-1)/7);else
 								{
-									for(int i=	2;i<6;++i)
+									for(int i = 	2;i<6;++i)
 										xColours[i] = (byte)(t1+(t2-t1)*(i-1)/5);
 									xColours[6] = 0;
 									xColours[7] = 255;
 								}
 								int currentOffset = offset;
-								for(int k=	0;k<4;k += 2)
+								for(int k = 	0;k<4;k += 2)
 								{
 									uint bitmask = (uint)temp[0]<< 0|(uint)temp[1]<< 8|(uint)temp[2]<< 16;
 									uint bitmask2 = (uint)temp2[0]<< 0|(uint)temp2[1]<< 8|(uint)temp2[2]<< 16;
-									for(int j=	0;j<2;j++)
+									for(int j = 	0;j<2;j++)
 									{
 										if(y+k+j<height)
 										{
-											for(int i=	0;i<4;i++)
+											for(int i = 	0;i<4;i++)
 											{
 												if(x+i<width)
 												{
@@ -1098,33 +1098,33 @@ namespace GameEngine
 				fixed(byte*bytePtr = data)
 				{
 					var temp = bytePtr;
-					for(int z=	0;z<depth;z++)
+					for(int z = 	0;z<depth;z++)
 					{
-						for(int y=	0;y<height;y += 4)
+						for(int y = 	0;y<height;y += 4)
 						{
-							for(int x=	0;x<width;x += 4)
+							for(int x = 	0;x<width;x += 4)
 							{
 								int t1 = colors[0] = temp[0];
 								int t2 = colors[1] = temp[1];
 								temp += 2;
 								if(t1>t2)
-									for(int i=	2;i<8;++i)
+									for(int i = 	2;i<8;++i)
 										colors[i] = (byte)(t1+(t2-t1)*(i-1)/7);else
 								{
-									for(int i=	2;i<6;++i)
+									for(int i = 	2;i<6;++i)
 										colors[i] = (byte)(t1+(t2-t1)*(i-1)/5);
 									colors[6] = 0;
 									colors[7] = 255;
 								}
 								uint currOffset = offset;
-								for(int k=	0;k<4;k += 2)
+								for(int k = 	0;k<4;k += 2)
 								{
 									uint bitmask = (uint)temp[0]<< 0|(uint)temp[1]<< 8|(uint)temp[2]<< 16;
-									for(int j=	0;j<2;j++)
+									for(int j = 	0;j<2;j++)
 									{
 										if(y+k+j<height)
 										{
-											for(int i=	0;i<4;i++)
+											for(int i = 	0;i<4;i++)
 											{
 												if(x+i<width)
 												{
@@ -1191,11 +1191,11 @@ namespace GameEngine
 				fixed(byte*bytePtr = data)
 				{
 					var temp = bytePtr;
-					for(int z=	0;z<depth;z++)
+					for(int z = 	0;z<depth;z++)
 					{
-						for(int y=	0;y<height;y += 4)
+						for(int y = 	0;y<height;y += 4)
 						{
-							for(int x=	0;x<width;x += 4)
+							for(int x = 	0;x<width;x += 4)
 							{
 								if(y>=height || x>=width)
 									break;
@@ -1224,9 +1224,9 @@ namespace GameEngine
 								colors[3].red = (byte)((colors[0].red+2*colors[1].red+1)/3);
 								colors[3].alpha = 0xFF;
 								int k = 0;
-								for(int j=	0;j<4;j++)
+								for(int j = 	0;j<4;j++)
 								{
-									for(int i=	0;i<4;i++,k++)
+									for(int i = 	0;i<4;i++,k++)
 									{
 										int select = (int)((bitmask & 0x03 << k*2)>> k*2);
 										var col = colors[select];
@@ -1256,10 +1256,10 @@ namespace GameEngine
 									alphas[6] = 0x00;									
 									alphas[7] = 0xFF;									
 								}
-								uint bits=	*(uint*)alphamask;
-								for(int j=	0;j<2;j++)
+								uint bits = 	*(uint*)alphamask;
+								for(int j = 	0;j<2;j++)
 								{
-									for(int i=	0;i<4;i++)
+									for(int i = 	0;i<4;i++)
 									{
 										if(x+i<width&&y+j<height)
 										{
@@ -1270,9 +1270,9 @@ namespace GameEngine
 									}
 								}
 								bits=	*(uint*)&alphamask[3];
-								for(int j=	2;j<4;j++)
+								for(int j = 	2;j<4;j++)
 								{
-									for(int i=	0;i<4;i++)
+									for(int i = 	0;i<4;i++)
 									{
 										if(x+i<width&&y+j<height)
 										{
@@ -1308,7 +1308,7 @@ namespace GameEngine
 						{
 							case DDSPixelFormat.R32F: 
 								size = width*height*depth*3;
-								for(int i=0,j=0;i<size;i += 3,j++)
+								for(int i = 0,j=0;i<size;i += 3,j++)
 								{
 									((float*)destData)[i] = ((float*)temp)[j];
 									((float*)destData)[i+1] = 1.0f;
@@ -1320,7 +1320,7 @@ namespace GameEngine
 								break;
 							case DDSPixelFormat.G32R32F: 
 								size = width*height*depth*3;
-								for(int i=0,j=0;i<size;i += 3,j += 2)
+								for(int i = 0,j=0;i<size;i += 3,j += 2)
 								{
 									((float*)destData)[i] = ((float*)temp)[j];
 									((float*)destData)[i+1] = ((float*)temp)[j+1];

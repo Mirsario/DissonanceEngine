@@ -20,7 +20,7 @@ namespace GameEngine
 			Skeleton skeleton = new Skeleton(name);
 			skeleton.bonesByName = new Dictionary<string,Bone>();
 			skeleton.bones = new Bone[bones.Length];
-			for(int i=0;i<bones.Length;i++) {
+			for(int i = 0;i<bones.Length;i++) {
 				skeleton.bones[i] = new Bone(bones[i].name);
 				skeleton.bones[i].transform.parent = parentTransform;
 				skeleton.bones[i].transform.localPosition = bones[i].transform.localPosition;
@@ -36,7 +36,7 @@ namespace GameEngine
 				bonesByName = new Dictionary<string,AnimationBone>(),
 				bones = new AnimationBone[bones.Length]
 			};
-			for(int i=0;i<bones.Length;i++) {
+			for(int i = 0;i<bones.Length;i++) {
 				var bone = new AnimationBone(bones[i].name) {
 					baseMatrix = bones[i].baseMatrix,
 					transform = new Transform()
@@ -44,7 +44,7 @@ namespace GameEngine
 				skeleton.bones[i] = bone;
 				skeleton.bonesByName.Add(bone.name,bone);
 			}
-			for(int i=0;i<bones.Length;i++) {
+			for(int i = 0;i<bones.Length;i++) {
 				var bone = skeleton.bones[i];
 				bone.transform.parent = bone.parent==null ? parentTransform : bone.parent.transform;
 				bone.transform.Matrix = bone.baseMatrix;
@@ -57,7 +57,7 @@ namespace GameEngine
 		}
 		public void Dispose()
 		{
-			for(int i=0;i<bones.Length;i++) {
+			for(int i = 0;i<bones.Length;i++) {
 				bones[i].Dispose();
 			}
 			bones = null;

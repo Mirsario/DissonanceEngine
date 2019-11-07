@@ -35,7 +35,7 @@ namespace GameEngine
 		{
 			//Debug.Log("lala1");
 			if(skeleton!=null) {
-				for(int i=0;i<skeleton.bones.Length;i++) {
+				for(int i = 0;i<skeleton.bones.Length;i++) {
 					var matrix = skeleton.bones[i].transform.Matrix;
 					matrix = Matrix4x4.CreateRotation(matrix.ExtractEuler());
 					Shader.UniformMatrix4(GL.GetUniformLocation(shader.program,$"boneMatrices[{i}]"),ref matrix);

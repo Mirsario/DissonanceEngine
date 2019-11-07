@@ -122,7 +122,7 @@ namespace GameEngine
 		public T GetComponent<T>(bool noSubclasses = false) where T : Component
 		{
 			var type = typeof(T);
-			for(int i=0;i<components.Count;i++) {
+			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
@@ -135,7 +135,7 @@ namespace GameEngine
 		{
 			var list = new List<T>();
 			var type = typeof(T);
-			for(int i=0;i<components.Count;i++) {
+			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
@@ -148,7 +148,7 @@ namespace GameEngine
 		{
 			int count = 0;
 			var type = typeof(T);
-			for(int i=0;i<components.Count;i++) {
+			for(int i = 0;i<components.Count;i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {

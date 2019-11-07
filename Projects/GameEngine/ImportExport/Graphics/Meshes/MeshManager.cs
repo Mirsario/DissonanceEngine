@@ -29,12 +29,12 @@ namespace GameEngine
 			BoneWeight[] boneWeights = null;
 			AnimationSkeleton skeleton = null;
 			
-			for(int chunk=0;chunk<chunkAmount;chunk++) {
+			for(int chunk = 0;chunk<chunkAmount;chunk++) {
 				ReadChunk(reader,(chunkName,r) => {
 					switch(chunkName) {
 						#region Vertices
 						case "vertices": {
-							for(int i=0;i<vertexCount;i++) {
+							for(int i = 0;i<vertexCount;i++) {
 								vertices[i] = r.ReadVector3();
 								//Debug.Log($"Vertices[{i}]=={vertices[i]}");
 							}
@@ -43,7 +43,7 @@ namespace GameEngine
 						#endregion
 						#region Triangles
 						case "triangles": {
-							for(int i=0;i<triIndiceCount;i++) {
+							for(int i = 0;i<triIndiceCount;i++) {
 								triangles[i] = r.ReadInt32();
 								//Debug.Log($"triangles[{i}]=={triangles[i]}");
 							}
@@ -53,7 +53,7 @@ namespace GameEngine
 						#region Normals
 						case "normals": {
 							normals = new Vector3[vertexCount];
-							for(int i=0;i<vertexCount;i++) {
+							for(int i = 0;i<vertexCount;i++) {
 								normals[i] = r.ReadVector3();
 							}
 							break;
@@ -62,7 +62,7 @@ namespace GameEngine
 						#region Tangents
 						case "tangents": {
 							tangents = new Vector4[vertexCount];
-							for(int i=0;i<vertexCount;i++) {
+							for(int i = 0;i<vertexCount;i++) {
 								tangents[i] = r.ReadVector4();
 							}
 							break;
@@ -71,7 +71,7 @@ namespace GameEngine
 						#region UVs
 						case "uv0": {
 							uv0 = new Vector2[vertexCount];
-							for(int i=0;i<vertexCount;i++) {
+							for(int i = 0;i<vertexCount;i++) {
 								uv0[i] = new Vector2(r.ReadSingle(),r.ReadSingle());
 							}
 							break;
@@ -80,7 +80,7 @@ namespace GameEngine
 						#region BoneWeights
 						case "boneWeights": {
 							boneWeights = new BoneWeight[vertexCount];
-							for(int i=0;i<vertexCount;i++) {
+							for(int i = 0;i<vertexCount;i++) {
 								boneWeights[i].boneIndex0 = r.ReadInt32();
 								boneWeights[i].boneIndex1 = r.ReadInt32();
 								boneWeights[i].boneIndex2 = r.ReadInt32();
@@ -100,7 +100,7 @@ namespace GameEngine
 							int bonesCount = r.ReadInt32();
 							skeleton.bones = new Bone[bonesCount];
 							int[] parentIds = new int[bonesCount];
-							for(int i=0;i<bonesCount;i++) {
+							for(int i = 0;i<bonesCount;i++) {
 								skeleton.bones[i] = new Bone(r.ReadString());
 								Vector3 localPosition = r.ReadVector3();
 								Quaternion localRotation = r.ReadQuaternion();
@@ -118,7 +118,7 @@ namespace GameEngine
 								//	Matrix4x4.CreateTranslation(localPosition*scale)*
 								//	Matrix4x4.CreateRotation(localRotation);
 							}
-							for(int i=0;i<bonesCount;i++) {
+							for(int i = 0;i<bonesCount;i++) {
 								int id = parentIds[i];
 								if(id>=0) {
 									skeleton.bones[i].parent = skeleton.bones[id];
@@ -177,7 +177,7 @@ namespace GameEngine
 
 			//Vertices
 			WriteChunk("vertices",w => {
-				for(int i=0;i<vertexCount;i++) {
+				for(int i = 0;i<vertexCount;i++) {
 					w.Write(mesh.vertices[i]);
 				}
 			});
@@ -192,7 +192,7 @@ namespace GameEngine
 			//UV
 			if(mesh.uv?.Length>0==true) {
 				WriteChunk("uv0",w => {
-					for(int i=0;i<vertexCount;i++) {
+					for(int i = 0;i<vertexCount;i++) {
 						w.Write(mesh.uv[i]);
 					}
 				});
@@ -201,7 +201,7 @@ namespace GameEngine
 			//Normals
 			if(mesh.normals?.Length>0==true) {
 				WriteChunk("normals",w => {
-					for(int i=0;i<vertexCount;i++) {
+					for(int i = 0;i<vertexCount;i++) {
 						w.Write(mesh.normals[i]);
 					}
 				});
@@ -210,7 +210,7 @@ namespace GameEngine
 			//Tangents
 			if(mesh.tangents?.Length>0==true) {
 				WriteChunk("tangents",w => {
-					for(int i=0;i<vertexCount;i++) {
+					for(int i = 0;i<vertexCount;i++) {
 						w.Write(mesh.tangents[i]);
 					}
 				});
@@ -219,7 +219,7 @@ namespace GameEngine
 			//VertexColor
 			if(mesh.colors?.Length>0==true) {
 				WriteChunk("colors",w => {
-					for(int i=0;i<vertexCount;i++) {
+					for(int i = 0;i<vertexCount;i++) {
 						var c = mesh.colors[i];
 
 						w.Write((byte)(c.x*255));
@@ -233,7 +233,7 @@ namespace GameEngine
 			//BoneWeights
 			if(mesh.boneWeights?.Length>0==true) {
 				WriteChunk("boneWeights",w => {
-					for(int i=0;i<vertexCount;i++) {
+					for(int i = 0;i<vertexCount;i++) {
 						var weight = mesh.boneWeights[i];
 
 						w.Write(weight.boneIndex0);
@@ -310,7 +310,7 @@ namespace GameEngine
 			Debug.Log("Writing skeleton");
 			writer.Write("skeleton");
 			long chunkSize = StringSize(skinnedMesh.rootBone.parent.name)+sizeof(int);
-			for(int i=0;i<skinnedMesh.bones.Length;i++) {
+			for(int i = 0;i<skinnedMesh.bones.Length;i++) {
 				chunkSize += (long)StringSize(skinnedMesh.bones[i].name)+(sizeof(float)*10)+sizeof(int);
 			}
 			writer.Write(chunkSize);
@@ -319,7 +319,7 @@ namespace GameEngine
 			writer.Write(skinnedMesh.bones.Length);
 			Debug.Log("skeletonName: "+skinnedMesh.rootBone.parent.name);
 			Debug.Log("boneCount: "+skinnedMesh.bones.Length);
-			for(int i=0;i<skinnedMesh.bones.Length;i++) {
+			for(int i = 0;i<skinnedMesh.bones.Length;i++) {
 				Transform bone = skinnedMesh.bones[i];
 				writer.Write(bone.name);
 				writer.Write(bone.localPosition);
@@ -329,7 +329,7 @@ namespace GameEngine
 					writer.Write(-1);
 				}else{
 					bool wrote = false;
-					for(int j=0;j<skinnedMesh.bones.Length;j++) {
+					for(int j = 0;j<skinnedMesh.bones.Length;j++) {
 						if(bone.parent==skinnedMesh.bones[j].parent) {
 							writer.Write(j);
 							wrote = true;

@@ -47,7 +47,7 @@ namespace GameEngine
 			string text = message.ToString();
 			if(uniqueId!=null) {
 				int j = 0;
-				for(int i=0;i<lines.Count;i++) {
+				for(int i = 0;i<lines.Count;i++) {
 					if(lines[i].id==uniqueId) {
 						RemoveLine(i);
 						lines.RemoveAt(i);
@@ -63,14 +63,14 @@ namespace GameEngine
 			SplitWrite(text);
 			lines.Add(new LineInfo(text,uniqueId));
 			if(showTrace) {
-				for(int i=1;i<stackFrames.Length;i++) {
+				for(int i = 1;i<stackFrames.Length;i++) {
 					if(stackFrames[i].GetFileName()==null) {
 						break;
 					}
 					var method = stackFrames[i].GetMethod();
 					string frameText = "  "+Path.GetFileName(stackFrames[i].GetFileName())+":"+method.Name+"(";
 					var parameters = method.GetParameters();
-					for(int j=0;j<parameters.Length;j++) {
+					for(int j = 0;j<parameters.Length;j++) {
 						frameText += (j>0?",":"")+parameters[j].ParameterType.Name;
 					}
 					frameText += ") at line "+stackFrames[i].GetFileLineNumber();
@@ -81,7 +81,7 @@ namespace GameEngine
 		public static void SplitWrite(string str)
 		{
 			var lines = str.Split(new[]{"\r\n","\n"},StringSplitOptions.None);
-			for(int i=0;i<lines.Length;i++) {
+			for(int i = 0;i<lines.Length;i++) {
 				Console.WriteLine(lines[i]);
 			}
 		}

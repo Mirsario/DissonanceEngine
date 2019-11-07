@@ -142,8 +142,8 @@ namespace GameEngine
 					1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
 				);
 				GL.Begin(PrimitiveTypeGL.Quads);
-				for(int y=0;y<3;y++) {
-					for(int x=0;x<3;x++) {
+				for(int y = 0;y<3;y++) {
+					for(int x = 0;x<3;x++) {
 						var vertex = new Vector4(
 							x>0 ? x==1 ? center.x : center.z : vector.x,
 							y>0 ? y==1 ? center.y : center.w : vector.y,
@@ -198,7 +198,7 @@ namespace GameEngine
 
 			GL.Begin(PrimitiveTypeGL.Quads);
 
-			for(int i=0;i<text.Length;i++) {
+			for(int i = 0;i<text.Length;i++) {
 				char c = text[i];
 				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
 					GL.VertexAttrib2(uvAttrib,uvs[0]);	GL.Vertex2(xPos,		1f-yPos);

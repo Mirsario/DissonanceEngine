@@ -19,14 +19,14 @@ namespace GameEngine.Graphics
 			var size = new Vector2(charSize.x/texture.Width,charSize.y/texture.Height);
 			float x = 0f;
 			float y = 0f;
-			for(int i=0;i<offset;i++) {
+			for(int i = 0;i<offset;i++) {
 				x += size.x;
 				if(x>=1f) {
 					x = 0f;
 					y += size.y;
 				}
 			}
-			for(int i=0;i<charList.Length;i++) {
+			for(int i = 0;i<charList.Length;i++) {
 				charToUv.Add(charList[i],new Vector2[4] {
 					new Vector2(x,			y),
 					new Vector2(x+size.x,	y),

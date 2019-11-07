@@ -36,7 +36,7 @@ namespace GameEngine
 			Debug.Log("propertyListLength: "+propertyCount);
 			Debug.Log("nameLength: "+nameLength);
 			Debug.Log("name: "+name);
-			for(int i=0;i<propertyCount;i++) {
+			for(int i = 0;i<propertyCount;i++) {
 				char type = reader.ReadChar();
 				Debug.Log("property["+i+"] type is ''"+type+"''");
 			}

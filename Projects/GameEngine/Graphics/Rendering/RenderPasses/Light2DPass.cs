@@ -22,7 +22,7 @@ namespace GameEngine.Graphics
 
 			passShader.SetupCommonUniforms();
 
-			for(int i=0;i<Rendering.cameraList.Count;i++) {
+			for(int i = 0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
 
 				var viewport = GetViewport(camera);
@@ -33,7 +33,7 @@ namespace GameEngine.Graphics
 				passShader.SetupCameraUniforms(camera,cameraPos);
 
 				if(passedTextures!=null) {
-					for(int j=0;j<passedTextures.Length;j++) {
+					for(int j = 0;j<passedTextures.Length;j++) {
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+j));
 						GL.BindTexture(TextureTarget.Texture2D,passedTextures[j].Id);
 

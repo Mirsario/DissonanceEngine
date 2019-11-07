@@ -66,7 +66,7 @@ namespace GameEngine.Graphics
 		{
 			ShaderUniform uniform;
 			if(Textures.Count>0) {
-				for(int i=0;i<Textures.Count && i<32;i++) {
+				for(int i = 0;i<Textures.Count && i<32;i++) {
 					string textureName = Textures[i].Key;
 					var texture = Textures[i].Value;
 					if(texture==null || !shader.uniforms.TryGetValue(textureName,out uniform)) {
@@ -133,7 +133,7 @@ namespace GameEngine.Graphics
 			const int vecLength = 2;
 			int iBase;
 			var data = new float[values.Length*vecLength];
-			for(int i=0;i<values.Length;i++) {
+			for(int i = 0;i<values.Length;i++) {
 				iBase = i*vecLength;
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
@@ -154,7 +154,7 @@ namespace GameEngine.Graphics
 			const int vecLength = 3;
 			int iBase;
 			var data = new float[values.Length*vecLength];
-			for(int i=0;i<values.Length;i++) {
+			for(int i = 0;i<values.Length;i++) {
 				iBase = i*vecLength;
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
@@ -176,7 +176,7 @@ namespace GameEngine.Graphics
 			const int vecLength = 4;
 			int iBase;
 			var data = new float[values.Length*vecLength];
-			for(int i=0;i<values.Length;i++) {
+			for(int i = 0;i<values.Length;i++) {
 				iBase = i*vecLength;
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
@@ -208,7 +208,7 @@ namespace GameEngine.Graphics
 		{
 			CheckUniform(name,"SetTexture");
 
-			for(int i=0;i<Textures.Count;i++) {
+			for(int i = 0;i<Textures.Count;i++) {
 				if(Textures[i].Key==name) {
 					Textures[i] = new KeyValuePair<string,Texture>(name,texture);
 					return;

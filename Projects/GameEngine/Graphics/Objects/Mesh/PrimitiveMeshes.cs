@@ -255,8 +255,8 @@
 			int vertexIndex = 0;
 			int triangleIndex = 0;
 
-			for(int y=0;y<yRes;y++) {
-				for(int x=0;x<xRes;x++) {
+			for(int y = 0;y<yRes;y++) {
+				for(int x = 0;x<xRes;x++) {
 					SphereVertex(x,y,vertexIndex);
 					SphereVertex(x,y+1,vertexIndex+1);
 					SphereVertex(x+1,y,vertexIndex+2);

@@ -236,7 +236,7 @@ namespace GameEngine.Graphics
 		}
 		public static void SetTextures(Texture[] textures)
 		{
-			for(int i=0;i<textures.Length && i<32;i++) {
+			for(int i = 0;i<textures.Length && i<32;i++) {
 				var texture = textures[i];
 				
 				GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+i));
@@ -246,7 +246,7 @@ namespace GameEngine.Graphics
 		public static void SetTextures(Dictionary<string,Texture> textures)
 		{
 			var arr = textures.ToArray();
-			for(int i=0;i<arr.Length && i<32;i++) {
+			for(int i = 0;i<arr.Length && i<32;i++) {
 				string textureName = arr[i].Key;
 				var texture = arr[i].Value;
 				

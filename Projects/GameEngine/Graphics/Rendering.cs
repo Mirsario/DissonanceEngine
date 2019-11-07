@@ -143,7 +143,7 @@ namespace GameEngine.Graphics
 			drawCallsCount = 0;
 
 			//Calculate view and projection matrices, culling frustums
-			for(int i=0;i<cameraList.Count;i++) {
+			for(int i = 0;i<cameraList.Count;i++) {
 				var camera = cameraList[i];
 
 				var viewSize = camera.ViewPixel;
@@ -173,7 +173,7 @@ namespace GameEngine.Graphics
 			if(renderingPipeline.Framebuffers!=null) {
 				int length = renderingPipeline.Framebuffers.Length;
 
-				for(int i=0;i<=length;i++) {
+				for(int i = 0;i<=length;i++) {
 					var framebuffer = i==length ? null : renderingPipeline.Framebuffers[i];
 					framebuffer?.PrepareAttachments();
 					Framebuffer.Bind(framebuffer);
@@ -187,7 +187,7 @@ namespace GameEngine.Graphics
 			renderingPipeline.PreRender();
 
 			//Render passes
-			for(int i=0;i<renderingPipeline.RenderPasses.Length;i++) {
+			for(int i = 0;i<renderingPipeline.RenderPasses.Length;i++) {
 				var pass = renderingPipeline.RenderPasses[i];
 				if(pass.enabled) {
 					pass.Render();
@@ -231,12 +231,12 @@ namespace GameEngine.Graphics
 				
 				int x = 0;
 				int y = 0;
-				for(int i=0;i<framebuffers.Length;i++) {
+				for(int i = 0;i<framebuffers.Length;i++) {
 					var framebuffer = framebuffers[i];
 
 					Framebuffer.Bind(framebuffer,Framebuffer.Target.ReadFramebuffer);
 
-					for(int j=0;j<framebuffer.renderTextures.Length;j++) {
+					for(int j = 0;j<framebuffer.renderTextures.Length;j++) {
 						var tex = framebuffer.renderTextures[j];
 
 						if(IsDepthTexture(tex)) {

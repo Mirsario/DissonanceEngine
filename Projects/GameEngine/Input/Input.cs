@@ -126,7 +126,7 @@ namespace GameEngine
 				vars.pressedButtonsPrev.Add(str);
 			}
 
-			for(int i=0;i<MaxMouseButtons;i++) {
+			for(int i = 0;i<MaxMouseButtons;i++) {
 				vars.mouseButtonsPrev[i] = vars.mouseButtons[i];
 			}
 

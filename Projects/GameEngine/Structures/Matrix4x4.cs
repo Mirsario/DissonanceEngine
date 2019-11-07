@@ -805,7 +805,7 @@ namespace GameEngine
 		public static implicit operator double[](Matrix4x4 value)
 		{
 			var output = new double[16];
-			for(int i=0;i<16;i++) {
+			for(int i = 0;i<16;i++) {
 				output[i] = value[i];
 			}
 			return output;

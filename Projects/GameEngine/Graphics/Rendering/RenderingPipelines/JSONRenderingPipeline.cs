@@ -72,7 +72,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 			Framebuffer FindFramebuffer(string name,bool throwException = true)
 			{
 				Framebuffer framebuffer = null;
-				for(int i=0;i<framebuffers.Count;i++) {
+				for(int i = 0;i<framebuffers.Count;i++) {
 					if(framebuffers[i].Name==name) {
 						framebuffer = framebuffers[i];
 					}

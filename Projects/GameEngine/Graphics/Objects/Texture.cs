@@ -42,7 +42,7 @@ namespace GameEngine.Graphics
 			var fillColor = new Pixel(255,255,255,255);
 			int length = width*height;
 			var pixels = new Pixel[length];
-			for(int i=0;i<length;i++) {
+			for(int i = 0;i<length;i++) {
 				pixels[i] = fillColor;
 			}
 
@@ -83,8 +83,8 @@ namespace GameEngine.Graphics
 		   //TODO: Speed this up
 			var pixels = GetPixels();
 			var bitmap = new Bitmap(Width,Height);
-			for(int y=0;y<Height;y++) {
-				for(int x=0;x<Width;x++) {
+			for(int y = 0;y<Height;y++) {
+				for(int x = 0;x<Width;x++) {
 					bitmap.SetPixel(x,y,pixels[x,y]);
 				}
 			}

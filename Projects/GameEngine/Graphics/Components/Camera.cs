@@ -88,7 +88,7 @@ namespace GameEngine
 		}
 		public bool PointInFrustum(Vector3 point)
 		{
-			for(int i=0;i<6;i++) {
+			for(int i = 0;i<6;i++) {
 				if(frustum[i,0]*point.x+frustum[i,1]*point.y+frustum[i,2]*point.z+frustum[i,3]<=0) {
 					return false;
 				}
@@ -103,7 +103,7 @@ namespace GameEngine
 			float y2 = point.y+extents.y;
 			float z1 = point.z-extents.z;
 			float z2 = point.z+extents.z;
-			for(int i=0;i<6;i++) {
+			for(int i = 0;i<6;i++) {
 				if(frustum[i,0]*x1+frustum[i,1]*y1+frustum[i,2]*z1+frustum[i,3]>0) {
 					continue;
 				}

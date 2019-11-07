@@ -324,7 +324,7 @@ namespace GameEngine
 				tan2[i3] += tdir;
 			}
 
-			for(int i=0;i<verticeCount;i++)  {
+			for(int i = 0;i<verticeCount;i++)  {
 				var n = normals[i];
 				var t = tan1[i];
 

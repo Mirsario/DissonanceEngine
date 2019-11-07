@@ -97,7 +97,7 @@ namespace GameEngine
 				return 0f;
 			}
 			float num = values[0];
-			for(int i=1;i<values.Length;i++) {
+			for(int i = 1;i<values.Length;i++) {
 				if(values[i]<num) {
 					num = values[i];
 				}
@@ -111,7 +111,7 @@ namespace GameEngine
 				return 0;
 			}
 			int num = values[0];
-			for(int i=1;i<values.Length;i++) {
+			for(int i = 1;i<values.Length;i++) {
 				if(values[i]<num) {
 					num = values[i];
 				}
@@ -126,7 +126,7 @@ namespace GameEngine
 				return 0f;
 			}
 			float num = values[0];
-			for(int i=1;i<values.Length;i++) {
+			for(int i = 1;i<values.Length;i++) {
 				if(values[i]>num) {
 					num = values[i];
 				}
@@ -140,7 +140,7 @@ namespace GameEngine
 				return 0;
 			}
 			int num = values[0];
-			for(int i=1;i<values.Length;i++) {
+			for(int i = 1;i<values.Length;i++) {
 				if(values[i]>num) {
 					num = values[i];
 				}

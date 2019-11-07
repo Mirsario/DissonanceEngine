@@ -339,7 +339,7 @@ namespace GameEngine.Graphics
 					}
 				}
 
-				for(int i=0;i<defines.Length;i++) {
+				for(int i = 0;i<defines.Length;i++) {
 					defString += "#define "+defines[i]+" \n";
 				}
 

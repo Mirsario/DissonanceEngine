@@ -19,8 +19,8 @@ namespace GameEngine.Extensions
 			int xLength2 = to.GetLength(0);
 			int yLength2 = to.GetLength(1);
 
-			for(int y=0;y<srcRect.height;y++) {
-				for(int x=0;x<srcRect.width;x++) {
+			for(int y = 0;y<srcRect.height;y++) {
+				for(int x = 0;x<srcRect.width;x++) {
 					int X1 = srcRect.x+x;
 					int Y1 = srcRect.y+y;
 					int X2 = destPoint.x+x;

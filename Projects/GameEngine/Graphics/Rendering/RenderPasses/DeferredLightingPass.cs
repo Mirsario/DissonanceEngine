@@ -36,7 +36,7 @@ namespace GameEngine.Graphics
 			worldView = default, worldViewInverse = default,
 			worldViewProj = default, worldViewProjInverse = default;
 
-			for(int i=0;i<Rendering.cameraList.Count;i++) {
+			for(int i = 0;i<Rendering.cameraList.Count;i++) {
 				var camera = Rendering.cameraList[i];
 
 				var viewRect = camera.ViewPixel;
@@ -44,7 +44,7 @@ namespace GameEngine.Graphics
 
 				var cameraPos = camera.Transform.Position;
 
-				for(int j=0;j<shaders.Length;j++) {
+				for(int j = 0;j<shaders.Length;j++) {
 					var activeShader = shaders[j];
 					if(activeShader==null) {
 						continue;
@@ -58,7 +58,7 @@ namespace GameEngine.Graphics
 					var lightType = (LightType)j;
 					
 					//TODO: Update & optimize this
-					for(int k=0;k<passedTextures.Length;k++) {
+					for(int k = 0;k<passedTextures.Length;k++) {
 						var tex = passedTextures[k];
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+k));
 						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
