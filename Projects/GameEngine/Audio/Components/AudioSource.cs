@@ -15,6 +15,7 @@ namespace GameEngine
 		protected float refDistance = 0f;
 		protected float maxDistance = defaultMaxDistance;
 		protected float volume = 1f;
+		protected float pitch = 1f;
 		protected float playbackOffset;
 		protected bool updateClip;
 		protected bool updateIs2D;
@@ -22,6 +23,7 @@ namespace GameEngine
 		protected bool updateRefDistance = true;
 		protected bool updateMaxDistance = true;
 		protected bool updateVolume = true;
+		protected bool updatePitch = true;
 		protected bool updatePlaybackOffset;
 
 		///<summary>Indicates whether or not the source is currently playing.</summary>
@@ -122,6 +124,20 @@ namespace GameEngine
 				}
 			}
 		}
+		public float Pitch {
+			get => pitch;
+			set {
+				pitch = value;
+
+				if(beenEnabledBefore) {
+					AL.Source(sourceId,ALSourcef.Pitch,value);
+
+					updatePitch = false;
+				} else {
+					updatePitch = true;
+				}
+			}
+		}
 		public float PlaybackOffset {
 			get => playbackOffset;
 			set {
@@ -162,6 +178,9 @@ namespace GameEngine
 			}
 			if(updateVolume) {
 				Volume = volume;
+			}
+			if(updatePitch) {
+				Pitch = pitch;
 			}
 			if(updatePlaybackOffset) {
 				PlaybackOffset = playbackOffset;

@@ -26,12 +26,12 @@ namespace GameEngine
 			
 			CheckALErrors();
 		}
-		internal static void FixedUpdate() {}
+		internal static void FixedUpdate() => CheckALErrors();
 		internal static void Dispose() {}
-
-		public static void CheckALErrors()
+		internal static void CheckALErrors()
 		{
 			var error = AL.GetError();
+
 			if(error!=ALError.NoError) {
 				throw new Exception("ALError: "+error);
 			}

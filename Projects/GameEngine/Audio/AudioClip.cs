@@ -5,8 +5,6 @@ namespace GameEngine
 {
 	public class AudioClip : Asset<AudioClip>
 	{
-		//TODO: Implement OnDispose
-
 		internal int bufferId;
 
 		internal int channelsNum;
@@ -20,15 +18,27 @@ namespace GameEngine
 			bufferId = AL.GenBuffer();
 		}
 
+		public override void Dispose()
+		{
+			if(bufferId>0) {
+				AL.DeleteBuffer(bufferId);
+
+				bufferId = 0;
+			}
+		}
+
 		internal void SetData(byte[] data,int channelsNum,int bitsPerSample,int sampleRate)
 		{
 			if(data==null) {
 				throw new ArgumentNullException(nameof(data));
 			}
+
 			this.channelsNum = channelsNum;
 			this.bitsPerSample = bitsPerSample;
 			this.sampleRate = sampleRate;
+
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
+
 			AL.BufferData(bufferId,GetSoundFormat(channelsNum,bitsPerSample),data,data.Length,sampleRate);
 
 			Audio.CheckALErrors();
@@ -38,9 +48,12 @@ namespace GameEngine
 			if(data==null) {
 				throw new ArgumentNullException(nameof(data));
 			}
+
 			this.channelsNum = channelsNum;
 			this.sampleRate = sampleRate;
+
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
+
 			AL.BufferData(bufferId,ALFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
 
 			Audio.CheckALErrors();
@@ -50,23 +63,22 @@ namespace GameEngine
 			if(data==null) {
 				throw new ArgumentNullException(nameof(data));
 			}
+
 			this.channelsNum = channelsNum;
 			this.sampleRate = sampleRate;
+
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
+
 			AL.BufferData(bufferId,ALFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
 
 			Audio.CheckALErrors();
 		}
 
-		internal static ALFormat GetSoundFormat(int channels,int bits)
-		{
-			return channels switch
-			{
-				1 => bits==8 ? ALFormat.Mono8 : ALFormat.Mono16,
-				2 => bits==8 ? ALFormat.Stereo8 : ALFormat.Stereo16,
-				_ => throw new NotSupportedException("The specified sound format is not supported."),
-			};
-		}
+		private static ALFormat GetSoundFormat(int channels,int bits) => channels switch {
+			1 => bits==8 ? ALFormat.Mono8 : ALFormat.Mono16,
+			2 => bits==8 ? ALFormat.Stereo8 : ALFormat.Stereo16,
+			_ => throw new NotSupportedException("The specified sound format is not supported."),
+		};
 	}
 }
 
