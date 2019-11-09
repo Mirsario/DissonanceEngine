@@ -13,7 +13,7 @@ namespace AbyssCrusaders.Core
 			}
 		}
 
-		public static SoundInstance Create(string sound,Vector2 position,float volume = 1f,Transform attachTo = null,bool is2D = false)
+		public static SoundInstance Create(string sound,Vector2 position,float volume = 1f,float? pitch = null,Transform attachTo = null,bool is2D = false)
 		{
 			var instance = Instantiate<SoundInstance>("SoundInstance_"+sound);
 
@@ -26,6 +26,7 @@ namespace AbyssCrusaders.Core
 			(instance.source = instance.AddComponent<AudioSource>(c => {
 				c.Clip = Resources.Get<AudioClip>(sound);
 				c.Volume = volume;
+				c.Pitch = pitch ?? Rand.Range(0.9f,1.1f);
 
 				if(is2D) {
 					c.Is2D = true;
