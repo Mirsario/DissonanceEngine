@@ -24,6 +24,7 @@ namespace ImmersionFramework
 		public void Update()
 		{
 			time -= Time.DeltaTime;
+
 			if(time<0f) {
 				screenShakes.Remove(this);
 			}
@@ -38,7 +39,9 @@ namespace ImmersionFramework
 		public static ScreenShake New(float power,float time,float distance,Vector3? position = null)
 		{
 			var screenShake = new ScreenShake(power,time,distance,position);
+
 			screenShakes.Add(screenShake);
+
 			return screenShake;
 		}
 		public static float GetPowerAtPoint(Vector3 point)

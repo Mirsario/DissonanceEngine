@@ -25,11 +25,9 @@ namespace SurvivalGame
 
 					const string Clip = "Sounds/honk.wav";
 
-					if(entity is Human human) {
-						human.PlayVoiceClip(Resources.Get<AudioClip>(Clip));
-					} else {
-						SoundInstance.Create(Clip,entity.Transform.Position);
-					}
+					var instance = SoundInstance.Create(Clip,entity.Transform.Position);
+
+					instance.source.Clip?.Dispose();
 				}
 			}
 
