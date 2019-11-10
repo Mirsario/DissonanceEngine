@@ -10,7 +10,7 @@ namespace AbyssCrusaders.Core
 {
 	public partial class Chunk
 	{
-		private const int OcclusionSpread = 4;
+		private const int OcclusionSpread = 3;
 		private const int EmissionSpread = 12;
 		private const int MaxLightingSpread = EmissionSpread;
 		private const int LightingDataTexSize = ChunkSize+MaxLightingSpread*2;
@@ -314,12 +314,16 @@ namespace AbyssCrusaders.Core
 
 			for(int y = -MaxLightingSpread;y<ChunkSize+MaxLightingSpread;y++) {
 				for(int x = -MaxLightingSpread;x<ChunkSize+MaxLightingSpread;x++) {
-					Tile tile = (x<0 || y<0 || x>=ChunkSize || y>=ChunkSize) ? world[positionInTiles.x+x,positionInTiles.y+y] : tiles[x,y];
+					Tile GetTile(int x,int y) => (x<0 || y<0 || x>=ChunkSize || y>=ChunkSize) ? world[positionInTiles.x+x,positionInTiles.y+y] : tiles[x,y];
+					static bool PassesLight(Tile tile) => tile.type==0 || TilePreset.byId[tile.type].transparent;
 
-					bool passesLight = tile.type==0 || TilePreset.byId[tile.type].transparent;
+					Tile tile = GetTile(x,y);
+
+
+					bool passesLight = PassesLight(tile);
 					bool hasLight = passesLight && tile.wall==0;
 
-					pixelData[i++] = passesLight ? (byte)255 : (byte)0;
+					pixelData[i++] = (passesLight || PassesLight(GetTile(x-1,y)) || PassesLight(GetTile(x+1,y)) || PassesLight(GetTile(x,y-1)) || PassesLight(GetTile(x,y+1))) ? (byte)255 : (byte)0;
 					pixelData[i++] = hasLight ? (byte)255 : (byte)0;
 				}
 			}

@@ -1,3 +1,4 @@
+using AbyssCrusaders.Content.Common.Effects;
 using AbyssCrusaders.Content.Tiles.Building;
 using AbyssCrusaders.Core;
 using AbyssCrusaders.Core.Test;
@@ -135,6 +136,14 @@ namespace AbyssCrusaders.Content.Entities
 				}
 			}
 
+			if(Input.GetKeyDown(Keys.U)) {
+				Instantiate<Cloud>(position:Main.camera.mousePosition);
+			}
+			if(Input.GetKeyDown(Keys.I)) {
+				var pos = new Vector2Int((int)Position.x,(int)Position.y+2);
+
+				world.PlaceTileEntity<TileEntities.Nature.Trees.Spruce>(pos.x,pos.y);
+			}
 			if(Input.GetKeyDown(Keys.O)) {
 				var pos = new Vector2Int((int)Position.x,(int)Position.y-1);
 

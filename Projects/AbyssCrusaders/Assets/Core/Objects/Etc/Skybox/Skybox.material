@@ -1,0 +1,8 @@
+{
+	"name": "$FILENAME",
+	"shader": "Game/Skybox",
+	"vectors": {
+		"colorTop": [ 0.43, 0.72, 0.92 ], //[0.21,0.48,0.67], //
+		"colorBottom": [ 0.48,0.47,0.69 ] //[ 0.68, 0.80, 0.85 ]
+	}
+}

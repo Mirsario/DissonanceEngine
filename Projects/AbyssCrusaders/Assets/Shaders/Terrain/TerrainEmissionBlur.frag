@@ -40,7 +40,7 @@ void main (void)
 				
 				vec2 values = texture2D(inputMap,vUV+pixelPos).xy;
                 
-				//Emission
+				//Occlusion
                 if(updateOcclusion && values.x>=1.0 && (!updateEmission || (x>=-occlusionSpread && y>=-occlusionSpread && x<=occlusionSpread && y<=occlusionSpread))) {
                     float step = 1.0-(sqrt(x*x+y*y)/occlusionSpread);
                     

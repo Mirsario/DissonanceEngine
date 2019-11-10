@@ -21,7 +21,7 @@ namespace AbyssCrusaders.Content.Worlds.Common.GenPasses
 				Frequency = 0.05f
 			};*/
 
-			var noiseB = new FastNoise {
+			var noise = new FastNoise {
 				NoiseType = FastNoise.NoiseTypes.CubicFractal,
 				Frequency = 0.06f,
 				FractalOctaves = 3,
@@ -33,7 +33,7 @@ namespace AbyssCrusaders.Content.Worlds.Common.GenPasses
 				for(int y = 0;y<world.height;y++) {
 					ref var tile = ref world[x,y];
 
-					if(noiseB.GetNoise(x,y)+0.5f>0.02f) {
+					if(noise.GetNoise(x,y)+0.5f>0.02f) {
 						tile.type = tileType;
 					}
 				}

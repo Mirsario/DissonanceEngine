@@ -59,6 +59,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\Common\Effects\Cloud\Cloud.cs" />
+    <Compile Include="Content\TileEntities\Nature\Trees\Spruce\Spruce.cs" />
+    <Compile Include="Content\TileEntities\Nature\Trees\Tree.cs" />
     <Compile Include="Content\Tiles\Building\Platforms\WoodPlatform.cs" />
     <Compile Include="Core\Attributes\ForceIDAttribute.cs" />
     <Compile Include="Content\TileEntities\Crafting\RepairTable\RepairTable.cs" />
@@ -92,7 +95,7 @@
     <Compile Include="Core\Objects\Tests\CursorSoundObj.cs" />
     <Compile Include="Core\Objects\Tests\CursorLightObj.cs" />
     <Compile Include="Core\Objects\Etc\LightObj.cs" />
-    <Compile Include="Core\Objects\Etc\Skybox.cs" />
+    <Compile Include="Core\Objects\Etc\Skybox\Skybox.cs" />
     <Compile Include="Core\Objects\Etc\SoundInstance.cs" />
     <Compile Include="Core\Objects\GameObject2D.cs" />
     <Compile Include="Core\Objects\SpriteObject.cs" />

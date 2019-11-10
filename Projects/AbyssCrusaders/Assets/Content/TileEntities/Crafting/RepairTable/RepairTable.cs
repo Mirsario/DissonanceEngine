@@ -3,7 +3,7 @@ using AbyssCrusaders.Core;
 using GameEngine;
 using GameEngine.Graphics;
 
-namespace AbyssCrusaders.TileEntities.Crafting
+namespace AbyssCrusaders.Content.TileEntities.Crafting
 {
 	public class RepairTable : TileEntity
 	{
