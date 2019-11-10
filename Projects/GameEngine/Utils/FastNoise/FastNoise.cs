@@ -40,7 +40,7 @@ namespace GameEngine.Utils
 			}
 		}
 
-		public FastNoise(int seed = 1337)
+		public FastNoise(int seed = 0)
 		{
 			Seed = seed;
 
@@ -175,10 +175,12 @@ namespace GameEngine.Utils
 		{
 			DECIMAL amp = gain;
 			DECIMAL ampFractal = 1;
+
 			for(int i = 1;i < octaves;i++) {
 				ampFractal += amp;
 				amp *= gain;
 			}
+
 			fractalBounding = 1/ampFractal;
 		}
 
@@ -190,7 +192,9 @@ namespace GameEngine.Utils
 		[MethodImpl(Inline)] private static DECIMAL CubicLerp(DECIMAL a,DECIMAL b,DECIMAL c,DECIMAL d,DECIMAL t)
 		{
 			DECIMAL p = (d-c)-(a-b);
-			return t*t*t*p+t*t*((a-b)-p)+t*(c-a)+b;
+			DECIMAL tt = t*t;
+
+			return tt*t*p+tt*((a-b)-p)+t*(c-a)+b;
 		}
 	}
 }
