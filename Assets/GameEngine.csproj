@@ -38,25 +38,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
-      <HintPath>..\..\References\Ionic.Zip.dll</HintPath>
+      <HintPath>..\References\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References\OpenTK.dll</HintPath>
+      <HintPath>..\References\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\NVorbis.dll</HintPath>
+      <HintPath>..\References\NVorbis.dll</HintPath>
     </Reference>
     <Reference Include="BulletSharp">
-      <HintPath>References\BulletSharp.dll</HintPath>
+      <HintPath>..\References\BulletSharp.dll</HintPath>
     </Reference>
     <Reference Include="SmartMeshLibrary">
-      <HintPath>..\..\References\SmartMeshLibrary.dll</HintPath>
+      <HintPath>..\References\SmartMeshLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
