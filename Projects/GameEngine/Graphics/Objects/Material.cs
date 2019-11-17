@@ -21,9 +21,10 @@ namespace GameEngine.Graphics
 
 		public string name;
 
+		protected Shader shader;
+
 		internal List<Renderer> rendererAttachments;
 
-		protected Shader shader;
 		public Shader Shader {
 			get => shader;
 			set {
@@ -39,6 +40,8 @@ namespace GameEngine.Graphics
 			}
 		}
 
+		public override string AssetName => name;
+
 		public Material(string name,Shader shader)
 		{
 			this.name = name;
@@ -53,7 +56,6 @@ namespace GameEngine.Graphics
 			Textures = new List<KeyValuePair<string,Texture>>();
 		}
 
-		public override string GetAssetName() => name;
 		public override Material Clone()
 		{
 			var clone = new Material(name,Shader);

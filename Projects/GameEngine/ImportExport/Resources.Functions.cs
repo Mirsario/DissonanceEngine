@@ -43,7 +43,7 @@ namespace GameEngine
 
 			var output = assetManager.Import(stream,fileName);
 
-			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.InitAsset(),false);
+			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.RegisterAsset(),false);
 
 			return output;
 		}

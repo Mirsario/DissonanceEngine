@@ -7,18 +7,17 @@ using GLShaderType = OpenTK.Graphics.OpenGL.ShaderType;
 
 namespace GameEngine.Graphics
 {
+	//TODO: Initialize static fields after Graphics.Init();
 	public partial class Shader : Asset<Shader>
 	{
-		//TODO: Implement OnDispose
 		internal static Shader activeShader;
 
-		//TODO: Initialize these after Graphics.Init();
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
-		internal Dictionary<string,ShaderUniform> uniforms;
-		internal bool[] hasDefaultUniform = new bool[DSU.Count];
-		internal int[] defaultUniformIndex = new int[DSU.Count];
-		internal List<Material> materialAttachments = new List<Material>();
+
+		private static Shader errorShader;
+
+		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 
 		public readonly int Id;
 		public readonly string Name;
@@ -32,11 +31,13 @@ namespace GameEngine.Graphics
 		public BlendingFactor blendFactorDst;
 		public CullMode cullMode = CullMode.Front;
 		public PolygonMode polygonMode = PolygonMode.Fill;
-		
-		private static Shader errorShader;
-		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 
-		public override string GetAssetName() => Name;
+		internal Dictionary<string,ShaderUniform> uniforms;
+		internal bool[] hasDefaultUniform = new bool[DSU.Count];
+		internal int[] defaultUniformIndex = new int[DSU.Count];
+		internal List<Material> materialAttachments = new List<Material>();
+
+		public override string AssetName => Name;
 
 		private Shader(string name)
 		{

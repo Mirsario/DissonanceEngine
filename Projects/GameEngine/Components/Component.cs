@@ -11,8 +11,11 @@ namespace GameEngine
 		internal static Dictionary<Type,List<Component>> typeInstances = new Dictionary<Type,List<Component>>();
 		
 		public readonly string Name;
+
 		internal readonly int NameHash;
+
 		internal GameObject gameObject;
+
 		protected bool beenEnabledBefore;
 
 		protected bool enabled;
@@ -22,6 +25,7 @@ namespace GameEngine
 				if(enabled==value) {
 					return;
 				}
+
 				if(value) {
 					var type = GetType();
 					var parameters = typeParameters[type];
@@ -34,12 +38,14 @@ namespace GameEngine
 						}
 
 						OnEnable();
+
 						ProgrammableEntityHooks.SubscribeEntity(this);
 
 						enabled = true;
 					}
 				}else{
 					OnDisable();
+
 					ProgrammableEntityHooks.UnsubscribeEntity(this);
 
 					enabled = false;
@@ -78,8 +84,10 @@ namespace GameEngine
 			typeInstances[GetType()]?.Remove(this);
 
 			var dict = gameObject.componentsByNameHash;
+
 			if(dict.TryGetValue(NameHash,out var list)) {
 				list.Remove(this);
+
 				if(list.Count==0) {
 					dict.Remove(NameHash);
 				}
@@ -92,15 +100,17 @@ namespace GameEngine
 		{
 			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
 				foreach(var type in assembly.GetTypes()) {
-					if(typeof(Component).IsAssignableFrom(type)) {
-						if(!typeParameters.ContainsKey(type)) {
-							typeParameters[type] = new ComponentParameters();
-						}
+					if(!typeof(Component).IsAssignableFrom(type)) {
+						continue;
+					}
 
-						var attributes = type.GetCustomAttributes<ComponentAttribute>();
-						foreach(var attribute in attributes) {
-							attribute.SetParameters(type);
-						}
+					if(!typeParameters.ContainsKey(type)) {
+						typeParameters[type] = new ComponentParameters();
+					}
+
+					var attributes = type.GetCustomAttributes<ComponentAttribute>();
+					foreach(var attribute in attributes) {
+						attribute.SetParameters(type);
 					}
 				}
 			}

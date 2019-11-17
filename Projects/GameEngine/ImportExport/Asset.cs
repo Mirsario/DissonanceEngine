@@ -9,12 +9,13 @@ namespace GameEngine
 	{
 		protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
 
-		public virtual string GetAssetName() => null;
+		public virtual string AssetName => null;
+
 		public virtual void Dispose() { }
 
-		internal void InitAsset()
+		public void RegisterAsset()
 		{
-			string name = GetAssetName();
+			string name = AssetName;
 
 			if(name!=null) {
 				var type = GetType();
