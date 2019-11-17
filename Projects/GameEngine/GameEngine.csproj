@@ -55,6 +55,9 @@
     <Reference Include="BulletSharp">
       <HintPath>References\BulletSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SmartMeshLibrary">
+      <HintPath>..\..\References\SmartMeshLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -236,12 +239,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DefaultResources.zip" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SmartMeshLibrary\SmartMeshLibrary.csproj">
-      <Project>{c915c225-5e50-4347-a649-dbb83b57aeda}</Project>
-      <Name>SmartMeshLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

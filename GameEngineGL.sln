@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "Projects\GameEngine\GameEngine.csproj", "{A7E44EF9-187F-4718-8FEC-871F99BD27F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMeshLibrary", "Projects\SmartMeshLibrary\SmartMeshLibrary.csproj", "{C915C225-5E50-4347-A649-DBB83B57AEDA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmersionFramework", "Projects\ImmersionFramework\ImmersionFramework.csproj", "{753E1F7F-C787-497B-BE7B-B70D223C8C5F}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{A7E44EF9-187F-4718-8FEC-871F99BD27F9}.Debug|x64.Build.0 = Debug|x64
 		{A7E44EF9-187F-4718-8FEC-871F99BD27F9}.Release|x64.ActiveCfg = Release|x64
 		{A7E44EF9-187F-4718-8FEC-871F99BD27F9}.Release|x64.Build.0 = Release|x64
-		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Debug|x64.ActiveCfg = Debug|x64
-		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Debug|x64.Build.0 = Debug|x64
-		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Release|x64.ActiveCfg = Release|x64
-		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Release|x64.Build.0 = Release|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Debug|x64.ActiveCfg = Debug|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Debug|x64.Build.0 = Debug|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Release|x64.ActiveCfg = Release|x64
