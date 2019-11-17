@@ -2,13 +2,3 @@
 */bin/*
 *.vs/
 packages/
-Projects/GameEngine/bin
-Projects/GameEngine/obj
-Projects/SmartMeshLibrary/bin
-Projects/SmartMeshLibrary/obj
-Projects/SurvivalGame/Assets/bin
-Projects/SurvivalGame/Assets/obj
-Projects/SurvivalGame/Build
-Projects/ImmersionFramework/bin
-Projects/ImmersionFramework/obj
-Projects/ImmersionFramework/Ignored
