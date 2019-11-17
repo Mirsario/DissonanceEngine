@@ -1,7 +1,9 @@
 using AbyssCrusaders.Content.Common.Effects;
+using AbyssCrusaders.Content.Items.Tools.Pickaxes;
 using AbyssCrusaders.Content.Tiles.Building;
 using AbyssCrusaders.Core;
 using AbyssCrusaders.Core.Test;
+using AbyssCrusaders.Utilities;
 using GameEngine;
 using GameEngine.Graphics;
 
@@ -47,10 +49,11 @@ namespace AbyssCrusaders.Content.Entities
 			airFriction = 0.75f;
 			stopSpeed = 0.1f;
 			maxSpeed = 12f;
+			gravity = 60f;
 
 			animationFrameCount = 18;
 
-			currentTile = TilePreset.GetTypeId<Wood>();
+			currentTile = TilePreset.GetTypeId<WoodTile>();
 
 			sprite = AddComponent<Sprite>(c => {
 				c.Material = Resources.Find<Material>("Player").Clone();
@@ -136,8 +139,11 @@ namespace AbyssCrusaders.Content.Entities
 				}
 			}
 
+			if(Input.GetKeyDown(Keys.Y)) {
+				Instantiate<IronPickaxe>(world,position:Main.camera.mousePosition);
+			}
 			if(Input.GetKeyDown(Keys.U)) {
-				Instantiate<Cloud>(position:Main.camera.mousePosition);
+				Instantiate<Cloud>(position: Main.camera.mousePosition);
 			}
 			if(Input.GetKeyDown(Keys.I)) {
 				var pos = new Vector2Int((int)Position.x,(int)Position.y+2);

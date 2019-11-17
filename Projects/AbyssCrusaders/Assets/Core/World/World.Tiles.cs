@@ -158,8 +158,13 @@ namespace AbyssCrusaders.Core
 				tile.PlayTileSound(x,y,"Break");
 			}
 
+			var preset = tile.TilePreset;
+
 			tile.type = 0;
 			tile.tileDamage = 0;
+
+			preset.OnDestroyed(this,x,y,false);
+			preset.DropLoot(this,x,y,false);
 
 			SquareTileFrame(x,y);
 		}
@@ -175,8 +180,13 @@ namespace AbyssCrusaders.Core
 				tile.PlayWallSound(x,y,"Break");
 			}
 
+			var preset = tile.WallPreset;
+
 			tile.wall = 0;
 			tile.tileDamage = 0;
+
+			preset.OnDestroyed(this,x,y,true);
+			preset.DropLoot(this,x,y,true);
 
 			SquareTileFrame(x,y);
 		}

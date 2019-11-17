@@ -11,7 +11,7 @@ namespace AbyssCrusaders.Content.Worlds.Overworld.GenPasses
 	{
 		public override void Run(int seed,int index,World world)
 		{
-			ushort dirt = TilePreset.GetTypeId<Dirt>();
+			ushort dirt = TilePreset.GetTypeId<DirtTile>();
 			//ushort grass = TilePreset.GetTypeId<Grass>();
 			//ushort stone = TilePreset.GetTypeId<Stone>();
 			//ushort wood = TilePreset.GetTypeId<Wood>();

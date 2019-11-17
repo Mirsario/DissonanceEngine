@@ -38,15 +38,17 @@ namespace AbyssCrusaders.Content.Common.Effects
 
 			var pos = Position;
 
-			float offsetToRight = sprite.FrameSizeInUnits.x*(1f-sprite.Origin.x);
-			float offsetToLeft = -sprite.FrameSizeInUnits.x*sprite.Origin.x;
+			var frameSize = sprite.FrameSizeInUnits;
+			var origin = sprite.Origin;
+			float offsetToRight = frameSize.x*(1f-origin.x);
+			float offsetToLeft = -frameSize.x*origin.x;
 
 			pos += new Vector2(Time.RenderDeltaTime,0f);
 
 			if(pos.x+offsetToLeft>Main.camera.rect.Right) {
-				pos.x = Main.camera.rect.x-offsetToRight;
+				pos.x -= Main.camera.rect.width+frameSize.x;
 			}else if(pos.x+offsetToRight<Main.camera.rect.x) {
-				pos.x =+ Main.camera.rect.Right+offsetToLeft;
+				pos.x += Main.camera.rect.width+frameSize.x;
 			}
 
 			Position = pos;

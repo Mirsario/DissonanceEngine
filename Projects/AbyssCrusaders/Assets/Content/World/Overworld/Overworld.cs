@@ -14,9 +14,9 @@ namespace AbyssCrusaders.Content.Worlds.Overworld
 	{
 		public override void ModifyGenTasks(List<GenPass> list)
 		{
-			ushort dirt = TilePreset.GetTypeId<Dirt>();
+			ushort dirt = TilePreset.GetTypeId<DirtTile>();
 			ushort grass = TilePreset.GetTypeId<Grass>();
-			ushort stone = TilePreset.GetTypeId<Stone>();
+			ushort stone = TilePreset.GetTypeId<StoneTile>();
 			ushort clay = TilePreset.GetTypeId<Clay>();
 			ushort sand = TilePreset.GetTypeId<Sand>();
 			ushort copperOre = TilePreset.GetTypeId<CopperOre>();

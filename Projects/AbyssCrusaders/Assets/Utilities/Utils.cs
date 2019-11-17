@@ -1,4 +1,4 @@
-﻿namespace AbyssCrusaders
+﻿namespace AbyssCrusaders.Utilities
 {
 	public static class Utils
 	{

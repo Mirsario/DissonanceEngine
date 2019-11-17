@@ -1,5 +1,6 @@
 using GameEngine;
 using GameEngine.Physics;
+using System;
 
 namespace AbyssCrusaders.Core
 {
@@ -17,13 +18,26 @@ namespace AbyssCrusaders.Core
 		{
 			var entity = Instantiate<T>(name,position,depth,rotation,scale,init);
 
+			PrepareEntity(entity,world,init);
+
+			return entity;
+		}
+		public static Entity Instantiate(Type type,World world,string name = default,Vector2 position = default,float depth = 0f,float rotation = default,Vector2? scale = null,bool init = true)
+		{
+			var entity = (Entity)Instantiate(type,name,position,depth,rotation,scale,init);
+
+			PrepareEntity(entity,world,init);
+
+			return entity;
+		}
+
+		private static void PrepareEntity(Entity entity,World world,bool init)
+		{
 			entity.world = world;
 
 			if(init) {
 				entity.Init();
 			}
-
-			return entity;
 		}
 	}
 }

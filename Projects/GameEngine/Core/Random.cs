@@ -53,14 +53,9 @@ namespace GameEngine
 			globalSeed = (int)DateTime.Now.Ticks;
 			staticRandom = new Random(globalSeed);
 		}
-		public static int Next(int maxValue)
-		{
-			return staticRandom.Next(maxValue);
-		}
-		public static float Next(float maxValue)
-		{
-			return (float)staticRandom.NextDouble()*maxValue;
-		}
+		public static int Next(int maxValue) => staticRandom.Next(maxValue);
+		public static float Next(float maxValue) => (float)staticRandom.NextDouble()*maxValue;
+		public static int Range(int minValue,int maxValue) => staticRandom.Next(minValue,maxValue);
 		public static float Range(float minValue,float maxValue)
 		{
 			if(minValue>maxValue) {
@@ -69,10 +64,6 @@ namespace GameEngine
 				minValue = tempVal;
 			}
 			return minValue+(float)staticRandom.NextDouble()*(maxValue-minValue);
-		}
-		public static int Range(int minValue,int maxValue)
-		{
-			return staticRandom.Next(minValue,maxValue);
 		}
 	}
 }

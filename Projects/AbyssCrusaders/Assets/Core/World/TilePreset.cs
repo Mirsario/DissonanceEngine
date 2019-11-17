@@ -9,23 +9,24 @@ namespace AbyssCrusaders.Core
 {
 	public abstract class TilePreset : IDisposable //ICloneable, 
 	{
-		//Static/Consts
 		public static ushort typeCount;
 		public static Dictionary<Type,TilePreset> byType;
 		public static Dictionary<string,TilePreset> byName;
 		public static TilePreset[] byId;
 		
-		//Instance
 		public readonly string Name;
 		public readonly TileFrameset frameset;
+
 		public bool canBeWall;
 		public bool allowDroppingThrough;
 		public bool transparent;
+		public ILootSource loot;
 		public CollisionInfo collision;
 
 		public ushort Id { get; private set; }
 
 		protected abstract TileFrameset Frameset { get; }
+
 		public virtual Texture Texture => Resources.Get<Texture>($"{GetType().Name}.png");
 
 		protected TilePreset()
@@ -39,8 +40,25 @@ namespace AbyssCrusaders.Core
 
 		public virtual void OnInit() {}
 		public virtual void Dispose() {}
+		public virtual void OnDestroyed(World world,int x,int y,bool wall) { }
 		public virtual bool BlendsWithTile(Tile thisTile,Tile otherTile) => false;
 
+		public void DropLoot(World world,int x,int y,bool wall)
+		{
+			if(loot==null) {
+				return;
+			}
+
+			var pos = new Vector2(x+0.5f,y+0.5f);
+
+			foreach((int itemId,int amount) in loot.GetLoot()) {
+				var type = Item.typeById[itemId];
+
+				var item = (Item)Entity.Instantiate(type,world,position:pos);
+
+				item.velocity = Vector2.Rotate(new Vector2(4f,0f),Rand.Next(360f));
+			}
+		}
 		public bool TryGetTexture(out Texture texture) => (texture = Texture)!=null;
 
 		public static void Initialize()

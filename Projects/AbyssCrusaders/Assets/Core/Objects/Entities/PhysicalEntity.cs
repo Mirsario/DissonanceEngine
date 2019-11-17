@@ -1,4 +1,5 @@
 ﻿using System;
+using AbyssCrusaders.Utilities;
 using GameEngine;
 
 namespace AbyssCrusaders.Core
@@ -16,7 +17,7 @@ namespace AbyssCrusaders.Core
 		public float airFriction = 1f;
 		public float stopSpeed = 0.1f;
 		public float maxSpeed = 10f;
-		public float lastTimeOnGround;
+		public float gravity = 20f;
 		public bool dropDownSlopes;
 		public bool autoStepUp = true;
 		public bool autoStepDown = true;
@@ -31,7 +32,7 @@ namespace AbyssCrusaders.Core
 
 			prevVelocity = velocity;
 
-			velocity.y += 60f*Time.FixedDeltaTime;
+			velocity.y += gravity*Time.FixedDeltaTime;
 
 			Position = PhysicsStep(Position,ref velocity);
 		}
@@ -47,7 +48,7 @@ namespace AbyssCrusaders.Core
 			float heightHalf = height*0.5f;
 
 			int ceilHalfWidth = Mathf.CeilToInt(widthHalf);
-			int ceilHalfHeight = Mathf.CeilToInt(heightHalf);
+			//int ceilHalfHeight = Mathf.CeilToInt(heightHalf);
 
 			float left = position.x-widthHalf;
 			float right = position.x+widthHalf;
@@ -77,6 +78,7 @@ namespace AbyssCrusaders.Core
 
 					var preset = tile.TilePreset;
 
+					//Step-up
 					bool TryClimb(int direction,ref Vector2 vel)
 					{
 						if(!autoStepUp || !preset.collision.up || bottom<y || bottom>y+1) { //vel.y<0f
@@ -114,6 +116,7 @@ namespace AbyssCrusaders.Core
 						return true;
 					}
 
+					//Vertical collisions
 					if((preset.collision.up || preset.collision.down) && right>x && left<x+1) {
 						if(preset.collision.up && (!dropDownSlopes || !preset.allowDroppingThrough) && velocity.y>0f && bottom<=y && bottomNext>y && bottomNext<y+1) {
 							velocity.y = deltaVelocity.y = 0f;
@@ -128,6 +131,7 @@ namespace AbyssCrusaders.Core
 						}
 					}
 
+					//Horizontal collisions
 					if((preset.collision.left || preset.collision.right) && bottom>y && top<y+1) {
 						if(preset.collision.left && velocity.x>0f && right<=x && rightNext>x && rightNext<x+1) {
 							if(!TryClimb(1,ref velocity)) {
@@ -150,6 +154,7 @@ namespace AbyssCrusaders.Core
 
 			position += deltaVelocity;
 
+			//Step-down
 			if(autoStepDown && deltaVelocity.x!=0f && deltaVelocity.y>=0f) {
 				int direction = Math.Sign(deltaVelocity.x);
 
@@ -198,10 +203,6 @@ namespace AbyssCrusaders.Core
 			}
 
 			position.x = Mathf.Repeat(position.x,world.width);
-
-			if(collisions.down) {
-				lastTimeOnGround = Time.GameTime;
-			}
 
 			return position;
 		}

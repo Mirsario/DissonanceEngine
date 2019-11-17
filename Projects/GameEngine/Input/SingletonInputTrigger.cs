@@ -30,7 +30,9 @@ namespace GameEngine
 
 				var trigger = Input.RegisterTrigger(type,type.Name,null);
 
-				typeof(Info<>).MakeGenericType(type).GetField("Id",BindingFlags.Static|BindingFlags.Public).SetValue(null,trigger.Id);
+				typeof(Info<>).MakeGenericType(type)
+					.GetField("Id",BindingFlags.Static|BindingFlags.Public)
+					.SetValue(null,trigger.Id);
 			}
 		}
 	}

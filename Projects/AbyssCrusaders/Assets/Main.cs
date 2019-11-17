@@ -54,6 +54,7 @@ namespace AbyssCrusaders
 
 			GameInput.Initialize();
 			TileFrameset.Initialize();
+			Item.Initialize();
 			TilePreset.Initialize();
 
 			menuController = new MainMenuController();

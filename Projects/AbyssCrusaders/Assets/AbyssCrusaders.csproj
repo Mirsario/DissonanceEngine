@@ -60,16 +60,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\Common\Effects\Cloud\Cloud.cs" />
+    <Compile Include="Content\Items\Placeables\Building\Dirt.cs" />
+    <Compile Include="Content\Items\Placeables\Building\Stone.cs" />
+    <Compile Include="Content\Items\Placeables\Building\Wood.cs" />
+    <Compile Include="Content\Items\Tools\Pickaxes\IronPickaxe.cs" />
     <Compile Include="Content\TileEntities\Nature\Trees\Spruce\Spruce.cs" />
     <Compile Include="Content\TileEntities\Nature\Trees\Tree.cs" />
     <Compile Include="Content\Tiles\Building\Platforms\WoodPlatform.cs" />
     <Compile Include="Core\Attributes\ForceIDAttribute.cs" />
     <Compile Include="Content\TileEntities\Crafting\RepairTable\RepairTable.cs" />
+    <Compile Include="Core\DataStructures\LootTable.cs" />
+    <Compile Include="Core\DataStructures\LootInfo.cs" />
+    <Compile Include="Core\Interfaces\ILootSource.cs" />
     <Compile Include="Core\Item\Item.cs" />
     <Compile Include="Core\World\PlacingRule.cs" />
     <Compile Include="Core\World\World.TileEntities.cs" />
-    <Compile Include="CubeObj.cs" />
-    <Compile Include="CubeObj2.cs" />
     <Compile Include="CustomRenderingPipeline.cs" />
     <Compile Include="Core\DataStructures\BitsByte.cs" />
     <Compile Include="Core\DataStructures\WallDrawInfo.cs" />
@@ -106,7 +111,7 @@
     <Compile Include="UI\Menu\MenuState.cs" />
     <Compile Include="UI\Menu\WorldCreate.cs" />
     <Compile Include="UI\Menu\WorldSelect.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Core\World\Chunk.Rendering.cs" />
     <Compile Include="Core\World\Chunk.cs" />
     <Compile Include="Core\World\Generation\GenPass.cs" />
@@ -129,23 +134,24 @@
     <Compile Include="Core\World\TilePreset.cs" />
     <Compile Include="Content\Tiles\Air.cs" />
     <Compile Include="Content\Tiles\Common\PlatformTileBase.cs" />
-    <Compile Include="Content\Tiles\Building\Wood.cs" />
+    <Compile Include="Content\Tiles\Building\WoodTile.cs" />
     <Compile Include="Content\Tiles\Natural\Clay.cs" />
     <Compile Include="Content\Tiles\Natural\Grass.cs" />
-    <Compile Include="Content\Tiles\Natural\Dirt.cs" />
+    <Compile Include="Content\Tiles\Natural\DirtTile.cs" />
     <Compile Include="Content\Tiles\Natural\Nature\TallGrass.cs" />
     <Compile Include="Content\Tiles\Natural\Ores\CopperOre.cs" />
     <Compile Include="Content\Tiles\Natural\Ores\GoldOre.cs" />
     <Compile Include="Content\Tiles\Natural\Ores\IronOre.cs" />
     <Compile Include="Content\Tiles\Natural\Ores\SilverOre.cs" />
     <Compile Include="Content\Tiles\Natural\Sand.cs" />
-    <Compile Include="Content\Tiles\Natural\Stone.cs" />
+    <Compile Include="Content\Tiles\Natural\StoneTile.cs" />
     <Compile Include="Content\Tiles\Common\SolidTileBase.cs" />
     <Compile Include="Core\World\World.cs" />
     <Compile Include="Core\World\WorldInfo.cs" />
     <Compile Include="Core\World\World.IO.cs" />
     <Compile Include="Core\World\World.Tiles.cs" />
     <Compile Include="Core\World\World.Utils.cs" />
+    <Compile Include="Utilities\IDUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Common\Audio\Music\Test.ogg" />
