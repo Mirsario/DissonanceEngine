@@ -1,7 +1,0 @@
-{
-	"name": "Robot",
-	"shader": "Diffuse",
-	"textures": {
-		"mainTex": "RobotDiffuse.png"
-	}
-}

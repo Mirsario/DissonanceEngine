@@ -1,7 +1,0 @@
-{
-	"DualSided": { //Diffuse
-		"vertexShader": "BuiltInAssets/Shaders/default.vert",
-		"fragmentShader":	"BuiltInAssets/Shaders/default.frag",
-		"cullMode": "Off"
-	}
-}

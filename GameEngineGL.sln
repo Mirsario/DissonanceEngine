@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "Projects\Game
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMeshLibrary", "Projects\SmartMeshLibrary\SmartMeshLibrary.csproj", "{C915C225-5E50-4347-A649-DBB83B57AEDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbyssCrusaders", "Projects\AbyssCrusaders\Assets\AbyssCrusaders.csproj", "{87D87572-DFB4-4662-BC81-F9FAA00C31EA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurvivalGame", "Projects\SurvivalGame\Assets\SurvivalGame.csproj", "{25966A38-0F5B-406E-96A7-1EDFD7D716E9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmersionFramework", "Projects\ImmersionFramework\ImmersionFramework.csproj", "{753E1F7F-C787-497B-BE7B-B70D223C8C5F}"
 EndProject
 Global
@@ -27,14 +23,6 @@ Global
 		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Debug|x64.Build.0 = Debug|x64
 		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Release|x64.ActiveCfg = Release|x64
 		{C915C225-5E50-4347-A649-DBB83B57AEDA}.Release|x64.Build.0 = Release|x64
-		{87D87572-DFB4-4662-BC81-F9FAA00C31EA}.Debug|x64.ActiveCfg = Debug|x64
-		{87D87572-DFB4-4662-BC81-F9FAA00C31EA}.Debug|x64.Build.0 = Debug|x64
-		{87D87572-DFB4-4662-BC81-F9FAA00C31EA}.Release|x64.ActiveCfg = Release|x64
-		{87D87572-DFB4-4662-BC81-F9FAA00C31EA}.Release|x64.Build.0 = Release|x64
-		{25966A38-0F5B-406E-96A7-1EDFD7D716E9}.Debug|x64.ActiveCfg = Debug|x64
-		{25966A38-0F5B-406E-96A7-1EDFD7D716E9}.Debug|x64.Build.0 = Debug|x64
-		{25966A38-0F5B-406E-96A7-1EDFD7D716E9}.Release|x64.ActiveCfg = Release|x64
-		{25966A38-0F5B-406E-96A7-1EDFD7D716E9}.Release|x64.Build.0 = Release|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Debug|x64.ActiveCfg = Debug|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Debug|x64.Build.0 = Debug|x64
 		{753E1F7F-C787-497B-BE7B-B70D223C8C5F}.Release|x64.ActiveCfg = Release|x64

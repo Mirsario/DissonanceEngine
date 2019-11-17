@@ -1,7 +1,0 @@
-{
-	"GLDrawTest": {
-		"vertexShader": "Shaders/GLDrawTest.vert",
-		"fragmentShader": "Shaders/GLDrawTest.frag",
-		"cullMode": "Off"
-	}
-}

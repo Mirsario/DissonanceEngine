@@ -1,6 +1,0 @@
-{
-	"Game/Skybox": {
-		"vertexShader":		"Skybox.vert",
-		"fragmentShader":	"Skybox.frag"
-	}
-}

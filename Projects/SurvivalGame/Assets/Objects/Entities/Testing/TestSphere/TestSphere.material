@@ -1,8 +1,0 @@
-{
-	"name": "TestSphere",
-	"shader": "Specular",
-	"textures": {
-		//"mainTex": "Entities/Testing/TestSphere/TestSphereDiffuse.png"
-		//"normalMap": "Entities/Testing/TestSphere/TestSphereNormalMap.png",
-	}
-}

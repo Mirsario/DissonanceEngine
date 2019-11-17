@@ -1,7 +1,0 @@
-{
-	"name": "DualSided",
-	"shader": "DualSided",
-	"textures": {
-		"mainTex":	"World/Tiles/Grass1.png"
-	}
-}

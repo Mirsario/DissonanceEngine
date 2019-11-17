@@ -1,8 +1,0 @@
-{
-	"Fog": {
-		"vertexShader": "BuiltInAssets/Shaders/postprocess.vert",
-		"fragmentShader": "Shaders/PostProcess/fog.frag",
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha"
-	}
-}

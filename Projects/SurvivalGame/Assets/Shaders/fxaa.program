@@ -1,6 +1,0 @@
-{
-	"FXAA": {
-		"vertexShader": "BuiltInAssets/Shaders/postprocess.vert",
-		"fragmentShader": "Shaders/fxaa.frag",
-	}
-}

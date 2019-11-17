@@ -1,8 +1,0 @@
-{
-	"name": "TestCube",
-	"shader": "Diffuse",
-	"textures": {
-		"mainTex":	 "Entities/Testing/TestCube/TestCubeTexture.png"//,
-		//"emissionMap": "Entities/Testing/TestCube/TestCubeEmission.png",
-	}
-}

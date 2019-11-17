@@ -20,6 +20,7 @@ namespace GameEngine
 		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string fileName = null) where T : class
 		{
 			var type = typeof(T);
+
 			if(assetManager==null) {
 				if(fileName==null) {
 					throw new ArgumentException(
