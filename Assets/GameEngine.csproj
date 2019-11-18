@@ -55,9 +55,6 @@
     <Reference Include="BulletSharp">
       <HintPath>..\References\BulletSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SmartMeshLibrary">
-      <HintPath>..\References\SmartMeshLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -248,4 +245,22 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
+  <Choose>
+    <When Condition="$(DefineConstants.Contains('HASPROJECT_SMARTMESHLIBRARY'))">
+	  <ItemGroup>
+        <ProjectReference Include="../../SmartMeshLibrary/SmartMeshLibrary.csproj">
+          <Project>{C915C225-5E50-4347-A649-DBB83B57AEDA}</Project>
+          <Name>SmartMeshLibrary</Name>
+        </ProjectReference>
+      </ItemGroup>
+    </When>
+	<Otherwise>
+	  <ItemGroup>
+        <Reference Include="SmartMeshLibrary">
+          <HintPath>..\References\SmartMeshLibrary.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+	</Otherwise>
+  </Choose>
 </Project>
