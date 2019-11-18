@@ -95,11 +95,9 @@ namespace GameEngine.Graphics
 		internal static RenderingPipeline renderingPipeline;
 		public static RenderingPipeline RenderingPipeline => renderingPipeline;
 		
-		#region Hardcoded
 		//TODO: To be moved
 		private static Shader guiShader;
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI");
-		#endregion
 
 		internal static void PreInit()
 		{
@@ -109,17 +107,17 @@ namespace GameEngine.Graphics
 		{
 			var glVersion = GetOpenGLVersion();
 			var minVersion = new Version("3.3");
+
 			if(glVersion<minVersion) {
 				throw new GraphicsException($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
 
 			CheckGLErrors(); //Do not remove
 
-			#region FontImport
+			//FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
 			var tex = Resources.Import<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
 			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~",tex,new Vector2(12f,16f),0) { size = 16 };
-			#endregion
 
 			cameraList = new List<Camera>();
 			rendererList = new List<Renderer>();
@@ -200,7 +198,7 @@ namespace GameEngine.Graphics
 
 			//GL.Disable(EnableCap.StencilTest);
 
-			#region RenderTargetDebug
+#region RenderTargetDebug
 			if(Input.GetKey(Keys.F)) {
 				//TODO: This is completely temporarily
 				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
@@ -261,7 +259,7 @@ namespace GameEngine.Graphics
 					}
 				}
 			}
-			#endregion
+#endregion
 
 			GL.Flush();
 			//window.SwapBuffers(); //TODO: After upgrading to OpenTK 4.0, see if fullscreen is still bugged on multi-monitor setup when using this SwapBuffers() call instead of GL.Finish/Flush().
