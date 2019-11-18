@@ -248,19 +248,29 @@
   <Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
   <Choose>
     <When Condition="$(DefineConstants.Contains('HASPROJECT_SMARTMESHLIBRARY'))">
-	  <ItemGroup>
+      <ItemGroup>
         <ProjectReference Include="../../SmartMeshLibrary/SmartMeshLibrary.csproj">
           <Project>{C915C225-5E50-4347-A649-DBB83B57AEDA}</Project>
           <Name>SmartMeshLibrary</Name>
         </ProjectReference>
       </ItemGroup>
     </When>
-	<Otherwise>
-	  <ItemGroup>
+    <Otherwise>
+      <ItemGroup>
         <Reference Include="SmartMeshLibrary">
           <HintPath>..\References\SmartMeshLibrary.dll</HintPath>
         </Reference>
       </ItemGroup>
-	</Otherwise>
+    </Otherwise>
   </Choose>
+  <PropertyGroup>
+    <PostBuildEvent>set POSTBUILD=PostBuild.bat
+
+if exist "$(SolutionDir)%25POSTBUILD%25" (
+    echo Running solution's %25POSTBUILD%25...
+    call "$(SolutionDir)%25POSTBUILD%25" "$(ProjectName)" "$(TargetPath)" "$(SolutionDir)"
+) else (
+    echo Solution's %25POSTBUILD%25 is not present.
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
