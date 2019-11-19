@@ -1,7 +1,17 @@
+using System.Runtime.InteropServices;
+
 namespace GameEngine
 {
 	public partial struct Vector4Int
 	{
+		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector4Int));
+		public static readonly Vector4Int Zero = default;
+		public static readonly Vector4Int One = new Vector4Int(1,1,1,1);
+		public static readonly Vector4Int UnitX = new Vector4Int(1,0,0,0);
+		public static readonly Vector4Int UnitY = new Vector4Int(0,1,0,0);
+		public static readonly Vector4Int UnitZ = new Vector4Int(0,0,1,0);
+		public static readonly Vector4Int UnitW = new Vector4Int(0,0,0,1);
+
 		public int x;
 		public int y;
 		public int z;

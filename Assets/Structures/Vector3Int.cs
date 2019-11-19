@@ -1,7 +1,22 @@
+using System.Runtime.InteropServices;
+
 namespace GameEngine
 {
 	public struct Vector3Int
 	{
+		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector3Int));
+		public static readonly Vector3Int Zero = default;
+		public static readonly Vector3Int One = new Vector3Int(1,1,1);
+		public static readonly Vector3Int UnitX = new Vector3Int(1,0,0);
+		public static readonly Vector3Int UnitY = new Vector3Int(0,1,0);
+		public static readonly Vector3Int UnitZ = new Vector3Int(0,0,1);
+		public static readonly Vector3Int Up = new Vector3Int(0,1,0);
+		public static readonly Vector3Int Down = new Vector3Int(0,-1,0);
+		public static readonly Vector3Int Left = new Vector3Int(-1,0,0);
+		public static readonly Vector3Int Right = new Vector3Int(1,0,0);
+		public static readonly Vector3Int Forward = new Vector3Int(0,0,1);
+		public static readonly Vector3Int Backward = new Vector3Int(0,0,-1);
+
 		public int x;
 		public int y;
 		public int z;
