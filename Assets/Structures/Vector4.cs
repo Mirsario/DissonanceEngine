@@ -173,80 +173,24 @@ namespace GameEngine
 			return vec;
 		}
 
-		public static Vector4 operator+(Vector4 a,Vector4 b)
-		{
-			return new Vector4(a.x+b.x,a.y+b.y,a.z+b.z,a.w+b.w);
-		}
-		public static Vector4 operator-(Vector4 a,Vector4 b)
-		{
-			return new Vector4(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w);
-		}
-		public static Vector4 operator-(Vector4 a)
-		{
-			return new Vector4(-a.x,-a.y,-a.z,-a.w);
-		}
-		public static Vector4 operator*(Vector4 a,float d)
-		{
-			return new Vector4(a.x*d,a.y*d,a.z*d,a.w*d);
-		}
-		public static Vector4 operator*(float d,Vector4 a)
-		{
-			return new Vector4(a.x*d,a.y*d,a.z*d,a.w*d);
-		}
-		public static Vector4 operator/(Vector4 a,float d)
-		{
-			return new Vector4(a.x/d,a.y/d,a.z/d,a.w/d);
-		}
-		public static bool operator==(Vector4 a,Vector4 b)
-		{
-			return (a-b).SqrMagnitude<9.99999944E-11f;
-		}
-		public static bool operator!=(Vector4 a,Vector4 b)
-		{
-			return (a-b).SqrMagnitude>=9.99999944E-11f;
-		}
-		public override int GetHashCode()
-		{
-			return x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
-		}
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector4)) {
-				return false;
-			}
-			var vector = (Vector4)other;
-			return x.Equals(vector.x) && y.Equals(vector.y) && z.Equals(vector.z) && w.Equals(vector.w);
-		}
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
+		public override bool Equals(object other) => other is Vector4 vector && x==vector.x && y==vector.y && z==vector.z && w==vector.w;
 
-		public static implicit operator OpenTK.Vector4(Vector4 value)
-		{
-			return new OpenTK.Vector4(value.x,value.y,value.z,value.w);
-		}
-		public static implicit operator Vector4(OpenTK.Vector4 value)
-		{
-			return new Vector4(value.X,value.Y,value.Z,value.W);
-		}
+		public static implicit operator OpenTK.Vector4(Vector4 value) => new OpenTK.Vector4(value.x,value.y,value.z,value.w);
+		public static implicit operator Vector4(OpenTK.Vector4 value) => new Vector4(value.X,value.Y,value.Z,value.W);
+		public static explicit operator Vector4(Vector3 value) => new Vector4(value.x,value.y,value.z,0f);
+		public static explicit operator Vector3(Vector4 value) => new Vector3(value.x,value.y,value.z);
+		public static explicit operator Vector2(Vector4 value) => new Vector2(value.x,value.y);
 
-		public static explicit operator Vector4(Vector3 value)
-		{
-			return new Vector4(value.x,value.y,value.z,0f);
-		}
-		public static explicit operator Vector3(Vector4 value)
-		{
-			return new Vector3(value.x,value.y,value.z);
-		}
-		public static explicit operator Vector2(Vector4 value)
-		{
-			return new Vector2(value.x,value.y);
-		}
-		/*public static implicit operator BulletSharp.Vector4(Vector4 value)
-		{
-			return new BulletSharp.Vector4(value.x,value.y,value.z,value.w);
-		}
-		public static implicit operator Vector4(BulletSharp.Vector4 value)
-		{
-			return new Vector4(value.X,value.Y,value.Z,value.W);
-		}*/
+		//Vector4
+		public static Vector4 operator +(Vector4 a,Vector4 b) => new Vector4(a.x+b.x,a.y+b.y,a.z+b.z,a.w+b.w);
+		public static Vector4 operator -(Vector4 a,Vector4 b) => new Vector4(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w);
+		public static Vector4 operator -(Vector4 a) => new Vector4(-a.x,-a.y,-a.z,-a.w);
+		public static Vector4 operator *(Vector4 a,float d) => new Vector4(a.x*d,a.y*d,a.z*d,a.w*d);
+		public static Vector4 operator *(float d,Vector4 a) => new Vector4(a.x*d,a.y*d,a.z*d,a.w*d);
+		public static Vector4 operator /(Vector4 a,float d) => new Vector4(a.x/d,a.y/d,a.z/d,a.w/d);
+		public static bool operator ==(Vector4 a,Vector4 b) => (a-b).SqrMagnitude<9.99999944E-11f;
+		public static bool operator !=(Vector4 a,Vector4 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
 	}
 }
 
