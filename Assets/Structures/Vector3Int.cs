@@ -46,18 +46,8 @@ namespace GameEngine
 		public static bool operator ==(Vector3Int a,Vector3Int b) => a.x==b.x && a.y==b.y && a.z==b.z;
 		public static bool operator !=(Vector3Int a,Vector3Int b) => a.x!=b.x || a.y!=b.y || a.z!=b.z;
 
-		public override int GetHashCode()
-		{
-			return x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
-		}
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector3Int)) {
-				return false;
-			}
-			var otherPoint = (Vector3Int)other;
-			return x==otherPoint.x && y==otherPoint.y && z==otherPoint.z;
-		}
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
+		public override bool Equals(object other) => other is Vector3Int vector && x==vector.x && y==vector.y && z==vector.z;
 	}
 }
 

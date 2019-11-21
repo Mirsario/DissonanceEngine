@@ -44,14 +44,7 @@ namespace GameEngine
 
 		public override string ToString() => "X: "+x+",Y: "+y+",W: "+z+",Z: "+w;
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector4Int)) {
-				return false;
-			}
-			Vector4Int point = (Vector4Int)other;
-			return x==point.x && y==point.y && z==point.z && w==point.w;
-		}
+		public override bool Equals(object other) => other is Vector4Int point && x==point.x && y==point.y && z==point.z && w==point.w;
 	}
 }
 

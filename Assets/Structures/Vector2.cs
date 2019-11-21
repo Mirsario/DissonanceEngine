@@ -70,13 +70,7 @@ namespace GameEngine
 		public float[] ToArray() => new[] { x,y };
 		public override string ToString() => "X: "+x+",Y: "+y;
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector2 vector)) {
-				return false;
-			}
-			return x.Equals(vector.x) && y.Equals(vector.y);
-		}
+		public override bool Equals(object other) => other is Vector2 vector && x==vector.x && y==vector.y;
 
 		public static Vector2 StepTowards(Vector2 val,Vector2 goal,float step) => new Vector2(
 			Mathf.StepTowards(val.x,goal.x,step),

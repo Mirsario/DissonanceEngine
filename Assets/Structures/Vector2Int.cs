@@ -45,14 +45,7 @@ namespace GameEngine
 
 		public override string ToString() => "X: "+x+",Y: "+y;
 		public override int GetHashCode() => x^y<<2;
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector2Int)) {
-				return false;
-			}
-			Vector2Int point = (Vector2Int)other;
-			return x==point.x && y==point.y;
-		}
+		public override bool Equals(object other) => other is Vector2Int point && x==point.x && y==point.y;
 	}
 }
 

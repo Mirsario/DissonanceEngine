@@ -32,14 +32,7 @@ namespace GameEngine
 
 		public override string ToString() => "X: "+x+",Y: "+y;
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector2UShort)) {
-				return false;
-			}
-			Vector2UShort point = (Vector2UShort)other;
-			return x==point.x && y==point.y;
-		}
+		public override bool Equals(object other) => other is Vector2UShort point && x==point.x && y==point.y;
 	}
 }
 

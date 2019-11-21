@@ -14,26 +14,11 @@ namespace GameEngine
 			right = Right;
 			bottom = Bottom;
 		}
-		
-		public static bool operator==(RectOffset a,RectOffset b)
-		{
-			return a.Equals(b);
-		}
-		public static bool operator!=(RectOffset a,RectOffset b)
-		{
-			return !a.Equals(b);
-		}
-		public override int GetHashCode()
-		{
-			return left.GetHashCode()^right.GetHashCode()<<2^top.GetHashCode()>>2^bottom.GetHashCode()>>1;
-		}
-		public override bool Equals(object other)
-		{
-			if(!(other is RectOffset)) {
-				return false;
-			}
-			var otherNew = (RectOffset)other;
-			return left.Equals(otherNew.left) && right.Equals(otherNew.right) && top.Equals(otherNew.top) && bottom.Equals(otherNew.bottom);
-		}
+
+		public override int GetHashCode() => left.GetHashCode()^right.GetHashCode()<<2^top.GetHashCode()>>2^bottom.GetHashCode()>>1;
+		public override bool Equals(object other) => other is RectOffset otherRect && left==otherRect.left && right==otherRect.right && top==otherRect.top && bottom==otherRect.bottom;
+
+		public static bool operator ==(RectOffset a,RectOffset b) => a.Equals(b);
+		public static bool operator !=(RectOffset a,RectOffset b) => !a.Equals(b);
 	}
 }

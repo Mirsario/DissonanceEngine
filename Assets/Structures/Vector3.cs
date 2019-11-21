@@ -279,14 +279,7 @@ namespace GameEngine
 		public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
 
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
-		public override bool Equals(object other)
-		{
-			if(!(other is Vector3)) {
-				return false;
-			}
-			var vector = (Vector3)other;
-			return x.Equals(vector.x) && y.Equals(vector.y) && z.Equals(vector.z);
-		}
+		public override bool Equals(object other) => other is Vector3 vector && x==vector.x && y==vector.y && z==vector.z;
 	}
 }
 
