@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using GLEnableCap = OpenTK.Graphics.OpenGL.EnableCap;
+using System.Runtime.CompilerServices;
 
 #pragma warning disable 0649
 
@@ -266,17 +267,18 @@ namespace GameEngine.Graphics
 		public static void VertexAttrib1(AttributeId attribute,float val) => GL.VertexAttrib1((int)attribute,val);
 		public static void VertexAttrib4(AttributeId attribute,Vector4 vec4) => GL.VertexAttrib4((int)attribute,vec4);
 		//UV
-		public static void TexCoord2(Vector2 v)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void TexCoord2(float x,float y)
 		{
 			if(Shader.activeShader==null) {
-				GL.TexCoord2(v);
+				GL.TexCoord2(x,y);
 			}else{
-				GL.VertexAttrib2((int)AttributeId.Uv0,v);
+				GL.VertexAttrib2((int)AttributeId.Uv0,x,y);
 			}
 		}
-		public static void TexCoord2(int x,int y) => TexCoord2(new Vector2(x,y));
-		public static void TexCoord2(float x,float y) => TexCoord2(new Vector2(x,y));
-		public static void TexCoord2(double x,double y) => TexCoord2(new Vector2((float)x,(float)y));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static void TexCoord2(Vector2 vec) => TexCoord2(vec.x,vec.y);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static void TexCoord2(int x,int y) => TexCoord2(x,y);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static void TexCoord2(double x,double y) => TexCoord2(x,y);
 		//other
 		//public static void VertexAttrib2() => GL.VertexAttrib2(
 		//Color

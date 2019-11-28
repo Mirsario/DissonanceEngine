@@ -36,10 +36,13 @@ namespace GameEngine
 		public BoneWeight[] boneWeights;
 		public Bounds bounds;
 
-		internal int vertexBufferId = -1;
-		internal int indexBufferId = -1;
 		internal int vertexSize;
+		internal int vertexBufferId = -1;
+		internal int vertexBufferLength;
+		internal int indexBufferId = -1;
+		internal int indexBufferLength;
 		internal bool isReady;
+
 
 		public virtual void DrawMesh(bool skipAttributes = false)
 		{
@@ -104,7 +107,7 @@ namespace GameEngine
 
 			//Triangles
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,indexBufferId);
-			GL.DrawElements(PrimitiveTypeGL.Triangles,triangles.Length,DrawElementsType.UnsignedInt,0);
+			GL.DrawElements(PrimitiveTypeGL.Triangles,indexBufferLength,DrawElementsType.UnsignedInt,0);
 		}
 
 		public void Apply()
@@ -133,7 +136,7 @@ namespace GameEngine
 			float yMin = 0f; float yMax = 0f;
 			float zMin = 0f; float zMax = 0f;
 
-			vertexSize = 3+(uv!=null ? 2 : 0)+(normals!=null ? 3 : 0)+(colors!=null ? 4 : 0)+(tangents!=null ? 4 : 0)+(boneWeights!=null ? 8 : 0);
+			int vertexSize = 3+(uv!=null ? 2 : 0)+(normals!=null ? 3 : 0)+(colors!=null ? 4 : 0)+(tangents!=null ? 4 : 0)+(boneWeights!=null ? 8 : 0);
 
 			var vertexData = new float[vertexSize*vertices.Length];
 
@@ -224,23 +227,31 @@ namespace GameEngine
 
 			bounds = new Bounds(boundsCenter,boundsExtents);
 
+			PushData(vertexData,vertexSize,triangles);
+
+			isReady = true;
+		}
+		public void PushData(float[] vertexData,int vertexSize,int[] triangles)
+		{
 			static void PushData<T>(BufferTarget bufferTarget,ref int bufferId,int size,T[] data,BufferUsageHint usageHint) where T : struct
 			{
 				if(bufferId==-1) {
 					bufferId = GL.GenBuffer();
 				}
 
-				GL.BindBuffer(BufferTarget.ArrayBuffer,bufferId);
-				GL.BufferData(BufferTarget.ArrayBuffer,(IntPtr)size,data,usageHint);
+				GL.BindBuffer(bufferTarget,bufferId);
+				GL.BufferData(bufferTarget,(IntPtr)size,data,usageHint);
 			}
 
+			this.vertexSize = vertexSize;
+			vertexBufferLength = vertexData.Length;
+			indexBufferLength = triangles.Length;
+
 			//Push Vertices
-			PushData(BufferTarget.ArrayBuffer,ref vertexBufferId,sizeof(float)*vertexData.Length,vertexData,BufferUsageHint.StaticDraw);
+			PushData(BufferTarget.ArrayBuffer,ref vertexBufferId,sizeof(float)*vertexBufferLength,vertexData,BufferUsageHint.StaticDraw);
 
 			//Push Triangles
-			PushData(BufferTarget.ElementArrayBuffer,ref indexBufferId,sizeof(int)*triangles.Length,triangles,BufferUsageHint.StaticDraw);
-
-			isReady = true;
+			PushData(BufferTarget.ElementArrayBuffer,ref indexBufferId,sizeof(int)*indexBufferLength,triangles,BufferUsageHint.StaticDraw);
 		}
 		public void RecalculateNormals()
 		{
@@ -332,11 +343,6 @@ namespace GameEngine
 				float w = Vector3.Dot(Vector3.Cross(n,t),tan2[i])<0f ? -1f : 1f;
 				tangents[i] = new Vector4((t-n*Vector3.Dot(n,t)).Normalized,w);
 			}
-		}
-
-		internal void BufferData()
-		{
-
 		}
 
 		public static Mesh CombineMeshes(params Mesh[] meshes) => CombineMeshesInternal(meshes);
