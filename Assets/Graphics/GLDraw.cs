@@ -187,10 +187,12 @@ namespace GameEngine.Graphics
 				End();
 			});*/
 
+
 			if(drawActions.Count>0) {
 				for(int i = 0;i<drawActions.Count;i++) {
 					drawActions[i]?.Invoke();
 				}
+
 				drawActions.Clear();
 			}
 		}

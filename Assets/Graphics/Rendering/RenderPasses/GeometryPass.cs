@@ -135,7 +135,7 @@ namespace GameEngine.Graphics
 									ref var iTuple = ref renderQueue[i];
 									ref var jTuple = ref renderQueue[j];
 
-									if(iTuple.shader.Id<jTuple.shader.Id || iTuple.material.Id<jTuple.material.Id) {
+									if(iTuple.shader.queue>jTuple.shader.queue || iTuple.shader.Id>jTuple.shader.Id || iTuple.material.Id>jTuple.material.Id) {
 										var temp = iTuple;
 										iTuple = jTuple;
 										jTuple = temp;
@@ -239,7 +239,9 @@ namespace GameEngine.Graphics
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.Blend);
 			GL.Disable(EnableCap.AlphaTest);
+
 			Framebuffer.Bind(null);
+
 			GLDraw.Draw();
 		}
 	}

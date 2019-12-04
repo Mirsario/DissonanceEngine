@@ -184,6 +184,8 @@ namespace GameEngine.Graphics
 
 			renderingPipeline.PreRender();
 
+			Framebuffer.Bind(null);
+
 			//Render passes
 			for(int i = 0;i<renderingPipeline.RenderPasses.Length;i++) {
 				var pass = renderingPipeline.RenderPasses[i];
@@ -198,7 +200,7 @@ namespace GameEngine.Graphics
 
 			//GL.Disable(EnableCap.StencilTest);
 
-#region RenderTargetDebug
+			#region RenderTargetDebug
 			if(Input.GetKey(Keys.F)) {
 				//TODO: This is completely temporarily
 				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
@@ -209,7 +211,7 @@ namespace GameEngine.Graphics
 				for(int i = 0;i<framebuffers.Length;i++) {
 					var fb = framebuffers[i];
 
-					for(int j = 0;j<fb.renderTextures.Length;j++) {
+					for(int j = 0;j<fb.renderTextures.Count;j++) {
 						var tex = fb.renderTextures[j];
 
 						if(!IsDepthTexture(tex)) {
@@ -234,7 +236,7 @@ namespace GameEngine.Graphics
 
 					Framebuffer.Bind(framebuffer,Framebuffer.Target.ReadFramebuffer);
 
-					for(int j = 0;j<framebuffer.renderTextures.Length;j++) {
+					for(int j = 0;j<framebuffer.renderTextures.Count;j++) {
 						var tex = framebuffer.renderTextures[j];
 
 						if(IsDepthTexture(tex)) {

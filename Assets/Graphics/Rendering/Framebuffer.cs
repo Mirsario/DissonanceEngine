@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GameEngine.Utils;
 using OpenTK.Graphics.OpenGL;
 
@@ -6,6 +7,8 @@ using GLFramebufferAttachment = OpenTK.Graphics.OpenGL.FramebufferAttachment;
 
 namespace GameEngine.Graphics
 {
+	//TODO: WIP
+	//TODO: Some fields shouldn't be public
 	public class Framebuffer : IDisposable
 	{
 		public enum Target
@@ -21,7 +24,9 @@ namespace GameEngine.Graphics
 		public readonly string Name;
 		public readonly int Id;
 
-		public RenderTexture[] renderTextures;
+		private readonly Dictionary<RenderTexture,FramebufferAttachment> textureToAttachment;
+
+		public List<RenderTexture> renderTextures;
 		public Renderbuffer[] renderbuffers;
 		public DrawBuffersEnum[] drawBuffers;
 
@@ -33,6 +38,10 @@ namespace GameEngine.Graphics
 		{
 			Name = name;
 			Id = GL.GenFramebuffer();
+
+			renderTextures = new List<RenderTexture>();
+
+			textureToAttachment = new Dictionary<RenderTexture,FramebufferAttachment>();
 		}
 
 		public void AttachRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
@@ -41,9 +50,10 @@ namespace GameEngine.Graphics
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,TextureTarget.Texture2D,texture.Id,0);
-			Rendering.CheckFramebufferStatus();
+			//Rendering.CheckFramebufferStatus();
 			
-			ArrayUtils.Add(ref renderTextures,texture);
+			renderTextures.Add(texture);
+			textureToAttachment[texture] = attachment;
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
@@ -53,10 +63,11 @@ namespace GameEngine.Graphics
 			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
 			maxTextureHeight = Math.Max(maxTextureHeight,texture.Height);
 		}
-		public void AttachRenderTextures(params RenderTexture[] textures)
+		public void AttachRenderTextures(params RenderTexture[] textures) => AttachRenderTextures((IEnumerable<RenderTexture>)textures);
+		public void AttachRenderTextures(IEnumerable<RenderTexture> textures)
 		{
-			for(int i = 0;i<textures.Length;i++) {
-				AttachRenderTexture(textures[i]);
+			foreach(var texture in textures) {
+				AttachRenderTexture(texture);
 			}
 		}
 		public void AttachRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
@@ -74,10 +85,37 @@ namespace GameEngine.Graphics
 				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
 			}
 		}
+
+		public void DetachRenderTexture(RenderTexture texture)
+		{
+			if(!textureToAttachment.TryGetValue(texture,out var attachment)) {
+				return;
+			}
+
+			Bind(this);
+
+			GL.FramebufferTexture(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,0,0);
+
+			renderTextures.Remove(texture);
+			textureToAttachment.Remove(texture);
+
+			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
+				int index = Array.IndexOf(drawBuffers,drawBuffersEnum);
+				if(index>=0) {
+					ArrayUtils.Remove(ref drawBuffers,index);
+				}
+			}
+
+			nextDefaultAttachment--;
+
+			Bind(null);
+		}
+
 		public void PrepareAttachments()
 		{
 			if(renderTextures!=null) {
-				for(int i = 0;i<renderTextures.Length;i++) {
+				for(int i = 0;i<renderTextures.Count;i++) {
 					renderTextures[i].UpdateSize();
 				}
 			}
@@ -111,7 +149,9 @@ namespace GameEngine.Graphics
 		public static Framebuffer Create(string name,Action<Framebuffer> initializer = null)
 		{
 			var fb = new Framebuffer(name);
+
 			initializer?.Invoke(fb);
+
 			return fb;
 		}
 		public static void Bind(Framebuffer fb,Target target = Target.Framebuffer)

@@ -11,7 +11,6 @@ namespace GameEngine.Graphics
 	public partial class Shader : Asset<Shader>
 	{
 		internal static Shader activeShader;
-
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
 
@@ -25,8 +24,9 @@ namespace GameEngine.Graphics
 		public int vertexShader;
 		public int fragmentShader;
 		public int geometryShader;
-		public string[] defines;
+		public int queue;
 		public uint stencilMask;
+		public string[] defines;
 		public BlendingFactor blendFactorSrc;
 		public BlendingFactor blendFactorDst;
 		public CullMode cullMode = CullMode.Front;
@@ -55,6 +55,7 @@ namespace GameEngine.Graphics
 			}
 
 			shadersByName[Name] = this;
+
 			shaders.Add(this);
 
 			//Set uniform locations

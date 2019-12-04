@@ -20,6 +20,7 @@ namespace GameEngine
 			public string[] shaderDefines;
 
 			//Parameters
+			public int queue;
 			public string cullMode;
 			public string polygonMode;
 			//public string renderType;
@@ -49,6 +50,7 @@ namespace GameEngine
 			foreach(var pair in jsonShaders) {
 				string name = pair.Key;
 				var jsonShader = pair.Value;
+
 				string vertexCode = Resources.ImportText(jsonShader.vertexShader);
 				string fragmentCode = Resources.ImportText(jsonShader.fragmentShader);
 				string geometryCode = jsonShader.geometryShader.IsEmptyOrNull() ? "" : Resources.ImportText(jsonShader.geometryShader);
@@ -61,6 +63,7 @@ namespace GameEngine
 					shader.polygonMode = PolygonMode.Fill;
 				}
 
+				shader.queue = jsonShader.queue;
 				shader.blendFactorSrc = jsonShader.blendFactorSrc;
 				shader.blendFactorDst = jsonShader.blendFactorDst;
 
