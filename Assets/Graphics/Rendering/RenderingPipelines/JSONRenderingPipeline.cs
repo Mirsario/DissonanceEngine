@@ -107,7 +107,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 						string texName = texArray[i];
 						bool callContinue = false;
 
-						for(int j = 0;j<texFB.renderTextures.Length;j++) {
+						for(int j = 0;j<texFB.renderTextures.Count;j++) {
 							var fb = texFB.renderTextures[j];
 
 							if(fb.name==texName) {
