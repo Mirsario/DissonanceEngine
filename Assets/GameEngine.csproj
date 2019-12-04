@@ -77,6 +77,11 @@
     <Compile Include="Components\Attributes\ComponentParameters.cs" />
     <Compile Include="Core\Debug.cs" />
     <Compile Include="Core\DebugInternal.cs" />
+    <Compile Include="Core\Mathf.MinMax.cs" />
+    <Compile Include="Core\Mathf.Interpolation.cs" />
+    <Compile Include="Core\Mathf.Clamping.cs" />
+    <Compile Include="Core\Mathf.Rounding.cs" />
+    <Compile Include="Core\Mathf.Essential.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Graphics\Rendering\Utils\GLUtils.cs" />
