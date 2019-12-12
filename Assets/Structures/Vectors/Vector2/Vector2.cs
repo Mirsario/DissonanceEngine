@@ -48,11 +48,17 @@ namespace GameEngine
 			y = Y;
 		}
 
+		public override string ToString() => "X: "+x+",Y: "+y;
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
+		public override bool Equals(object other) => other is Vector2 vector && x==vector.x && y==vector.y;
+
+		public float[] ToArray() => new[] { x,y };
 		public void Normalize()
 		{
-			float mag = Magnitude;
-			if(mag!=0f) {
-				float num = 1f/mag;
+			float magnitude = Magnitude;
+
+			if(magnitude!=0f) {
+				float num = 1f/magnitude;
 				x *= num;
 				y *= num;
 			}
@@ -60,6 +66,7 @@ namespace GameEngine
 		public void Normalize(out float magnitude)
 		{
 			magnitude = Magnitude;
+
 			if(magnitude!=0f) {
 				float num = 1f/magnitude;
 				x *= num;
@@ -67,19 +74,78 @@ namespace GameEngine
 			}
 		}
 
-		public float[] ToArray() => new[] { x,y };
-		public override string ToString() => "X: "+x+",Y: "+y;
-		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
-		public override bool Equals(object other) => other is Vector2 vector && x==vector.x && y==vector.y;
+		public static float Dot(Vector2 a,Vector2 b) => a.x*b.x+a.y*b.y;
+		public static float Distance(Vector2 a,Vector2 b) => (a-b).Magnitude;
+		public static float SqrDistance(Vector2 a,Vector2 b) => (a-b).SqrMagnitude;
+		public static Vector2 Normalize(Vector2 vec)
+		{
+			float magnitude = vec.Magnitude;
 
-		public static Vector2 StepTowards(Vector2 val,Vector2 goal,float step) => new Vector2(
-			Mathf.StepTowards(val.x,goal.x,step),
-			Mathf.StepTowards(val.y,goal.y,step)
-		);
-		public static Vector2 SnapToGrid(Vector2 val,float step) => new Vector2(
-			Mathf.SnapToGrid(val.x,step),
-			Mathf.SnapToGrid(val.y,step)
-		);
+			if(magnitude!=0f) {
+				float num = 1f/magnitude;
+				vec.x *= num;
+				vec.y *= num;
+			}
+
+			return vec;
+		}
+		public static Vector2 Normalize(Vector2 vec,out float magnitude)
+		{
+			magnitude = vec.Magnitude;
+
+			if(magnitude!=0f) {
+				float num = 1f/magnitude;
+				vec.x *= num;
+				vec.y *= num;
+			}
+
+			return vec;
+		}
+		public static Vector2 StepTowards(Vector2 vec,Vector2 goal,float step)
+		{
+			vec.x = Mathf.StepTowards(vec.x,goal.x,step);
+			vec.y = Mathf.StepTowards(vec.y,goal.y,step);
+
+			return vec;
+		}
+		public static Vector2 SnapToGrid(Vector2 vec,float step)
+		{
+			vec.x = Mathf.SnapToGrid(vec.x,step);
+			vec.y = Mathf.SnapToGrid(vec.y,step);
+
+			return vec;
+		}
+		public static Vector2 Floor(Vector2 vec)
+		{
+			vec.x = Mathf.Floor(vec.x);
+			vec.y = Mathf.Floor(vec.y);
+
+			return vec;
+		}
+		public static Vector2 Ceil(Vector2 vec)
+		{
+			vec.x = Mathf.Ceil(vec.x);
+			vec.y = Mathf.Ceil(vec.y);
+
+			return vec;
+		}
+		public static Vector2 Round(Vector2 vec)
+		{
+			vec.x = Mathf.Round(vec.x);
+			vec.y = Mathf.Round(vec.y);
+
+			return vec;
+		}
+		public static Vector2 Rotate(Vector2 vec,float angle)
+		{
+			float sin = Mathf.Sin(angle*Mathf.Deg2Rad);
+			float cos = Mathf.Cos(angle*Mathf.Deg2Rad);
+
+			vec.x = (cos*vec.x)-(sin*vec.y);
+			vec.y = (sin*vec.x)+(cos*vec.y);
+
+			return vec;
+		}
 		public static Vector2 Lerp(Vector2 from,Vector2 to,float t)
 		{
 			if(t<0f) {
@@ -87,45 +153,12 @@ namespace GameEngine
 			}else if(t>1f) {
 				t = 1f;
 			}
-			return new Vector2(from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t);
+
+			Vector2 result;
+			result.x = from.x+(to.x-from.x)*t;
+			result.y = from.y+(to.y-from.y)*t;
+			return result;
 		}
-		public static Vector2 Normalize(Vector2 vec)
-		{
-			float mag = vec.Magnitude;
-			if(mag!=0f) {
-				float num = 1f/mag;
-				vec.x *= num;
-				vec.y *= num;
-			}
-			return vec;
-		}
-		public static Vector2 Floor(Vector2 vec)
-		{
-			vec.x = Mathf.Floor(vec.x);
-			vec.y = Mathf.Floor(vec.y);
-			return vec;
-		}
-		public static Vector2 Ceil(Vector2 vec)
-		{
-			vec.x = Mathf.Ceil(vec.x);
-			vec.y = Mathf.Ceil(vec.y);
-			return vec;
-		}
-		public static Vector2 Round(Vector2 vec)
-		{
-			vec.x = Mathf.Round(vec.x);
-			vec.y = Mathf.Round(vec.y);
-			return vec;
-		}
-		public static Vector2 Rotate(Vector2 vec,float angle)
-		{
-			float sin = Mathf.Sin(angle*Mathf.Deg2Rad);
-			float cos = Mathf.Cos(angle*Mathf.Deg2Rad);
-			return new Vector2((cos*vec.x)-(sin*vec.y),(sin*vec.x)+(cos*vec.y));
-		}
-		public static float Dot(Vector2 a,Vector2 b) => a.x*b.x+a.y*b.y;
-		public static float Distance(Vector2 a,Vector2 b) => (a-b).Magnitude;
-		public static float SqrDistance(Vector2 a,Vector2 b) => (a-b).SqrMagnitude;
 
 		//Operators
 		public static Vector2 operator -(Vector2 a) => new Vector2(-a.x,-a.y);

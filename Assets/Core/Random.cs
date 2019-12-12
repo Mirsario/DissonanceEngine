@@ -2,11 +2,17 @@ using System;
 
 namespace GameEngine
 {
+	//TODO: Redesign
 	public class Rand
 	{
 		internal static Random staticRandom;
-		internal Random random;
+
 		private static int globalSeed;
+
+		internal Random random;
+
+		private int seed;
+
 		public static int GlobalSeed {
 			get => globalSeed;
 			set {
@@ -15,7 +21,6 @@ namespace GameEngine
 			}
 		}
 		
-		private int seed;
 		public int Seed {
 			get => seed;
 			set {
@@ -27,8 +32,10 @@ namespace GameEngine
 		public Rand(int seed)
 		{
 			this.seed = seed;
+
 			random = new Random(seed);
 		}
+
 		public float NextFloat(float minValue,float maxValue)
 		{
 			if(minValue>maxValue) {
@@ -36,6 +43,7 @@ namespace GameEngine
 				maxValue = minValue;
 				minValue = tempVal;
 			}
+
 			return minValue+(float)random.NextDouble()*(maxValue-minValue);
 		}
 		public int NextInt(int minValue,int maxValue)
@@ -45,6 +53,7 @@ namespace GameEngine
 				maxValue = minValue;
 				minValue = tempVal;
 			}
+
 			return random.Next(minValue,maxValue);
 		}
 		
