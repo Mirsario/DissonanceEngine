@@ -28,6 +28,7 @@
 		public static Vector2 operator /(Vector2UShort a,Vector2 b) => new Vector2(a.x/b.x,a.y/b.y);
 		public static Vector2 operator /(Vector2 a,Vector2UShort b) => new Vector2(a.x/b.x,a.y/b.y);
 	}
+
 	public partial struct Vector2Int
 	{
 		//Vector2
@@ -48,6 +49,7 @@
 		public static Vector2Int operator /(Vector2Int a,Vector2UShort b) => new Vector2Int(a.x/b.x,a.y/b.y);
 		public static Vector2Int operator /(Vector2UShort a,Vector2Int b) => new Vector2Int(a.x/b.x,a.y/b.y);
 	}
+
 	public partial struct Vector2UShort
 	{
 		//Vector2

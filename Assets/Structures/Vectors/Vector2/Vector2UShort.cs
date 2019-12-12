@@ -4,6 +4,7 @@ namespace GameEngine
 	{
 		public ushort x;
 		public ushort y;
+
 		public Vector2UShort(ushort x,ushort y)
 		{
 			this.x = x;
