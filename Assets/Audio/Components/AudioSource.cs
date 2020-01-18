@@ -40,6 +40,7 @@ namespace GameEngine
 
 				if(beenEnabledBefore) {
 					AL.Source(sourceId,ALSourcei.Buffer,clip?.bufferId ?? -1);
+
 					updateClip = false;
 				} else {
 					updateClip = true;
@@ -53,7 +54,9 @@ namespace GameEngine
 
 				if(beenEnabledBefore) {
 					AL.Source(sourceId,ALSourceb.SourceRelative,is2D);
+
 					var pos = (OpenTK.Vector3)(is2D ? Vector3.Zero : Transform.Position);
+
 					AL.Source(sourceId,ALSource3f.Position,ref pos);
 
 					updateIs2D = false;
