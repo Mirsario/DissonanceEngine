@@ -32,14 +32,17 @@ namespace GameEngine.Graphics
 			}
 
 			ErrorCode error = GL.GetError();
+
 			switch(error) {
-				case ErrorCode.NoError: return false;
+				case ErrorCode.NoError:
+					return false;
 				default:
 					if(throwException) {
 						throw new GraphicsException(prefix.ToString()+error);
 					}else{
 						Debug.Log(prefix.ToString()+error,stackframeOffset:2);
 					}
+
 					return true;
 			}
 		}

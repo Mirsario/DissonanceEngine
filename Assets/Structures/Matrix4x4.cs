@@ -6,6 +6,8 @@ namespace GameEngine
 		//Constants
 		public const int Length = 16;
 
+		private const string OutOfRangeMessage = "[{0},{1}] is not a valid matrix index.";
+
 		//Read-only fields
 		public static readonly Matrix4x4 Identity = new Matrix4x4(Vector4.UnitX,Vector4.UnitY,Vector4.UnitZ,Vector4.UnitW);
 		public static readonly Matrix4x4 Zero = new Matrix4x4(Vector4.Zero,Vector4.Zero,Vector4.Zero,Vector4.Zero);
@@ -76,44 +78,41 @@ namespace GameEngine
 
 		//Indexers
 		public float this[int row,int column] {
-			get {
-				return column switch
-				{
-					0 => row switch
-					{
-						0 => m00,
-						1 => m01,
-						2 => m02,
-						3 => m03,
-						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
-					},
-					1 => row switch
-					{
-						0 => m10,
-						1 => m11,
-						2 => m12,
-						3 => m13,
-						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
-					},
-					2 => row switch
-					{
-						0 => m20,
-						1 => m21,
-						2 => m22,
-						3 => m23,
-						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
-					},
-					3 => row switch
-					{
-						0 => m30,
-						1 => m31,
-						2 => m32,
-						3 => m33,
-						_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
-					},
-					_ => throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index."),
-				};
-			}
+			get => column switch {
+				0 => row switch {
+					0 => m00,
+					1 => m01,
+					2 => m02,
+					3 => m03,
+					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
+				},
+
+				1 => row switch {
+					0 => m10,
+					1 => m11,
+					2 => m12,
+					3 => m13,
+					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
+				},
+
+				2 => row switch {
+					0 => m20,
+					1 => m21,
+					2 => m22,
+					3 => m23,
+					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
+				},
+
+				3 => row switch {
+					0 => m30,
+					1 => m31,
+					2 => m32,
+					3 => m33,
+					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
+				},
+
+				_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
+			};
 			set {
 				switch(column) {
 					case 0: switch(row) {
@@ -121,56 +120,56 @@ namespace GameEngine
 						case 1:	m01 = value; return;
 						case 2:	m02 = value; return;
 						case 3:	m03 = value; return;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
+						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 					}
+
 					case 1: switch(row) {
 						case 0:	m10 = value; return;
 						case 1:	m11 = value; return;
 						case 2:	m12 = value; return;
 						case 3:	m13 = value; return;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
+						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 					}
+
 					case 2: switch(row) {
 						case 0:	m20 = value; return;
 						case 1:	m21 = value; return;
 						case 2:	m22 = value; return;
 						case 3:	m23 = value; return;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
+						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 					}
 					case 3: switch(row) {
 						case 0:	m30 = value; return;
 						case 1:	m31 = value; return;
 						case 2:	m32 = value; return;
 						case 3:	m33 = value; return;
-						default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
+						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 					}
-					default: throw new IndexOutOfRangeException("["+row+","+column+"] is not a valid matrix index.");
+
+					default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 				}
 			}
 		}
 		public float this[int id] {
-			get {
-				return id switch
-				{
-					0 => m00,
-					1 => m01,
-					2 => m02,
-					3 => m03,
-					4 => m10,
-					5 => m11,
-					6 => m12,
-					7 => m13,
-					8 => m20,
-					9 => m21,
-					10 => m22,
-					11 => m23,
-					12 => m30,
-					13 => m31,
-					14 => m32,
-					15 => m33,
-					_ => throw new IndexOutOfRangeException("["+id+"] single matrix index must range from 0 to 15."),
-				};
-			}
+			get => id switch {
+				0 => m00,
+				1 => m01,
+				2 => m02,
+				3 => m03,
+				4 => m10,
+				5 => m11,
+				6 => m12,
+				7 => m13,
+				8 => m20,
+				9 => m21,
+				10 => m22,
+				11 => m23,
+				12 => m30,
+				13 => m31,
+				14 => m32,
+				15 => m33,
+				_ => throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15]."),
+			};
 			set {
 				switch(id) {
 					case 0:	m00 = value; break;
@@ -189,7 +188,7 @@ namespace GameEngine
 					case 13: m31 = value; break;
 					case 14: m32 = value; break;
 					case 15: m33 = value; break;
-					default: throw new IndexOutOfRangeException("["+id+"] single matrix index must range from 0 to 15.");
+					default: throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15].");
 				}
 			}
 		}
@@ -241,8 +240,10 @@ namespace GameEngine
 				{ m20,m21,m22,m23 },
 				{ m30,m31,m32,m33 }
 			};
+
 			int icol = 0;
 			int irow = 0;
+
 			for(int i = 0;i<4;i++) {
 				float maxPivot = 0f;
 				for(int j = 0;j<4;j++) {
@@ -261,7 +262,9 @@ namespace GameEngine
 						}
 					}
 				}
+
 				++pivotIdx[icol];
+
 				if(irow!=icol) {
 					for(int k = 0;k<4;++k) {
 						float f = inverse[irow,k];
@@ -269,18 +272,24 @@ namespace GameEngine
 						inverse[icol,k] = f;
 					}
 				}
+
 				rowIdx[i] = irow;
 				colIdx[i] = icol;
+
 				float pivot = inverse[icol,icol];
 				if(pivot==0f) {
 					return;
 					//throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
 				}
+
 				float oneOverPivot = 1f/pivot;
+
 				inverse[icol,icol] = 1f;
+
 				for(int k = 0;k<4;++k) {
 					inverse[icol,k] *= oneOverPivot;
 				}
+
 				for(int j = 0;j<4;++j) {
 					if(icol!=j) {
 						float f = inverse[j,icol];
@@ -291,15 +300,18 @@ namespace GameEngine
 					}
 				}
 			}
+
 			for(int j = 3;j>=0;--j) {
 				int ir = rowIdx[j];
 				int ic = colIdx[j];
+
 				for(int k = 0;k<4;++k) {
 					float f = inverse[k,ir];
 					inverse[k,ir] = inverse[k,ic];
 					inverse[k,ic] = f;
 				}
 			}
+
 			m00 = inverse[0,0];
 			m01 = inverse[0,1];
 			m02 = inverse[0,2];
@@ -335,6 +347,7 @@ namespace GameEngine
 			float mag0 = ((Vector3)Row0).Magnitude;
 			float mag1 = ((Vector3)Row1).Magnitude;
 			float mag2 = ((Vector3)Row2).Magnitude;
+
 			Row0 = new Vector4(mag0,0f,0f,m03);
 			Row1 = new Vector4(0f,mag1,0f,m13);
 			Row2 = new Vector4(0f,0f,mag2,m23);
