@@ -25,6 +25,10 @@ namespace GameEngine
 			this.w = w;
 		}
 
+		public override string ToString() => "X: "+x+",Y: "+y+",W: "+z+",Z: "+w;
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
+		public override bool Equals(object other) => other is Vector4Int point && x==point.x && y==point.y && z==point.z && w==point.w;
+
 		//Vector4Int
 		public static Vector4Int operator +(Vector4Int a,Vector4Int b) => new Vector4Int(a.x+b.x,a.y+b.y,a.z+b.z,a.w+b.w);
 		public static Vector4Int operator -(Vector4Int a,Vector4Int b) => new Vector4Int(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w);
@@ -42,9 +46,7 @@ namespace GameEngine
 		public static Vector4 operator*(float d,Vector4Int a) => new Vector4(d*a.x,d*a.y,d*a.z,d*a.w);
 		public static Vector4 operator/(Vector4Int a,float d) => new Vector4(a.x/d,a.y/d,a.z/d,a.w/d);
 
-		public override string ToString() => "X: "+x+",Y: "+y+",W: "+z+",Z: "+w;
-		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
-		public override bool Equals(object other) => other is Vector4Int point && x==point.x && y==point.y && z==point.z && w==point.w;
+		public static unsafe implicit operator int*(Vector4Int vec) => (int*)&vec;
 	}
 }
 

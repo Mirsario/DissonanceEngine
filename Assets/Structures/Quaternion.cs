@@ -235,18 +235,20 @@ namespace GameEngine
 		}
 		public static Quaternion operator *(Quaternion q,float s)
 		{
-			q.x = q.x*s;
-			q.y = q.y*s;
-			q.z = q.z*s;
-			q.w = q.w*s;
+			q.x *= s;
+			q.y *= s;
+			q.z *= s;
+			q.w *= s;
+
 			return q;
 		}
 		public static Quaternion operator *(float s,Quaternion q)
 		{
-			q.x = q.x*s;
-			q.y = q.y*s;
-			q.z = q.z*s;
-			q.w = q.w*s;
+			q.x *= s;
+			q.y *= s;
+			q.z *= s;
+			q.w *= s;
+
 			return q;
 		}
 		public static bool operator ==(Quaternion a,Quaternion b) => a.x==b.x && a.y==b.y && a.z==b.z && a.w==b.w;
@@ -254,20 +256,6 @@ namespace GameEngine
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2^w.GetHashCode()>>1;
 		public bool Equals(Quaternion q) => x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
 		public override bool Equals(object other) => other is Quaternion q && x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
-
-		public static implicit operator OpenTK.Quaternion(Quaternion value)
-		{
-			return new OpenTK.Quaternion(value.x,value.y,value.z,value.w);
-		}
-		public static implicit operator Quaternion(OpenTK.Quaternion value)
-		{
-			Quaternion result;
-			result.x = value.X;
-			result.y = value.Y;
-			result.z = value.Z;
-			result.w = value.W;
-			return result;
-		}
 	}
 }
 

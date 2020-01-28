@@ -1,4 +1,5 @@
-using BulletSharp;
+/*using BulletSharp;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Physics
 {
@@ -23,9 +24,9 @@ namespace GameEngine.Physics
 				collShape = null;
 			}
 
-			collShape = new CylinderShape(size*0.5f);
+			collShape = new CylinderShape(size.ToBulletVector3()*0.5f);
 
 			base.UpdateCollider();
 		}
 	}
-}
+}*/

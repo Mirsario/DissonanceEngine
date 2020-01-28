@@ -1,6 +1,5 @@
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
-using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace GameEngine
 {
@@ -93,7 +92,7 @@ namespace GameEngine
 		}
 		public override void Render(object renderObject)
 		{
-			int uvAttrib = (int)AttributeId.Uv0;
+			uint uvAttrib = (uint)AttributeId.Uv0;
 
 			Vector4 uvPoints = spriteEffects switch {
 				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => new Vector4(sourceUV.z,sourceUV.w,sourceUV.x,sourceUV.y),

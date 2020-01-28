@@ -1,5 +1,5 @@
 ﻿using GameEngine.Physics;
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework.OpenGL;
 using System;
 using System.Diagnostics;
 
@@ -178,7 +178,7 @@ namespace GameEngine.Graphics
 
 								//Update PolygonMode
 								if(lastPolygonMode!=shader.polygonMode) {
-									GL.PolygonMode(MaterialFace.FrontAndBack,(OpenTK.Graphics.OpenGL.PolygonMode)(lastPolygonMode = shader.polygonMode));
+									GL.PolygonMode(MaterialFace.FrontAndBack,lastPolygonMode = shader.polygonMode);
 								}
 
 								lastShader = shader;
@@ -232,7 +232,7 @@ namespace GameEngine.Graphics
 				Debug.Log($"");
 			}
 
-			GL.PolygonMode(MaterialFace.FrontAndBack,OpenTK.Graphics.OpenGL.PolygonMode.Fill);
+			GL.PolygonMode(MaterialFace.FrontAndBack,PolygonMode.Fill);
 			GL.CullFace(CullFaceMode.Front);
 
 			GL.Disable(EnableCap.CullFace);
@@ -241,8 +241,6 @@ namespace GameEngine.Graphics
 			GL.Disable(EnableCap.AlphaTest);
 
 			Framebuffer.Bind(null);
-
-			GLDraw.Draw();
 		}
 	}
 }

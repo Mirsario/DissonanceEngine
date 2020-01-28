@@ -1,9 +1,10 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
-using GameEngine.Extensions;
+using GameEngine.Utils.Extensions;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace GameEngine
 {
@@ -40,6 +41,7 @@ namespace GameEngine
 		public override Shader[] Import(Stream stream,string fileName)
 		{
 			string jsonText;
+
 			using(var reader = new StreamReader(stream)) {
 				jsonText = reader.ReadToEnd();
 			}
@@ -56,9 +58,11 @@ namespace GameEngine
 				string geometryCode = jsonShader.geometryShader.IsEmptyOrNull() ? "" : Resources.ImportText(jsonShader.geometryShader);
 
 				var shader = Shader.FromCode(name,vertexCode,fragmentCode,geometryCode,jsonShader.shaderDefines);
+
 				if(!Enum.TryParse(jsonShader.cullMode,true,out shader.cullMode)) {
 					shader.cullMode = CullMode.Front;
 				}
+
 				if(!Enum.TryParse(jsonShader.polygonMode,true,out shader.polygonMode)) {
 					shader.polygonMode = PolygonMode.Fill;
 				}

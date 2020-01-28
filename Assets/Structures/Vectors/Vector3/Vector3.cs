@@ -83,14 +83,18 @@ namespace GameEngine
 			z = XYZ;
 		}
 		
-		public float[] ToArray() => new[] { x,y,z };
-		public override string ToString() => string.Format(" {0:F5}\t {1:F5}\t {2:F5}",new object[]{x,y,z}).Replace("-","-");
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
+		public override bool Equals(object other) => other is Vector3 vector && x==vector.x && y==vector.y && z==vector.z;
+		public override string ToString() => string.Format(" {0:F5}\t {1:F5}\t {2:F5}",new object[] { x,y,z }).Replace("-","-");
 
+		public float[] ToArray() => new[] { x,y,z };
 		public void Normalize()
 		{
 			float mag = Magnitude;
+
 			if(mag!=0f) {
 				float num = 1f/mag;
+
 				x *= num;
 				y *= num;
 				z *= num;
@@ -99,8 +103,10 @@ namespace GameEngine
 		public void Normalize(out float magnitude)
 		{
 			magnitude = Magnitude;
+
 			if(magnitude!=0f) {
 				float num = 1f/magnitude;
+
 				x *= num;
 				y *= num;
 				z *= num;
@@ -108,21 +114,28 @@ namespace GameEngine
 		}
 		public void NormalizeEuler()
 		{
+			//TODO: Rewrite without loops, sigh.
+
 			while(x>=360f) {
 				x -= 360f;
 			}
+
 			while(x<0f) {
 				x += 360f;
 			}
+
 			while(y>=360f) {
 				y -= 360f;
 			}
+
 			while(y<0f) {
 				y += 360f;
 			}
+
 			while(z>=360f) {
 				z -= 360f;
 			}
+
 			while(z<0f) {
 				z += 360f;
 			}
@@ -187,9 +200,11 @@ namespace GameEngine
 		public static Vector3 Normalize(Vector3 vec)
 		{
 			float mag = vec.Magnitude;
+
 			if(mag!=0f) {
 				vec *= 1f/mag;
 			}
+
 			return vec;
 		}
 		public static Vector3 Floor(Vector3 vec)
@@ -197,6 +212,7 @@ namespace GameEngine
 			vec.x = Mathf.Floor(vec.x);
 			vec.y = Mathf.Floor(vec.y);
 			vec.z = Mathf.Floor(vec.z);
+
 			return vec;
 		}
 		public static Vector3 Ceil(Vector3 vec)
@@ -204,6 +220,7 @@ namespace GameEngine
 			vec.x = Mathf.Ceil(vec.x);
 			vec.y = Mathf.Ceil(vec.y);
 			vec.z = Mathf.Ceil(vec.z);
+
 			return vec;
 		}
 		public static Vector3 Round(Vector3 vec)
@@ -211,16 +228,19 @@ namespace GameEngine
 			vec.x = Mathf.Round(vec.x);
 			vec.y = Mathf.Round(vec.y);
 			vec.z = Mathf.Round(vec.z);
+
 			return vec;
 		}
 		public static Vector3 Lerp(Vector3 from,Vector3 to,float t)
 		{
 			t = Mathf.Clamp01(t);
+
 			return new Vector3(from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t,from.z+(to.z-from.z)*t);
 		}
 		public static Vector3 LerpAngle(Vector3 from,Vector3 to,float t)
 		{
 			//Could be sped up.
+
 			return new Vector3(
 				Mathf.LerpAngle(from.x,to.x,t),
 				Mathf.LerpAngle(from.y,to.y,t),
@@ -238,48 +258,47 @@ namespace GameEngine
 		public static Vector3 Cross(Vector3 left,Vector3 right)
 		{
 			Cross(ref left,ref right,out var result);
+
 			return result;
 		}
-		public static float Dot(Vector3 left,Vector3 right)
-		{
-			return left.x*right.x+left.y*right.y+left.z*right.z;
-		}
+		public static float Dot(Vector3 left,Vector3 right) => left.x*right.x+left.y*right.y+left.z*right.z;
 		public static float Angle(Vector3 from,Vector3 to)
 		{
 			float denominator = Mathf.Sqrt(from.SqrMagnitude*to.SqrMagnitude);
+
 			if(denominator<kEpsilonNormalSqrt) {
 				return 0f;
 			}
+
 			float dot = Mathf.Clamp(Dot(from,to)/denominator,-1F,1F);
+
 			return Mathf.Acos(dot)*Mathf.Rad2Deg;
 		}
-		public static float Distance(Vector3 a,Vector3 b)
-		{
-			return (a-b).Magnitude;
-		}
-		public static float SqrDistance(Vector3 a,Vector3 b)
-		{
-			return (a-b).SqrMagnitude;
-		}
-		
-		public static Vector3 operator*(Vector3 a,Vector3 b) => new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);	//Vector3
+		public static float Distance(Vector3 a,Vector3 b) => (a-b).Magnitude;
+		public static float SqrDistance(Vector3 a,Vector3 b) => (a-b).SqrMagnitude;
+
+		//Operations
+
+		//Vector3
+		public static Vector3 operator*(Vector3 a,Vector3 b) => new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);
 		public static Vector3 operator/(Vector3 a,Vector3 b) => new Vector3(a.x/b.x,a.y/b.y,a.z/b.z);
 		public static Vector3 operator+(Vector3 a,Vector3 b) => new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
 		public static Vector3 operator-(Vector3 a,Vector3 b) => new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);
 		public static Vector3 operator-(Vector3 a) => new Vector3(-a.x,-a.y,-a.z);
 		public static bool operator==(Vector3 a,Vector3 b) => (a-b).SqrMagnitude<9.99999944E-11f;
 		public static bool operator!=(Vector3 a,Vector3 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
-		public static Vector3 operator*(Vector3 a,float d) => new Vector3(a.x*d,a.y*d,a.z*d);			//Float
+		//Float
+		public static Vector3 operator*(Vector3 a,float d) => new Vector3(a.x*d,a.y*d,a.z*d);
 		public static Vector3 operator*(float d,Vector3 a) => new Vector3(a.x*d,a.y*d,a.z*d);
 		public static Vector3 operator/(Vector3 a,float d) => new Vector3(a.x/d,a.y/d,a.z/d);
-		
-		public static implicit operator OpenTK.Vector3(Vector3 value) => new OpenTK.Vector3(value.x,value.y,value.z);
-		public static implicit operator Vector3(OpenTK.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
-		public static implicit operator BulletSharp.Vector3(Vector3 value) => new BulletSharp.Vector3(value.x,value.y,value.z);
-		public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
 
-		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
-		public override bool Equals(object other) => other is Vector3 vector && x==vector.x && y==vector.y && z==vector.z;
+		//Casts
+		
+		//BulletSharp.Vector3
+		//public static implicit operator BulletSharp.Vector3(Vector3 value) => new BulletSharp.Vector3(value.x,value.y,value.z);
+		//public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
+
+		public static unsafe implicit operator float*(Vector3 vec) => (float*)&vec;
 	}
 }
 

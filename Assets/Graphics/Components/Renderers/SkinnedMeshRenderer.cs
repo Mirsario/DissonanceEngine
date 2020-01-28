@@ -1,4 +1,4 @@
-/*using OpenTK.Graphics.OpenGL;
+/*using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
 
 namespace GameEngine

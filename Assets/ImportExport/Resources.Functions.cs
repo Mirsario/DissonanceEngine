@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using GameEngine.Extensions;
-using Ionic.Zip;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine
 {
@@ -30,11 +28,13 @@ namespace GameEngine
 				}
 
 				string ext = Path.GetExtension(fileName).ToLower();
+
 				if(!assetManagers.TryGetValue(ext,out var managers)) {
 					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
 				}
 
 				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
+
 				if(results.Length==0) {
 					throw new NotImplementedException($"Could not find any '{ext}' asset managers which would return a '{type.Name}'.");
 				}
@@ -51,7 +51,7 @@ namespace GameEngine
 		public static string ImportText(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<string>)assetManagers[".txt"][0],throwOnFail);
 		public static byte[] ImportBytes(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<byte[]>)assetManagers[".bytes"][0],throwOnFail);
 		
-		//'Get' imports and caches files,or gets them from cache, if they have already been loaded.
+		//'Get' imports and caches files, or gets them from cache, if they have already been loaded.
 		public static T Get<T>(string filePath,bool throwOnFail = true) where T : class
 		{
 			ReadyPath(ref filePath);
@@ -164,7 +164,7 @@ namespace GameEngine
 				return null;
 			}
 
-			var method = typeof(Resources).GetMethod("ImportFromStream",BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(tType);
+			var method = typeof(Resources).GetMethod(nameof(ImportFromStream),BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(tType);
 			var content = method.Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
 
 			AddToCache(filePath,content);

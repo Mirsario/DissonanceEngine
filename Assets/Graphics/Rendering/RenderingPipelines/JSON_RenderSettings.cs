@@ -18,6 +18,7 @@ namespace GameEngine
 				[JsonProperty(Required = Required.Always)]
 				public TextureFormat format;
 			}
+
 			[JsonProperty(Required = Required.Always)]
 			public Dictionary<string,Texture> textures;
 		}

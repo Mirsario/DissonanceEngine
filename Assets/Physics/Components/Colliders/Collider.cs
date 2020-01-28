@@ -1,4 +1,4 @@
-using BulletSharp;
+/*using BulletSharp;
 
 namespace GameEngine.Physics
 {
@@ -54,5 +54,4 @@ namespace GameEngine.Physics
 			}
 		}
 	}
-}
-
+}*/

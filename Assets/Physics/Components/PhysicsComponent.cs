@@ -1,4 +1,4 @@
-namespace GameEngine.Physics
+/*namespace GameEngine.Physics
 {
 	public abstract class PhysicsComponent : Component
 	{
@@ -13,5 +13,4 @@ namespace GameEngine.Physics
 			}
 		}
 	}
-}
-
+}*/

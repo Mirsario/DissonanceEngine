@@ -2,26 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameEngine.Graphics;
-using GameEngine.Utils;
-using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using Dissonance.Framework.OpenGL;
 
 #pragma warning disable 0649
 
 namespace GameEngine
 {
-	public struct BoneWeight
-	{
-		public int boneIndex0;
-		public int boneIndex1;
-		public int boneIndex2;
-		public int boneIndex3;
-		public float weight0;
-		public float weight1;
-		public float weight2;
-		public float weight3;
-	}
-
 	public class Mesh : Asset<Mesh>
 	{
 		public delegate void ArrayCopyDelegate<T>(int meshIndex,T[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length);
@@ -37,9 +23,9 @@ namespace GameEngine
 		public Bounds bounds;
 
 		internal int vertexSize;
-		internal int vertexBufferId = -1;
+		internal uint vertexBufferId;
 		internal int vertexBufferLength;
-		internal int indexBufferId = -1;
+		internal uint indexBufferId;
 		internal int indexBufferLength;
 		internal bool isReady;
 
@@ -48,7 +34,7 @@ namespace GameEngine
 		{
 			int vertexDataOffset = 0;
 
-			void TrySubmitAttribute(bool active,int attributeId,int size,VertexAttribPointerType pointerType,bool normalized,int stride)
+			void TrySubmitAttribute(bool active,uint attributeId,int size,VertexAttribPointerType pointerType,bool normalized,int stride)
 			{
 				if(active) {
 					GL.EnableVertexAttribArray(attributeId);
@@ -107,7 +93,7 @@ namespace GameEngine
 
 			//Triangles
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,indexBufferId);
-			GL.DrawElements(PrimitiveTypeGL.Triangles,indexBufferLength,DrawElementsType.UnsignedInt,0);
+			GL.DrawElements(PrimitiveType.Triangles,indexBufferLength,DrawElementsType.UnsignedInt,0);
 		}
 
 		public void Apply()
@@ -233,14 +219,14 @@ namespace GameEngine
 		}
 		public void PushData(float[] vertexData,int vertexSize,int[] triangles)
 		{
-			static void PushData<T>(BufferTarget bufferTarget,ref int bufferId,int size,T[] data,BufferUsageHint usageHint) where T : struct
+			static void PushData<T>(BufferTarget bufferTarget,ref uint bufferId,int size,T[] data,BufferUsageHint usageHint) where T : unmanaged
 			{
-				if(bufferId==-1) {
+				if(bufferId==0) {
 					bufferId = GL.GenBuffer();
 				}
 
 				GL.BindBuffer(bufferTarget,bufferId);
-				GL.BufferData(bufferTarget,(IntPtr)size,data,usageHint);
+				GL.BufferData(bufferTarget,size,data,usageHint);
 			}
 
 			this.vertexSize = vertexSize;

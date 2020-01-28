@@ -1,5 +1,4 @@
 using System;
-using OpenTK.Graphics.OpenGL;
 using GameEngine.Graphics;
 
 namespace GameEngine

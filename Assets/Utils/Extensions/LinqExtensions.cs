@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GameEngine.Extensions
+namespace GameEngine.Utils.Extensions
 {
 	public static class LinqExtensions
 	{

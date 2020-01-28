@@ -1,6 +1,7 @@
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics {
+namespace GameEngine.Graphics
+{
 	internal class ShaderUniform
 	{
 		public string name;

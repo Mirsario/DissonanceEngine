@@ -1,16 +1,12 @@
-using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Drawing.Imaging;
-using System.IO;
-using ImagingPixelformat = System.Drawing.Imaging.PixelFormat;
-using GameEngine.Graphics;
+//using ImagingPixelformat = System.Drawing.Imaging.PixelFormat;
+
+//TODO: Moving to .NET Core broke reference to System.Drawing.Imaging. Needs fixing.
 
 namespace GameEngine
 {
 	//A "rewrite" of http://github.com/andburn/dds-reader
-	//
-	public class DDSManager : AssetManager<Texture>
+
+	/*public class DDSManager : AssetManager<Texture>
 	{
 		private static readonly byte[] Signature = { (byte)'D',(byte)'D',(byte)'S',(byte)' '};
 
@@ -531,8 +527,8 @@ namespace GameEngine
 				//
 				//Normalized number
 				//
-				e = e+(127-15);
-				m = m << 13;
+				e += (127-15);
+				m <<= 13;
 
 				//
 				//Assemble s,e and m.
@@ -1344,8 +1340,9 @@ namespace GameEngine
 						}
 					}
 				}
+
 				return rawData;
 			}
 		}
-	}
+	}*/
 }

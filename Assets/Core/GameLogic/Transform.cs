@@ -155,7 +155,7 @@ namespace GameEngine
 		{
 			Transform p = this;
 			while((p = p.parent)!=null) {
-				matrix = matrix*p.Matrix.Inverted;
+				matrix *= p.Matrix.Inverted;
 			}
 			return matrix;
 		}
@@ -164,7 +164,7 @@ namespace GameEngine
 		{
 			Transform p = this;
 			while((p = p.parent)!=null) {
-				matrix = matrix*p.Matrix;
+				matrix *= p.Matrix;
 			}
 			return matrix;
 		}

@@ -1,10 +1,11 @@
-using BulletSharp;
+/*using BulletSharp;
 
 namespace GameEngine.Physics
 {
 	public class Box2DCollider : Collider
 	{
 		protected Vector2 size = Vector2.One;
+
 		public Vector2 Size {
 			get => size;
 			set {
@@ -28,4 +29,4 @@ namespace GameEngine.Physics
 			base.UpdateCollider();
 		}
 	}
-}
+}*/

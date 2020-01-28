@@ -1,8 +1,6 @@
-using System.IO;
+/*using System.IO;
 using System.Collections.Generic;
 using SmartMeshLibrary;
-
-// ReSharper disable UnusedMember.Local
 
 namespace GameEngine
 {
@@ -14,6 +12,7 @@ namespace GameEngine
 		{
 			var file = SmartMesh.Import(stream);
 			var meshes = new List<Mesh>();
+
 			for(int i = 0;i<file.objects.Count;i++) {
 				var obj = file.objects[i];
 
@@ -25,6 +24,7 @@ namespace GameEngine
 
 				meshes.Add(mesh);
 			}
+
 			return meshes.Count>0 ? meshes[0] : null;
 		}
 		public override void Export(Mesh mesh,Stream stream) //TODO: Bad design choices, read AssetManager.cs
@@ -49,4 +49,4 @@ namespace GameEngine
 		private static (float x,float y,float z) Vector3ToXYZ(Vector3 vec) => (vec.x,vec.y,vec.z);
 		private static (float x,float y,float z,float w) Vector4ToXYZW(Vector4 vec) => (vec.x,vec.y,vec.z,vec.w);
 	}
-}
+}*/

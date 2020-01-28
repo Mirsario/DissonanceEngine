@@ -1,9 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using OpenTK;
-using OpenTK.Input;
-using TKMouseButton = OpenTK.Input.MouseButton;
 
 namespace GameEngine
 {
@@ -28,7 +24,6 @@ namespace GameEngine
 		//Keyboard
 		public static string InputString => Vars.inputString;
 
-		#region Initialization
 		internal static void Init()
 		{
 			fixedTimeVars = new InputVariables();
@@ -38,8 +33,7 @@ namespace GameEngine
 
 			SingletonInputTrigger.StaticInit();
 		}
-		#endregion
-		#region Update
+
 		internal static void FixedUpdate() => Update();
 		internal static void RenderUpdate() => Update();
 		internal static void LateFixedUpdate() => LateUpdate();
@@ -47,16 +41,18 @@ namespace GameEngine
 
 		private static void Update()
 		{
-			var vars = Vars;
+			//TODO: Reimplement
+			/*var vars = Vars;
 
 			if(Game.HasFocus) {
 				vars.mouseStatePrev = vars.mouseState;
 				vars.mouseState = Mouse.GetState();
 				vars.cursorState = Mouse.GetCursorState();
-				
+
 				vars.mouseWheel = vars.mouseState.Wheel-vars.mouseStatePrev.Wheel;
 
 				Vector2Int point = Game.window.PointToClient(new Vector2Int(vars.cursorState.X,vars.cursorState.Y));
+
 				vars.mousePosition = new Vector2(point.x,point.y);
 				vars.mouseDelta = new Vector2(vars.mouseStatePrev.X-vars.mouseState.X,vars.mouseStatePrev.Y-vars.mouseState.Y);
 				
@@ -110,7 +106,7 @@ namespace GameEngine
 
 			if(Game.fixedUpdate) {
 				CheckSpecialCombinations();
-			}
+			}*/
 		}
 		private static void LateUpdate()
 		{
@@ -148,11 +144,13 @@ namespace GameEngine
 		{
 			if(GetKeyDown(Keys.F4) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
 				Game.Quit();
-			}else if(GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
-				Screen.Fullscreen = !Screen.Fullscreen;
 			}
+
+			/*if(GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
+				Screen.Fullscreen = !Screen.Fullscreen;
+			}*/
 		}
-		#endregion
+
 		#region Dispose
 		public static void Dispose()
 		{
@@ -251,7 +249,6 @@ namespace GameEngine
 		}
 		#endregion
 
-		#region GetFunctions
 		public static float GetDirection(Keys left,Keys right) => (GetKey(left) ?-1f : 0f)+(GetKey(right) ? 1f : 0f);
 		public static Vector2 GetDirection(Keys up,Keys down,Keys left,Keys right) => new Vector2(
 			(GetKey(right) ? 1f : 0f)-(GetKey(left) ? 1f : 0f),
@@ -285,10 +282,12 @@ namespace GameEngine
 			var vars = Game.fixedUpdate ? fixedTimeVars : renderTimeVars;
 			return !vars.mouseButtons[(int)button] && vars.mouseButtonsPrev[(int)button];
 		}
-		#endregion
 
-		#region Callbacks
+		//TODO: Reimplement
+		/*#region Callbacks
+		
 		#region Mouse
+
 		internal static void MouseDown(object sender,MouseButtonEventArgs e)
 		{
 			#region Switch
@@ -296,51 +295,51 @@ namespace GameEngine
 			int index;
 			string name;
 			switch(e.Button) {
-				case TKMouseButton.Left:
+				case MouseButton.Left:
 					index = 0;
 					name = "mouse left";
 					break;
-				case TKMouseButton.Right: //Index 2 -> 1
+				case MouseButton.Right: //Index 2 -> 1
 					index = 1;
 					name = "mouse right";
 					break;
-				case TKMouseButton.Middle: //Index 1 -> 2
+				case MouseButton.Middle: //Index 1 -> 2
 					index = 2;
 					name = "mouse middle";
 					break;
-				case TKMouseButton.Button1:
+				case MouseButton.XButton1:
 					index = 3;
 					name = "mouse xbutton1";
 					break;
-				case TKMouseButton.Button2:
+				case MouseButton.XButton2:
 					index = 4;
 					name = "mouse xbutton2";
 					break;
-				case TKMouseButton.Button3:
+				case MouseButton.XButton3:
 					index = 5;
 					name = "mouse xbutton3";
 					break;
-				case TKMouseButton.Button4:
+				case MouseButton.XButton4:
 					index = 6;
 					name = "mouse xbutton4";
 					break;
-				case TKMouseButton.Button5:
+				case MouseButton.XButton5:
 					index = 7;
 					name = "mouse xbutton5";
 					break;
-				case TKMouseButton.Button6:
+				case MouseButton.XButton6:
 					index = 8;
 					name = "mouse xbutton6";
 					break;
-				case TKMouseButton.Button7:
+				case MouseButton.XButton7:
 					index = 9;
 					name = "mouse xbutton7";
 					break;
-				case TKMouseButton.Button8:
+				case MouseButton.XButton8:
 					index = 10;
 					name = "mouse xbutton8";
 					break;
-				case TKMouseButton.Button9:
+				case MouseButton.XButton9:
 					index = 11;
 					name = "mouse xbutton9";
 					break;
@@ -363,53 +362,53 @@ namespace GameEngine
 			int index;
 			string name;
 			switch(e.Button) {
-				case TKMouseButton.Left:
+				case MouseButton.Left:
 					index = 0;
 					name = "mouse left";
 					break;
-				case TKMouseButton.Right: //Index 2 -> 1
+				case MouseButton.Right: //Index 2 -> 1
 					index = 1;
 					name = "mouse right";
 					break;
-				case TKMouseButton.Middle: //Index 1 -> 2
+				case MouseButton.Middle: //Index 1 -> 2
 					index = 2;
 					name = "mouse middle";
 					break;
-				case TKMouseButton.Button1:
+				case MouseButton.XButton1:
 					index = 3;
 					name = "mouse xbutton1";
 					break;
-				case TKMouseButton.Button2:
+				case MouseButton.XButton2:
 					index = 4;
 					name = "mouse xbutton2";
 					break;
-				case TKMouseButton.Button3:
+				case MouseButton.XButton3:
 					index = 5;
 					name = "mouse xbutton3";
 					break;
-				case TKMouseButton.Button4:
+				case MouseButton.XButton4:
 					index = 6;
 					name = "mouse xbutton4";
 					break;
-				case TKMouseButton.Button5:
+				case MouseButton.XButton5:
 					index = 7;
 					name = "mouse xbutton5";
 					break;
-				case TKMouseButton.Button6:
+				case MouseButton.XButton6:
 					index = 8;
-					name = ",ouse xbutton6";
+					name = "mouse xbutton6";
 					break;
-				case TKMouseButton.Button7:
+				case MouseButton.XButton7:
 					index = 9;
-					name = ",ouse xbutton7";
+					name = "mouse xbutton7";
 					break;
-				case TKMouseButton.Button8:
+				case MouseButton.XButton8:
 					index = 10;
-					name = ",ouse xbutton8";
+					name = "mouse xbutton8";
 					break;
-				case TKMouseButton.Button9:
+				case MouseButton.XButton9:
 					index = 11;
-					name = ",ouse xbutton9";
+					name = "mouse xbutton9";
 					break;
 				default:
 					return;
@@ -423,9 +422,11 @@ namespace GameEngine
 
 			TriggerReset(name);
 		}
+		
 		#endregion
 
 		#region Keys
+
 		internal static void KeyPress(object sender,KeyPressEventArgs e)
 		{
 			char keyChar = e.KeyChar;
@@ -460,7 +461,9 @@ namespace GameEngine
 
 			TriggerReset(key.ToString().ToLower());
 		}
+
 		#endregion
-		#endregion
+
+		#endregion*/
 	}
 }

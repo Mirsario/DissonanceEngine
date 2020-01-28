@@ -1,4 +1,4 @@
-namespace GameEngine.Physics
+/*namespace GameEngine.Physics
 {
 	public class Rigidbody2D : RigidbodyBase
 	{
@@ -22,7 +22,7 @@ namespace GameEngine.Physics
 		{
 			base.OnEnable();
 
-			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new Vector3(1f,1f,0f);
+			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new BulletSharp.Vector3(1f,1f,0f);
 		}
 		public void ApplyForce(Vector2 force,Vector2 relativePos)
 		{
@@ -32,8 +32,7 @@ namespace GameEngine.Physics
 				btRigidbody.Activate();
 			}
 
-			btRigidbody.ApplyForce(new Vector3(force.x,force.y,0f),new Vector3(relativePos.x,relativePos.y,0f));
+			btRigidbody.ApplyForce(new BulletSharp.Vector3(force.x,force.y,0f),new BulletSharp.Vector3(relativePos.x,relativePos.y,0f));
 		}
 	}
-}
-
+}*/

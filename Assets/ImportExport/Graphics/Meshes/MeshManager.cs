@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using GameEngine.Utils.Extensions;
 using Ionic.Zlib;
 
 namespace GameEngine

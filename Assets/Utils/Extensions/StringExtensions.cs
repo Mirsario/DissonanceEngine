@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GameEngine.Extensions
+namespace GameEngine.Utils.Extensions
 {
 	public static class StringExtensions
 	{
@@ -13,8 +13,10 @@ namespace GameEngine.Extensions
 		{
 			for(int i = 0;i<replacements.Length;i++) {
 				(string oldValue, string newValue) = replacements[i];
+
 				str = str.ReplaceCaseInsensitive(oldValue,newValue);
 			}
+
 			return str;
 		}
 	}

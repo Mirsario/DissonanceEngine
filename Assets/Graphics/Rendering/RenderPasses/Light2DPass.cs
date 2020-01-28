@@ -1,6 +1,4 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
-using GLPrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
+﻿using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
@@ -47,7 +45,8 @@ namespace GameEngine.Graphics
 				int uniformLightColor = GL.GetUniformLocation(passShader.Id,"lightColor");
 				
 				foreach(var light in Rendering.light2DList) {
-					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(light.Transform.Position);
+					var lightPos = light.Transform.Position;
+					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(lightPos);
 
 					passShader.SetupMatrixUniforms(
 						light.Transform,
@@ -59,10 +58,12 @@ namespace GameEngine.Graphics
 						true
 					);
 					
-					GL.Uniform1(uniformLightRange,light.range);
-					GL.Uniform3(uniformLightPosition,light.Transform.Position);
-					GL.Uniform1(uniformLightIntensity,light.intensity);
-					GL.Uniform3(uniformLightColor,new Vector3(light.color.x,light.color.y,light.color.z));
+					unsafe {
+						GL.Uniform1(uniformLightRange,light.range);
+						GL.Uniform1(uniformLightIntensity,light.intensity);
+						GL.Uniform3(uniformLightPosition,lightPos.x,lightPos.y,lightPos.z);
+						GL.Uniform3(uniformLightColor,light.color.x,light.color.y,light.color.z);
+					}
 
 					PrimitiveMeshes.quad.DrawMesh(true);
 				}

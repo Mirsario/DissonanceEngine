@@ -1,4 +1,4 @@
-namespace GameEngine.Physics
+/*namespace GameEngine.Physics
 {
 	public class Collision
 	{
@@ -15,4 +15,4 @@ namespace GameEngine.Physics
 			Contacts = contacts;
 		}
 	}
-}
+}*/

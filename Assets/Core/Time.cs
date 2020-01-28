@@ -1,4 +1,3 @@
-using OpenTK;
 using System;
 using System.Diagnostics;
 
@@ -75,9 +74,10 @@ namespace GameEngine
 
 				targetUpdateFrequency = value;
 
-				if(Game.window!=null) {
+				//TODO: Reimplement
+				/*if(Game.window!=null) {
 					Game.window.TargetUpdateFrequency = targetUpdateFrequency;
-				}
+				}*/
 			}
 		}
 		public static double TargetRenderFrequency {
@@ -89,17 +89,18 @@ namespace GameEngine
 
 				targetRenderFrequency = value;
 
-				if(Game.window!=null) {
+				//TODO: Reimplement
+				/*if(Game.window!=null) {
 					Game.window.TargetRenderFrequency = targetRenderFrequency;
-				}
+				}*/
 			}
 		}
 
 		internal static void PreInit()
 		{
-			var device = DisplayDevice.Default;
+			//var device = DisplayDevice.Default;
 
-			targetRenderFrequency = device.RefreshRate;
+			targetRenderFrequency = 60; //device.RefreshRate;
 			targetUpdateFrequency = 60;
 		}
 		internal static void Init()
@@ -150,3 +151,4 @@ namespace GameEngine
 		}
 	}
 }
+ 

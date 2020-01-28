@@ -1,28 +1,33 @@
 using System;
-using OpenTK.Audio;
-using OpenTK.Audio.OpenAL;
+using Dissonance.Framework;
+using Dissonance.Framework.OpenAL;
 
 namespace GameEngine
 {
 	public static class Audio
 	{
-		//TODO: Currently,there can't be more than 1 listener in world. This is really bad for games with splitscreen.
-		internal static AudioContext defaultContext;
-		
+		internal static IntPtr audioDevice;
+		internal static IntPtr audioContext;
+
 		internal static void Init()
 		{
 			try {
-				defaultContext = new AudioContext();
+				audioDevice = ALC.OpenDevice(null);
+				audioContext = ALC.CreateContext(audioDevice,new int[] { });
 			}
 			catch {
 				throw new AudioException("An issue occured during Audio initialization.\r\nIs OpenAL installed?");
 			}
 
-			defaultContext.Suspend();
+			if(!ALC.MakeContextCurrent(audioContext)) {
+				throw new AudioException("An issue occured during Audio initialization. Unable to make the audio context current.");
+			}
+
+			ALC.SuspendContext(audioContext);
 
 			CheckALErrors();
 			
-			AL.DistanceModel(ALDistanceModel.LinearDistanceClamped);
+			AL.DistanceModel(DistanceModel.LinearDistanceClamped);
 			
 			CheckALErrors();
 		}
@@ -32,8 +37,8 @@ namespace GameEngine
 		{
 			var error = AL.GetError();
 
-			if(error!=ALError.NoError) {
-				throw new Exception("ALError: "+error);
+			if(error!=AudioError.NoError) {
+				throw new Exception("AudioError: "+error);
 			}
 		}
 	}

@@ -1,6 +1,4 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+﻿using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
@@ -100,11 +98,13 @@ namespace GameEngine.Graphics
 						}
 
 						if(uniformLightPosition!=-1) {
-							GL.Uniform3(uniformLightPosition,lightPosition);
+							GL.Uniform3(uniformLightPosition,lightPosition.x,lightPosition.y,lightPosition.z);
 						}
 
 						if(uniformLightDirection!=-1) {
-							GL.Uniform3(uniformLightDirection,lightTransform.Forward);
+							var forward = lightTransform.Forward;
+
+							GL.Uniform3(uniformLightDirection,forward.x,forward.y,forward.z);
 						}
 
 						if(uniformLightIntensity!=-1) {
@@ -112,7 +112,7 @@ namespace GameEngine.Graphics
 						}
 
 						if(uniformLightColor!=-1) {
-							GL.Uniform3(uniformLightColor,light.color);
+							GL.Uniform3(uniformLightColor,light.color.x,light.color.y,light.color.z);
 						}
 
 						switch(lightType) {
@@ -122,12 +122,12 @@ namespace GameEngine.Graphics
 								//GL.BindBuffer(BufferTarget.ArrayBuffer,mesh.vertexBufferId);
 								//GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)0);
 								//GL.BindBuffer(BufferTarget.ElementArrayBuffer,mesh.indexBufferId);
-								//GL.DrawElements(PrimitiveTypeGL.Triangles,mesh.indexLength,DrawElementsType.UnsignedInt,0);
+								//GL.DrawElements(PrimitiveType.Triangles,mesh.indexLength,DrawElementsType.UnsignedInt,0);
 								break;
 							case LightType.Directional:
 								//TODO: Draw like this should be made into a function
 
-								GL.Begin(PrimitiveTypeGL.Quads);
+								GL.Begin(PrimitiveType.Quads);
 
 								GL.Vertex2(-1f,-1f); GL.TexCoord2(0f,0f);
 								GL.Vertex2(-1f, 1f); GL.TexCoord2(0f,1f);
