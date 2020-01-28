@@ -1,11 +1,11 @@
 using System;
-using OpenTK.Audio.OpenAL;
+using Dissonance.Framework.OpenAL;
 
 namespace GameEngine
 {
 	public class AudioClip : Asset<AudioClip>
 	{
-		internal int bufferId;
+		internal uint bufferId;
 
 		internal int channelsNum;
 		internal int bitsPerSample;
@@ -54,7 +54,7 @@ namespace GameEngine
 
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
 
-			AL.BufferData(bufferId,ALFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
+			AL.BufferData(bufferId,BufferFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
 
 			Audio.CheckALErrors();
 		}
@@ -69,14 +69,14 @@ namespace GameEngine
 
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
 
-			AL.BufferData(bufferId,ALFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
+			AL.BufferData(bufferId,BufferFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
 
 			Audio.CheckALErrors();
 		}
 
-		private static ALFormat GetSoundFormat(int channels,int bits) => channels switch {
-			1 => bits==8 ? ALFormat.Mono8 : ALFormat.Mono16,
-			2 => bits==8 ? ALFormat.Stereo8 : ALFormat.Stereo16,
+		private static BufferFormat GetSoundFormat(int channels,int bits) => channels switch {
+			1 => bits==8 ? BufferFormat.Mono8 : BufferFormat.Mono16,
+			2 => bits==8 ? BufferFormat.Stereo8 : BufferFormat.Stereo16,
 			_ => throw new NotSupportedException("The specified sound format is not supported."),
 		};
 	}

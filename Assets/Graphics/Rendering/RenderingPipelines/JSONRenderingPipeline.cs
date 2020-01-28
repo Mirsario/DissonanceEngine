@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using OpenTK;
+using Dissonance.Framework;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics.RenderingPipelines
 {

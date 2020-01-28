@@ -1,7 +1,8 @@
-using System;
+/*using System;
 using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Physics
 {
@@ -35,6 +36,7 @@ namespace GameEngine.Physics
 
 		private float mass = 1f;
 		private RigidbodyType type = RigidbodyType.Static;
+		private bool isKinematic;
 
 		public bool Active => btRigidbody.IsActive;
 		public float MassFiltered => type==RigidbodyType.Dynamic ? mass : 0f;
@@ -42,15 +44,11 @@ namespace GameEngine.Physics
 		public bool UseGravity {
 			get => btRigidbody.Gravity!=BulletSharp.Vector3.Zero;
 			set {
-				if(value) {
-					btRigidbody.Gravity = PhysicsEngine.Gravity;
-				} else {
-					btRigidbody.Gravity = Vector3.Zero;
-				}
+				btRigidbody.Gravity = (value ? PhysicsEngine.Gravity : Vector3.Zero).ToBulletVector3();
+
 				btRigidbody.ApplyGravity();
 			}
 		}
-		private bool isKinematic;
 		public bool IsKinematic {
 			get => isKinematic;
 			set {
@@ -61,10 +59,10 @@ namespace GameEngine.Physics
 				isKinematic = value;
 
 				if(isKinematic) {
-					btRigidbody.CollisionFlags = btRigidbody.CollisionFlags | CollisionFlags.KinematicObject;
+					btRigidbody.CollisionFlags |= CollisionFlags.KinematicObject;
 					btRigidbody.ActivationState = ActivationState.DisableDeactivation;
 				} else {
-					btRigidbody.CollisionFlags = btRigidbody.CollisionFlags & ~CollisionFlags.KinematicObject;
+					btRigidbody.CollisionFlags &= ~CollisionFlags.KinematicObject;
 					btRigidbody.ActivationState = ActivationState.ActiveTag;
 				}
 			}
@@ -90,28 +88,28 @@ namespace GameEngine.Physics
 			set => btRigidbody.SetDamping(Drag,value);
 		}
 		public Vector3 Velocity {
-			get => btRigidbody.LinearVelocity;
+			get => btRigidbody.LinearVelocity.ToVector3();
 			set {
 				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 
-				btRigidbody.LinearVelocity = value;
+				btRigidbody.LinearVelocity = value.ToBulletVector3();
 			}
 		}
 		public Vector3 AngularVelocity {
-			get => btRigidbody.AngularVelocity;
+			get => btRigidbody.AngularVelocity.ToVector3();
 			set {
 				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 
-				btRigidbody.AngularVelocity = value;
+				btRigidbody.AngularVelocity = value.ToBulletVector3();
 			}
 		}
 		public Vector3 AngularFactor {
-			get => btRigidbody.AngularFactor;
-			set => btRigidbody.AngularFactor = value;
+			get => btRigidbody.AngularFactor.ToVector3();
+			set => btRigidbody.AngularFactor = value.ToBulletVector3();
 		}
 		public RigidbodyType Type {
 			get => type;
@@ -146,7 +144,7 @@ namespace GameEngine.Physics
 			collisionShape = new EmptyShape();
 
 			var motionState = new MotionStateInternal(gameObject.transform);
-			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero) {
+			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero.ToBulletVector3()) {
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,
 				Friction = 0.6f,
@@ -173,14 +171,19 @@ namespace GameEngine.Physics
 
 			if(colliders.Length==0) {
 				//EmptyShape
+
 				collisionShape = new EmptyShape();
-			}/*else if(colliders.Length==1) {
-				//Use the shape we have
-				collisionShape = colliders[0].collShape;
-				//summOffset += collider.offset;
-			}*/else {
+			//}
+			//else if(colliders.Length==1) {
+			//	//Use the shape we have
+			//
+			//	collisionShape = colliders[0].collShape;
+			//	//summOffset += collider.offset;
+			} else {
 				//CompoundShape
+
 				var compoundShape = new CompoundShape();
+
 				for(int i = 0;i<colliders.Length;i++) {
 					var collider = colliders[i];
 					var collShape = collider.collShape;
@@ -189,11 +192,14 @@ namespace GameEngine.Physics
 						compoundShape.AddChildShape(Matrix4x4.CreateTranslation(collider.Offset),collShape);
 					}
 				}
+
 				collisionShape = compoundShape;
 			}
 
 			float tempMass = MassFiltered;
+
 			var localInertia = MassFiltered<=0f ? BulletSharp.Vector3.Zero : collisionShape.CalculateLocalInertia(tempMass);
+
 			btRigidbody.CollisionShape = collisionShape;
 			btRigidbody.SetMassProps(tempMass,localInertia);
 
@@ -203,8 +209,10 @@ namespace GameEngine.Physics
 		{
 			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
 
-			BulletSharp.Vector3 localInertia = Vector3.Zero;
+			BulletSharp.Vector3 localInertia = BulletSharp.Vector3.Zero;
+
 			float tempMass = MassFiltered;
+
 			if(tempMass!=0f && collisionShape!=null) {
 				localInertia = collisionShape.CalculateLocalInertia(tempMass);
 			}
@@ -218,11 +226,13 @@ namespace GameEngine.Physics
 			if(!btRigidbody.IsActive) {
 				btRigidbody.Activate();
 			}
-			btRigidbody.ApplyForce(force,relativePos);
+
+			btRigidbody.ApplyForce(force.ToBulletVector3(),relativePos.ToBulletVector3());
 		}
 		public void Dispose()
 		{
 			btRigidbody.Dispose();
+
 			collisionShape = null;
 			PhysicsEngine.rigidbodies.Remove(this);
 		}
@@ -231,5 +241,4 @@ namespace GameEngine.Physics
 
 		}
 	}
-}
-
+}*/

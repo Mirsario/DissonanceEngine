@@ -7,13 +7,13 @@ namespace GameEngine
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2));
 		public static readonly Vector2 Zero = default;
-		public static readonly Vector2 One = new Vector2( 1f,1f);
-		public static readonly Vector2 UnitX = new Vector2( 1f,0f);
-		public static readonly Vector2 UnitY = new Vector2( 0f,1f);
-		public static readonly Vector2 Up = new Vector2( 0f,1f);
-		public static readonly Vector2 Down = new Vector2( 0f,-1f);
+		public static readonly Vector2 One = new Vector2(1f,1f);
+		public static readonly Vector2 UnitX = new Vector2(1f,0f);
+		public static readonly Vector2 UnitY = new Vector2(0f,1f);
+		public static readonly Vector2 Up = new Vector2(0f,1f);
+		public static readonly Vector2 Down = new Vector2(0f,-1f);
 		public static readonly Vector2 Left = new Vector2(-1f,0f);
-		public static readonly Vector2 Right = new Vector2( 1f,0f);
+		public static readonly Vector2 Right = new Vector2(1f,0f);
 
 		public float x;
 		public float y;
@@ -22,11 +22,9 @@ namespace GameEngine
 		public float Magnitude => Mathf.Sqrt(x*x+y*y);
 		public float SqrMagnitude => x*x+y*y;
 
-		public float this[int index]
-		{
+		public float this[int index] {
 			get {
-				return index switch
-				{
+				return index switch {
 					0 => x,
 					1 => y,
 					_ => throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1,inclusive."),
@@ -48,9 +46,9 @@ namespace GameEngine
 			y = Y;
 		}
 
-		public override string ToString() => "X: "+x+",Y: "+y;
 		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2;
 		public override bool Equals(object other) => other is Vector2 vector && x==vector.x && y==vector.y;
+		public override string ToString() => "X: "+x+",Y: "+y;
 
 		public float[] ToArray() => new[] { x,y };
 		public void Normalize()
@@ -150,7 +148,7 @@ namespace GameEngine
 		{
 			if(t<0f) {
 				t = 0f;
-			}else if(t>1f) {
+			} else if(t>1f) {
 				t = 1f;
 			}
 
@@ -160,15 +158,9 @@ namespace GameEngine
 			return result;
 		}
 
-		//Operators
-		public static Vector2 operator -(Vector2 a) => new Vector2(-a.x,-a.y);
-		public static Vector2 operator +(Vector2 a,Vector2 b) => new Vector2(a.x+b.x,a.y+b.y);
-		public static Vector2 operator -(Vector2 a,Vector2 b) => new Vector2(a.x-b.x,a.y-b.y);
-		public static Vector2 operator *(Vector2 a,Vector2 b) => new Vector2(a.x*b.x,a.y*b.y);
-		public static Vector2 operator /(Vector2 a,Vector2 b) => new Vector2(a.x/b.x,a.y/b.y);
-		public static bool operator ==(Vector2 a,Vector2 b) => (a-b).SqrMagnitude<9.99999944E-11f;
-		public static bool operator !=(Vector2 a,Vector2 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
-		//Float
+		//Operations
+
+		//Int
 		public static Vector2 operator *(Vector2 a,int d) => new Vector2(a.x*d,a.y*d);
 		public static Vector2 operator *(int d,Vector2 a) => new Vector2(a.x*d,a.y*d);
 		public static Vector2 operator /(Vector2 a,int d) => new Vector2(a.x/d,a.y/d);
@@ -176,6 +168,41 @@ namespace GameEngine
 		public static Vector2 operator *(Vector2 a,float d) => new Vector2(a.x*d,a.y*d);
 		public static Vector2 operator *(float d,Vector2 a) => new Vector2(a.x*d,a.y*d);
 		public static Vector2 operator /(Vector2 a,float d) => new Vector2(a.x/d,a.y/d);
+		//Vector2
+		public static bool operator ==(Vector2 a,Vector2 b) => (a-b).SqrMagnitude<9.99999944E-11f;
+		public static bool operator !=(Vector2 a,Vector2 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
+		public static Vector2 operator -(Vector2 a) => new Vector2(-a.x,-a.y);
+		public static Vector2 operator +(Vector2 a,Vector2 b) => new Vector2(a.x+b.x,a.y+b.y);
+		public static Vector2 operator -(Vector2 a,Vector2 b) => new Vector2(a.x-b.x,a.y-b.y);
+		public static Vector2 operator *(Vector2 a,Vector2 b) => new Vector2(a.x*b.x,a.y*b.y);
+		public static Vector2 operator /(Vector2 a,Vector2 b) => new Vector2(a.x/b.x,a.y/b.y);
+		//Vector2Int
+		public static Vector2 operator +(Vector2Int a,Vector2 b) => new Vector2(a.x+b.x,a.y+b.y);
+		public static Vector2 operator +(Vector2 a,Vector2Int b) => new Vector2(a.x+b.x,a.y+b.y);
+		public static Vector2 operator -(Vector2Int a,Vector2 b) => new Vector2(a.x-b.x,a.y-b.y);
+		public static Vector2 operator -(Vector2 a,Vector2Int b) => new Vector2(a.x-b.x,a.y-b.y);
+		public static Vector2 operator *(Vector2Int a,Vector2 b) => new Vector2(a.x*b.x,a.y*b.y);
+		public static Vector2 operator *(Vector2 a,Vector2Int b) => new Vector2(a.x*b.x,a.y*b.y);
+		public static Vector2 operator /(Vector2Int a,Vector2 b) => new Vector2(a.x/b.x,a.y/b.y);
+		public static Vector2 operator /(Vector2 a,Vector2Int b) => new Vector2(a.x/b.x,a.y/b.y);
+		//Vector2UShort
+		public static Vector2 operator +(Vector2UShort a,Vector2 b) => new Vector2(a.x+b.x,a.y+b.y);
+		public static Vector2 operator +(Vector2 a,Vector2UShort b) => new Vector2(a.x+b.x,a.y+b.y);
+		public static Vector2 operator -(Vector2UShort a,Vector2 b) => new Vector2(a.x-b.x,a.y-b.y);
+		public static Vector2 operator -(Vector2 a,Vector2UShort b) => new Vector2(a.x-b.x,a.y-b.y);
+		public static Vector2 operator *(Vector2UShort a,Vector2 b) => new Vector2(a.x*b.x,a.y*b.y);
+		public static Vector2 operator *(Vector2 a,Vector2UShort b) => new Vector2(a.x*b.x,a.y*b.y);
+		public static Vector2 operator /(Vector2UShort a,Vector2 b) => new Vector2(a.x/b.x,a.y/b.y);
+		public static Vector2 operator /(Vector2 a,Vector2UShort b) => new Vector2(a.x/b.x,a.y/b.y);
+
+		//Casts
+
+		//float*
+		public static unsafe implicit operator float*(Vector2 vec) => (float*)&vec;
+		//Vector2Int
+		public static explicit operator Vector2(Vector2Int value) => new Vector2(value.x,value.y);
+		//Vector2UShort
+		public static explicit operator Vector2(Vector2UShort value) => new Vector2(value.x,value.y);
 	}
 }
 

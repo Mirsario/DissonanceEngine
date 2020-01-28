@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Dissonance.Framework.OpenGL;
+using System.Collections.Generic;
 
 namespace GameEngine.Graphics.RenderingPipelines
 {
@@ -34,8 +35,8 @@ namespace GameEngine.Graphics.RenderingPipelines
 						emissionBuffer,
 						specularBuffer
 					);
+
 					fb.AttachRenderTexture(depthBuffer,FramebufferAttachment.DepthAttachment);
-					//fb.AttachRenderbuffer(depthBuffer,FramebufferAttachment.DepthAttachment);
 				}),
 
 				lightingFramebuffer = Framebuffer.Create("lightingBuffer",fb => {

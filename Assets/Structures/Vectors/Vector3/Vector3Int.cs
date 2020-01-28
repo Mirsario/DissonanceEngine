@@ -27,10 +27,10 @@ namespace GameEngine
 			y = Y;
 			z = Z;
 		}
-		public override string ToString()
-		{
-			return "X: "+x+",Y: "+y+",Z: "+z;
-		}
+
+		public override string ToString() => "X: "+x+",Y: "+y+",Z: "+z;
+		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
+		public override bool Equals(object other) => other is Vector3Int vector && x==vector.x && y==vector.y && z==vector.z;
 
 		public static explicit operator Vector3(Vector3Int value) => new Vector3(value.x,value.y,value.z);
 		public static explicit operator Vector3Int(Vector3 value) => new Vector3Int((int)value.x,(int)value.y,(int)value.z);
@@ -46,8 +46,7 @@ namespace GameEngine
 		public static bool operator ==(Vector3Int a,Vector3Int b) => a.x==b.x && a.y==b.y && a.z==b.z;
 		public static bool operator !=(Vector3Int a,Vector3Int b) => a.x!=b.x || a.y!=b.y || a.z!=b.z;
 
-		public override int GetHashCode() => x.GetHashCode()^y.GetHashCode()<<2^z.GetHashCode()>>2;
-		public override bool Equals(object other) => other is Vector3Int vector && x==vector.x && y==vector.y && z==vector.z;
+		public static unsafe implicit operator int*(Vector3Int vec) => (int*)&vec;
 	}
 }
 

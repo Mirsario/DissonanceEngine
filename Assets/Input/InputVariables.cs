@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTK.Input;
 
 namespace GameEngine
 {
 	internal class InputVariables
 	{
 		//Mouse
-		public MouseState cursorState;
-		public MouseState mouseState;
-		public MouseState mouseStatePrev;
+		//public MouseState cursorState;
+		//public MouseState mouseState;
+		//public MouseState mouseStatePrev;
 		public int mouseWheel;
 		public Vector2 mousePosition;
 		public Vector2 mouseDelta;
@@ -22,7 +21,7 @@ namespace GameEngine
 		public string inputString = "";
 
 		//Gamepads
-		public GamePadState[] gamepadStates = new GamePadState[Input.MaxGamepads];
+		//public GamePadState[] gamepadStates = new GamePadState[Input.MaxGamepads];
 
 		//Universal
 		public HashSet<string> pressedButtons = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);

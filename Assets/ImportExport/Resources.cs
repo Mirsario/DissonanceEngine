@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using GameEngine.Extensions;
 using Ionic.Zip;
+using System.Text;
 
 namespace GameEngine
 {
@@ -92,6 +92,8 @@ namespace GameEngine
 			cacheByPath = new Dictionary<Type,Dictionary<string,object>>();
 			cacheByName = new Dictionary<Type,Dictionary<string,object>>();
 			builtInAssets = new Dictionary<string,byte[]>(InternalUtils.strComparerInvariantIgnoreCase);
+
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 			LoadManagers();
 			AutoloadResources();

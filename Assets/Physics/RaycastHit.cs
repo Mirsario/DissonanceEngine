@@ -1,4 +1,4 @@
-﻿namespace GameEngine.Physics
+﻿/*namespace GameEngine.Physics
 {
 	public struct RaycastHit
 	{
@@ -8,5 +8,4 @@
 		public Collider collider;
 		public GameObject gameObject;
 	}
-}
-
+}*/

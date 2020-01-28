@@ -1,5 +1,5 @@
+using Dissonance.Framework.OpenAL;
 using System;
-using OpenTK.Audio.OpenAL;
 
 namespace GameEngine
 {
@@ -27,7 +27,7 @@ namespace GameEngine
 		protected bool updatePlaybackOffset;
 
 		///<summary>Indicates whether or not the source is currently playing.</summary>
-		public bool IsPlaying => AL.GetSourceState(sourceId)==ALSourceState.Playing;
+		public bool IsPlaying => (SourceState)AL.GetSource(sourceId,GetSourceInt.SourceState)==SourceState.Playing;
 
 		public AudioClip Clip {
 			get => clip;
@@ -39,7 +39,7 @@ namespace GameEngine
 				clip = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourcei.Buffer,clip?.bufferId ?? -1);
+					AL.Source(sourceId,SourceInt.Buffer,(int)(clip?.bufferId ?? 0));
 
 					updateClip = false;
 				} else {
@@ -53,11 +53,11 @@ namespace GameEngine
 				is2D = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourceb.SourceRelative,is2D);
+					AL.Source(sourceId,SourceBool.SourceRelative,is2D);
 
-					var pos = (OpenTK.Vector3)(is2D ? Vector3.Zero : Transform.Position);
-
-					AL.Source(sourceId,ALSource3f.Position,ref pos);
+					unsafe {
+						AL.Source(sourceId,SourceFloatArray.Position,is2D ? Vector3.Zero : Transform.Position);
+					}
 
 					updateIs2D = false;
 				} else {
@@ -71,7 +71,7 @@ namespace GameEngine
 				loop = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourceb.Looping,loop);
+					AL.Source(sourceId,SourceBool.Looping,loop);
 
 					updateLoop = false;
 				} else {
@@ -85,7 +85,7 @@ namespace GameEngine
 				refDistance = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourcef.ReferenceDistance,refDistance);
+					AL.Source(sourceId,SourceFloat.ReferenceDistance,refDistance);
 
 					updateRefDistance = false;
 				} else {
@@ -99,7 +99,7 @@ namespace GameEngine
 				maxDistance = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourcef.MaxDistance,maxDistance);
+					AL.Source(sourceId,SourceFloat.MaxDistance,maxDistance);
 
 					updateMaxDistance = false;
 				} else {
@@ -114,11 +114,11 @@ namespace GameEngine
 
 				if(beenEnabledBefore) {
 					if(value<1f) {
-						AL.Source(sourceId,ALSourcef.Gain,1f);
-						AL.Source(sourceId,ALSourcef.MaxGain,Math.Max(0f,value));
+						AL.Source(sourceId,SourceFloat.Gain,1f);
+						AL.Source(sourceId,SourceFloat.MaxGain,Math.Max(0f,value));
 					} else {
-						AL.Source(sourceId,ALSourcef.Gain,value);
-						AL.Source(sourceId,ALSourcef.MaxGain,1f);
+						AL.Source(sourceId,SourceFloat.Gain,value);
+						AL.Source(sourceId,SourceFloat.MaxGain,1f);
 					}
 
 					updateVolume = false;
@@ -133,7 +133,7 @@ namespace GameEngine
 				pitch = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourcef.Pitch,value);
+					AL.Source(sourceId,SourceFloat.Pitch,value);
 
 					updatePitch = false;
 				} else {
@@ -147,7 +147,7 @@ namespace GameEngine
 				playbackOffset = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,ALSourcef.SecOffset,value);
+					AL.Source(sourceId,SourceFloat.SecOffset,value);
 
 					updatePlaybackOffset = false;
 				} else {
@@ -167,37 +167,47 @@ namespace GameEngine
 			if(updateClip) {
 				Clip = clip;
 			}
+
 			if(updateIs2D) {
 				Is2D = is2D;
 			}
+
 			if(updateLoop) {
 				Loop = loop;
 			}
+
 			if(updateRefDistance) {
 				RefDistance = refDistance;
 			}
+
 			if(updateMaxDistance) {
 				MaxDistance = maxDistance;
 			}
+
 			if(updateVolume) {
 				Volume = volume;
 			}
+
 			if(updatePitch) {
 				Pitch = pitch;
 			}
+
 			if(updatePlaybackOffset) {
 				PlaybackOffset = playbackOffset;
 			}
 		}
 		protected override void OnDispose()
 		{
-			AL.DeleteSource(ref sourceId);
+			AL.DeleteSource(sourceId);
 		}
 		public override void FixedUpdate()
 		{
 			if(!is2D) {
-				OpenTK.Vector3 pos = Transform.Position;
-				AL.Source(sourceId,ALSource3f.Position,ref pos);
+				Vector3 pos = Transform.Position;
+
+				unsafe {
+					AL.Source(sourceId,SourceFloatArray.Position,pos);
+				}
 			}
 		}
 

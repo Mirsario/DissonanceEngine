@@ -1,5 +1,5 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {

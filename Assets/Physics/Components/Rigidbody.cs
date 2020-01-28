@@ -1,3 +1,5 @@
+/*using GameEngine.Utils.Extensions;
+
 namespace GameEngine.Physics
 {
 	public class Rigidbody : RigidbodyBase
@@ -23,8 +25,7 @@ namespace GameEngine.Physics
 				gameObject.rigidbodyInternal.btRigidbody.Activate();
 			}
 
-			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force,relativePos);
+			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force.ToBulletVector3(),relativePos.ToBulletVector3());
 		}
 	}
-}
-
+}*/

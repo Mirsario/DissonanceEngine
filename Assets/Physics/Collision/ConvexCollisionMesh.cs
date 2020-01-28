@@ -1,9 +1,5 @@
-﻿using BulletSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*using BulletSharp;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Physics
 {
@@ -15,11 +11,12 @@ namespace GameEngine.Physics
 			var triMesh = new TriangleMesh();
 
 			int i = 0;
+
 			while(i<mesh.triangles.Length) {
 				triMesh.AddTriangle(
-					mesh.vertices[mesh.triangles[i++]],
-					mesh.vertices[mesh.triangles[i++]],
-					mesh.vertices[mesh.triangles[i++]]
+					mesh.vertices[mesh.triangles[i++]].ToBulletVector3(),
+					mesh.vertices[mesh.triangles[i++]].ToBulletVector3(),
+					mesh.vertices[mesh.triangles[i++]].ToBulletVector3()
 				);
 			}
 
@@ -38,4 +35,4 @@ namespace GameEngine.Physics
 			return collisionMesh;
 		}
 	}
-}
+}*/

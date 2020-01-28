@@ -1,4 +1,4 @@
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
@@ -19,7 +19,7 @@ namespace GameEngine.Graphics
 			SetShader(this);
 
 			if(uniforms.TryGetValue(uniformName,out var uniform)) {
-				GL.Uniform2(uniform.location,1,new[] { value.x,value.y });
+				GL.Uniform2(uniform.location,value.x,value.y);
 			}
 		}
 	}

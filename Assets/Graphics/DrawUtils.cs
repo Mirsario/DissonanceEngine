@@ -1,5 +1,4 @@
-using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using Dissonance.Framework.OpenGL;
 
 #pragma warning disable 0649
 
@@ -25,15 +24,13 @@ namespace GameEngine.Graphics
 				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 			
-			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
-			var vector = new Vector4(
-				rect.x,
-				rect.y,
-				rect.x+rect.width,
-				rect.y+rect.height
-			);
+			var vector = new Vector4(rect.x,rect.y,rect.x+rect.width,rect.y+rect.height);
 
-			GL.Begin(PrimitiveTypeGL.Quads);
+			if(!GL.TryGetAttribLocation(Shader.activeShader.Id,"uv",out uint uvAttrib)) {
+				return;
+			}
+
+			GL.Begin(PrimitiveType.Quads);
 
 			GL.Vertex2(vector.x,1f-vector.y); GL.VertexAttrib2(uvAttrib,0f,0f);
 			GL.Vertex2(vector.x,1f-vector.w); GL.VertexAttrib2(uvAttrib,0f,1f);

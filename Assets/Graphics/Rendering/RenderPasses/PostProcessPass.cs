@@ -1,5 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+﻿using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {

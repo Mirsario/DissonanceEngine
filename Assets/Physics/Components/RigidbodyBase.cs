@@ -1,4 +1,4 @@
-namespace GameEngine.Physics
+/*namespace GameEngine.Physics
 {
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent
@@ -63,5 +63,4 @@ namespace GameEngine.Physics
 			OnDisable();
 		}
 	}
-}
-
+}*/

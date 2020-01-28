@@ -1,7 +1,7 @@
 using System;
 using GameEngine.Graphics;
 
-namespace GameEngine.Extensions
+namespace GameEngine.Utils.Extensions
 {
 	//TODO: Move regions into their own extension classes
 	public static class PixelExtensions
@@ -12,7 +12,7 @@ namespace GameEngine.Extensions
 			if(mixFunc==null) {
 				mixFunc = (pxlA,pxlB) => pxlB;
 			}
-			
+
 			var srcRect = sourceRect ?? new RectInt(0,0,from.GetLength(0),from.GetLength(1));
 			int xLength1 = from.GetLength(0);
 			int yLength1 = from.GetLength(1);

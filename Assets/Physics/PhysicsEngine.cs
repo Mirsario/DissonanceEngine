@@ -1,6 +1,7 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using BulletSharp;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Physics
 {
@@ -16,8 +17,8 @@ namespace GameEngine.Physics
 
 		public static List<RigidbodyBase> ActiveRigidbodies	{ get; private set; }
 		public static Vector3 Gravity {
-			get => world.Gravity;
-			set => world.Gravity = value;
+			get => world.Gravity.ToVector3();
+			set => world.Gravity = value.ToBulletVector3();
 		}
 		
 		public static void Init()
@@ -90,23 +91,28 @@ namespace GameEngine.Physics
 				layerMask = mask(layerMask);
 			}
 
-			BulletSharp.Vector3 rayEnd = origin+direction*range;
-			BulletSharp.Vector3 origin2 = origin;
+			BulletSharp.Vector3 rayEnd = (origin+direction*range).ToBulletVector3();
+			BulletSharp.Vector3 origin2 = origin.ToBulletVector3();
+
 			var callback = new RaycastCallback(ref origin2,ref rayEnd,layerMask,customFilter);
-			world.RayTest(origin,rayEnd,callback);
+
+			world.RayTest(origin.ToBulletVector3(),rayEnd,callback);
 
 			if(!callback.HasHit) {
 				hit = new RaycastHit {
 					triangleIndex = -1,
 				};
+
 				return false;
 			}
+
 			hit = new RaycastHit {
-				point = callback.HitPointWorld,
+				point = callback.HitPointWorld.ToVector3(),
 				triangleIndex = callback.triangleIndex,
 				collider = callback.collider,
 				gameObject = callback.collider?.gameObject
 			};
+
 			return true;
 		}
 		public static void Dispose()
@@ -126,6 +132,7 @@ namespace GameEngine.Physics
 				for(int i = 0;i<rigidbodies.Count;i++) {
 					rigidbodies[i].Dispose();
 				}
+
 				rigidbodies.Clear();
 			}
 		}
@@ -134,24 +141,30 @@ namespace GameEngine.Physics
 			if(shape is CompoundShape compoundShape && compoundShape.NumChildShapes>0) {
 				return compoundShape.GetChildShape(subIndex>=0 ? subIndex : 0);
 			}
+
 			return shape;
 		}
 
 		#region Callbacks
+
 		private static void Callback_ContactAdded(ManifoldPoint cp,CollisionObjectWrapper colObj0,int partId0,int index0,CollisionObjectWrapper colObj1,int partId1,int index1)
 		{
 			//Bullet seems to use edge normals by default. Code below corrects it so it uses face normals instead.
 			//This fixes tons of issues with rigidbodies jumping up when moving between terrain quads,even if terrain is 100% flat.
+
 			var shape0 = colObj0.CollisionShape;
 			var shape1 = colObj1.CollisionShape;
 			var obj = shape0.ShapeType==BroadphaseNativeType.TriangleShape ? colObj0 : shape1.ShapeType==BroadphaseNativeType.TriangleShape ? colObj1 : null;
+
 			if(obj!=null) {
 				Matrix4x4 transform = obj.WorldTransform;
+
 				transform.ClearTranslation();
+
 				var shape = (TriangleShape)obj.CollisionShape;
-				cp.NormalWorldOnB = (transform*Vector3.Cross(shape.Vertices[1]-shape.Vertices[0],shape.Vertices[2]-shape.Vertices[0])).Normalized;
+
+				cp.NormalWorldOnB = (transform*Vector3.Cross((shape.Vertices[1]-shape.Vertices[0]).ToVector3(),(shape.Vertices[2]-shape.Vertices[0]).ToVector3())).Normalized.ToBulletVector3();
 			}
-			//Debug.Log("Added Contact between "+Rand.Range(0,100));
 
 			//cp.UserPersistentData = colObj1Wrap.CollisionObject.UserObject;
 		}
@@ -201,8 +214,8 @@ namespace GameEngine.Physics
 						for(int k = 0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
 							contacts[k] = new ContactPoint {
-								point = doingA ? cPoint.PositionWorldOnB : cPoint.PositionWorldOnA,	//Should ContactPoint have two pairs of vectors?
-								normal = cPoint.NormalWorldOnB,
+								point = (doingA ? cPoint.PositionWorldOnB : cPoint.PositionWorldOnA).ToVector3(),	//Should ContactPoint have two pairs of vectors?
+								normal = cPoint.NormalWorldOnB.ToVector3(),
 								separation = cPoint.Distance,
 							};
 						}
@@ -214,8 +227,8 @@ namespace GameEngine.Physics
 						for(int k = 0;k<numContacts;k++) {
 							var cPoint = contactManifold.GetContactPoint(k);
 							contacts[k] = new ContactPoint2D {
-								point = doingA ? ((Vector3)cPoint.PositionWorldOnB).XY : ((Vector3)cPoint.PositionWorldOnA).XY,	//Should ContactPoint have two pairs of vectors?
-								normal = ((Vector3)cPoint.NormalWorldOnB).XY,
+								point = (doingA ? cPoint.PositionWorldOnB : cPoint.PositionWorldOnA).ToVector3().XY,	//Should ContactPoint have two pairs of vectors?
+								normal = cPoint.NormalWorldOnB.ToVector3().XY,
 								separation = cPoint.Distance,
 							};
 						}
@@ -226,6 +239,7 @@ namespace GameEngine.Physics
 				}
 			}
 		}
+
 		#endregion
 	}
 	internal class RaycastCallback : ClosestRayResultCallback
@@ -278,5 +292,4 @@ namespace GameEngine.Physics
 			return base.NeedsCollision(proxy);
 		}
 	}
-}
-
+}*/

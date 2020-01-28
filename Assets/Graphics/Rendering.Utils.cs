@@ -1,9 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using GLBlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using Dissonance.Framework;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
@@ -31,10 +29,10 @@ namespace GameEngine.Graphics
 				prefix = "";
 			}
 
-			ErrorCode error = GL.GetError();
+			GraphicsError error = GL.GetError();
 
 			switch(error) {
-				case ErrorCode.NoError:
+				case GraphicsError.NoError:
 					return false;
 				default:
 					if(throwException) {
@@ -50,26 +48,36 @@ namespace GameEngine.Graphics
 		internal static void CheckFramebufferStatus()
 		{
 			switch(GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) {
-				case FramebufferErrorCode.FramebufferComplete:
+				case FramebufferStatus.FramebufferComplete:
 					return;
-				case FramebufferErrorCode.FramebufferIncompleteAttachment:
-					throw new Exception("An attachment could not be bound to frame buffer object!");
-				case FramebufferErrorCode.FramebufferIncompleteMissingAttachment:
+
+				case FramebufferStatus.FramebufferIncompleteAttachment:
+					throw new Exception("An attachment could not be bound to frame buffer object.");
+
+				case FramebufferStatus.FramebufferIncompleteMissingAttachment:
 					throw new Exception("Attachments are missing! At least one image (texture) must be bound to the frame buffer object!");
-				case FramebufferErrorCode.FramebufferIncompleteDimensionsExt:
+
+				case FramebufferStatus.FramebufferIncompleteDimensionsExt:
 					throw new Exception("The dimensions of the buffers attached to the currently used frame buffer object do not match!");
-				case FramebufferErrorCode.FramebufferIncompleteFormatsExt:
+
+				case FramebufferStatus.FramebufferIncompleteFormatsExt:
 					throw new Exception("The formats of the currently used frame buffer object are not supported or do not fit together!");
-				case FramebufferErrorCode.FramebufferIncompleteDrawBuffer:
+
+				case FramebufferStatus.FramebufferIncompleteDrawBuffer:
 					throw new Exception("A Draw buffer is incomplete or undefinied. All draw buffers must specify attachment points that have images attached.");
-				case FramebufferErrorCode.FramebufferIncompleteReadBuffer:
+
+				case FramebufferStatus.FramebufferIncompleteReadBuffer:
 					throw new Exception("A Read buffer is incomplete or undefinied. All read buffers must specify attachment points that have images attached.");
-				case FramebufferErrorCode.FramebufferIncompleteMultisample:
+
+				case FramebufferStatus.FramebufferIncompleteMultisample:
 					throw new Exception("All images must have the same number of multisample samples.");
-				case FramebufferErrorCode.FramebufferIncompleteLayerTargets :
+
+				case FramebufferStatus.FramebufferIncompleteLayerTargets :
 					throw new Exception("If a layered image is attached to one attachment,then all attachments must be layered attachments. The attached layers do not have to have the same number of layers,nor do the layers have to come from the same kind of texture.");
-				case FramebufferErrorCode.FramebufferUnsupported:
+
+				case FramebufferStatus.FramebufferUnsupported:
 					throw new Exception("Attempt to use an unsupported format combinaton!");
+
 				default:
 					throw new Exception("Unknown error while attempting to create frame buffer object!");
 			}
@@ -86,7 +94,7 @@ namespace GameEngine.Graphics
 			if(blendFactorSrc!=currentBlendFactorSrc || blendFactorDst!=currentBlendFactorDst) {
 				currentBlendFactorSrc = blendFactorSrc;
 				currentBlendFactorDst = blendFactorDst;
-				GL.BlendFunc((GLBlendingFactor)blendFactorSrc,(GLBlendingFactor)blendFactorDst);
+				GL.BlendFunc((BlendingFactor)blendFactorSrc,(BlendingFactor)blendFactorDst);
 			}
 		}
 	}

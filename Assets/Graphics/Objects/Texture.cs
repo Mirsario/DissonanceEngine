@@ -1,25 +1,28 @@
-using System.Drawing;
-using System.Drawing.Imaging;
-using OpenTK.Graphics.OpenGL;
-using ImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
-using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using System;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
 	public class Texture : Asset<Texture>
 	{
+		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;
+		protected const PixelType DefaultPixelType = PixelType.UnsignedByte;
+
 		public static FilterMode defaultFilterMode = FilterMode.Trilinear;
 		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
 		
 		public string name = "";
+
 		protected FilterMode filterMode;
 		protected TextureWrapMode wrapMode;
 		protected bool useMipmaps;
 
-		public int Id { get; protected set; }
+		public uint Id { get; protected set; }
 		public int Width { get; protected set; }
 		public int Height { get; protected set; }
-		
+		public PixelFormat PixelFormat { get; protected set; }
+		public PixelType PixelType { get; protected set; }
+
 		public Vector2Int Size => new Vector2Int(Width,Height);
 		
 		protected Texture() { }
@@ -40,15 +43,19 @@ namespace GameEngine.Graphics
 			this.useMipmaps = useMipmaps;
 			
 			var fillColor = new Pixel(255,255,255,255);
+
 			int length = width*height;
+
 			var pixels = new Pixel[length];
+
 			for(int i = 0;i<length;i++) {
 				pixels[i] = fillColor;
 			}
 
-			SetupTexture(pixels);
+			SetPixels(pixels);
 		}
-		internal Texture(int id,int width,int height)
+
+		internal Texture(uint id,int width,int height)
 		{
 			Id = id;
 			Width = width;
@@ -60,125 +67,55 @@ namespace GameEngine.Graphics
 			GL.DeleteTexture(Id);
 		}
 
-		public Pixel[,] GetPixels()
+		public T[,] GetPixels<T>() where T : unmanaged
 		{
-			var pixels1D = new Pixel[Width*Height];
+			var pixels = new T[Width,Height];
+
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.GetTexImage(TextureTarget.Texture2D,0,PixelFormat.Rgba,PixelType.UnsignedByte,pixels1D);
+
+			//TODO: Ensure that this works.
+			unsafe {
+				fixed(T* ptr = &(pixels!=null && pixels.Length!=0 ? ref pixels[0,0] : ref *(T*)null)) {
+					GL.GetTexImage(TextureTarget.Texture2D,0,PixelFormat,PixelType,(IntPtr)ptr);
+				}
+			}
+
 			GL.BindTexture(TextureTarget.Texture2D,0);
 
-			//TODO: Can these loops be avoided?
-			var pixels = new Pixel[Width,Height];
-			int i = 0;
-			for(int y = 0;y<Height;y++) {
-				for(int x = 0;x<Width;x++) {
-					pixels[x,y] = pixels1D[i++];
-				}
-			}
 			return pixels;
 		}
-		public Bitmap GetBitmap()
-		{
-		   //TODO: Speed this up
-			var pixels = GetPixels();
-			var bitmap = new Bitmap(Width,Height);
-			for(int y = 0;y<Height;y++) {
-				for(int x = 0;x<Width;x++) {
-					bitmap.SetPixel(x,y,pixels[x,y]);
-				}
-			}
-			return bitmap;
-		}
-		public void SetPixels(Pixel[,] pixels)
-		{
-			//TODO: Can these loops be avoided?
-			var pixels1D = new Pixel[Width*Height];
-			int i = 0;
-			for(int y = 0;y<Height;y++) {
-				for(int x = 0;x<Width;x++) {
-					pixels1D[i++] = pixels[x,y];
-				}
-			}
+		public void SetPixels<T>(T[] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
+		public void SetPixels<T>(T[,] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
+		public void SetPixels<T>(T[,,] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-
-			//TODO: Unhardcode this
-			GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat.Rgba,PixelType.UnsignedByte,pixels1D);
-			if(useMipmaps) {
-				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-			}
-		}
-		public void SetPixels(byte[] data,TextureFormat format = TextureFormat.RGBA8)
+		protected void SetPixelsInternal(Action setter,PixelFormat pixelFormat,PixelType pixelType)
 		{
-			var (formatGeneral,_,pixelType,_)= Rendering.textureFormatInfo[format];
+			PixelFormat = pixelFormat;
+			PixelType = pixelType;
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-
-			//TODO: Unhardcode this
-			GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,formatGeneral,pixelType,data);
-			if(useMipmaps) {
-				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-			}
-		}
-		public void Save(string path)
-		{
-			var bitmap = GetBitmap();
-			bitmap.Save(path);
-			bitmap.Dispose();
-		}
-
-		private void SetupTexture(Pixel[] pixels)
-		{
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.Rgba,Width,Height,0,PixelFormat.Rgba,PixelType.UnsignedByte,pixels);
+			setter();
 
 			SetupFiltering(filterMode,wrapMode,useMipmaps);
-		}
-		
-		public static Texture FromBitmap(Bitmap bitmap,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)
-		{
-			int id = GL.GenTexture();
-			int width = bitmap.Width;
-			int height = bitmap.Height;
-			
-			var bitData = bitmap.LockBits(new Rectangle(0,0,width,height),ImageLockMode.ReadOnly,ImagingPixelFormat.Format32bppArgb);
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.Rgba,width,height,0,PixelFormat.Bgra,PixelType.UnsignedByte,bitData.Scan0);
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
-			bitmap.UnlockBits(bitData);
-			//bitmap.Dispose();
-
-			return new Texture(id,width,height);
 		}
 
 		internal static void SetupFiltering(FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)
 		{
-			filterMode ??= defaultFilterMode;
 			wrapMode ??= defaultWrapMode;
-
-			int magFilter;
-			int minFilter;
-			switch(filterMode) {
-				case FilterMode.Bilinear:
-					magFilter = (int)TextureMagFilter.Linear;
-					minFilter = (int)TextureMinFilter.Linear;
-					break;
-				case FilterMode.Trilinear:
-					magFilter = (int)TextureMagFilter.Linear;
-					minFilter = (int)TextureMinFilter.LinearMipmapLinear;
-					break;
-				default:
-					magFilter = (int)TextureMagFilter.Nearest;
-					minFilter = (int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest);
-					break;
-			}
+			filterMode ??= defaultFilterMode;
 
 			int wrapModeInt = wrapMode==TextureWrapMode.Repeat ? 10497 : 33071;
+
+			(int magFilter,int minFilter) = filterMode switch {
+				FilterMode.Bilinear => ((int)TextureMagFilter.Linear,(int)TextureMinFilter.Linear),
+				FilterMode.Trilinear => ((int)TextureMagFilter.Linear,(int)TextureMinFilter.LinearMipmapLinear),
+				_ => ((int)TextureMagFilter.Nearest,(int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest))
+			};
+
+
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS,wrapModeInt);
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapT,wrapModeInt);
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,magFilter);

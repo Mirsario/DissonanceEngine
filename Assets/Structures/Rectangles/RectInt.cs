@@ -46,16 +46,19 @@ namespace GameEngine
 			if(notOnBorders) {
 				return point.x>x && point.x<x+width && point.y>y && point.y<y+height;
 			}
+
 			return point.x>=x && point.x<=x+width && point.y>=y && point.y<=y+height;
 		}
 
 		public static RectInt FromPoints(int x1,int y1,int x2,int y2)
 		{
 			RectInt rect;
+
 			rect.x = x1;
 			rect.y = y1;
 			rect.width = x2-x1;
 			rect.height = y2-y1;
+
 			return rect;
 		}
 

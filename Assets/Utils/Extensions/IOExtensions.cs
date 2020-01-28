@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace GameEngine
+namespace GameEngine.Utils.Extensions
 {
 	public static class IOExtensions
 	{
@@ -49,7 +49,7 @@ namespace GameEngine
 			writer.Write(vec.z);
 			writer.Write(vec.w);
 		}
-		
+
 		public static void Write(this BinaryWriter writer,Quaternion q)
 		{
 			writer.Write(q.x);

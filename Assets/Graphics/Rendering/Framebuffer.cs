@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameEngine.Utils;
-using OpenTK.Graphics.OpenGL;
-
-using GLFramebufferAttachment = OpenTK.Graphics.OpenGL.FramebufferAttachment;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
@@ -11,18 +9,12 @@ namespace GameEngine.Graphics
 	//TODO: Some fields shouldn't be public
 	public class Framebuffer : IDisposable
 	{
-		public enum Target
-		{
-			ReadFramebuffer = 36008,
-			DrawFramebuffer = 36009,
-			Framebuffer = 36160,
-		}
-		
 		internal static Framebuffer activeBuffer;
+
 		public static Framebuffer ActiveBuffer => activeBuffer;
 		
 		public readonly string Name;
-		public readonly int Id;
+		public readonly uint Id;
 
 		private readonly Dictionary<RenderTexture,FramebufferAttachment> textureToAttachment;
 
@@ -49,13 +41,14 @@ namespace GameEngine.Graphics
 			Bind(this);
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
-			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,TextureTarget.Texture2D,texture.Id,0);
-			//Rendering.CheckFramebufferStatus();
+
+			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,attachment,TextureTarget.Texture2D,texture.Id,0);
 			
 			renderTextures.Add(texture);
 			textureToAttachment[texture] = attachment;
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
 			}
@@ -75,12 +68,15 @@ namespace GameEngine.Graphics
 			Bind(this);
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
-			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,RenderbufferTarget.Renderbuffer,Id);
+
+			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,attachment,RenderbufferTarget.Renderbuffer,Id);
+
 			Rendering.CheckFramebufferStatus();
 
 			ArrayUtils.Add(ref renderbuffers,renderbuffer);
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
 			}
@@ -94,7 +90,7 @@ namespace GameEngine.Graphics
 
 			Bind(this);
 
-			GL.FramebufferTexture(FramebufferTarget.Framebuffer,(GLFramebufferAttachment)attachment,0,0);
+			GL.FramebufferTexture(FramebufferTarget.Framebuffer,attachment,0,0);
 
 			renderTextures.Remove(texture);
 			textureToAttachment.Remove(texture);
@@ -154,15 +150,15 @@ namespace GameEngine.Graphics
 
 			return fb;
 		}
-		public static void Bind(Framebuffer fb,Target target = Target.Framebuffer)
+		public static void Bind(Framebuffer fb,FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
-			GL.BindFramebuffer((FramebufferTarget)target,fb?.Id ?? 0);
+			GL.BindFramebuffer(target,fb?.Id ?? 0);
 
-			if((int)target==(int)Target.Framebuffer) {
+			if(target==FramebufferTarget.Framebuffer) {
 				activeBuffer = fb;
 			}
 		}
-		public static void BindWithDrawBuffers(Framebuffer fb,Target target = Target.Framebuffer)
+		public static void BindWithDrawBuffers(Framebuffer fb,FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
 			Bind(fb,target);
 

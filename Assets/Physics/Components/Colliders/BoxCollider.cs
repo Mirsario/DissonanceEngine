@@ -1,10 +1,12 @@
-using BulletSharp;
+/*using BulletSharp;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Physics
 {
 	public class BoxCollider : Collider
 	{
 		protected Vector3 size = Vector3.One;
+
 		public Vector3 Size {
 			get => size;
 			set {
@@ -23,9 +25,9 @@ namespace GameEngine.Physics
 				collShape = null;
 			}
 
-			collShape = new BoxShape(size*0.5f);
+			collShape = new BoxShape(size.ToBulletVector3()*0.5f);
 
 			base.UpdateCollider();
 		}
 	}
-}
+}*/

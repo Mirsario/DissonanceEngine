@@ -806,15 +806,13 @@ namespace GameEngine
 		public static bool operator ==(Matrix4x4 left,Matrix4x4 right) => left.Equals(right);
 		public static bool operator !=(Matrix4x4 left,Matrix4x4 right) => !left.Equals(right);
 
-		public static implicit operator OpenTK.Matrix4(Matrix4x4 v) => new OpenTK.Matrix4(v.Row0,v.Row1,v.Row2,v.Row3);
-		public static implicit operator Matrix4x4(OpenTK.Matrix4 v) => new Matrix4x4(v.Row0,v.Row1,v.Row2,v.Row3);
+		/*public static implicit operator Matrix4x4(BulletSharp.Matrix v) => new Matrix4x4(v.M11,v.M12,v.M13,v.M14,v.M21,v.M22,v.M23,v.M24,v.M31,v.M32,v.M33,v.M34,v.M41,v.M42,v.M43,v.M44);
 		public static implicit operator BulletSharp.Matrix(Matrix4x4 v) => new BulletSharp.Matrix {
 			M11 = v.m00,M12 = v.m01,M13 = v.m02,M14 = v.m03,
 			M21 = v.m10,M22 = v.m11,M23 = v.m12,M24 = v.m13,
 			M31 = v.m20,M32 = v.m21,M33 = v.m22,M34 = v.m23,
 			M41 = v.m30,M42 = v.m31,M43 = v.m32,M44 = v.m33
-		};
-		public static implicit operator Matrix4x4(BulletSharp.Matrix v) => new Matrix4x4(v.M11,v.M12,v.M13,v.M14,v.M21,v.M22,v.M23,v.M24,v.M31,v.M32,v.M33,v.M34,v.M41,v.M42,v.M43,v.M44);
+		};*/
 		public static implicit operator double[](Matrix4x4 value)
 		{
 			var output = new double[16];

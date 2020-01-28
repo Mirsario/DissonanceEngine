@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
-using GameEngine.Extensions;
+using Dissonance.Framework.OpenGL;
+using GameEngine.Utils.Extensions;
 
 namespace GameEngine.Graphics
 {

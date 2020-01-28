@@ -1,6 +1,4 @@
-using BulletSharp;
-
-namespace GameEngine.Physics
+/*namespace GameEngine.Physics
 {
 	public class MeshCollider : Collider
 	{
@@ -23,4 +21,4 @@ namespace GameEngine.Physics
 			base.UpdateCollider();
 		}
 	}
-}
+}*/

@@ -1,53 +1,8 @@
-using OpenTK.Graphics.OpenGL;
-using PrimitiveTypeGL = OpenTK.Graphics.OpenGL.PrimitiveType;
+using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
 
 namespace GameEngine
 {
-	public class GUIStyle
-	{
-		public Texture texInactive;
-		public Texture texNormal;
-		public Texture texHover;
-		public Texture texActive;
-		public RectOffset border;
-		public TextAlignment textAlignment;
-		public int fontSize = 16;
-
-		public GUIStyle()
-		{
-			texInactive = GUI.texDefaultInactive;
-			texNormal = GUI.texDefault;
-			texHover = GUI.texDefaultHover;
-			texActive = GUI.texDefaultActive;
-			border = new RectOffset(6f,6f,6f,6f);
-			textAlignment = TextAlignment.UpperLeft;
-		}
-	}
-	public class GUISkin
-	{
-		public GUIStyle boxStyle;
-		public GUIStyle buttonStyle;
-		public GUISkin()
-		{
-			boxStyle = new GUIStyle();
-			buttonStyle = new GUIStyle {
-				textAlignment = TextAlignment.MiddleCenter
-			};
-		}
-	}
-	public enum TextAlignment
-	{
-		UpperLeft,
-		UpperCenter,
-		UpperRight,
-		MiddleLeft,
-		MiddleCenter,
-		MiddleRight,
-		LowerLeft,
-		LowerCenter,
-		LowerRight
-	}
 	public static class GUI
 	{
 		internal static bool canDraw;
@@ -80,9 +35,12 @@ namespace GameEngine
 		{
 			bool hover = rect.Contains(Input.MousePosition,true);
 			bool anyPress = Input.GetMouseButton(0);
+
 			var style = skin.buttonStyle;
 			var tex = active ? hover ? anyPress ? style.texActive : style.texHover : style.texNormal : style.texInactive;
+
 			Draw(rect,tex,color,style);
+
 			if(!string.IsNullOrEmpty(text)) {
 				var textRect = new RectFloat(
 					rect.x+style.border.left,
@@ -90,6 +48,7 @@ namespace GameEngine
 					rect.width-style.border.left-style.border.right,
 					rect.height-style.border.top-style.border.bottom
 				);
+
 				DrawString(font,style.fontSize,textRect,text,alignment:style.textAlignment);
 			}
 			
@@ -115,17 +74,22 @@ namespace GameEngine
 				(rect.x+rect.width)/Screen.Width,
 				(rect.y+rect.height)/Screen.Height
 			);
+
 			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
+
 				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 			
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
-			
-			int index = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
+
+			if(!GL.TryGetAttribLocation(Shader.activeShader.Id,"uv",out uint index)) {
+				return;
+			}
+
 			if(style==null || style.border.left==0) {
-				GL.Begin(PrimitiveTypeGL.Quads);
+				GL.Begin(PrimitiveType.Quads);
 					GL.VertexAttrib2(index,0.0f,0.0f);	GL.Vertex2(vector.x,1f-vector.y);
 					GL.VertexAttrib2(index,0.0f,1.0f);	GL.Vertex2(vector.x,1f-vector.w);
 					GL.VertexAttrib2(index,1.0f,1.0f);	GL.Vertex2(vector.z,1f-vector.w);
@@ -141,7 +105,9 @@ namespace GameEngine
 					style.border.left/textureSize.x,		style.border.top/textureSize.y,
 					1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
 				);
-				GL.Begin(PrimitiveTypeGL.Quads);
+
+				GL.Begin(PrimitiveType.Quads);
+
 				for(int y = 0;y<3;y++) {
 					for(int x = 0;x<3;x++) {
 						var vertex = new Vector4(
@@ -162,6 +128,7 @@ namespace GameEngine
 						GL.VertexAttrib2(index,uv.z,uv.y); GL.Vertex2(vertex.z,1f-vertex.y);
 					}
 				}
+
 				GL.End();
 			}
 		}
@@ -196,15 +163,23 @@ namespace GameEngine
 			float height = font.charSize.y/Screen.Height*scale;
 			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
 
-			GL.Begin(PrimitiveTypeGL.Quads);
+			if(uvAttrib<0) {
+				return;
+			}
+
+			uint uintUvAttrib = (uint)uvAttrib;
+
+			GL.Begin(PrimitiveType.Quads);
 
 			for(int i = 0;i<text.Length;i++) {
 				char c = text[i];
 				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
-					GL.VertexAttrib2(uvAttrib,uvs[0]);	GL.Vertex2(xPos,		1f-yPos);
-					GL.VertexAttrib2(uvAttrib,uvs[1]);	GL.Vertex2(xPos+width,	1f-yPos);
-					GL.VertexAttrib2(uvAttrib,uvs[2]);	GL.Vertex2(xPos+width,	1f-yPos-height);
-					GL.VertexAttrib2(uvAttrib,uvs[3]);	GL.Vertex2(xPos,		1f-yPos-height);
+					unsafe {
+						GL.VertexAttrib2(uintUvAttrib,uvs[0]);	GL.Vertex2(xPos,		1f-yPos);
+						GL.VertexAttrib2(uintUvAttrib,uvs[1]);	GL.Vertex2(xPos+width,	1f-yPos);
+						GL.VertexAttrib2(uintUvAttrib,uvs[2]);	GL.Vertex2(xPos+width,	1f-yPos-height);
+						GL.VertexAttrib2(uintUvAttrib,uvs[3]);	GL.Vertex2(xPos,		1f-yPos-height);
+					}
 				}
 
 				xPos += width;

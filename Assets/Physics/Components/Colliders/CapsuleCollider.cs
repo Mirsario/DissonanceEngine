@@ -1,10 +1,12 @@
-using BulletSharp;
+/*using BulletSharp;
 
 namespace GameEngine.Physics
 {
 	public class CapsuleCollider : Collider
 	{
 		protected float radius = 0.5f;
+		protected float height = 2f;
+
 		public float Radius {
 			get => radius;
 			set {
@@ -15,7 +17,6 @@ namespace GameEngine.Physics
 				}
 			}
 		}
-		protected float height = 2f;
 		public float Height {
 			get => height;
 			set {
@@ -39,4 +40,4 @@ namespace GameEngine.Physics
 			base.UpdateCollider();
 		}
 	}
-}
+}*/

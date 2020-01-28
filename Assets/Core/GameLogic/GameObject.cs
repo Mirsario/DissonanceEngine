@@ -1,8 +1,6 @@
 using System;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
-using GameEngine.Physics;
 
 namespace GameEngine
 {
@@ -16,7 +14,7 @@ namespace GameEngine
 		internal bool initialized;
 		internal List<Component> components;
 		internal Dictionary<int,List<Component>> componentsByNameHash;
-		internal RigidbodyInternal rigidbodyInternal;
+		//internal RigidbodyInternal rigidbodyInternal;
 		internal Transform transform;
 
 		public Transform Transform => transform;

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using Dissonance.Framework;
+using Dissonance.Framework.OpenGL;
 using DSU = GameEngine.Graphics.DefaultShaderUniforms;
-using GLShaderType = OpenTK.Graphics.OpenGL.ShaderType;
 
 namespace GameEngine.Graphics
 {
@@ -18,13 +17,13 @@ namespace GameEngine.Graphics
 
 		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 
-		public readonly int Id;
+		public readonly uint Id;
 		public readonly string Name;
 
-		public int vertexShader;
-		public int fragmentShader;
-		public int geometryShader;
 		public int queue;
+		public uint vertexShader;
+		public uint fragmentShader;
+		public uint geometryShader;
 		public uint stencilMask;
 		public string[] defines;
 		public BlendingFactor blendFactorSrc;
@@ -60,17 +59,23 @@ namespace GameEngine.Graphics
 
 			//Set uniform locations
 			uniforms = new Dictionary<string,ShaderUniform>();
-			GL.GetProgram(Id,GetProgramParameterName.ActiveUniforms,out int uniformCount);
+
+			Rendering.CheckGLErrors();
+
+			GL.GetProgram(Id,GetProgramParameter.ActiveUniforms,out int uniformCount);
+
+			Rendering.CheckGLErrors();
 
 			const int MaxUniformNameLength = 32;
 
 			for(int location = 0;location<uniformCount;location++) {
-				GL.GetActiveUniform(Id,location,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
+				GL.GetActiveUniform(Id,(uint)location,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
 
 				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,location));
 				
 				//Optimization for engine's uniforms
 				int indexOf = Array.IndexOf(DSU.names,uniformName);
+
 				if(indexOf>=0) {
 					hasDefaultUniform[indexOf] = true;
 					defaultUniformIndex[indexOf] = location;
@@ -85,17 +90,21 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.ScreenWidth]) {
 				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width);
 			}
+
 			if(hasDefaultUniform[DSU.ScreenHeight]) {
 				GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight],Screen.Height);
 			}
+
 			if(hasDefaultUniform[DSU.ScreenResolution]) {
-				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],Screen.sizeFloat);
+				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],Screen.sizeFloat.x,Screen.sizeFloat.y);
 			}
+
 			if(hasDefaultUniform[DSU.Time]) {
 				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
 			}
+
 			if(hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor],Rendering.ambientColor);
+				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor],Rendering.ambientColor.x,Rendering.ambientColor.y,Rendering.ambientColor.z);
 			}
 		}
 		internal void SetupCameraUniforms(Camera camera,Vector3 cameraPos)
@@ -103,14 +112,19 @@ namespace GameEngine.Graphics
 			if(hasDefaultUniform[DSU.NearClip]) {
 				GL.Uniform1(defaultUniformIndex[DSU.NearClip],camera.nearClip);
 			}
+
 			if(hasDefaultUniform[DSU.FarClip]) {
 				GL.Uniform1(defaultUniformIndex[DSU.FarClip],camera.farClip);
 			}
+
 			if(hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos);
+				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos.x,cameraPos.y,cameraPos.z);
 			}
+
 			if(hasDefaultUniform[DSU.CameraDirection]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],camera.Transform.Forward);
+				var forward = camera.Transform.Forward;
+
+				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],forward.x,forward.y,forward.z);
 			}
 		}
 		internal void SetupMatrixUniformsCached(Transform transform,bool[] uniformComputed,
@@ -276,10 +290,12 @@ namespace GameEngine.Graphics
 			code = RegexCache.shaderFSuffixB.Replace(code,@"$1$2");
 			code = RegexCache.shaderFSuffixA.Replace(code,@"$1$2.0");
 			
-			int shader = GL.CreateShader((GLShaderType)type);
+			uint shader = GL.CreateShader(type);
+
 			GL.ShaderSource(shader,code);
 			GL.CompileShader(shader);
 
+			//TODO: This requires testing
 			string info = GL.GetShaderInfoLog(shader);
 
 			if(!string.IsNullOrEmpty(info)) {
@@ -287,9 +303,9 @@ namespace GameEngine.Graphics
 
 				GL.DeleteShader(shader);
 
-				if(type==ShaderType.Vertex) {
+				if(type==ShaderType.VertexShader) {
 					GL.AttachShader(Id,ErrorShader.vertexShader);
-				}else if(type==ShaderType.Fragment) {
+				}else if(type==ShaderType.FragmentShader) {
 					GL.AttachShader(Id,ErrorShader.fragmentShader);
 				}
 			}else{
@@ -335,6 +351,7 @@ namespace GameEngine.Graphics
 					}
 
 					int index = code.IndexOf("version",StringComparison.Ordinal);
+
 					if(index>=0) {
 						index = code.IndexOf("\n",index,StringComparison.Ordinal)+1;
 						code = code.Insert(index,defString);
@@ -361,9 +378,9 @@ namespace GameEngine.Graphics
 				}
 			}
 
-			TryCompileCode(shader,ShaderType.Vertex,vertexCode);
-			TryCompileCode(shader,ShaderType.Fragment,fragmentCode);
-			TryCompileCode(shader,ShaderType.Geometry,geometryCode);
+			TryCompileCode(shader,ShaderType.VertexShader,vertexCode);
+			TryCompileCode(shader,ShaderType.FragmentShader,fragmentCode);
+			TryCompileCode(shader,ShaderType.GeometryShader,geometryCode);
 
 			GL.BindAttribLocation(shader.Id,(int)AttributeId.Vertex,"vertex");
 			GL.BindAttribLocation(shader.Id,(int)AttributeId.Normal,"normal");

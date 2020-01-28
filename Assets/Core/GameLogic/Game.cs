@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Input;
+using Dissonance.Framework;
+using Dissonance.Framework.GLFW3;
 using GameEngine.Graphics;
 using GameEngine.Physics;
-using System.Reflection;
+using GameEngine.Core;
+using Dissonance.Framework.OpenGL;
 
 namespace GameEngine
 {
@@ -31,7 +31,7 @@ namespace GameEngine
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
 		public static Dictionary<string,string> filePaths;
-		public static GameWindow window;
+		public static IntPtr window;
 		
 		internal static Game instance;
 		internal static bool shouldQuit;
@@ -43,12 +43,16 @@ namespace GameEngine
 		public void Run(string[] args = null)
 		{
 			Console.BufferHeight = short.MaxValue-1;
+
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
+
+			DllResolver.Init();
 
 			if(args!=null) {
 				string joinedArgs = string.Join(" ",args);
 				var matches = RegexCache.commandArguments.Matches(joinedArgs);
 				var dict = new Dictionary<string,string>(StringComparer.InvariantCultureIgnoreCase);
+
 				foreach(Match match in matches) {
 					dict[match.Groups[1].Value] = match.Groups[2].Value;
 				}
@@ -61,20 +65,53 @@ namespace GameEngine
 			assetsPath = Path.GetFullPath(assetsPath);
 
 			Layers.Init();
-			//... Load gameconfig.json here
 			Time.PreInit();
 			Rendering.PreInit();
 			PreInit();
+
 			preInitDone = true;
 
-			Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
-			
+			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch {
+				GLFWError.VersionUnavailable => throw new GraphicsException(description),
+				_ => $"GLFW Error {code}: {description}"
+			}));
+
+			if(GLFW.Init()==0) {
+				throw new Exception("Unable to initialize GLFW!");
+			}
+
+			GLFW.WindowHint(WindowHint.ContextVersionMajor,3); //Targeted major version
+			GLFW.WindowHint(WindowHint.ContextVersionMinor,2); //Targeted minor version
+
+			window = GLFW.CreateWindow(800,600,"Unnamed Window",IntPtr.Zero,IntPtr.Zero);
+
+			GLFW.MakeContextCurrent(window);
+
+			GLFW.SetWindowFocusCallback(window,OnFocusChange);
+
+			GL.Load();
+
+			Init();
+
+			while(GLFW.WindowShouldClose(window)==0) {
+				GLFW.PollEvents();
+
+				FixedUpdateInternal();
+				RenderUpdateInternal();
+			}
+
+			GLFW.DestroyWindow(window);
+			GLFW.Terminate();
+
+			//Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
+
 			//window.VSync = VSyncMode.On;
-			
-			window.Load += (obj,e) => Init();
+
+			/*window.Load += (obj,e) => Init();
 			window.Resize += Rendering.Resize;
 			window.WindowStateChanged += (sender,e) => {
 				Debug.Log("State changed");
+
 				Rendering.Resize(sender,e);
 			};
 			window.UpdateFrame += FixedUpdateInternal;
@@ -87,12 +124,12 @@ namespace GameEngine
 			window.FocusedChanged += OnFocusChange;
 			window.Closing += ApplicationQuit;
 
-			window.Run(Time.TargetUpdateFrequency,Time.TargetRenderFrequency);
+			window.Run(Time.TargetUpdateFrequency,Time.TargetRenderFrequency);*/
 		}
 		public void Dispose()
 		{
 			Rendering.Dispose();
-			PhysicsEngine.Dispose();
+			//PhysicsEngine.Dispose();
 		}
 
 		internal void Init()
@@ -101,10 +138,11 @@ namespace GameEngine
 
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 			Debug.Log($"Assets directory is '{assetsPath}'.");
-			AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
+			//AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
 
 			Time.Init();
-			Screen.UpdateValues(window);
+			Screen.UpdateValues();
+
 			Screen.lockCursor = false;
 			Screen.showCursor = true;
 
@@ -123,56 +161,42 @@ namespace GameEngine
 			}
 
 			filePaths = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+
 			foreach(string file in Resources.GetFilesRecursive(assetsPath,null,new[] { $"{assetsPath}/bin",$"{assetsPath}/obj" })) {
 				filePaths[Path.GetFileName(file)] = file;
 			}
-
-			#region FileUpdating
-			//TODO: Implement resource reloading
-			/*#if DEBUG
-			//Experimental, not finished yet.
-			fileWatcher = new FileSystemWatcher {
-				Path = "Assets",
-				NotifyFilter = NotifyFilters.LastWrite,
-				Filter = "*.*"
-			};
-			fileWatcher.Changed += delegate(object obj,FileSystemEventArgs args) {
-				DateTime lastWriteDateNew = File.GetLastWriteTime(args.FullPath);
-				if(lastWriteDate.Ticks!=lastWriteDateNew.Ticks) {
-					Debug.Log("old: "+lastWriteDate.Ticks+",new: "+lastWriteDateNew.Ticks);
-					Debug.Log("old: "+lastWriteDate+",new: "+lastWriteDateNew);
-					lastWriteDate = lastWriteDateNew;
-					Debug.Log(args.FullPath+" was changed");
-				}
-			};
-			fileWatcher.EnableRaisingEvents = true;
-			#endif*/
-			#endregion
 			
 			Component.Init();
 			Resources.Init();
 			Rendering.Init();
 			GUI.Init();
 			Input.Init();
-			PhysicsEngine.Init();
+			//PhysicsEngine.Init();
 			Audio.Init();
 
 			Debug.Log("Loading game...");
+
 			Start();
+
 			Debug.Log("Game started.");
 		}
-		internal void FixedUpdateInternal(object sender,FrameEventArgs e)
+		internal void FixedUpdateInternal()
 		{
 			fixedUpdate = true;
+
 			Time.PreFixedUpdate();
 
-			if(Screen.lockCursor && window.Focused) {
+			bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
+
+			if(Screen.lockCursor && isFocused) {
 				var center = Screen.WindowCenter;
-				Mouse.SetPosition(center.x,center.y);
+
+				GLFW.SetCursorPos(Game.window,center.x,center.y);
 			}
 
-			window.CursorVisible = Screen.showCursor || !window.Focused;
-			Screen.UpdateValues(window);
+			Screen.CursorVisible = Screen.showCursor || !isFocused;
+
+			Screen.UpdateValues();
 
 			Time.UpdateFixed(1.0/Time.TargetUpdateFrequency);
 			Input.FixedUpdate();
@@ -189,21 +213,14 @@ namespace GameEngine
 				return;
 			}
 
-			PhysicsEngine.UpdateFixed();
+			//PhysicsEngine.UpdateFixed();
 			Input.LateFixedUpdate();
 			Audio.FixedUpdate();
 
 			Time.PostFixedUpdate();
 		}
-		internal void RenderUpdateInternal(object sender,FrameEventArgs e)
+		internal void RenderUpdateInternal()
 		{
-			/*//TODO: This is a temporary fix for what seems to be an OpenTK bug, which introduces issues with setting GL.Viewport's width & height to values bigger than window's original Width & Height. There must be a better solution.
-			if(!resizedWindow) {
-				window.Location = new System.Drawing.Point((window.Width/2)-(DefaultWidth/2),(window.Height/2)-(DefaultHeight/2));
-				window.Size = new System.Drawing.Size(DefaultWidth,DefaultHeight);
-				Screen.UpdateValues(window);
-				resizedWindow = true;
-			}*/
 			fixedUpdate = false;
 
 			if(shouldQuit) {
@@ -212,7 +229,7 @@ namespace GameEngine
 
 			Time.PreRenderUpdate();
 
-			Time.UpdateRender(e.Time);
+			Time.UpdateRender(GLFW.GetTime());
 			Input.RenderUpdate();
 
 			RenderUpdate();
@@ -227,7 +244,7 @@ namespace GameEngine
 				return;
 			}
 
-			PhysicsEngine.UpdateRender();
+			//PhysicsEngine.UpdateRender();
 			Rendering.Render();
 			Input.LateRenderUpdate();
 
@@ -246,14 +263,16 @@ namespace GameEngine
 		public virtual void OnGUI() {}
 		public virtual void OnApplicationQuit() {}
 
-		public static void Quit() => window.Exit();
+		public static void Quit() => GLFW.SetWindowShouldClose(window,1);
 		
-		private static void OnFocusChange(object sender,EventArgs e) => HasFocus = window.Focused;
+		private static void OnFocusChange(IntPtr window,int isFocused) => HasFocus = isFocused!=0;
 		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
 		{
 			#if WINDOWS
+			
 			var exception = (Exception)e.ExceptionObject;
 			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
+			
 			#endif
 			
 			Quit();	

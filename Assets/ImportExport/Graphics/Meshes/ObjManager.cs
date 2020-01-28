@@ -84,7 +84,7 @@ namespace GameEngine
 							break;
 						case "f":
 							face = face+brokenString.Length-1;
-							triangles = triangles+3*(brokenString.Length-2);/*brokenString.Length is 3 or greater since a face must have at least
+							triangles += 3*(brokenString.Length-2);/*brokenString.Length is 3 or greater since a face must have at least
 																					3 vertices.  For each additional vertice,there is an additional
 																					triangle in the mesh(hence this formula).*/
 							break;

@@ -1,5 +1,4 @@
-using System.Drawing;
-using System.Drawing.Imaging;
+using System;
 using System.IO;
 using GameEngine.Graphics;
 
@@ -11,14 +10,18 @@ namespace GameEngine
 		
 		public override Texture Import(Stream stream,string fileName)
 		{
-			var bitmap = new Bitmap(stream);
-			var texture = Texture.FromBitmap(bitmap);
-			bitmap.Dispose();
-			return texture;
+			//var texture = new Texture(bitmap.Width,bitmap.Height);
+			//texture.SetPixels(
+
+			//return texture;
+
+			throw new NotImplementedException();
 		}
 		public override void Export(Texture asset,Stream stream)
 		{
-			asset.GetBitmap().Save(stream,ImageFormat.Png);
+			//asset.GetBitmap().Save(stream,ImageFormat.Png);
+
+			throw new NotImplementedException();
 		}
 	}
 }
