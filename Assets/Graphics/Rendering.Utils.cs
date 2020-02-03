@@ -94,7 +94,8 @@ namespace GameEngine.Graphics
 			if(blendFactorSrc!=currentBlendFactorSrc || blendFactorDst!=currentBlendFactorDst) {
 				currentBlendFactorSrc = blendFactorSrc;
 				currentBlendFactorDst = blendFactorDst;
-				GL.BlendFunc((BlendingFactor)blendFactorSrc,(BlendingFactor)blendFactorDst);
+
+				GL.BlendFunc(blendFactorSrc,blendFactorDst);
 			}
 		}
 	}

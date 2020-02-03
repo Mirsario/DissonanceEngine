@@ -170,13 +170,17 @@ namespace GameEngine
 		public Vector4 ToAxisAngle()
 		{
 			//TODO: Not tested
+
 			if(Mathf.Abs(w)>1f) {
 				Normalize();
 			}
-			var result = new Vector4 {
-				w = 2f*Mathf.Acos(w)
-			};
+
+			Vector4 result;
+
+			result.w = 2f*Mathf.Acos(w);
+
 			float den = Mathf.Sqrt(1f-w*w);
+
 			if(den>0.0001f) {
 				result.x = x/den;
 				result.y = y/den;
@@ -186,6 +190,7 @@ namespace GameEngine
 				result.y = 0f;
 				result.z = 0f;
 			}
+
 			return result;
 		}
 		

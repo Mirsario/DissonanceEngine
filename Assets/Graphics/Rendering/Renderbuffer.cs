@@ -20,7 +20,7 @@ namespace GameEngine.Graphics
 			this.storageType = storageType;
 
 			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer,Id);
-			GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer,(RenderbufferStorage)this.storageType,Screen.Width,Screen.Height);
+			GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer,this.storageType,Screen.Width,Screen.Height);
 		}
 
 		public static void Bind(Renderbuffer newBuffer)

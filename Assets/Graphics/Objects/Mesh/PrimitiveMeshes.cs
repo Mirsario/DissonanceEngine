@@ -11,19 +11,6 @@
 		public static Mesh InvertedCube { get; private set; }
 		public static Mesh Sphere { get; private set; }
 		public static Mesh IcoSphere { get; private set; }
-
-		internal static void GenerateDefaultMeshes()
-		{
-			Quad = GenerateQuad();
-			QuadXFlipped = GenerateQuad(flipUVHorizontally:true);
-			QuadYFlipped = GenerateQuad(flipUVVertically:true);
-			QuadXYFlipped = GenerateQuad(flipUVHorizontally:true,flipUVVertically:true);
-			ScreenQuad = GenerateQuad(2f);
-			Cube = GenerateCube();
-			InvertedCube = GenerateCube(inverted:true);
-			Sphere = GenerateSphere();
-			IcoSphere = GenerateIcoSphere();
-		}
 		
 		public static Mesh GenerateQuad(float size = 1f,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool flipUVHorizontally = false,bool flipUVVertically = false,bool apply = true)
 		{
@@ -320,6 +307,19 @@
 			}
 
 			return newMesh;
+		}
+
+		internal static void Init()
+		{
+			Quad = GenerateQuad();
+			QuadXFlipped = GenerateQuad(flipUVHorizontally: true);
+			QuadYFlipped = GenerateQuad(flipUVVertically: true);
+			QuadXYFlipped = GenerateQuad(flipUVHorizontally: true,flipUVVertically: true);
+			ScreenQuad = GenerateQuad(2f);
+			Cube = GenerateCube();
+			InvertedCube = GenerateCube(inverted: true);
+			Sphere = GenerateSphere();
+			IcoSphere = GenerateIcoSphere();
 		}
 	}
 }

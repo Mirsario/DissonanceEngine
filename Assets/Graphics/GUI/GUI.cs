@@ -1,19 +1,22 @@
 using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
+using System.Linq;
 
 namespace GameEngine
 {
 	public static class GUI
 	{
-		internal static bool canDraw;
 		public static GUISkin skin;
 		public static Font font;
-		
 		public static Texture texDefaultInactive;
 		public static Texture texDefault;
 		public static Texture texDefaultHover;
 		public static Texture texDefaultActive;
-		
+
+		internal static bool canDraw;
+
+		private static Mesh textBufferMesh;
+
 		internal static void Init()
 		{
 			texDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
@@ -21,6 +24,8 @@ namespace GameEngine
 			texDefaultHover = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultHover.png");
 			texDefaultActive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultActive.png");
 			skin = new GUISkin();
+
+			textBufferMesh = new Mesh();
 		}
 		internal static void Update()
 		{
@@ -75,63 +80,96 @@ namespace GameEngine
 				(rect.y+rect.height)/Screen.Height
 			);
 
-			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
+				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 			
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 
-			if(!GL.TryGetAttribLocation(Shader.activeShader.Id,"uv",out uint index)) {
+			if(style==null || style.border.left==0) {
+				DrawUtils.DrawQuadUv0(
+					new Vector4(vector.x,1f-vector.y,vector.z,1f-vector.w),
+					new Vector4(0f,0f,1f,1f)
+				);
+
 				return;
 			}
 
-			if(style==null || style.border.left==0) {
-				//TODO: Reimplement
-				/*GL.Begin(PrimitiveType.Quads);
-					GL.VertexAttrib2(index,0.0f,0.0f);	GL.Vertex2(vector.x,1f-vector.y);
-					GL.VertexAttrib2(index,0.0f,1.0f);	GL.Vertex2(vector.x,1f-vector.w);
-					GL.VertexAttrib2(index,1.0f,1.0f);	GL.Vertex2(vector.z,1f-vector.w);
-					GL.VertexAttrib2(index,1.0f,0.0f);	GL.Vertex2(vector.z,1f-vector.y);
-				GL.End();*/
-			}else{
-				var textureSize = new Vector2(texture.Width,texture.Height);
-				var center = new Vector4(
-					vector.x+style.border.left/Screen.Width,vector.y+style.border.top/Screen.Height,
-					vector.z-style.border.right/Screen.Width,vector.w-style.border.bottom/Screen.Height
-				);
-				var centerUV = new Vector4(
-					style.border.left/textureSize.x,		style.border.top/textureSize.y,
-					1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
-				);
+			var textureSize = new Vector2(texture.Width,texture.Height);
+			var center = new Vector4(
+				vector.x+style.border.left/Screen.Width,vector.y+style.border.top/Screen.Height,
+				vector.z-style.border.right/Screen.Width,vector.w-style.border.bottom/Screen.Height
+			);
+			var centerUV = new Vector4(
+				style.border.left/textureSize.x,		style.border.top/textureSize.y,
+				1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
+			);
 
-				//TODO: Reimplement
-				/*GL.Begin(PrimitiveType.Quads);
+			//TODO: Reimplement
+			for(int y = 0;y<3;y++) {
+				for(int x = 0;x<3;x++) {
+					Vector4 vertices,uv;
 
-				for(int y = 0;y<3;y++) {
-					for(int x = 0;x<3;x++) {
-						var vertex = new Vector4(
-							x>0 ? x==1 ? center.x : center.z : vector.x,
-							y>0 ? y==1 ? center.y : center.w : vector.y,
-							x>0 ? x==1 ? center.z : vector.z : center.x,
-							y>0 ? y==1 ? center.w : vector.w : center.y
-						);
-						var uv = new Vector4(
-							x==0 ? 0f : x==1 ? centerUV.x : centerUV.z,
-							y==0 ? 0f : y==1 ? centerUV.y : centerUV.w,
-							x==0 ? centerUV.x : x==1 ? centerUV.z : 1f,
-							y==0 ? centerUV.y : y==1 ? centerUV.w : 1f
-						);
-						GL.VertexAttrib2(index,uv.x,uv.y); GL.Vertex2(vertex.x,1f-vertex.y);
-						GL.VertexAttrib2(index,uv.x,uv.w); GL.Vertex2(vertex.x,1f-vertex.w);
-						GL.VertexAttrib2(index,uv.z,uv.w); GL.Vertex2(vertex.z,1f-vertex.w);
-						GL.VertexAttrib2(index,uv.z,uv.y); GL.Vertex2(vertex.z,1f-vertex.y);
+					switch(x) {
+						default:
+							vertices.x = vector.x;
+							vertices.z = center.x;
+							uv.x = 0f;
+							uv.z = centerUV.x;
+							break;
+						case 1:
+							vertices.x = center.x;
+							vertices.z = center.z;
+							uv.x = centerUV.x;
+							uv.z = centerUV.z;
+							break;
+						case 2:
+							vertices.x = center.z;
+							vertices.z = vector.z;
+							uv.x = centerUV.z;
+							uv.z = 1f;
+							break;
 					}
-				}
 
-				GL.End();*/
+					switch(y) {
+						default:
+							vertices.y = 1f-vector.y;
+							vertices.w = 1f-center.y;
+							uv.y = centerUV.y;
+							uv.w = 0f;
+							break;
+						case 1:
+							vertices.y = 1f-center.y;
+							vertices.w = 1f-center.w;
+							uv.y = centerUV.w;
+							uv.w = centerUV.y;
+							break;
+						case 2:
+							vertices.y = 1f-center.w;
+							vertices.w = 1f-vector.w;
+							uv.y = 1f;
+							uv.w = centerUV.w;
+							break;
+					}
+
+					/*var vertices = new Vector4(
+						x>0 ? x==1 ? center.x : center.z : vector.x,
+						(y>0 ? y==1 ? center.y : center.w : vector.y),
+						x>0 ? x==1 ? center.z : vector.z : center.x,
+						(y>0 ? y==1 ? center.w : vector.w : center.y)
+					);
+					var uv = new Vector4(
+						x==0 ? 0f : x==1 ? centerUV.x : centerUV.z,
+						y==0 ? 0f : y==1 ? centerUV.y : centerUV.w,
+						x==0 ? centerUV.x : x==1 ? centerUV.z : 1f,
+						y==0 ? centerUV.y : y==1 ? centerUV.w : 1f
+					);*/
+
+					DrawUtils.DrawQuadUv0(vertices,uv);
+				}
 			}
 		}
 		//TODO: Move this
@@ -141,14 +179,14 @@ namespace GameEngine
 				return;
 			}
 
-			if(Shader.activeShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
-				GL.Uniform4(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
+				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D,font.texture.Id);
-			GL.Uniform1(Shader.activeShader.defaultUniformIndex[DefaultShaderUniforms.MainTex],0);
+			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex],0);
 
 			float scale = fontSize/font.charSize.y;
 			var position = new Vector2(rect.x,rect.y);
@@ -163,33 +201,45 @@ namespace GameEngine
 			float yPos = position.y/Screen.Height;
 			float width = font.charSize.x/Screen.Width*scale;
 			float height = font.charSize.y/Screen.Height*scale;
-			int uvAttrib = GL.GetAttribLocation(Shader.activeShader.Id,"uv");
 
-			if(uvAttrib<0) {
-				return;
-			}
+			int numCharacters = text.Count(c => !char.IsWhiteSpace(c) && font.charToUv.ContainsKey(c));
 
-			uint uintUvAttrib = (uint)uvAttrib;
+			textBufferMesh.Vertices = new Vector3[numCharacters*4];
+			textBufferMesh.Uv0 = new Vector2[numCharacters*4];
+			textBufferMesh.triangles = new int[numCharacters*6];
 
-			//TODO: Reimplement
-			/*GL.Begin(PrimitiveType.Quads);
+			int vertex = 0;
+			int triangle = 0;
 
 			for(int i = 0;i<text.Length;i++) {
 				char c = text[i];
 
 				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
-					unsafe {
-						GL.VertexAttrib2(uintUvAttrib,uvs[0]);	GL.Vertex2(xPos,		1f-yPos);
-						GL.VertexAttrib2(uintUvAttrib,uvs[1]);	GL.Vertex2(xPos+width,	1f-yPos);
-						GL.VertexAttrib2(uintUvAttrib,uvs[2]);	GL.Vertex2(xPos+width,	1f-yPos-height);
-						GL.VertexAttrib2(uintUvAttrib,uvs[3]);	GL.Vertex2(xPos,		1f-yPos-height);
-					}
+					textBufferMesh.Vertices[vertex  ] = new Vector3(xPos,		1f-yPos,		0f);
+					textBufferMesh.Vertices[vertex+1] = new Vector3(xPos+width,	1f-yPos,		0f);
+					textBufferMesh.Vertices[vertex+2] = new Vector3(xPos+width,	1f-yPos-height,	0f);
+					textBufferMesh.Vertices[vertex+3] = new Vector3(xPos,		1f-yPos-height,	0f);
+
+					textBufferMesh.Uv0[vertex  ] = uvs[0];
+					textBufferMesh.Uv0[vertex+1] = uvs[1];
+					textBufferMesh.Uv0[vertex+2] = uvs[2];
+					textBufferMesh.Uv0[vertex+3] = uvs[3];
+					
+					textBufferMesh.triangles[triangle++] = vertex;
+					textBufferMesh.triangles[triangle++] = vertex+1;
+					textBufferMesh.triangles[triangle++] = vertex+2;
+					textBufferMesh.triangles[triangle++] = vertex;
+					textBufferMesh.triangles[triangle++] = vertex+2;
+					textBufferMesh.triangles[triangle++] = vertex+3;
+
+					vertex += 4;
 				}
 
 				xPos += width;
 			}
 
-			GL.End();*/
+			textBufferMesh.Apply();
+			textBufferMesh.DrawMesh();
 		}
 	}
 }

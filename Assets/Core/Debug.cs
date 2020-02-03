@@ -21,11 +21,6 @@ namespace GameEngine
 
 		private static readonly List<LineInfo> Lines = new List<LineInfo>();
 		private static readonly Dictionary<string,List<Stopwatch>> Stopwatches = new Dictionary<string,List<Stopwatch>>();
-		
-		static Debug()
-		{
-			Console.Clear();
-		}
 
 		public static void StartStopwatch(string name)
 		{

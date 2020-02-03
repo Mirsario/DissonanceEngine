@@ -5,9 +5,6 @@ namespace GameEngine.Graphics
 {
 	public class RenderTexture : Texture
 	{
-		//internal FramebufferAttachment attachment;
-		//internal Framebuffer framebuffer;
-		//internal bool ownsFramebuffer;
 		public readonly Func<Vector2Int> TargetSize;
 		public readonly TextureFormat TextureFormat;
 		
@@ -32,7 +29,7 @@ namespace GameEngine.Graphics
 
 			SetupTexture();
 		}
-		
+
 		public void GenerateMipmaps()
 		{
 			GL.ActiveTexture(TextureUnit.Texture0);
@@ -44,13 +41,7 @@ namespace GameEngine.Graphics
 			Width = width;
 			Height = height;
 
-			//Debug.Log($"Resizing to [{width},{height}]");
-
 			SetupTexture();
-		}
-		public override void Dispose()
-		{
-			GL.DeleteTexture(Id);
 		}
 
 		internal bool UpdateSize()
@@ -64,6 +55,7 @@ namespace GameEngine.Graphics
 			if(vec.x<=0) {
 				throw new InvalidOperationException("Texture's width can't equal or be less than zero.");
 			}
+
 			if(vec.y<=0) {
 				throw new InvalidOperationException("Texture's height can't equal or be less than zero.");
 			}
@@ -87,20 +79,5 @@ namespace GameEngine.Graphics
 
 			SetupFiltering(filterMode,wrapMode,useMipmaps);
 		}
-
-		/*public RenderTexture(int width,int height,PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f,PixelFormat pixelFormat = PixelFormat.Rgba,PixelType pixelType = PixelType.UnsignedByte)
-		{
-			GL.GenTextures(1,out int id);
-			Id = id;
-			this.Width = width;
-			this.Height = height;
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,id);
-			GL.TexImage2D(TextureTarget.Texture2D,0,internalFormat,width,height,0,pixelFormat,pixelType,IntPtr.Zero);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMinFilter,	(int)TextureMinFilter.Linear);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,	(int)TextureMagFilter.Linear);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS,		(int)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToBorder);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapT,		(int)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToBorder);
-		}*/
 	}
 }

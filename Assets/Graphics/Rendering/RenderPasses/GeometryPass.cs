@@ -221,10 +221,12 @@ namespace GameEngine.Graphics
 				void LogStat(string name,long ticks,int tabs = 2) => Debug.Log($"{name}: {new string('\t',tabs)}{ticks} ticks \t({(ticks/(float)totalMs)*100f:0.00}%)");
 
 				Debug.Log($"RENDER STATS:");
+
 				LogStat(nameof(totalMs),totalMs);
 				LogStat(nameof(rendererLoopMs),rendererLoopMs,1);
 				LogStat(nameof(sortingMs),sortingMs);
 				LogStat(nameof(renderMs),renderMs);
+
 				Debug.Log($"");
 			}
 
