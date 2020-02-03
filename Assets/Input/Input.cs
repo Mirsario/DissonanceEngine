@@ -166,20 +166,23 @@ namespace GameEngine
 		//	=> (T)RegisterTrigger(typeof(T),name,bindings,minValue,maxValue);
 		internal static InputTrigger RegisterTrigger(Type type,string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null)
 		{
-			if(!triggersByName.TryGetValue(name,out var trigger)) {
-				int id = triggers.Length;
-
-				trigger = (InputTrigger)Activator.CreateInstance(type,true); //new InputTrigger();
-				trigger.Init(id,name,bindings,minValue ?? InputTrigger.DefaultMinValue,maxValue ?? InputTrigger.DefaultMaxValue);
-
-				Array.Resize(ref triggers,id+1);
-				triggers[id] = trigger;
-				triggersByName[name] = trigger;
-
-				InputTrigger.Count = triggers.Length;
-			}else{
+			if(triggersByName.TryGetValue(name,out var trigger)) {
 				trigger.Bindings = bindings;
+				return trigger;
 			}
+
+			int id = triggers.Length;
+
+			trigger = (InputTrigger)Activator.CreateInstance(type,true); //new InputTrigger();
+
+			trigger.Init(id,name,bindings,minValue ?? InputTrigger.DefaultMinValue,maxValue ?? InputTrigger.DefaultMaxValue);
+
+			Array.Resize(ref triggers,id+1);
+
+			triggers[id] = trigger;
+			triggersByName[name] = trigger;
+
+			InputTrigger.Count = triggers.Length;
 
 			return trigger;
 		}

@@ -9,8 +9,6 @@ using System.Runtime.CompilerServices;
 
 namespace GameEngine
 {
-	//TODO: Make attributes object-oriented.
-
 	public class Mesh : Asset<Mesh>
 	{
 		public delegate void ArrayCopyDelegate<T>(int meshIndex,T[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length);
@@ -27,7 +25,6 @@ namespace GameEngine
 		internal uint vertexArrayId;
 
 		public bool IsReady { get; protected set; }
-		//public IReadOnlyList<uint> Attributes { get; protected set; }
 
 		//Vertex Buffer shortcuts
 		public VertexBuffer VertexBuffer => GetBuffer<VertexBuffer>();
@@ -64,6 +61,8 @@ namespace GameEngine
 			GL.BindVertexArray(vertexArrayId);
 
 			GL.DrawElements(PrimitiveType.Triangles,indexBufferLength,DrawElementsType.UnsignedInt,0);
+
+			GL.BindVertexArray(0);
 		}
 
 		public void Apply()

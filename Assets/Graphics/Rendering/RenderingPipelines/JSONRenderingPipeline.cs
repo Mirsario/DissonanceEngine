@@ -22,7 +22,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 		internal static void ParseJSON(string jsonText,List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
 			//TODO: Stop creating textures here, only make settings!
-			//TODO: Make textures be resizable btw.
+			//TODO: Make textures resizable.
 			var jsonSettings = JsonConvert.DeserializeObject<JSON_RenderSettings>(jsonText);
 
 			ParseJSONFramebuffers(jsonSettings,framebuffers);
@@ -139,6 +139,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 						throw new Exception($"Couldn't find texture or a renderbuffer named '{texName}' in framebuffer '{fbName}'.");
 					}
 				}
+
 				var shadersArr = passInfo.acceptedShaderNames;
 				bool shaderRequired = passInfo.requiresShader;
 

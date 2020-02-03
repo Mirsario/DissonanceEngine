@@ -140,20 +140,10 @@ namespace GameEngine
 				z += 360f;
 			}
 		}
-		public Vector3 Rotate(Vector3 rot)
-		{
-			return Matrix4x4.CreateRotation(rot)*this;
-		}
-		public Vector3 RotatedBy(Vector3 vec)
-		{
-			//TODO: Test if this should have all axes reversed or just Y
-			return Matrix4x4.CreateRotation(-vec.x,vec.y,-vec.z)*this;
-		}
-		public Vector3 RotatedBy(float x,float y,float z)
-		{
-			//TODO: Test if this should have all axes reversed or just Y
-			return Matrix4x4.CreateRotation(-x,y,-z)*this;
-		}
+		//TODO: Rewrite without matrices.
+		public Vector3 Rotate(Vector3 rot) => Matrix4x4.CreateRotation(rot)*this;
+		public Vector3 RotatedBy(Vector3 vec) => Matrix4x4.CreateRotation(-vec.x,vec.y,-vec.z)*this;
+		public Vector3 RotatedBy(float x,float y,float z) => Matrix4x4.CreateRotation(-x,y,-z)*this;
 
 		public static Vector3 StepTowards(Vector3 val,Vector3 goal,float step)
 		{

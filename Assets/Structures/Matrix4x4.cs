@@ -231,9 +231,11 @@ namespace GameEngine
 		public void Invert()
 		{
 			//TODO: Optimize this???
-			int[] colIdx = { 0,0,0,0 };
-			int[] rowIdx = { 0,0,0,0 };
-			int[] pivotIdx = { -1,-1,-1,-1 };
+
+			int[] columnIndices = { 0,0,0,0 };
+			int[] rowIndices = { 0,0,0,0 };
+			int[] pivotIndices = { -1,-1,-1,-1 };
+
 			float[,] inverse =  {
 				{ m00,m01,m02,m03 },
 				{ m10,m11,m12,m13 },
@@ -241,72 +243,81 @@ namespace GameEngine
 				{ m30,m31,m32,m33 }
 			};
 
-			int icol = 0;
-			int irow = 0;
+			int iColumn = 0;
+			int iRow = 0;
 
 			for(int i = 0;i<4;i++) {
 				float maxPivot = 0f;
+
 				for(int j = 0;j<4;j++) {
-					if(pivotIdx[j]!=0) {
-						for(int k = 0;k<4;++k) {
-							if(pivotIdx[k]==-1) {
-								float absVal = Math.Abs(inverse[j,k]);
-								if(absVal>maxPivot) {
-									maxPivot = absVal;
-									irow = j;
-									icol = k;
-								}
-							} else if(pivotIdx[k]>0) {
-								return;
+					if(pivotIndices[j]==0) {
+						continue;
+					}
+
+					for(int k = 0;k<4;++k) {
+						if(pivotIndices[k]==-1) {
+							float absVal = Math.Abs(inverse[j,k]);
+
+							if(absVal>maxPivot) {
+								maxPivot = absVal;
+								iRow = j;
+								iColumn = k;
 							}
+						} else if(pivotIndices[k]>0) {
+							return;
 						}
 					}
 				}
 
-				++pivotIdx[icol];
+				pivotIndices[iColumn]++;
 
-				if(irow!=icol) {
+				if(iRow!=iColumn) {
 					for(int k = 0;k<4;++k) {
-						float f = inverse[irow,k];
-						inverse[irow,k] = inverse[icol,k];
-						inverse[icol,k] = f;
+						float f = inverse[iRow,k];
+
+						inverse[iRow,k] = inverse[iColumn,k];
+						inverse[iColumn,k] = f;
 					}
 				}
 
-				rowIdx[i] = irow;
-				colIdx[i] = icol;
+				rowIndices[i] = iRow;
+				columnIndices[i] = iColumn;
 
-				float pivot = inverse[icol,icol];
+				float pivot = inverse[iColumn,iColumn];
 				if(pivot==0f) {
-					return;
-					//throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
+					return; //Matrix is singular and cannot be inverted.
 				}
 
 				float oneOverPivot = 1f/pivot;
 
-				inverse[icol,icol] = 1f;
+				inverse[iColumn,iColumn] = 1f;
 
 				for(int k = 0;k<4;++k) {
-					inverse[icol,k] *= oneOverPivot;
+					inverse[iColumn,k] *= oneOverPivot;
 				}
 
 				for(int j = 0;j<4;++j) {
-					if(icol!=j) {
-						float f = inverse[j,icol];
-						inverse[j,icol] = 0f;
-						for(int k = 0;k<4;++k) {
-							inverse[j,k] -= inverse[icol,k]*f;
-						}
+					if(iColumn==j) {
+						continue;
+					}
+
+					float f = inverse[j,iColumn];
+
+					inverse[j,iColumn] = 0f;
+
+					for(int k = 0;k<4;++k) {
+						inverse[j,k] -= inverse[iColumn,k]*f;
 					}
 				}
 			}
 
 			for(int j = 3;j>=0;--j) {
-				int ir = rowIdx[j];
-				int ic = colIdx[j];
+				int ir = rowIndices[j];
+				int ic = columnIndices[j];
 
 				for(int k = 0;k<4;++k) {
 					float f = inverse[k,ir];
+
 					inverse[k,ir] = inverse[k,ic];
 					inverse[k,ic] = f;
 				}

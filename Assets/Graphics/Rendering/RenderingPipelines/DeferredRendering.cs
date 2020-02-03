@@ -7,8 +7,6 @@ namespace GameEngine.Graphics.RenderingPipelines
 	{
 		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
 		{
-			//Vector2Int ScreenSize() => new Vector2Int(Screen.Width,Screen.Height);
-
 			Debug.Log($"Setting up '{GetType().Name}' rendering pipeline.");
 
 			Framebuffer mainFramebuffer,lightingFramebuffer;
@@ -21,7 +19,7 @@ namespace GameEngine.Graphics.RenderingPipelines
 			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 			var specularBuffer = new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f);
 
-			var depthBuffer = new RenderTexture("depthBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.Depth32); //new Renderbuffer("depthBuffer",RenderbufferStorage.DepthComponent32f);
+			var depthBuffer = new RenderTexture("depthBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.Depth32);
 
 			var lightingBuffer = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
 
@@ -84,27 +82,5 @@ namespace GameEngine.Graphics.RenderingPipelines
 
 			Framebuffer.Bind(null);
 		}
-
-		/*public override void Resize()
-		{
-			//Vector2Int screenSize = Screen.size;
-			//
-			//for(int i = 0;i<framebuffers.Length;i++) {
-			//	var fb = framebuffers[i];
-			//	for(int j = 0;j<fb.renderTextures.Length;j++) {
-			//		fb.renderTextures[j].Resize(screenSize.x,screenSize.y);
-			//	}
-			//}
-
-			for(int i = 0;i<framebuffers.Length;i++) {
-				var fb = framebuffers[i];
-				for(int j = 0;j<fb.renderTextures.Length;j++) {
-					var rt = fb.renderTextures[j];
-					if(rt.UpdateSize()) {
-						rt.Resize(rt.Width,rt.Height);
-					}
-				}
-			}
-		}*/
 	}
 }

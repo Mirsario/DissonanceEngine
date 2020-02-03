@@ -16,6 +16,8 @@ namespace GameEngine
 
 		public static float DefaultPixelSize { get; set; } = 1f;
 
+		protected static Mesh bufferMesh;
+
 		public SpriteEffects spriteEffects;
 
 		protected RectFloat sourceRectangle = RectFloat.Default;
@@ -93,10 +95,6 @@ namespace GameEngine
 		}
 		public override void Render(object renderObject)
 		{
-			//TODO: Reimplement.
-			throw new NotImplementedException();
-			/*uint uvAttrib = (uint)AttributeId.Uv0;
-
 			Vector4 uvPoints = spriteEffects switch {
 				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => new Vector4(sourceUV.z,sourceUV.w,sourceUV.x,sourceUV.y),
 				SpriteEffects.FlipHorizontally => new Vector4(sourceUV.z,sourceUV.y,sourceUV.x,sourceUV.w),
@@ -104,14 +102,7 @@ namespace GameEngine
 				_ => sourceUV
 			};
 
-			GL.Begin(PrimitiveType.Quads);
-
-			GL.VertexAttrib2(uvAttrib,uvPoints.x,uvPoints.w); GL.Vertex2(vertices.x,vertices.y);
-			GL.VertexAttrib2(uvAttrib,uvPoints.x,uvPoints.y); GL.Vertex2(vertices.x,vertices.w);
-			GL.VertexAttrib2(uvAttrib,uvPoints.z,uvPoints.y); GL.Vertex2(vertices.z,vertices.w);
-			GL.VertexAttrib2(uvAttrib,uvPoints.z,uvPoints.w); GL.Vertex2(vertices.z,vertices.y);
-
-			GL.End();*/
+			DrawUtils.DrawQuadUv0(vertices,uvPoints);
 		}
 
 		protected void RecalculateVertices()

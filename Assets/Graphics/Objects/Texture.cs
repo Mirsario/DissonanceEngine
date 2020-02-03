@@ -64,10 +64,7 @@ namespace GameEngine.Graphics
 			Height = height;
 		}
 
-		public override void Dispose()
-		{
-			GL.DeleteTexture(Id);
-		}
+		public override void Dispose() => GL.DeleteTexture(Id);
 
 		public T[,] GetPixels<T>() where T : unmanaged
 		{

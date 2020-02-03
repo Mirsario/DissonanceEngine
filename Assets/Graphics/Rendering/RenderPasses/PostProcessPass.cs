@@ -44,7 +44,7 @@ namespace GameEngine.Graphics
 				);
 				var vpPointsB = (vpPointsA*2f)-Vector4.One;
 
-				GLUtils.DrawQuadUV(vpPointsB,vpPointsA);
+				DrawUtils.DrawQuadUv0(vpPointsB,vpPointsA);
 			}
 
 			GL.Disable(EnableCap.Blend);
