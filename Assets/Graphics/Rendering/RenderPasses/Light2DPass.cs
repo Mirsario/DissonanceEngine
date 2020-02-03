@@ -65,7 +65,7 @@ namespace GameEngine.Graphics
 						GL.Uniform3(uniformLightColor,light.color.x,light.color.y,light.color.z);
 					}
 
-					PrimitiveMeshes.quad.DrawMesh(true);
+					PrimitiveMeshes.ScreenQuad.DrawMesh();
 				}
 			}
 

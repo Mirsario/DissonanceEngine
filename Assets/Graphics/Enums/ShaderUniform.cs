@@ -2,7 +2,7 @@ using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
-	internal class ShaderUniform
+	public class ShaderUniform
 	{
 		public string name;
 		public ActiveUniformType type;

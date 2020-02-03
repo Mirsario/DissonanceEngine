@@ -1,5 +1,6 @@
 using Dissonance.Framework.OpenGL;
 using GameEngine.Graphics;
+using System;
 
 namespace GameEngine
 {
@@ -92,7 +93,9 @@ namespace GameEngine
 		}
 		public override void Render(object renderObject)
 		{
-			uint uvAttrib = (uint)AttributeId.Uv0;
+			//TODO: Reimplement.
+			throw new NotImplementedException();
+			/*uint uvAttrib = (uint)AttributeId.Uv0;
 
 			Vector4 uvPoints = spriteEffects switch {
 				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => new Vector4(sourceUV.z,sourceUV.w,sourceUV.x,sourceUV.y),
@@ -108,7 +111,7 @@ namespace GameEngine
 			GL.VertexAttrib2(uvAttrib,uvPoints.z,uvPoints.y); GL.Vertex2(vertices.z,vertices.w);
 			GL.VertexAttrib2(uvAttrib,uvPoints.z,uvPoints.w); GL.Vertex2(vertices.z,vertices.y);
 
-			GL.End();
+			GL.End();*/
 		}
 
 		protected void RecalculateVertices()

@@ -382,13 +382,11 @@ namespace GameEngine.Graphics
 			TryCompileCode(shader,ShaderType.FragmentShader,fragmentCode);
 			TryCompileCode(shader,ShaderType.GeometryShader,geometryCode);
 
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.Vertex,"vertex");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.Normal,"normal");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.Tangent,"tangent");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.Color,"color");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.BoneIndices,"boneIndices");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.BoneWeights,"boneWeights");
-			GL.BindAttribLocation(shader.Id,(int)AttributeId.Uv0,"uv0");
+			for(int i = 0;i<CustomVertexAttribute.Count;i++) {
+				var attribute = CustomVertexAttribute.GetInstance(i);
+
+				GL.BindAttribLocation(shader.Id,(uint)i,attribute.NameId);
+			}
 			
 			GL.LinkProgram(shader.Id);
 

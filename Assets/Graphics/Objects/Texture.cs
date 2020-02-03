@@ -5,8 +5,9 @@ namespace GameEngine.Graphics
 {
 	public class Texture : Asset<Texture>
 	{
-		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;
 		protected const PixelType DefaultPixelType = PixelType.UnsignedByte;
+		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;
+		protected const PixelInternalFormat DefaultPixelInternalFormat = PixelInternalFormat.Rgba;
 
 		public static FilterMode defaultFilterMode = FilterMode.Trilinear;
 		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
@@ -20,8 +21,9 @@ namespace GameEngine.Graphics
 		public uint Id { get; protected set; }
 		public int Width { get; protected set; }
 		public int Height { get; protected set; }
-		public PixelFormat PixelFormat { get; protected set; }
 		public PixelType PixelType { get; protected set; }
+		public PixelFormat PixelFormat { get; protected set; }
+		public PixelInternalFormat PixelInternalFormat { get; protected set; }
 
 		public Vector2Int Size => new Vector2Int(Width,Height);
 		
@@ -85,17 +87,27 @@ namespace GameEngine.Graphics
 
 			return pixels;
 		}
-		public void SetPixels<T>(T[] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
-		public void SetPixels<T>(T[,] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
-		public void SetPixels<T>(T[,,] pixels,PixelFormat pixelFormat = DefaultPixelFormat,PixelType pixelType = DefaultPixelType) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexSubImage2D(TextureTarget.Texture2D,0,0,0,Width,Height,PixelFormat,PixelType,pixels),pixelFormat,pixelType);
 
-		protected void SetPixelsInternal(Action setter,PixelFormat pixelFormat,PixelType pixelType)
+		public void SetPixels(IntPtr pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat)
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+
+		public void SetPixels<T>(T[] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+
+		public void SetPixels<T>(T[,] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+
+		public void SetPixels<T>(T[,,] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+
+		protected void SetPixelsInternal(Action setter,PixelType pixelType,PixelFormat pixelFormat,PixelInternalFormat pixelInternalFormat)
 		{
-			PixelFormat = pixelFormat;
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D,Id);
+
 			PixelType = pixelType;
+			PixelFormat = pixelFormat;
+			PixelInternalFormat = pixelInternalFormat;
 
 			setter();
 
@@ -107,7 +119,7 @@ namespace GameEngine.Graphics
 			wrapMode ??= defaultWrapMode;
 			filterMode ??= defaultFilterMode;
 
-			int wrapModeInt = wrapMode==TextureWrapMode.Repeat ? 10497 : 33071;
+			uint wrapModeInt = wrapMode==TextureWrapMode.Repeat ? GLConstants.REPEAT : GLConstants.CLAMP_TO_EDGE;
 
 			(int magFilter,int minFilter) = filterMode switch {
 				FilterMode.Bilinear => ((int)TextureMagFilter.Linear,(int)TextureMinFilter.Linear),
@@ -115,11 +127,10 @@ namespace GameEngine.Graphics
 				_ => ((int)TextureMagFilter.Nearest,(int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest))
 			};
 
-
+			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMinFilter,minFilter);
+			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,magFilter);
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS,wrapModeInt);
 			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapT,wrapModeInt);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,magFilter);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMinFilter,minFilter);	
 
 			if(useMipmaps) {
 				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);

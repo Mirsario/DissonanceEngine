@@ -117,7 +117,7 @@ namespace GameEngine.Graphics
 
 						switch(lightType) {
 							case LightType.Point:
-								PrimitiveMeshes.icoSphere.DrawMesh(true);
+								PrimitiveMeshes.IcoSphere.DrawMesh();
 
 								//GL.BindBuffer(BufferTarget.ArrayBuffer,mesh.vertexBufferId);
 								//GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)0);

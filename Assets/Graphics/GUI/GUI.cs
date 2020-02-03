@@ -89,12 +89,13 @@ namespace GameEngine
 			}
 
 			if(style==null || style.border.left==0) {
-				GL.Begin(PrimitiveType.Quads);
+				//TODO: Reimplement
+				/*GL.Begin(PrimitiveType.Quads);
 					GL.VertexAttrib2(index,0.0f,0.0f);	GL.Vertex2(vector.x,1f-vector.y);
 					GL.VertexAttrib2(index,0.0f,1.0f);	GL.Vertex2(vector.x,1f-vector.w);
 					GL.VertexAttrib2(index,1.0f,1.0f);	GL.Vertex2(vector.z,1f-vector.w);
 					GL.VertexAttrib2(index,1.0f,0.0f);	GL.Vertex2(vector.z,1f-vector.y);
-				GL.End();
+				GL.End();*/
 			}else{
 				var textureSize = new Vector2(texture.Width,texture.Height);
 				var center = new Vector4(
@@ -106,7 +107,8 @@ namespace GameEngine
 					1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
 				);
 
-				GL.Begin(PrimitiveType.Quads);
+				//TODO: Reimplement
+				/*GL.Begin(PrimitiveType.Quads);
 
 				for(int y = 0;y<3;y++) {
 					for(int x = 0;x<3;x++) {
@@ -129,7 +131,7 @@ namespace GameEngine
 					}
 				}
 
-				GL.End();
+				GL.End();*/
 			}
 		}
 		//TODO: Move this
@@ -169,10 +171,12 @@ namespace GameEngine
 
 			uint uintUvAttrib = (uint)uvAttrib;
 
-			GL.Begin(PrimitiveType.Quads);
+			//TODO: Reimplement
+			/*GL.Begin(PrimitiveType.Quads);
 
 			for(int i = 0;i<text.Length;i++) {
 				char c = text[i];
+
 				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c,out var uvs)) {
 					unsafe {
 						GL.VertexAttrib2(uintUvAttrib,uvs[0]);	GL.Vertex2(xPos,		1f-yPos);
@@ -185,7 +189,7 @@ namespace GameEngine
 				xPos += width;
 			}
 
-			GL.End();
+			GL.End();*/
 		}
 	}
 }

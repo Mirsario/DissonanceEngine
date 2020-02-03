@@ -3,13 +3,15 @@ using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
-	public class NormalAttribute : VertexAttribute
+	public class NormalAttribute : CustomVertexAttribute<NormalBuffer>
 	{
-		protected override VertexAttributeInfo Info => new VertexAttributeInfo("normal",VertexAttribPointerType.Float,3,true);
-
-		public override void Handle()
+		public override void Init(out string nameId,out VertexAttribPointerType pointerType,out bool isNormalized,out int size,out int offset)
 		{
-			throw new NotImplementedException();
+			nameId = "normal";
+			pointerType = VertexAttribPointerType.Float;
+			isNormalized = true;
+			size = 3;
+			offset = 0;
 		}
 	}
 }

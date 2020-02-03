@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace GameEngine
 {
-	internal class ProgrammableEntityTypeInfo //TODO: This especially
+	internal class ProgrammableEntityTypeInfo //TODO: Come up with a better name?
 	{
 		public MethodInfo[] methodInfos;
 

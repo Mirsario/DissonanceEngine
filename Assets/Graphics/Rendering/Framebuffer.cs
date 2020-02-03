@@ -45,6 +45,7 @@ namespace GameEngine.Graphics
 			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,attachment,TextureTarget.Texture2D,texture.Id,0);
 			
 			renderTextures.Add(texture);
+
 			textureToAttachment[texture] = attachment;
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
