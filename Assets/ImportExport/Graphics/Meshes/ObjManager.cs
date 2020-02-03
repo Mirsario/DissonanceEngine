@@ -38,9 +38,9 @@ namespace GameEngine
 
 			var mesh = new Mesh {
 				name = Path.GetFileName(fileName),
-				vertices = newVerts,
-				uv = newUVs,
-				normals = newNormals,
+				Vertices = newVerts,
+				Uv0 = newUVs,
+				Normals = newNormals,
 				triangles = meshInfo.triangles //TODO: Does .obj support submeshes?
 			};
 

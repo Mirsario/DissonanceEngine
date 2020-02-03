@@ -2,7 +2,7 @@
 
 namespace GameEngine
 {
-	public struct BoneWeight
+	public struct BoneWeights
 	{
 		public int boneIndex0;
 		public int boneIndex1;

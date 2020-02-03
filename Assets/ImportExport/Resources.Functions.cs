@@ -3,6 +3,7 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using GameEngine.Utils.Extensions;
+using GameEngine.Utils.Internal;
 
 namespace GameEngine
 {
@@ -107,9 +108,9 @@ namespace GameEngine
 				assetManager = results[0];
 			}
 
-			using(var stream = File.OpenWrite(filePath)) {
-				assetManager.Export(asset,stream);
-			}
+			using var stream = File.OpenWrite(filePath);
+
+			assetManager.Export(asset,stream);
 		}
 
 		internal static T ImportInternal<T>(string filePath,bool addToCache,AssetManager<T> assetManager,bool ntpMultiplePaths,bool throwOnFail = true) where T : class
@@ -160,9 +161,12 @@ namespace GameEngine
 			using var entryStream = new MemoryStream(data);
 
 			var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
+
 			if(tType==null) {
 				return null;
 			}
+
+			//TODO: Avoid these generic shenanigans.
 
 			var method = typeof(Resources).GetMethod(nameof(ImportFromStream),BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(tType);
 			var content = method.Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });

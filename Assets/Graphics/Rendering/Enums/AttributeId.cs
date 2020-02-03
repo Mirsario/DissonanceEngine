@@ -8,6 +8,6 @@ namespace GameEngine.Graphics
 		Color,
 		BoneIndices,
 		BoneWeights,
-		Uv0
+		Uv0,
 	}
 }

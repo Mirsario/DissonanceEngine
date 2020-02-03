@@ -18,15 +18,15 @@ namespace GameEngine
 		}
 		public void ApplyToMesh(Mesh mesh,bool clear = true)
 		{
-			mesh.vertices = vertices.ToArray();
+			mesh.Vertices = vertices.ToArray();
 			mesh.triangles = triangles.ToArray();
 
 			if(normals!=null && normals.Count>0) {
-				mesh.normals = normals.ToArray();
+				mesh.Normals = normals.ToArray();
 			}
 
 			if(uvs!=null && uvs.Count>0) {
-				mesh.uv = uvs.ToArray();
+				mesh.Uv0 = uvs.ToArray();
 			}
 
 			if(clear) {

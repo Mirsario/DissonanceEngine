@@ -28,6 +28,8 @@ namespace GameEngine
 			CheckALErrors();
 			
 			AL.DistanceModel(DistanceModel.LinearDistanceClamped);
+
+			Debug.Log("Supports float32 audio: "+AL.IsExtensionPresent("AL_EXT_FLOAT32"));
 			
 			CheckALErrors();
 		}

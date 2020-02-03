@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameEngine
+namespace GameEngine.Utils.Internal
 {
 	internal static class InternalUtils
 	{
@@ -14,11 +14,13 @@ namespace GameEngine
 			for(int i = 0;i<byIdList.Count;i++) {
 				if(byIdList[i]==null) {
 					byIdList[i] = instance;
+
 					return i;
 				}
 			}
 
 			byIdList.Add(instance);
+
 			return byIdList.Count-1;
 		}
 		public static bool ObjectOrCollectionCall<T>(object obj,Action<T> call,bool throwError = true) where T : class

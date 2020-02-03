@@ -58,6 +58,7 @@ namespace GameEngine
 		public override bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Material material,out Bounds bounds,out object renderObject)
 		{
 			var lods = LODMeshes;
+
 			if(lods!=null) {
 				if(lods.Length==1) {
 					var lod = lods[0];
@@ -66,10 +67,11 @@ namespace GameEngine
 					renderObject = lod.mesh;
 					bounds = lod.mesh?.bounds ?? default;
 
-					return lod.mesh!=null && lod.mesh.isReady;
+					return lod.mesh!=null && lod.mesh.IsReady;
 				}
 
 				float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
+
 				for(int i = 0;i<lods.Length;i++) {
 					var lod = lods[i];
 
@@ -78,7 +80,7 @@ namespace GameEngine
 						renderObject = lod.mesh;
 						bounds = lod.mesh?.bounds ?? default;
 
-						return lod.mesh!=null && lod.mesh.isReady;
+						return lod.mesh!=null && lod.mesh.IsReady;
 					}
 				}
 			}

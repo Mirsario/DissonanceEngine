@@ -2,35 +2,27 @@
 {
 	public static class PrimitiveMeshes
 	{
-		//Need field access internally for full speed
-		internal static Mesh quad;
-		internal static Mesh quadXFlipped;
-		internal static Mesh quadYFlipped;
-		internal static Mesh quadXYFlipped;
-		internal static Mesh cube;
-		internal static Mesh invertedCube;
-		internal static Mesh sphere;
-		internal static Mesh icoSphere;
-
-		public static Mesh Quad => quad;
-		public static Mesh QuadXFlipped => quadXFlipped;
-		public static Mesh QuadYFlipped => quadYFlipped;
-		public static Mesh QuadXYFlipped => quadXYFlipped;
-		public static Mesh Cube => cube;
-		public static Mesh InvertedCube => invertedCube;
-		public static Mesh Sphere => sphere;
-		public static Mesh IcoSphere => icoSphere;
+		public static Mesh Quad { get; private set; }
+		public static Mesh QuadXFlipped { get; private set; }
+		public static Mesh QuadYFlipped { get; private set; }
+		public static Mesh QuadXYFlipped { get; private set; }
+		public static Mesh ScreenQuad { get; private set; }
+		public static Mesh Cube { get; private set; }
+		public static Mesh InvertedCube { get; private set; }
+		public static Mesh Sphere { get; private set; }
+		public static Mesh IcoSphere { get; private set; }
 
 		internal static void GenerateDefaultMeshes()
 		{
-			quad = GenerateQuad();
-			quadXFlipped = GenerateQuad(flipUVHorizontally:true);
-			quadYFlipped = GenerateQuad(flipUVVertically:true);
-			quadXYFlipped = GenerateQuad(flipUVHorizontally:true,flipUVVertically:true);
-			cube = GenerateCube();
-			invertedCube = GenerateCube(inverted:true);
-			sphere = GenerateSphere();
-			icoSphere = GenerateIcoSphere();
+			Quad = GenerateQuad();
+			QuadXFlipped = GenerateQuad(flipUVHorizontally:true);
+			QuadYFlipped = GenerateQuad(flipUVVertically:true);
+			QuadXYFlipped = GenerateQuad(flipUVHorizontally:true,flipUVVertically:true);
+			ScreenQuad = GenerateQuad(2f);
+			Cube = GenerateCube();
+			InvertedCube = GenerateCube(inverted:true);
+			Sphere = GenerateSphere();
+			IcoSphere = GenerateIcoSphere();
 		}
 		
 		public static Mesh GenerateQuad(float size = 1f,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool flipUVHorizontally = false,bool flipUVVertically = false,bool apply = true)
@@ -39,13 +31,13 @@
 
 			var newMesh = new Mesh {
 				//Vertices
-				vertices = new[] {
+				Vertices = new[] {
 					new Vector3(-half,-half,0f),	new Vector3( half,-half,0f),
 					new Vector3(-half, half,0f),	new Vector3( half, half,0f),
 				},
 
 				//UVs
-				uv = addUVs ? new[] {
+				Uv0 = addUVs ? new[] {
 					new Vector2(flipUVHorizontally ? 1f : 0f,flipUVVertically ? 1f : 0f),new Vector2(flipUVHorizontally ? 0f : 1f,flipUVVertically ? 1f : 0f),
 					new Vector2(flipUVHorizontally ? 1f : 0f,flipUVVertically ? 0f : 1f),new Vector2(flipUVHorizontally ? 0f : 1f,flipUVVertically ? 0f : 1f),
 				} : null,
@@ -58,11 +50,11 @@
 			};
 
 			if(addNormals) {
-				newMesh.RecalculateNormals();
+				newMesh.NormalBuffer.Recalculate();
 			}
 
 			if(addTangents) {
-				newMesh.RecalculateTangents();
+				newMesh.TangentBuffer.Recalculate();
 			}
 
 			if(apply) {
@@ -83,9 +75,9 @@
 			int triIndexCount = resolution.x*resolution.y*6;
 
 			var newMesh = new Mesh {
-				vertices = new Vector3[vertexCount],
+				Vertices = new Vector3[vertexCount],
 				triangles = new int[triIndexCount],
-				uv = addUVs ? new Vector2[vertexCount] : null
+				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
 			var vertexMap = new int[realResolution.x,realResolution.y];
@@ -95,10 +87,10 @@
 
 			for(int y = 0;y<realResolution.y;y++) {
 				for(int x = 0;x<realResolution.x;x++) {
-					newMesh.vertices[vertex] = new Vector3(x*stepSize.x+offset.x,0f,y*stepSize.y+offset.y);
+					newMesh.Vertices[vertex] = new Vector3(x*stepSize.x+offset.x,0f,y*stepSize.y+offset.y);
 
 					if(addUVs) {
-						newMesh.uv[vertex] = new Vector2(x,y)*to01*realUvSize;
+						newMesh.Uv0[vertex] = new Vector2(x,y)*to01*realUvSize;
 					}
 
 					vertexMap[x,y] = vertex++;
@@ -122,11 +114,11 @@
 			}
 
 			if(addNormals) {
-				newMesh.RecalculateNormals();
+				newMesh.NormalBuffer.Recalculate();
 			}
 
 			if(addTangents) {
-				newMesh.RecalculateTangents();
+				newMesh.TangentBuffer.Recalculate();
 			}
 
 			if(apply) {
@@ -137,13 +129,12 @@
 		}
 		public static Mesh GenerateCube(float cubeSize = 1f,bool inverted = false,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool apply = true)
 		{
-			float half = cubeSize*0.5f;
 			Vector3 size = Vector3.One*cubeSize;
 			Vector3 offset = -size*0.5f;
 
 			var newMesh = new Mesh {
 				//Vertices
-				vertices = new[] {
+				Vertices = new[] {
 					offset+new Vector3(0f    ,size.y,size.z),   offset+new Vector3(size.x,size.y,size.z),   offset+new Vector3(0f    ,0f    ,size.z),   offset+new Vector3(size.x,0f    ,size.z),
 					offset+new Vector3(size.x,size.y,0f    ),	offset+new Vector3(0f    ,size.y,0f    ),	offset+new Vector3(size.x,0f    ,0f    ),	offset+new Vector3(0f    ,0f    ,0f    ),
 					offset+new Vector3(0f    ,size.y,size.z),	offset+new Vector3(size.x,size.y,size.z),	offset+new Vector3(0f    ,size.y,0f    ),	offset+new Vector3(size.x,size.y,0f    ),
@@ -153,7 +144,7 @@
 				},
 
 				//Normals
-				normals = addNormals ? new[] {
+				Normals = addNormals ? new[] {
 					Vector3.Forward,	Vector3.Forward,	Vector3.Forward,	Vector3.Forward,
 					Vector3.Backward,	Vector3.Backward,	Vector3.Backward,	Vector3.Backward,
 					Vector3.Up,			Vector3.Up,			Vector3.Up,			Vector3.Up,
@@ -163,7 +154,7 @@
 				} : null,
 
 				//UVs
-				uv = addUVs ? new[] {
+				Uv0 = addUVs ? new[] {
 					new Vector2(0f,0f),new Vector2(1f,0f),new Vector2(0f,1f),new Vector2(1f,1f),
 					new Vector2(0f,0f),new Vector2(1f,0f),new Vector2(0f,1f),new Vector2(1f,1f),
 					new Vector2(1f,0f),new Vector2(0f,0f),new Vector2(1f,1f),new Vector2(0f,1f),
@@ -207,7 +198,7 @@
 			//}
 
 			if(addTangents) {
-				newMesh.RecalculateTangents();
+				newMesh.TangentBuffer.Recalculate();
 			}
 
 			if(apply) {
@@ -218,7 +209,8 @@
 		}
 		public static Mesh GenerateSphere(int xRes = 16,int yRes = 16,float radius = 1f,bool inverted = false,bool addUVs = true,bool addNormals = true,bool apply = true)
 		{
-			//TODO: There's plenty of unneeded vertex repeating, which is only needed on UV seams. Fixing this could increase performance.
+			//TODO: There's plenty of unneeded vertex repeating, which is only needed on UV seams.
+
 			float xResMultiplier = 1f/xRes;
 			float yResMultiplier = 1f/yRes;
 			float xOffset = Mathf.TwoPI*xResMultiplier;
@@ -226,16 +218,16 @@
 			int verticeAmount = xRes*yRes*4;
 
 			var newMesh = new Mesh {
-				vertices = new Vector3[verticeAmount],
+				Vertices = new Vector3[verticeAmount],
 				triangles = new int[xRes*yRes*6]
 			};
 
 			if(addNormals) {
-				newMesh.normals = new Vector3[verticeAmount];
+				newMesh.Normals = new Vector3[verticeAmount];
 			}
 
 			if(addUVs) {
-				newMesh.uv = new Vector2[verticeAmount];
+				newMesh.Uv0 = new Vector2[verticeAmount];
 			}
 			
 			void SphereVertex(int x,int y,int index)
@@ -243,12 +235,12 @@
 				float hAngle = x*xOffset;
 				float vAngle = y*yOffset;
 				var normal = new Vector3(Mathf.Sin(hAngle)*Mathf.Sin(vAngle),Mathf.Cos(vAngle),Mathf.Cos(hAngle)*Mathf.Sin(vAngle));
-				newMesh.vertices[index] = normal*radius;
+				newMesh.Vertices[index] = normal*radius;
 				if(addNormals) {
-					newMesh.normals[index] = normal;
+					newMesh.Normals[index] = normal;
 				}
 				if(addUVs) {
-					newMesh.uv[index] = new Vector2(x*xResMultiplier,y*yResMultiplier);
+					newMesh.Uv0[index] = new Vector2(x*xResMultiplier,y*yResMultiplier);
 				}
 			}
 
@@ -291,7 +283,7 @@
 
 			var newMesh = new Mesh {
 				//Vertices
-				vertices = new[] {
+				Vertices = new[] {
 					new Vector3(-X,N,Z),new Vector3( X, N, Z),new Vector3(-X, N,-Z),new Vector3( X, N,-Z),
 					new Vector3( N,Z,X),new Vector3( N, Z,-X),new Vector3( N,-Z, X),new Vector3( N,-Z,-X),
 					new Vector3( Z,X,N),new Vector3(-Z, X, N),new Vector3( Z,-X, N),new Vector3(-Z,-X, N)
@@ -316,7 +308,7 @@
 			};
 
 			if(addNormals) {
-				newMesh.RecalculateNormals();
+				newMesh.NormalBuffer.Recalculate();
 			}
 
 			/*if(addTangents) {

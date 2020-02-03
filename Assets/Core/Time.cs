@@ -110,26 +110,32 @@ namespace GameEngine
 		}
 		internal static void PreFixedUpdate() => fixedStopwatch.Restart();
 		internal static void PreRenderUpdate() => renderStopwatch.Restart();
-		internal static void UpdateFixed(double newDelta)
+		internal static void UpdateFixed(double newTime)
 		{
-			fixedTimePrev = fixedTime;
+			//Real time
 			fixedTimeRealPrev = fixedTimeReal;
+			fixedTimeReal = (float)newTime;
 
-			fixedDeltaTime = (float)newDelta;
-			fixedTimeReal += fixedDeltaTime;
-			fixedDeltaTime *= TimeScale;
+			//Delta
+			fixedDeltaTime = fixedTimePrev-fixedTimeReal;
+
+			//Game time
+			fixedTimePrev = fixedTime;
 			fixedTime += fixedDeltaTime;
 
 			fixedUpdateCount++;
 		}
-		internal static void UpdateRender(double newDelta)
+		internal static void UpdateRender(double newTime)
 		{
-			renderTimePrev = renderTime;
+			//Real time
 			renderTimeRealPrev = renderTimeReal;
+			renderTimeReal = (float)newTime;
 
-			renderDeltaTime = (float)newDelta;
-			renderTimeReal += renderDeltaTime;
-			renderDeltaTime *= TimeScale;
+			//Delta
+			renderDeltaTime = renderTimeReal-renderTimeRealPrev;
+
+			//Game time
+			renderTimePrev = renderTime;
 			renderTime += renderDeltaTime;
 
 			renderUpdateCount++;

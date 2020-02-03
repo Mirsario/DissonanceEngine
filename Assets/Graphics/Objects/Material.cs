@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Dissonance.Framework.OpenGL;
 using GameEngine.Utils.Extensions;
+using GameEngine.Utils.Internal;
 
 namespace GameEngine.Graphics
 {

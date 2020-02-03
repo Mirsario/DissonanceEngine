@@ -78,8 +78,6 @@ namespace GameEngine.Graphics
 
 					var cameraPos = camera.Transform.Position;
 
-					GL.EnableVertexAttribArray((int)AttributeId.Vertex);
-
 					//RendererLoop
 					if(rendererCount==0) {
 						continue;
@@ -209,8 +207,6 @@ namespace GameEngine.Graphics
 							);
 
 							renderer.ApplyUniforms(shader);
-
-							//mesh.DrawMesh();
 							renderer.Render(renderObject);
 
 							Rendering.drawCallsCount++;
@@ -238,7 +234,7 @@ namespace GameEngine.Graphics
 			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.Blend);
-			GL.Disable(EnableCap.AlphaTest);
+			//GL.Disable(EnableCap.AlphaTest);
 
 			Framebuffer.Bind(null);
 		}

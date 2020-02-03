@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using Ionic.Zip;
 using System.Text;
+using System.Runtime.Serialization;
+using GameEngine.Utils.Internal;
 
 namespace GameEngine
 {
@@ -59,10 +61,12 @@ namespace GameEngine
 		{
 			if(!assetManagers.TryGetValue(Path.GetExtension(file).ToLower(),out var list)) {
 				outManager = null;
+
 				return false;
 			}
 
 			outManager = list[0];
+
 			return outManager.Autoload(file);
 		}
 		public static T1 GetAssetManager<T1,T2>()
@@ -105,6 +109,7 @@ namespace GameEngine
 			}
 
 			var files = new List<string>();
+
 			void GetFilesRecursion(string currentPath)
 			{
 				//Iterate files
@@ -113,14 +118,17 @@ namespace GameEngine
 						if(ignoredPaths?.Any(s => current.StartsWith(s))==true) {
 							continue;
 						}
+
 						files.Add(current);
 					}
 				}
+
 				//Iterate directories
 				foreach(string folderPath in Directory.GetDirectories(currentPath)) {
 					if(ignoredPaths?.Any(s => folderPath.StartsWith(s))==true) {
 						continue;
 					}
+
 					GetFilesRecursion(folderPath);
 				}
 			}
@@ -135,21 +143,26 @@ namespace GameEngine
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
 
 			foreach(var type in ReflectionCache.allTypes) {
-				if(!type.IsAbstract && typeof(AssetManager).IsAssignableFrom(type)) {
-					var manager = (AssetManager)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-
-					var generics = type?.BaseType.GetGenericArguments();
-					var returnType = generics?.Length==1 ? generics[0] : null;
-					if(returnType==null) {
-						continue;
-					}
-
-					var realReturnType = returnType.IsArray ? returnType.GetElementType() : returnType;
-
-					RegisterFormats(realReturnType,manager,manager.Extensions); //Allow overwriting engine's types by games'
-
-					newOrder[0].Add(manager);
+				if(type.IsAbstract || !typeof(AssetManager).IsAssignableFrom(type)) {
+					continue;
 				}
+
+				var manager = (AssetManager)FormatterServices.GetUninitializedObject(type);
+
+				var generics = type?.BaseType.GetGenericArguments();
+				var returnType = generics?.Length==1 ? generics[0] : null;
+
+				if(returnType==null) {
+					continue;
+				}
+
+				manager.Init();
+
+				var realReturnType = returnType.IsArray ? returnType.GetElementType() : returnType;
+
+				RegisterFormats(realReturnType,manager,manager.Extensions); //Allow overwriting engine's types by games'
+
+				newOrder[0].Add(manager);
 			}
 
 			//Sort everything based on dependencies
@@ -195,6 +208,7 @@ namespace GameEngine
 
 					var nextList = newOrder[i+1];
 					int movedNum = 0;
+
 					for(int j = 0;j<move.Length;j++) {
 						if(move[j]) {
 							nextList.Add(list[j-movedNum]);

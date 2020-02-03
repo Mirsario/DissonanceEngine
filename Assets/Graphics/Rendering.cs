@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameEngine.Graphics.RenderingPipelines;
 using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.GLFW3;
 
 namespace GameEngine.Graphics
 {
@@ -100,6 +101,7 @@ namespace GameEngine.Graphics
 
 		public static int drawCallsCount;
 		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);
+		public static Vector4 clearColor = Vector4.Zero;
 
 		internal static List<Camera> cameraList;
 		internal static List<Renderer> rendererList;
@@ -125,7 +127,7 @@ namespace GameEngine.Graphics
 		internal static void Init()
 		{
 			var glVersion = GetOpenGLVersion();
-			var minVersion = new Version("3.2");
+			var minVersion = new Version("2.0");
 
 			if(glVersion<minVersion) {
 				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
@@ -142,8 +144,7 @@ namespace GameEngine.Graphics
 			rendererList = new List<Renderer>();
 			lightList = new List<Light>();
 			light2DList = new List<Light2D>();
-			
-			GL.Enable(EnableCap.Texture2D);
+
 			GL.CullFace(CullFaceMode.Back);
 			GL.ClearDepth(1f);
 			GL.DepthFunc(DepthFunction.Lequal);
@@ -153,6 +154,7 @@ namespace GameEngine.Graphics
 			PrimitiveMeshes.GenerateDefaultMeshes();
 			
 			whiteTexture = new Texture(1,1);
+			whiteTexture.SetPixels(new[] { new Pixel(1f,1f,1f,1f) });
 		}
 
 		internal static void Render()
@@ -180,11 +182,11 @@ namespace GameEngine.Graphics
 
 				camera.matrix_viewInverse = Matrix4x4.Invert(camera.matrix_view);
 				camera.matrix_projInverse = Matrix4x4.Invert(camera.matrix_proj);
+
 				camera.CalculateFrustum(camera.matrix_view*camera.matrix_proj);
 			}
 
 			//Clear buffers
-			//GL.Enable(EnableCap.StencilTest);
 			GL.Viewport(0,0,Screen.Width,Screen.Height);
 
 			if(renderingPipeline.Framebuffers!=null) {
@@ -192,10 +194,12 @@ namespace GameEngine.Graphics
 
 				for(int i = 0;i<=length;i++) {
 					var framebuffer = i==length ? null : renderingPipeline.Framebuffers[i];
+
 					framebuffer?.PrepareAttachments();
+
 					Framebuffer.Bind(framebuffer);
 
-					GL.ClearColor(0f,0f,0f,0f);
+					GL.ClearColor(clearColor.x,clearColor.y,clearColor.z,clearColor.w);
 					//GL.StencilMask(~0);
 					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 				}
@@ -205,11 +209,16 @@ namespace GameEngine.Graphics
 
 			Framebuffer.Bind(null);
 
+			CheckGLErrors();
+
 			//Render passes
 			for(int i = 0;i<renderingPipeline.RenderPasses.Length;i++) {
 				var pass = renderingPipeline.RenderPasses[i];
+
 				if(pass.enabled) {
 					pass.Render();
+
+					CheckGLErrors();
 				}
 			}
 
@@ -217,16 +226,15 @@ namespace GameEngine.Graphics
 
 			renderingPipeline.PostRender();
 
-			//GL.Disable(EnableCap.StencilTest);
-
 			#region RenderTargetDebug
+
 			if(Input.GetKey(Keys.F)) {
-				//TODO: This is completely temporarily
+				//TODO: This is temporary
 				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
 
+				int textureCount = 0;
 				var framebuffers = renderingPipeline.framebuffers;
 
-				int textureCount = 0;
 				for(int i = 0;i<framebuffers.Length;i++) {
 					var fb = framebuffers[i];
 
@@ -244,6 +252,7 @@ namespace GameEngine.Graphics
 				}
 
 				int size = 1;
+
 				while(size*size<textureCount) {
 					size++;
 				}
@@ -281,12 +290,12 @@ namespace GameEngine.Graphics
 					}
 				}
 			}
-#endregion
 
-			GL.Flush();
-			//window.SwapBuffers(); //TODO: After upgrading to OpenTK 4.0, see if fullscreen is still bugged on multi-monitor setup when using this SwapBuffers() call instead of GL.Finish/Flush().
+			#endregion
 
-			Rendering.CheckGLErrors();
+			GLFW.SwapBuffers(Game.window);
+
+			CheckGLErrors();
 		}
 		
 		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
@@ -303,6 +312,7 @@ namespace GameEngine.Graphics
 			renderingPipeline?.Dispose();
 
 			renderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
+
 			renderingPipeline.Init();
 		}
 		internal static void Resize(object sender,EventArgs e)

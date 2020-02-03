@@ -3,14 +3,14 @@ using Dissonance.Framework.OpenGL;
 
 namespace GameEngine.Graphics
 {
-	public class VertexAttribute : CustomVertexAttribute<VertexBuffer>
+	public class Uv0Attribute : CustomVertexAttribute<Uv0Buffer>
 	{
 		public override void Init(out string nameId,out VertexAttribPointerType pointerType,out bool isNormalized,out int size,out int offset)
 		{
-			nameId = "vertex";
+			nameId = "uv0";
 			pointerType = VertexAttribPointerType.Float;
 			isNormalized = false;
-			size = 3;
+			size = 2;
 			offset = 0;
 		}
 	}

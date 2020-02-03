@@ -7,13 +7,13 @@ namespace GameEngine
 	{
 		internal uint bufferId;
 
-		internal int channelsNum;
-		internal int bitsPerSample;
-		internal int sampleRate;
+		protected int channelsNum;
+		protected int bytesPerSample;
+		protected int sampleRate;
 
 		public float LengthInSeconds { get; private set; }
-		
-		internal AudioClip()
+
+		public AudioClip()
 		{
 			bufferId = AL.GenBuffer();
 		}
@@ -27,56 +27,31 @@ namespace GameEngine
 			}
 		}
 
-		internal void SetData(byte[] data,int channelsNum,int bitsPerSample,int sampleRate)
+		internal unsafe void SetData<T>(T[] data,int channelsNum,int bytesPerSample,int sampleRate) where T : unmanaged
 		{
 			if(data==null) {
 				throw new ArgumentNullException(nameof(data));
 			}
 
 			this.channelsNum = channelsNum;
-			this.bitsPerSample = bitsPerSample;
+			this.bytesPerSample = bytesPerSample;
 			this.sampleRate = sampleRate;
 
 			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
 
-			AL.BufferData(bufferId,GetSoundFormat(channelsNum,bitsPerSample),data,data.Length,sampleRate);
+			var format = GetSoundFormat(channelsNum,bytesPerSample);
 
-			Audio.CheckALErrors();
-		}
-		internal void SetData(short[] data,int channelsNum,int bytesPerSample,int sampleRate)
-		{
-			if(data==null) {
-				throw new ArgumentNullException(nameof(data));
+			fixed(T* ptr = data) {
+				AL.BufferData(bufferId,format,(IntPtr)ptr,data.Length*bytesPerSample,sampleRate);
 			}
 
-			this.channelsNum = channelsNum;
-			this.sampleRate = sampleRate;
-
-			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
-
-			AL.BufferData(bufferId,BufferFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
-
-			Audio.CheckALErrors();
-		}
-		internal void SetData(float[] data,int channelsNum,int bytesPerSample,int sampleRate)
-		{
-			if(data==null) {
-				throw new ArgumentNullException(nameof(data));
-			}
-
-			this.channelsNum = channelsNum;
-			this.sampleRate = sampleRate;
-
-			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
-
-			AL.BufferData(bufferId,BufferFormat.Mono16,data,data.Length*bytesPerSample,sampleRate);
-
 			Audio.CheckALErrors();
 		}
 
-		private static BufferFormat GetSoundFormat(int channels,int bits) => channels switch {
-			1 => bits==8 ? BufferFormat.Mono8 : BufferFormat.Mono16,
-			2 => bits==8 ? BufferFormat.Stereo8 : BufferFormat.Stereo16,
+		private static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch {
+			1 => channels==1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
+			2 => channels==1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
+			4 => channels==1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,
 			_ => throw new NotSupportedException("The specified sound format is not supported."),
 		};
 	}

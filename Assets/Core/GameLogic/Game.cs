@@ -9,16 +9,15 @@ using GameEngine.Graphics;
 using GameEngine.Physics;
 using GameEngine.Core;
 using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.DevIL;
 
 namespace GameEngine
 {
-	//TODO: Finish .smartmesh format
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering
 	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
 	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
-	//TODO: Fix issues with window resizing
 	public class Game : IDisposable
 	{
 		//Debug
@@ -71,33 +70,19 @@ namespace GameEngine
 
 			preInitDone = true;
 
-			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch {
-				GLFWError.VersionUnavailable => throw new GraphicsException(description),
-				_ => $"GLFW Error {code}: {description}"
-			}));
+			PrepareGLFW();
+			PrepareGL();
 
-			if(GLFW.Init()==0) {
-				throw new Exception("Unable to initialize GLFW!");
-			}
-
-			GLFW.WindowHint(WindowHint.ContextVersionMajor,3); //Targeted major version
-			GLFW.WindowHint(WindowHint.ContextVersionMinor,2); //Targeted minor version
-
-			window = GLFW.CreateWindow(800,600,"Unnamed Window",IntPtr.Zero,IntPtr.Zero);
-
-			GLFW.MakeContextCurrent(window);
-
-			GLFW.SetWindowFocusCallback(window,OnFocusChange);
-
-			GL.Load();
+			IL.Init();
 
 			Init();
 
 			while(GLFW.WindowShouldClose(window)==0) {
-				GLFW.PollEvents();
-
 				FixedUpdateInternal();
 				RenderUpdateInternal();
+
+				//GLFW.SwapBuffers(window);
+				GLFW.PollEvents();
 			}
 
 			GLFW.DestroyWindow(window);
@@ -167,6 +152,10 @@ namespace GameEngine
 			}
 			
 			Component.Init();
+
+			CustomVertexBuffer.Initialize();
+			CustomVertexAttribute.Initialize();
+
 			Resources.Init();
 			Rendering.Init();
 			GUI.Init();
@@ -262,6 +251,41 @@ namespace GameEngine
 		public virtual void RenderUpdate() {}
 		public virtual void OnGUI() {}
 		public virtual void OnApplicationQuit() {}
+
+		//Test
+		private void PrepareGLFW()
+		{
+			Console.WriteLine("GLFW Preparing...");
+
+			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch
+			{
+				GLFWError.VersionUnavailable => throw new GraphicsException(description),
+				_ => $"GLFW Error {code}: {description}"
+			}));
+
+			if(GLFW.Init()==0) {
+				throw new Exception("Unable to initialize GLFW!");
+			}
+
+			GLFW.WindowHint(WindowHint.ContextVersionMajor,4); //Targeted major version
+			GLFW.WindowHint(WindowHint.ContextVersionMinor,3); //Targeted minor version
+
+			IntPtr monitor = IntPtr.Zero;
+			int resolutionWidth = 800;
+			int resolutionHeight = 600;
+
+			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,"Unnamed Window",monitor,IntPtr.Zero);
+
+			GLFW.MakeContextCurrent(window);
+		}
+		private void PrepareGL()
+		{
+			GL.Load();
+
+			Rendering.CheckGLErrors();
+
+			Console.WriteLine($"Loaded OpenGL {GL.GetString(StringName.Version)}");
+		}
 
 		public static void Quit() => GLFW.SetWindowShouldClose(window,1);
 		
