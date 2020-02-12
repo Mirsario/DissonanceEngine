@@ -1,6 +1,3 @@
-using Dissonance.Framework.OpenGL;
-using System;
-
 #pragma warning disable 0649
 
 namespace Dissonance.Engine.Graphics

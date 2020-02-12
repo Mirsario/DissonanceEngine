@@ -1,5 +1,4 @@
 ﻿using Dissonance.Framework.OpenGL;
-using Dissonance.Engine.Utils.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
