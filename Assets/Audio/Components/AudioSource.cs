@@ -205,9 +205,7 @@ namespace GameEngine
 			if(!is2D) {
 				Vector3 pos = Transform.Position;
 
-				unsafe {
-					AL.Source(sourceId,SourceFloatArray.Position,pos);
-				}
+				AL.Source(sourceId,SourceFloat3.Position,pos.x,pos.y,pos.z);
 			}
 		}
 

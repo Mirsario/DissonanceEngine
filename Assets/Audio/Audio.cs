@@ -9,6 +9,17 @@ namespace GameEngine
 		internal static IntPtr audioDevice;
 		internal static IntPtr audioContext;
 
+		[Obsolete("This call is supposed to be temporary.")]
+		public static void CheckALErrorsTemp() => CheckALErrors();
+		public static void CheckALErrors()
+		{
+			var error = AL.GetError();
+
+			if(error!=AudioError.NoError) {
+				throw new Exception("AudioError: "+error);
+			}
+		}
+
 		internal static void Init()
 		{
 			try {
@@ -35,13 +46,5 @@ namespace GameEngine
 		}
 		internal static void FixedUpdate() => CheckALErrors();
 		internal static void Dispose() {}
-		internal static void CheckALErrors()
-		{
-			var error = AL.GetError();
-
-			if(error!=AudioError.NoError) {
-				throw new Exception("AudioError: "+error);
-			}
-		}
 	}
 }
