@@ -65,6 +65,25 @@ namespace GameEngine
 			GL.BindVertexArray(0);
 		}
 
+		public override void Dispose()
+		{
+			if(vertexArrayId!=0) {
+				GL.DeleteVertexArray(vertexArrayId);
+
+				vertexArrayId = 0;
+			}
+
+			if(indexBufferId!=0) {
+				GL.DeleteBuffer(indexBufferId);
+
+				indexBufferId = 0;
+			}
+
+			for(int i = 0;i<VertexBuffers.Length;i++) {
+				VertexBuffers[i].Dispose();
+			}
+		}
+
 		public void Apply()
 		{
 			Rendering.CheckGLErrors();
