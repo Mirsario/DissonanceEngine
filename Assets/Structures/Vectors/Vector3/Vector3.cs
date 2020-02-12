@@ -44,12 +44,13 @@ namespace GameEngine
 		}
 		public Vector3 Normalized {
 			get {
-				var vec = new Vector3(x,y,z);
 				float mag = Magnitude;
+
 				if(mag!=0f) {
-					vec *= 1f/mag;
+					return this*(1f/mag);
 				}
-				return vec;
+
+				return this;
 			}
 		}
 		

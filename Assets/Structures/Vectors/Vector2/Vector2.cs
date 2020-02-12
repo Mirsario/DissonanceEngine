@@ -21,6 +21,7 @@ namespace GameEngine
 		public Vector2 Normalized => Normalize(this);
 		public float Magnitude => Mathf.Sqrt(x*x+y*y);
 		public float SqrMagnitude => x*x+y*y;
+		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y);
 
 		public float this[int index] {
 			get {

@@ -13,25 +13,27 @@ namespace GameEngine
 		public static readonly Vector4 UnitZ = new Vector4(0f,0f,1f,0f);
 		public static readonly Vector4 UnitW = new Vector4(0f,0f,0f,1f);
 
-		public Vector4 Normalized {
-			get {
-				var vec = new Vector4(x,y,z,w);
-				float mag = Magnitude;
-				if(mag!=0f) {
-					vec *= 1f/mag;
-				}
-				return vec;
-			}
-		}
-		public float Magnitude => Mathf.Sqrt(x*x+y*y+z*z+w*w);
-		public float SqrMagnitude => x*x+y*y+z*z+w*w;
 		public float x;
 		public float y;
 		public float z;
 		public float w;
 
+		public float Magnitude => Mathf.Sqrt(x*x+y*y+z*z+w*w);
+		public float SqrMagnitude => x*x+y*y+z*z+w*w;
+		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
 		public Vector2 XY => new Vector2(x,y);
 		public Vector3 XYZ => new Vector3(x,y,z);
+		public Vector4 Normalized {
+			get {
+				float mag = Magnitude;
+
+				if(mag!=0f) {
+					return this*(1f/mag);
+				}
+
+				return this;
+			}
+		}
 
 		public float this[int index] {
 			get => index switch {
