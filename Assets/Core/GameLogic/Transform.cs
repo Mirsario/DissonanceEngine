@@ -14,26 +14,31 @@ namespace GameEngine
 		internal bool updatePhysicsRotation = true;
 		internal bool updatePhysicsScale = true;
 
-		//Properties
 		public Transform Root => parent==null ? this : GetParents().Last();
 		public Vector3 Forward {
 			get {
 				var m = WorldMatrix;
+
 				m.ClearScale();
+
 				return new Vector3(m.m20,m.m21,m.m22).Normalized;
 			}
 		}
 		public Vector3 Right {
 			get {
 				var m = WorldMatrix;
+
 				m.ClearScale();
+
 				return new Vector3(m.m00,m.m01,m.m02).Normalized;
 			}
 		}
 		public Vector3 Up {
 			get {
 				var m = WorldMatrix;
+
 				m.ClearScale();
+
 				return new Vector3(m.m10,m.m11,m.m12).Normalized;
 			}
 		}
@@ -41,11 +46,15 @@ namespace GameEngine
 			get => WorldMatrix.ExtractTranslation();
 			set {
 				var m = matrix;
+
 				m.SetTranslation(value);
+
 				if(parent!=null) {
 					m = ToLocalSpace(m);
 				}
+
 				matrix.SetTranslation(m.ExtractTranslation());
+
 				updatePhysicsPosition = true;
 			}
 		}
@@ -53,6 +62,7 @@ namespace GameEngine
 			get => matrix.ExtractTranslation();
 			set {
 				matrix.SetTranslation(value);
+
 				updatePhysicsPosition = true;
 			}
 		}
@@ -60,6 +70,7 @@ namespace GameEngine
 			get => matrix.ExtractScale();
 			set {
 				matrix.SetScale(value);
+
 				updatePhysicsScale = true;
 			}
 		}
@@ -70,10 +81,12 @@ namespace GameEngine
 				var tempScale = matrix.ExtractScale();
 				
 				var m = Matrix4x4.CreateRotation(value);
+
 				matrix = m;
 				
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
+
 				updatePhysicsRotation = true;
 			}
 		}
@@ -82,9 +95,11 @@ namespace GameEngine
 			set {
 				var tempPos = LocalPosition;
 				var tempScale = LocalScale;
+
 				matrix = Matrix4x4.CreateRotation(value);
 				LocalPosition = tempPos;
 				LocalScale = tempScale;
+
 				updatePhysicsRotation = true;
 			}
 		}
@@ -98,6 +113,7 @@ namespace GameEngine
 				
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
+
 				updatePhysicsRotation = true;
 			}
 		}
@@ -108,10 +124,12 @@ namespace GameEngine
 				var tempScale = matrix.ExtractScale();
 				
 				value.NormalizeEuler();
+
 				matrix = Matrix4x4.CreateRotation(value);
 				
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
+
 				updatePhysicsRotation = true;
 			}
 		}
@@ -140,33 +158,41 @@ namespace GameEngine
 		}
 
 		public IEnumerable<Transform> GetParents() => parent==null ? null : GetParentsIterator(this);
-		private static IEnumerable<Transform> GetParentsIterator(Transform transform)
-		{
-			while(true) {
-				transform = transform.parent;
-				if(transform==null) {
-					break;
-				}
-				yield return transform;
-			}
-		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToLocalSpace(Matrix4x4 matrix)
 		{
 			Transform p = this;
+
 			while((p = p.parent)!=null) {
 				matrix *= p.Matrix.Inverted;
 			}
+
 			return matrix;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToWorldSpace(Matrix4x4 matrix)
 		{
 			Transform p = this;
+
 			while((p = p.parent)!=null) {
 				matrix *= p.Matrix;
 			}
+
 			return matrix;
+		}
+
+		private static IEnumerable<Transform> GetParentsIterator(Transform transform)
+		{
+			while(true) {
+				transform = transform.parent;
+
+				if(transform==null) {
+					break;
+				}
+
+				yield return transform;
+			}
 		}
 	}
 }
