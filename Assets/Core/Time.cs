@@ -14,7 +14,7 @@ namespace GameEngine
 		internal static float fixedTimePrev;
 		internal static float fixedTimeReal;
 		internal static float fixedTimeRealPrev;
-		internal static float fixedDeltaTime;
+		//internal static float fixedDeltaTime;
 		internal static uint fixedUpdateCount;
 		internal static float renderTime; //Render time
 		internal static float renderTimePrev;
@@ -38,13 +38,13 @@ namespace GameEngine
 		//Time
 		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
 		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
-		public static float DeltaTime => Game.fixedUpdate ? fixedDeltaTime : renderDeltaTime;
+		public static float DeltaTime => Game.fixedUpdate ? FixedDeltaTime : RenderDeltaTime;
 
 		public static float FixedGameTime => fixedTime;
 		public static float RenderGameTime => renderTime;
 		public static float FixedGlobalTime => fixedTimeReal;
 		public static float RenderGlobalTime => renderTimeReal;
-		public static float FixedDeltaTime => fixedDeltaTime;
+		public static float FixedDeltaTime => 1f/(float)TargetUpdateFrequency;
 		public static float RenderDeltaTime => renderDeltaTime;
 		public static uint FixedUpdateCount => fixedUpdateCount;
 		public static uint RenderUpdateCount => renderUpdateCount;
@@ -116,12 +116,9 @@ namespace GameEngine
 			fixedTimeRealPrev = fixedTimeReal;
 			fixedTimeReal = (float)newTime;
 
-			//Delta
-			fixedDeltaTime = fixedTimePrev-fixedTimeReal;
-
 			//Game time
 			fixedTimePrev = fixedTime;
-			fixedTime += fixedDeltaTime;
+			fixedTime += FixedDeltaTime;
 
 			fixedUpdateCount++;
 		}

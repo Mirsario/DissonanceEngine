@@ -91,6 +91,6 @@ namespace GameEngine
 
 			return false;
 		}
-		public override void Render(object renderObject) => ((Mesh)renderObject).DrawMesh();
+		public override void Render(object renderObject) => ((Mesh)renderObject).Render();
 	}
 }

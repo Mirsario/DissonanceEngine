@@ -117,24 +117,10 @@ namespace GameEngine.Graphics
 
 						switch(lightType) {
 							case LightType.Point:
-								PrimitiveMeshes.IcoSphere.DrawMesh();
-
-								//GL.BindBuffer(BufferTarget.ArrayBuffer,mesh.vertexBufferId);
-								//GL.VertexAttribPointer((int)AttributeId.Vertex,3,VertexAttribPointerType.Float,false,mesh.vertexSize,(IntPtr)0);
-								//GL.BindBuffer(BufferTarget.ElementArrayBuffer,mesh.indexBufferId);
-								//GL.DrawElements(PrimitiveType.Triangles,mesh.indexLength,DrawElementsType.UnsignedInt,0);
+								PrimitiveMeshes.IcoSphere.Render();
 								break;
 							case LightType.Directional:
-								//TODO: Draw like this should be made into a function
-
-								GL.Begin(PrimitiveType.Quads);
-
-								GL.Vertex2(-1f,-1f); GL.TexCoord2(0f,0f);
-								GL.Vertex2(-1f, 1f); GL.TexCoord2(0f,1f);
-								GL.Vertex2( 1f, 1f); GL.TexCoord2(1f,1f);
-								GL.Vertex2( 1f,-1f); GL.TexCoord2(1f,0f);
-
-								GL.End();
+								PrimitiveMeshes.ScreenQuad.Render();
 								break;
 						}
 					}
@@ -144,7 +130,9 @@ namespace GameEngine.Graphics
 			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 			GL.Disable(EnableCap.CullFace);
+
 			Shader.SetShader(null);
+
 			GL.BindTexture(TextureTarget.Texture2D,0);
 		}
 	}

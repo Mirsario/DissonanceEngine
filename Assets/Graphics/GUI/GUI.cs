@@ -108,7 +108,6 @@ namespace GameEngine
 				1f-style.border.right/textureSize.x,	1f-style.border.bottom/textureSize.y
 			);
 
-			//TODO: Reimplement
 			for(int y = 0;y<3;y++) {
 				for(int x = 0;x<3;x++) {
 					Vector4 vertices,uv;
@@ -154,19 +153,6 @@ namespace GameEngine
 							uv.w = centerUV.w;
 							break;
 					}
-
-					/*var vertices = new Vector4(
-						x>0 ? x==1 ? center.x : center.z : vector.x,
-						(y>0 ? y==1 ? center.y : center.w : vector.y),
-						x>0 ? x==1 ? center.z : vector.z : center.x,
-						(y>0 ? y==1 ? center.w : vector.w : center.y)
-					);
-					var uv = new Vector4(
-						x==0 ? 0f : x==1 ? centerUV.x : centerUV.z,
-						y==0 ? 0f : y==1 ? centerUV.y : centerUV.w,
-						x==0 ? centerUV.x : x==1 ? centerUV.z : 1f,
-						y==0 ? centerUV.y : y==1 ? centerUV.w : 1f
-					);*/
 
 					DrawUtils.DrawQuadUv0(vertices,uv);
 				}
@@ -239,7 +225,7 @@ namespace GameEngine
 			}
 
 			textBufferMesh.Apply();
-			textBufferMesh.DrawMesh();
+			textBufferMesh.Render();
 		}
 	}
 }

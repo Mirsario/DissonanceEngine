@@ -1,4 +1,5 @@
 using Dissonance.Framework.OpenGL;
+using System;
 
 #pragma warning disable 0649
 
@@ -10,7 +11,7 @@ namespace GameEngine.Graphics
 
 		public static void DrawQuadUv0()
 		{
-			PrimitiveMeshes.ScreenQuad.DrawMesh();
+			PrimitiveMeshes.ScreenQuad.Render();
 		}
 		public static void DrawQuadUv0(Vector4 vertices,Vector4 uv0)
 		{
@@ -25,7 +26,7 @@ namespace GameEngine.Graphics
 			bufferMesh.Uv0[3] = new Vector2(uv0.z,uv0.w);
 
 			bufferMesh.Apply();
-			bufferMesh.DrawMesh();
+			bufferMesh.Render();
 		}
 
 		internal static void Init()

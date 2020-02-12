@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 
 namespace GameEngine.Graphics
 {
-	public abstract class CustomVertexBuffer
+	public abstract class CustomVertexBuffer : IDisposable
 	{
-		private static class IDs<T> where T : CustomVertexBuffer
+		internal static class IDs<T> where T : CustomVertexBuffer
 		{
 			public static int id;
 		}
@@ -36,6 +36,14 @@ namespace GameEngine.Graphics
 			TypeId = GetId(GetType());
 		}
 
+		public abstract void Apply();
+		public abstract void Dispose();
+
+		public static int GetId<T>() where T : CustomVertexBuffer => IDs<T>.id;
+		public static int GetId(Type type) => idByType[type];
+		public static Type GetType(int id) => TypeById[id];
+		public static CustomVertexBuffer CreateInstance(int id) => (CustomVertexBuffer)Activator.CreateInstance(GetType(id),true);
+
 		internal static void Initialize()
 		{
 			idByType = new Dictionary<Type,int>();
@@ -56,13 +64,6 @@ namespace GameEngine.Graphics
 			TypeById = typeList.AsReadOnly();
 			Count = typeList.Count;
 		}
-
-		public abstract void Apply();
-
-		public static int GetId<T>() where T : CustomVertexBuffer => IDs<T>.id;
-		public static int GetId(Type type) => idByType[type];
-		public static Type GetType(int id) => TypeById[id];
-		public static CustomVertexBuffer CreateInstance(int id) => (CustomVertexBuffer)Activator.CreateInstance(GetType(id),true);
 	}
 
 	public abstract class CustomVertexBuffer<T> : CustomVertexBuffer where T : unmanaged
@@ -102,6 +103,13 @@ namespace GameEngine.Graphics
 				var attribute = CustomVertexAttribute.GetInstance((int)attributeId);
 
 				GL.VertexAttribPointer(attributeId,attribute.Size,attribute.PointerType,attribute.IsNormalized,0,(IntPtr)attribute.Offset);
+			}
+		}
+		public override void Dispose()
+		{
+			if(BufferId!=0) {
+				GL.DeleteBuffer(BufferId);
+				BufferId = 0;
 			}
 		}
 	}

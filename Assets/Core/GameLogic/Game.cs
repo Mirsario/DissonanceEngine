@@ -10,6 +10,8 @@ using GameEngine.Physics;
 using GameEngine.Core;
 using Dissonance.Framework.OpenGL;
 using Dissonance.Framework.DevIL;
+using System.Diagnostics;
+using System.Threading;
 
 namespace GameEngine
 {
@@ -73,17 +75,18 @@ namespace GameEngine
 			PrepareGLFW();
 			PrepareGL();
 
+			Console.WriteLine("Loading DevIL...");
+
 			IL.Init();
+
+			Console.WriteLine("DevIL loaded.");
+			Console.WriteLine("Calling Init()...");
 
 			Init();
 
-			while(GLFW.WindowShouldClose(window)==0) {
-				FixedUpdateInternal();
-				RenderUpdateInternal();
+			Console.WriteLine("Going into the UpdateLoop()...");
 
-				//GLFW.SwapBuffers(window);
-				GLFW.PollEvents();
-			}
+			UpdateLoop();
 
 			GLFW.DestroyWindow(window);
 			GLFW.Terminate();
@@ -187,8 +190,9 @@ namespace GameEngine
 
 			Screen.UpdateValues();
 
-			Time.UpdateFixed(1.0/Time.TargetUpdateFrequency);
-			Input.FixedUpdate();
+			Time.UpdateFixed(Time.FixedGlobalTime+1.0/Time.TargetUpdateFrequency);
+
+			Input.Update();
 
 			FixedUpdate();
 
@@ -203,7 +207,7 @@ namespace GameEngine
 			}
 
 			//PhysicsEngine.UpdateFixed();
-			Input.LateFixedUpdate();
+			Input.LateUpdate();
 			Audio.FixedUpdate();
 
 			Time.PostFixedUpdate();
@@ -219,7 +223,7 @@ namespace GameEngine
 			Time.PreRenderUpdate();
 
 			Time.UpdateRender(GLFW.GetTime());
-			Input.RenderUpdate();
+			Input.Update();
 
 			RenderUpdate();
 
@@ -235,7 +239,7 @@ namespace GameEngine
 
 			//PhysicsEngine.UpdateRender();
 			Rendering.Render();
-			Input.LateRenderUpdate();
+			Input.LateUpdate();
 
 			Time.PostRenderUpdate();
 		}
@@ -257,8 +261,7 @@ namespace GameEngine
 		{
 			Console.WriteLine("GLFW Preparing...");
 
-			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch
-			{
+			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch {
 				GLFWError.VersionUnavailable => throw new GraphicsException(description),
 				_ => $"GLFW Error {code}: {description}"
 			}));
@@ -277,14 +280,45 @@ namespace GameEngine
 			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,"Unnamed Window",monitor,IntPtr.Zero);
 
 			GLFW.MakeContextCurrent(window);
+
+			GLFW.SwapInterval(0);
 		}
 		private void PrepareGL()
 		{
 			GL.Load();
 
+			Console.WriteLine("GL functions Loaded. Checking for errors...");
+
 			Rendering.CheckGLErrors();
 
+			Console.WriteLine("No errors.");
+
 			Console.WriteLine($"Loaded OpenGL {GL.GetString(StringName.Version)}");
+		}
+		private void UpdateLoop()
+		{
+			Stopwatch updateStopwatch = new Stopwatch();
+
+			updateStopwatch.Start();
+
+			static TimeSpan FrequencyToTimeSpan(double frequency) => new TimeSpan((long)(TimeSpan.TicksPerSecond*(1d/frequency)));
+
+			TimeSpan nextUpdateTime = default;
+
+			while(GLFW.WindowShouldClose(window)==0) {
+				GLFW.PollEvents();
+
+				FixedUpdateInternal();
+				RenderUpdateInternal();
+
+				TimeSpan sleepTimeSpan = nextUpdateTime-updateStopwatch.Elapsed;
+
+				if(sleepTimeSpan>TimeSpan.Zero) {
+					Thread.Sleep(sleepTimeSpan);
+				}
+
+				nextUpdateTime = updateStopwatch.Elapsed+FrequencyToTimeSpan(Time.TargetUpdateFrequency);
+			}
 		}
 
 		public static void Quit() => GLFW.SetWindowShouldClose(window,1);

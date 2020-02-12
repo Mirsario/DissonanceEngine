@@ -159,7 +159,7 @@ namespace GameEngine.Graphics
 					}
 				}
 
-				if(Input.GetKey(Keys.LShift)) {
+				if(Input.GetKey(Keys.LeftShift)) {
 					textureCount = Math.Min(textureCount,1);
 				}
 

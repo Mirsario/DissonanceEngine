@@ -27,13 +27,11 @@ namespace GameEngine
 				}
 			}
 
-			int width = IL.GetInteger(IL.IMAGE_WIDTH);
-			int height = IL.GetInteger(IL.IMAGE_HEIGHT);
+			IL.ConvertImage(ImageDataFormat.Rgba,ImageDataType.UnsignedByte);
 
-			var texture = new Texture(width,height);
-			var data = IL.GetData();
+			var texture = new Texture(IL.GetInteger(ImageInt.ImageWidth),IL.GetInteger(ImageInt.ImageHeight));
 
-			texture.SetPixels(data);
+			texture.SetPixels(IL.GetData());
 
 			return texture;
 		}
