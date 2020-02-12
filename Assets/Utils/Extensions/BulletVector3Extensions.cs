@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Dissonance.Engine.Utils.Extensions
+﻿namespace Dissonance.Engine.Utils.Extensions
 {
 	internal static class Vector3Extensions
 	{

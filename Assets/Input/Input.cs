@@ -1,6 +1,4 @@
 using Dissonance.Framework.GLFW3;
-using System;
-using System.Collections.Generic;
 
 namespace Dissonance.Engine
 {

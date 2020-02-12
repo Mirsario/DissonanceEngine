@@ -1,6 +1,4 @@
-using Dissonance.Framework.OpenGL;
 using Dissonance.Engine.Graphics;
-using System;
 
 namespace Dissonance.Engine
 {
