@@ -2,10 +2,10 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using GameEngine.Utils.Extensions;
-using GameEngine.Utils.Internal;
+using Dissonance.Engine.Utils.Extensions;
+using Dissonance.Engine.Utils.Internal;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public static partial class Resources
 	{

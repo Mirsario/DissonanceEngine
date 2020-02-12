@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public abstract class Asset : IDisposable
 	{

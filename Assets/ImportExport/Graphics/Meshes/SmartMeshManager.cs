@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SmartMeshLibrary;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class SmartMeshManager : AssetManager<Mesh>
 	{

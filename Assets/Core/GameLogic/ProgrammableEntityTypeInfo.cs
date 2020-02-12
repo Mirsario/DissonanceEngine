@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	internal class ProgrammableEntityTypeInfo //TODO: Come up with a better name?
 	{

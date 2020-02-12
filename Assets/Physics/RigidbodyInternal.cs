@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
-using GameEngine.Utils.Extensions;
+using Dissonance.Engine.Utils.Extensions;
 
-namespace GameEngine.Physics
+namespace Dissonance.Engine.Physics
 {
 	//TO CONSIDER: Make this be derived from Bullet's RigidBody ?
 	internal class RigidbodyInternal : IDisposable

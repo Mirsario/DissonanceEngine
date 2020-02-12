@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class MeshInfo
 	{

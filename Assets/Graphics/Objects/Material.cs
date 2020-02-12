@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Dissonance.Framework.OpenGL;
-using GameEngine.Utils.Extensions;
-using GameEngine.Utils.Internal;
+using Dissonance.Engine.Utils.Extensions;
+using Dissonance.Engine.Utils.Internal;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	//TODO: Implement OnDispose
 	public class Material : Asset<Material>

@@ -1,6 +1,6 @@
 /*using BulletSharp;
 
-namespace GameEngine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public class CharacterController : Component
 	{

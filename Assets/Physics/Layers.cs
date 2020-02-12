@@ -1,6 +1,6 @@
 using System;
 
-namespace GameEngine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public static class Layers
 	{

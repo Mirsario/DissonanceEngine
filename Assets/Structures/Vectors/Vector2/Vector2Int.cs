@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public partial struct Vector2Int
 	{

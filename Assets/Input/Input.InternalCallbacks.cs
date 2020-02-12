@@ -2,7 +2,7 @@
 using System.Text;
 using Dissonance.Framework.GLFW3;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	partial class Input
 	{

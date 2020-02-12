@@ -1,9 +1,9 @@
-﻿using GameEngine.Utils.Internal;
+﻿using Dissonance.Engine.Utils.Internal;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	internal class ReflectionCache
 	{

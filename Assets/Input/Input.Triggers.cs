@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	partial class Input
 	{

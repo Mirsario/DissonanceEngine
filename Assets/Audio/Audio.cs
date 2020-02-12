@@ -2,7 +2,7 @@ using System;
 using Dissonance.Framework;
 using Dissonance.Framework.OpenAL;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public static class Audio
 	{

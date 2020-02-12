@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEngine", "GameEngine.csproj", "{0524F800-4A8D-4D94-8706-66F40352CDAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DissonanceEngine", "DissonanceEngine.csproj", "{0524F800-4A8D-4D94-8706-66F40352CDAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

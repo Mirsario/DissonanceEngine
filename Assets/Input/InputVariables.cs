@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	internal class InputVariables
 	{

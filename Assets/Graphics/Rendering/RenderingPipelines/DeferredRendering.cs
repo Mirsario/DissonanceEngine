@@ -1,7 +1,7 @@
 ﻿using Dissonance.Framework.OpenGL;
 using System.Collections.Generic;
 
-namespace GameEngine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics.RenderingPipelines
 {
 	public class DeferredRendering : RenderingPipeline
 	{

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameEngine.Utils.Internal
+namespace Dissonance.Engine.Utils.Internal
 {
 	internal static class InternalUtils
 	{

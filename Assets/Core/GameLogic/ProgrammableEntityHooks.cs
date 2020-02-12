@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	internal static class ProgrammableEntityHooks
 	{

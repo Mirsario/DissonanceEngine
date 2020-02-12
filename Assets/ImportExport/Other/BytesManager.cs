@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class BytesManager : AssetManager<byte[]>
 	{

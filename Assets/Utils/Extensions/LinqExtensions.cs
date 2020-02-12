@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GameEngine.Utils.Extensions
+namespace Dissonance.Engine.Utils.Extensions
 {
 	public static class LinqExtensions
 	{

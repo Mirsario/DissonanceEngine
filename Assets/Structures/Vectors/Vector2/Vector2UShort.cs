@@ -1,4 +1,4 @@
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public partial struct Vector2UShort
 	{

@@ -5,15 +5,15 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Dissonance.Framework;
 using Dissonance.Framework.GLFW3;
-using GameEngine.Graphics;
-using GameEngine.Physics;
-using GameEngine.Core;
+using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Physics;
+using Dissonance.Engine.Core;
 using Dissonance.Framework.OpenGL;
 using Dissonance.Framework.DevIL;
 using System.Diagnostics;
 using System.Threading;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering

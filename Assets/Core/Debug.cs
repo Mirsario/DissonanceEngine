@@ -3,7 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public static class Debug
 	{

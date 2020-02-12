@@ -1,6 +1,6 @@
 ﻿/*using BulletSharp;
 
-namespace GameEngine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public abstract class CollisionMesh : Asset<CollisionMesh>
 	{

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Dissonance.Framework;
 using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public static partial class Rendering
 	{

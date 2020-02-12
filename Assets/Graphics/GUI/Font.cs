@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public class Font
 	{

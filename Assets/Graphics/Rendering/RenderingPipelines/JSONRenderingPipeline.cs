@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Dissonance.Framework;
 using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics.RenderingPipelines
 {
 	public class JSONRenderingPipeline : RenderingPipeline
 	{

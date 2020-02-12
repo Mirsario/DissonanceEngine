@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	public class AutoloadRequirement : Attribute

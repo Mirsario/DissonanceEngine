@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class MaterialCollection : ICollection,ICollection<Material>,IEnumerable,IEnumerable<Material>
 	{

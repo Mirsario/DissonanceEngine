@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace GameEngine.Utils.Extensions
+namespace Dissonance.Engine.Utils.Extensions
 {
 	internal static class Vector3Extensions
 	{

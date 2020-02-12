@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using GameEngine.Graphics.RenderingPipelines;
+using Dissonance.Engine.Graphics.RenderingPipelines;
 using Dissonance.Framework.OpenGL;
 using Dissonance.Framework.GLFW3;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.

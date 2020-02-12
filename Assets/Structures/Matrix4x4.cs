@@ -1,5 +1,5 @@
 using System;
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public struct Matrix4x4
 	{

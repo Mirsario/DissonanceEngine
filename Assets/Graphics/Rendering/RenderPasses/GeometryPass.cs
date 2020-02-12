@@ -1,10 +1,10 @@
-﻿using GameEngine.Physics;
+﻿using Dissonance.Engine.Physics;
 using Dissonance.Framework.OpenGL;
 using System;
 using System.Diagnostics;
 using Dissonance.Framework.GLFW3;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{

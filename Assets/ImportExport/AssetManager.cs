@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	//TODO: It's currently quite impossible to make format return, for example, an array of meshes. Have to study unity's implementation of all this and come up with something better.
 	public abstract class AssetManager

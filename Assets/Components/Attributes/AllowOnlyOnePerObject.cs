@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class AllowOnlyOnePerObject : ComponentAttribute
 	{

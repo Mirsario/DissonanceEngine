@@ -6,9 +6,9 @@ using System.Linq;
 using Ionic.Zip;
 using System.Text;
 using System.Runtime.Serialization;
-using GameEngine.Utils.Internal;
+using Dissonance.Engine.Utils.Internal;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	//TODO: Still refactoring...
 	//TODO: AssetManager getter methods aren't finished.

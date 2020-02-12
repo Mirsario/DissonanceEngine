@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class GameObject : ProgrammableEntity, IDisposable
 	{

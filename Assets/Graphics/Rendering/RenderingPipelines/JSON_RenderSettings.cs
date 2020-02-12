@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 
 #pragma warning disable CS0649
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	[JsonObject]
 	internal class JSON_RenderSettings

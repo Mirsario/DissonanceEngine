@@ -1,8 +1,8 @@
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 using System;
 using System.Linq;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class MeshRenderer : Renderer
 	{

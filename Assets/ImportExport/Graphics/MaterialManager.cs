@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using GameEngine.Graphics;
-using GameEngine.Utils.Extensions;
+using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Utils.Extensions;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	[AutoloadRequirement(typeof(ShaderManager))]
 	public class MaterialManager : AssetManager<Material>

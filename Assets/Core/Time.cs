@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public static class Time
 	{

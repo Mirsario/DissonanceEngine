@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	//Very aggressive class, be careful
 	public static partial class Mathf

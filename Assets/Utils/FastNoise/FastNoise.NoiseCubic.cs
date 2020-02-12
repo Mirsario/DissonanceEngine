@@ -4,7 +4,7 @@
 using System;
 using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
-namespace GameEngine.Utils
+namespace Dissonance.Engine.Utils
 {
 	public partial class FastNoise
 	{

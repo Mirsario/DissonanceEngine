@@ -1,12 +1,12 @@
 using Dissonance.Framework.OpenGL;
-using GameEngine.Graphics;
-using GameEngine.Utils.Extensions;
+using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Utils.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class ShaderManager : AssetManager<Shader[]>
 	{

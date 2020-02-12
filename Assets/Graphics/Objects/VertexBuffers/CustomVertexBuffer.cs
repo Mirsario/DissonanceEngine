@@ -1,5 +1,5 @@
 ﻿using Dissonance.Framework.OpenGL;
-using GameEngine.Utils.Internal;
+using Dissonance.Engine.Utils.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649 //Value is never assigned to.
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class CustomVertexBuffer : IDisposable
 	{

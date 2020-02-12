@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public class VertexBuffer : CustomVertexBuffer<Vector3>
 	{
