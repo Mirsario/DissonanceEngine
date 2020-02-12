@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class,AllowMultiple = false,Inherited = true)]
 	public abstract class ComponentAttribute : Attribute

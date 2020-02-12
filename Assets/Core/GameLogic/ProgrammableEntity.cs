@@ -1,4 +1,4 @@
-﻿namespace GameEngine
+﻿namespace Dissonance.Engine
 {
 	public abstract class ProgrammableEntity //TODO: Come up with a better name?
 	{

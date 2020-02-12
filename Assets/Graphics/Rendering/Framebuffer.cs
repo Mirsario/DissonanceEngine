@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using GameEngine.Utils;
+using Dissonance.Engine.Utils;
 using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	//TODO: WIP
 	//TODO: Some fields shouldn't be public

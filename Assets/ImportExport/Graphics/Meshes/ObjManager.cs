@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class ObjManager : AssetManager<Mesh>
 	{

@@ -1,6 +1,6 @@
 ﻿#pragma warning disable 0649
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public struct BoneWeights
 	{

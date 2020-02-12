@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine.Utils
+namespace Dissonance.Engine.Utils
 {
 	public static class ArrayUtils
 	{

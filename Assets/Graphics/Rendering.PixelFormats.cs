@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	partial class Rendering
 	{

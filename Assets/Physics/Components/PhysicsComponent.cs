@@ -1,4 +1,4 @@
-/*namespace GameEngine.Physics
+/*namespace Dissonance.Engine.Physics
 {
 	public abstract class PhysicsComponent : Component
 	{

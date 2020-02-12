@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameEngine.Core
+namespace Dissonance.Engine.Core
 {
 	public static class DllResolver
 	{

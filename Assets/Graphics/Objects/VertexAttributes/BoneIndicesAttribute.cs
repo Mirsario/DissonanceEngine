@@ -1,7 +1,7 @@
 ﻿using System;
 using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public class BoneIndicesAttribute : CustomVertexAttribute<BoneWeightsBuffer>
 	{

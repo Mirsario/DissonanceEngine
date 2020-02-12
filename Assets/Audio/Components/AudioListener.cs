@@ -1,7 +1,7 @@
 using Dissonance.Framework.OpenAL;
 using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	[AllowOnlyOneInWorld]
 	public class AudioListener : Component

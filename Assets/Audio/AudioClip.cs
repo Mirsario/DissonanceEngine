@@ -1,7 +1,7 @@
 using System;
 using Dissonance.Framework.OpenAL;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class AudioClip : Asset<AudioClip>
 	{

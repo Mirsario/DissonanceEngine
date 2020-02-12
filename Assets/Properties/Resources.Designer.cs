@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GameEngine.Properties
+namespace Dissonance.Engine.Properties
 {
 
 

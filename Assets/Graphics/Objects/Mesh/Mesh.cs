@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 using Dissonance.Framework.OpenGL;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable 0649
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class Mesh : Asset<Mesh>
 	{

@@ -1,6 +1,6 @@
 ﻿using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	[RenderPassInfo(acceptedShaderNames = new[] { "point","directional","spot" })]
 	public class DeferredLightingPass : RenderPass

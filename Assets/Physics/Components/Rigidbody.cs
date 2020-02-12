@@ -1,6 +1,6 @@
-/*using GameEngine.Utils.Extensions;
+/*using Dissonance.Engine.Utils.Extensions;
 
-namespace GameEngine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public class Rigidbody : RigidbodyBase
 	{

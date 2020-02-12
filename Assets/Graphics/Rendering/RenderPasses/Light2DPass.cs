@@ -1,6 +1,6 @@
 ﻿using Dissonance.Framework.OpenGL;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public class Light2DPass : RenderPass
 	{

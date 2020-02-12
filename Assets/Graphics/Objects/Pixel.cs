@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public struct Pixel
 	{

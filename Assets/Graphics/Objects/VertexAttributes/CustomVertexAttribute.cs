@@ -6,7 +6,7 @@ using System.Reflection;
 
 #pragma warning disable CS0649 //Value is never assigned to.
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class CustomVertexAttribute
 	{

@@ -5,7 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using DECIMAL = System.Single;
 
-namespace GameEngine.Utils
+namespace Dissonance.Engine.Utils
 {
 	public partial class FastNoise
 	{

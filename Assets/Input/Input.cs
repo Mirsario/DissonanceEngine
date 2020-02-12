@@ -2,7 +2,7 @@ using Dissonance.Framework.GLFW3;
 using System;
 using System.Collections.Generic;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public static partial class Input
 	{

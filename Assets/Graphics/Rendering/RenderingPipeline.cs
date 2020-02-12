@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class RenderingPipeline : IDisposable
 	{

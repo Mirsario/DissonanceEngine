@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	//TODO: Actually implement animations
 	public class AnimationBone : IDisposable

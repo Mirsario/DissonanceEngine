@@ -3,9 +3,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Dissonance.Framework.DevIL;
 using Dissonance.Framework.OpenGL;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class PngManager : AssetManager<Texture>
 	{

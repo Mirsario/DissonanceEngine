@@ -1,7 +1,7 @@
 /*using Dissonance.Framework.OpenGL;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class SkinnedMeshRenderer : MeshRenderer
 	{

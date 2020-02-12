@@ -3,7 +3,7 @@ using System;
 
 #pragma warning disable 0649
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public static class DrawUtils
 	{

@@ -1,7 +1,7 @@
 using System;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 
-namespace GameEngine.Utils.Extensions
+namespace Dissonance.Engine.Utils.Extensions
 {
 	//TODO: Move regions into their own extension classes
 	public static class PixelExtensions

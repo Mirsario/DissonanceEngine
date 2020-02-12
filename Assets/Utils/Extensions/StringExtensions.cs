@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GameEngine.Utils.Extensions
+namespace Dissonance.Engine.Utils.Extensions
 {
 	public static class StringExtensions
 	{

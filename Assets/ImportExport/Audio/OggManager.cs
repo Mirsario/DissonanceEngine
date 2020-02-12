@@ -1,7 +1,7 @@
 using System.IO;
 using NVorbis;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class OggManager : AssetManager<AudioClip>
 	{

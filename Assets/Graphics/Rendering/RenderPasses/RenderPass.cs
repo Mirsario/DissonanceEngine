@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class RenderPass : IDisposable
 	{

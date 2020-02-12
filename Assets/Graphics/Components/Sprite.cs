@@ -1,8 +1,8 @@
 using Dissonance.Framework.OpenGL;
-using GameEngine.Graphics;
+using Dissonance.Engine.Graphics;
 using System;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class Sprite : Renderer
 	{

@@ -4,7 +4,7 @@ using Dissonance.Framework;
 using Dissonance.Framework.OpenGL;
 using DSU = GameEngine.Graphics.DefaultShaderUniforms;
 
-namespace GameEngine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	//TODO: Initialize static fields after Graphics.Init();
 	//TODO: Uniforms' code is quite terrible.

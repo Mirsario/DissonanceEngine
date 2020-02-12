@@ -1,4 +1,4 @@
-﻿namespace GameEngine.Graphics
+﻿namespace Dissonance.Engine.Graphics
 {
 	public static class PrimitiveMeshes
 	{

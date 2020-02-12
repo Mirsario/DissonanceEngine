@@ -1,4 +1,4 @@
-/*namespace GameEngine.Physics
+/*namespace Dissonance.Engine.Physics
 {
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent

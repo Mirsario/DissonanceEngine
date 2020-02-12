@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using GameEngine.Utils.Extensions;
+using Dissonance.Engine.Utils.Extensions;
 using Ionic.Zlib;
 
-namespace GameEngine
+namespace Dissonance.Engine
 {
 	public class MeshManager : AssetManager<Mesh>
 	{
