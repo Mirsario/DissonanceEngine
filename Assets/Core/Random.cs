@@ -9,10 +9,6 @@ namespace GameEngine
 
 		private static int globalSeed;
 
-		internal Random random;
-
-		private int seed;
-
 		public static int GlobalSeed {
 			get => globalSeed;
 			set {
@@ -20,6 +16,10 @@ namespace GameEngine
 				staticRandom = new Random(globalSeed);
 			}
 		}
+
+		internal Random random;
+
+		private int seed;
 		
 		public int Seed {
 			get => seed;
@@ -69,9 +69,11 @@ namespace GameEngine
 		{
 			if(minValue>maxValue) {
 				float tempVal = maxValue;
+
 				maxValue = minValue;
 				minValue = tempVal;
 			}
+
 			return minValue+(float)staticRandom.NextDouble()*(maxValue-minValue);
 		}
 	}
