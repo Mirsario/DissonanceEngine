@@ -26,7 +26,11 @@ namespace GameEngine
 		{
 			Vector3 pos = Transform.Position;
 
-			AL.Listener3(ListenerVector3Float.Position,pos.x,pos.y,pos.z);
+			if(pos.HasNaNs) {
+				throw new Exception($"NaNs values detected in {GameObject.GetType().Name}'s Transform.");
+			}
+
+			AL.Listener3(ListenerFloat3.Position,pos.x,pos.y,pos.z);
 
 			Vector3 lookAt = -Transform.Forward;
 			Vector3 up = Transform.Up;
