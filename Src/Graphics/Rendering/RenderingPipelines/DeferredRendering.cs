@@ -77,7 +77,7 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 				}),
 
 				//GUI
-				//RenderPass.Create<GUIPass>("GUI")
+				RenderPass.Create<GUIPass>("GUI")
 			});
 
 			Framebuffer.Bind(null);
