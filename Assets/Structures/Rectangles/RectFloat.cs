@@ -32,6 +32,15 @@ namespace GameEngine
 				height = value.y;
 			}
 		}
+		public Vector4 Points {
+			get => new Vector4(x,y,x+width,y+height);
+			set {
+				x = value.x;
+				y = value.y;
+				width = value.z-x;
+				height = value.w-y;
+			}
+		}
 
 		public RectFloat(float x,float y,float width,float height)
 		{
