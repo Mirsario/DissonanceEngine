@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Dissonance.Framework;
 using Dissonance.Framework.OpenGL;
-using DSU = GameEngine.Graphics.DefaultShaderUniforms;
+using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 
 namespace Dissonance.Engine.Graphics
 {
