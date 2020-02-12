@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Dissonance.Framework.GLFW3;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameEngine
 {
@@ -11,13 +13,10 @@ namespace GameEngine
 		//public MouseState mouseStatePrev;
 		public int mouseWheel;
 		public Vector2 mousePosition;
-		public Vector2 mouseDelta;
 		public bool[] mouseButtons = new bool[Input.MaxMouseButtons];
-		public bool[] mouseButtonsPrev = new bool[Input.MaxMouseButtons];
 
 		//Keyboard
-		public HashSet<Keys> pressedKeys = new HashSet<Keys>();
-		public HashSet<Keys> pressedKeysPrev = new HashSet<Keys>();
+		public Dictionary<Keys,byte> pressedKeys = new Dictionary<Keys,byte>(); //Value is amount of ticks left until released.
 		public string inputString = "";
 
 		//Gamepads
@@ -25,6 +24,61 @@ namespace GameEngine
 
 		//Universal
 		public HashSet<string> pressedButtons = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
-		public HashSet<string> pressedButtonsPrev = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
+		public void Update()
+		{
+			var pairs = pressedKeys.ToArray();
+
+			foreach(var pair in pairs) {
+				byte release = pair.Value;
+
+				if(release>0) {
+					release--;
+
+					if(release==0) {
+						pressedKeys.Remove(pair.Key);
+					} else {
+						pressedKeys[pair.Key] = release;
+					}
+				}
+			}
+		}
+		public void CopyTo(InputVariables other,bool reset = true)
+		{
+			if(reset) {
+				other.Reset(false);
+			}
+
+			other.mouseWheel = mouseWheel;
+			other.mousePosition = mousePosition;
+			other.inputString = inputString;
+
+			foreach(var pair in pressedKeys) {
+				other.pressedKeys.Add(pair.Key,pair.Value);
+			}
+
+			foreach(string str in pressedButtons) {
+				other.pressedButtons.Add(str);
+			}
+
+			for(int i = 0;i<Input.MaxMouseButtons;i++) {
+				other.mouseButtons[i] = mouseButtons[i];
+			}
+		}
+		public void Reset(bool resetArrays = true)
+		{
+			mouseWheel = 0;
+			mousePosition = Vector2.Zero;
+			inputString = string.Empty;
+
+			pressedKeys.Clear();
+			pressedButtons.Clear();
+
+			if(resetArrays) {
+				for(int i = 0;i<Input.MaxMouseButtons;i++) {
+					mouseButtons[i] = false;
+				}
+			}
+		}
 	}
 }
