@@ -26,12 +26,20 @@ namespace GameEngine
 		internal SummInput fixedInput;
 		internal SummInput renderInput;
 
-		public float Value => Game.fixedUpdate ? fixedInput.analogInput : renderInput.analogInput;
-		public bool IsPressed => Game.fixedUpdate ? fixedInput.isPressed : renderInput.isPressed;
-		public bool WasPressed => Game.fixedUpdate ? fixedInput.wasPressed : renderInput.wasPressed;
-		public bool JustPressed => Game.fixedUpdate ? (fixedInput.isPressed && !fixedInput.wasPressed) : (renderInput.isPressed && !renderInput.wasPressed);
-		public bool JustReleased => Game.fixedUpdate ? (fixedInput.wasPressed && !fixedInput.isPressed) : (renderInput.wasPressed && !renderInput.isPressed);
+		public int Id { get; internal set; }
 
+		public bool IsPressed => CurrentInput.isPressed;
+		public bool WasPressed => CurrentInput.wasPressed;
+		public bool JustPressed => CurrentInput.isPressed && !CurrentInput.wasPressed;
+		public bool JustReleased => CurrentInput.wasPressed && !CurrentInput.isPressed;
+
+		public float Value {
+			get => CurrentInput.analogInput;
+			internal set {
+				CurrentInput.analogInput = Mathf.Clamp(value,minValue,maxValue);
+				CurrentInput.isPressed = value!=0f;
+			}
+		}
 		public InputBinding[] Bindings {
 			set {
 				if(value==null) {
@@ -47,11 +55,7 @@ namespace GameEngine
 			}
 		}
 
-		internal int id;
-		public int Id {
-			get => id;
-			internal set => id = value;
-		}
+		internal ref SummInput CurrentInput => ref (Game.fixedUpdate ? ref fixedInput : ref renderInput);
 
 		internal InputTrigger() {}
 
@@ -64,15 +68,6 @@ namespace GameEngine
 			this.maxValue = maxValue;
 
 			Bindings = bindings;
-		}
-
-		internal void SetAnalogValue(float fixedValue,float renderValue)
-		{
-			fixedInput.analogInput = fixedValue<minValue ? minValue : (fixedValue>maxValue ? maxValue : fixedValue);
-			fixedInput.isPressed = fixedInput.analogInput!=0f;
-
-			renderInput.analogInput = renderValue<minValue ? minValue : (renderValue>maxValue ? maxValue : renderValue);
-			renderInput.isPressed = renderInput.analogInput!=0f;
 		}
 	}
 }
