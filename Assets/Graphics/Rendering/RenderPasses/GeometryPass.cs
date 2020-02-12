@@ -2,6 +2,7 @@
 using Dissonance.Framework.OpenGL;
 using System;
 using System.Diagnostics;
+using Dissonance.Framework.GLFW3;
 
 namespace GameEngine.Graphics
 {

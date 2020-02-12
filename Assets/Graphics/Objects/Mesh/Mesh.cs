@@ -56,7 +56,7 @@ namespace GameEngine
 			}
 		}
 
-		public virtual void DrawMesh()
+		public virtual void Render()
 		{
 			GL.BindVertexArray(vertexArrayId);
 
@@ -137,6 +137,8 @@ namespace GameEngine
 			GL.BindBuffer(BufferTarget.ArrayBuffer,0);
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,0);
 
+			Rendering.CheckGLErrors();
+
 			IsReady = true;
 		}
 
@@ -144,7 +146,7 @@ namespace GameEngine
 		public T GetBuffer<T>() where T : CustomVertexBuffer => (T)VertexBuffers[CustomVertexBuffer.GetId<T>()];
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ref TData[] VertexData<TBuffer, TData>() where TBuffer : CustomVertexBuffer<TData> where TData : unmanaged => ref GetBuffer<TBuffer>().data;
+		public ref TData[] VertexData<TBuffer, TData>() where TBuffer : CustomVertexBuffer<TData> where TData : unmanaged => ref ((TBuffer)VertexBuffers[CustomVertexBuffer.IDs<TBuffer>.id]).data;
 
 		public static Mesh CombineMeshes(params Mesh[] meshes) => CombineMeshesInternal(meshes);
 		public static Mesh CombineMeshes(params (Mesh mesh,Vector3 offset)[] meshesWithOffsets)
