@@ -26,12 +26,12 @@ namespace Dissonance.Engine
 				audioDevice = ALC.OpenDevice(null);
 				audioContext = ALC.CreateContext(audioDevice,new int[] { });
 			}
-			catch {
-				throw new AudioException("An issue occured during Audio initialization.\r\nIs OpenAL installed?");
+			catch(Exception e) {
+				throw new AudioException("An issue occured during Audio initialization.",e);
 			}
 
 			if(!ALC.MakeContextCurrent(audioContext)) {
-				throw new AudioException("An issue occured during Audio initialization. Unable to make the audio context current.");
+				throw new AudioException("An issue occured during Audio initialization: Unable to make the audio context current.");
 			}
 
 			ALC.SuspendContext(audioContext);

@@ -1,4 +1,4 @@
-/*namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public class Collision
 	{
@@ -15,4 +15,4 @@
 			Contacts = contacts;
 		}
 	}
-}*/
+}

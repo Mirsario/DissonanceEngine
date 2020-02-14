@@ -210,12 +210,14 @@ namespace Dissonance.Engine
 					int movedNum = 0;
 
 					for(int j = 0;j<move.Length;j++) {
-						if(move[j]) {
-							nextList.Add(list[j-movedNum]);
-							list.RemoveAt(j-movedNum);
-
-							movedNum++;
+						if(!move[j]) {
+							continue;
 						}
+
+						nextList.Add(list[j-movedNum]);
+						list.RemoveAt(j-movedNum);
+
+						movedNum++;
 					}
 				}
 			}
@@ -312,6 +314,7 @@ namespace Dissonance.Engine
 			}
 
 			//Enumerate through these assets in loading order
+
 			foreach(var managers in autoloadOrder) {
 				foreach(var manager in managers) {
 					if(!gameAssetsByManager.TryGetValue(manager,out var fileList)) {
@@ -320,9 +323,10 @@ namespace Dissonance.Engine
 
 					for(int k = 0;k<fileList.Count;k++) {
 						try {
-							//TODO: This could use some improving.
+							//TODO: This could use some heavy improving.
 
 							var tType = manager.GetType().BaseType?.GetGenericArguments()[0];
+
 							if(tType==null) {
 								continue;
 							}
@@ -374,7 +378,7 @@ namespace Dissonance.Engine
 				string lowerPath = path.ToLower();
 
 				if(!lowerPath.StartsWith(BuiltInAssetsFolder.ToLower()) && !lowerPath.StartsWith("assets/")) {
-					path = importingBuiltInAssets ? BuiltInAssetsFolder+path : "Assets/"+path;
+					path = importingBuiltInAssets ? BuiltInAssetsFolder+path : $"Assets/{path}";
 				}
 			}
 		}
