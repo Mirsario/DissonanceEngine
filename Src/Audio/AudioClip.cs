@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Dissonance.Framework.OpenAL;
 
 namespace Dissonance.Engine
@@ -42,7 +43,7 @@ namespace Dissonance.Engine
 			var format = GetSoundFormat(channelsNum,bytesPerSample);
 
 			fixed(T* ptr = data) {
-				AL.BufferData(bufferId,format,(IntPtr)ptr,data.Length*bytesPerSample,sampleRate);
+				AL.BufferData(bufferId,format,(IntPtr)ptr,data.Length*Marshal.SizeOf<T>(),sampleRate);
 			}
 
 			Audio.CheckALErrors();
