@@ -15,6 +15,7 @@ using System.Threading;
 
 namespace Dissonance.Engine
 {
+	//TODO: A lot of code here is temporary.
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering
 	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets

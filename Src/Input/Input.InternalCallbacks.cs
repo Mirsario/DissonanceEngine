@@ -23,8 +23,6 @@ namespace Dissonance.Engine
 		}
 		private static void MouseButtonCallback(IntPtr window,MouseButton button,MouseAction action,KeyModifiers mods)
 		{
-			Console.WriteLine($"Mouse Button: {(MouseButton)button}\t\taction: {action}\t\tmods: {mods}");
-
 			bool value = action==MouseAction.Press;
 
 			fixedInput.mouseButtons[(int)button] = value;
@@ -44,8 +42,6 @@ namespace Dissonance.Engine
 			if(action==KeyAction.Repeat) {
 				return;
 			}
-
-			Console.WriteLine($"Key: {key}\t\tscanCode: {scanCode}\t\taction: {action}\t\tmods: {mods}");
 
 			static void InputAction(Action<InputVariables> action)
 			{
