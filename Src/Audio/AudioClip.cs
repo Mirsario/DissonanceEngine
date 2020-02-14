@@ -28,7 +28,7 @@ namespace Dissonance.Engine
 			}
 		}
 
-		internal unsafe void SetData<T>(T[] data,int channelsNum,int bytesPerSample,int sampleRate) where T : unmanaged
+		public unsafe void SetData<T>(T[] data,int channelsNum,int bytesPerSample,int sampleRate) where T : unmanaged
 		{
 			if(data==null) {
 				throw new ArgumentNullException(nameof(data));
@@ -49,7 +49,7 @@ namespace Dissonance.Engine
 			Audio.CheckALErrors();
 		}
 
-		private static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch {
+		public static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch {
 			1 => channels==1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
 			2 => channels==1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
 			4 => channels==1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,
