@@ -217,22 +217,8 @@ namespace Dissonance.Engine
 
 			AL.SourcePlay(sourceId);
 		}
-		public void Pause()
-		{
-			if(clip==null) {
-				throw new Exception("This AudioSource has no clip set!");
-			}
-
-			AL.SourcePause(sourceId);
-		}
-		public void Stop()
-		{
-			if(clip==null) {
-				throw new Exception("This AudioSource has no clip set!");
-			}
-
-			AL.SourceStop(sourceId);
-		}
+		public void Pause() => AL.SourcePause(sourceId);
+		public void Stop() => AL.SourceStop(sourceId);
 	}
 }
 
