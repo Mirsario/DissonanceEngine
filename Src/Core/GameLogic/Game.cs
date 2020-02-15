@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Dissonance.Framework;
-using Dissonance.Framework.GLFW3;
+using Dissonance.Framework.Windowing;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Physics;
 using Dissonance.Engine.Core;
-using Dissonance.Framework.OpenGL;
-using Dissonance.Framework.DevIL;
+using Dissonance.Framework.Graphics;
+using Dissonance.Framework.Imaging;
 using System.Diagnostics;
 using System.Threading;
 
@@ -182,7 +182,7 @@ namespace Dissonance.Engine
 			bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
 			if(Screen.lockCursor && isFocused) {
-				var center = Screen.WindowCenter;
+				var center = Screen.Center;
 
 				GLFW.SetCursorPos(Game.window,center.x,center.y);
 			}

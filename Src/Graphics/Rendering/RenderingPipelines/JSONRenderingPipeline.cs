@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Dissonance.Framework;
-using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics.RenderingPipelines
 {

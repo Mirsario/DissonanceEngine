@@ -1,4 +1,4 @@
-﻿using Dissonance.Framework.OpenGL;
+﻿using Dissonance.Framework.Graphics;
 using System.Collections.Generic;
 
 namespace Dissonance.Engine.Graphics.RenderingPipelines

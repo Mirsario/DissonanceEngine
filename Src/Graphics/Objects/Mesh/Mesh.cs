@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.Graphics;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable 0649

@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Dissonance.Framework;
-using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {

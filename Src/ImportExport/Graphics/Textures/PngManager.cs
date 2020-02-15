@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using Dissonance.Framework.DevIL;
+using Dissonance.Framework.Imaging;
 using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine

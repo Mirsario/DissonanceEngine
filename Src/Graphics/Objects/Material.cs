@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Dissonance.Engine.Utils.Internal;
 

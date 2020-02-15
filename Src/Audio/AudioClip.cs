@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Dissonance.Framework.OpenAL;
+using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine
 {
