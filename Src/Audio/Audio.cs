@@ -34,8 +34,6 @@ namespace Dissonance.Engine
 				throw new AudioException("An issue occured during Audio initialization: Unable to make the audio context current.");
 			}
 
-			ALC.SuspendContext(audioContext);
-
 			CheckALErrors();
 			
 			AL.DistanceModel(DistanceModel.LinearDistanceClamped);
