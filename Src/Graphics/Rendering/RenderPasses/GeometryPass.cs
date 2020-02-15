@@ -1,8 +1,8 @@
 ﻿using Dissonance.Engine.Physics;
-using Dissonance.Framework.OpenGL;
+using Dissonance.Framework.Graphics;
 using System;
 using System.Diagnostics;
-using Dissonance.Framework.GLFW3;
+using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Graphics
 {

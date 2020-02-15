@@ -1,4 +1,4 @@
-using Dissonance.Framework.OpenAL;
+using Dissonance.Framework.Audio;
 using System;
 
 namespace Dissonance.Engine

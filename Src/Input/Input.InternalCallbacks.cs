@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
-using Dissonance.Framework.GLFW3;
+using Dissonance.Framework.Windowing;
+using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine
 {

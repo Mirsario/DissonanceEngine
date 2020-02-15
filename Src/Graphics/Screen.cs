@@ -1,4 +1,4 @@
-﻿using Dissonance.Framework.GLFW3;
+﻿using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {

@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Core
 			"NVorbis",
 			"Ionic.Zip",
 			"Newtonsoft.Json",
-			"BulletSharp",
+			"BulletSharp"
 		};
 
 		private static Dictionary<string,Assembly> assemblyCache;
