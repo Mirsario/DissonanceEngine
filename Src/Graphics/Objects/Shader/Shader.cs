@@ -47,7 +47,8 @@ namespace Dissonance.Engine.Graphics
 
 		public override string ToString() => Name;
 
-		public int GetUniformLocation(string uniformName) => uniforms[uniformName].location;
+		public int GetUniformLocation(string uniformName)
+			=> uniforms.TryGetValue(uniformName,out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
 		public bool TryGetUniformLocation(string uniformName,out int location)
 		{
 			if(uniforms.TryGetValue(uniformName,out var uniform)) {
