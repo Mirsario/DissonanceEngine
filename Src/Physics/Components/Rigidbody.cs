@@ -1,5 +1,3 @@
-/*using Dissonance.Engine.Utils.Extensions;
-
 namespace Dissonance.Engine.Physics
 {
 	public class Rigidbody : RigidbodyBase
@@ -25,7 +23,7 @@ namespace Dissonance.Engine.Physics
 				gameObject.rigidbodyInternal.btRigidbody.Activate();
 			}
 
-			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force.ToBulletVector3(),relativePos.ToBulletVector3());
+			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force,relativePos);
 		}
 	}
-}*/
+}

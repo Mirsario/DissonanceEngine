@@ -1,4 +1,4 @@
-/*using Dissonance.Engine.Physics;
+using Dissonance.Engine.Physics;
 using System;
 using System.IO;
 
@@ -13,9 +13,11 @@ namespace Dissonance.Engine
 			var mesh = Resources.ImportFromStream<Mesh>(stream,fileName:fileName);
 
 			var collisionMesh = new ConvexCollisionMesh();
+
 			collisionMesh.SetupFromMesh(mesh);
+
 			return collisionMesh;
 		}
 		public override void Export(ConvexCollisionMesh mesh,Stream stream) => throw new NotImplementedException();
 	}
-}*/
+}

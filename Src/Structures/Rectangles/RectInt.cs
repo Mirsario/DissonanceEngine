@@ -41,9 +41,9 @@ namespace Dissonance.Engine
 			this.height = height;
 		}
 
-		public bool Contains(Vector2 point,bool notOnBorders = false)
+		public bool Contains(Vector2 point,bool inclusive = false)
 		{
-			if(notOnBorders) {
+			if(inclusive) {
 				return point.x>x && point.x<x+width && point.y>y && point.y<y+height;
 			}
 

@@ -1,8 +1,9 @@
-/*namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public class MeshCollider : Collider
 	{
 		protected CollisionMesh mesh;
+
 		public CollisionMesh Mesh {
 			get => mesh;
 			set {
@@ -21,4 +22,4 @@
 			base.UpdateCollider();
 		}
 	}
-}*/
+}

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
-	public partial struct Vector2
+	public struct Vector2
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2));
 		public static readonly Vector2 Zero = default;
@@ -24,19 +24,16 @@ namespace Dissonance.Engine
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y);
 
 		public float this[int index] {
-			get {
-				return index switch {
-					0 => x,
-					1 => y,
-					_ => throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1,inclusive."),
-				};
-			}
+			get => index switch {
+				0 => x,
+				1 => y,
+				_ => throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1, inclusively."),
+			};
 			set {
 				switch(index) {
 					case 0: x = value; return;
 					case 1: y = value; return;
-					default:
-						throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1,inclusive.");
+					default: throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1, inclusively.");
 				}
 			}
 		}

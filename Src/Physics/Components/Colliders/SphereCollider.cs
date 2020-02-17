@@ -1,10 +1,11 @@
-/*using BulletSharp;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
 	public class SphereCollider : Collider
 	{
 		protected float radius = 1f;
+
 		public float Radius {
 			get => radius;
 			set {
@@ -28,4 +29,4 @@ namespace Dissonance.Engine.Physics
 			base.UpdateCollider();
 		}
 	}
-}*/
+}

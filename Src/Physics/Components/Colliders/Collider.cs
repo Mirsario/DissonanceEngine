@@ -1,4 +1,4 @@
-/*using BulletSharp;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -6,9 +6,10 @@ namespace Dissonance.Engine.Physics
 	{
 		internal CollisionShape collShape;
 
+		protected Vector3 offset = Vector3.Zero;
+
 		private bool needsUpdate;
 
-		protected Vector3 offset = Vector3.Zero;
 		public Vector3 Offset {
 			get => offset;
 			set {
@@ -18,6 +19,17 @@ namespace Dissonance.Engine.Physics
 					TryUpdateCollider();
 				}
 			}
+		}
+
+		internal virtual void UpdateCollider()
+		{
+			if(collShape!=null) {
+				collShape.UserObject = this;
+			}
+
+			gameObject.rigidbodyInternal.UpdateShape();
+
+			needsUpdate = false;
 		}
 
 		protected override void OnInit()
@@ -35,16 +47,6 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 
-		internal virtual void UpdateCollider()
-		{
-			if(collShape!=null) {
-				collShape.UserObject = this;
-			}
-
-			gameObject.rigidbodyInternal.UpdateShape();
-			needsUpdate = false;
-		}
-
 		protected void TryUpdateCollider()
 		{
 			if(enabled) {
@@ -54,4 +56,4 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 	}
-}*/
+}

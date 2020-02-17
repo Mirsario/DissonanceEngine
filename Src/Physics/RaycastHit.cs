@@ -1,4 +1,4 @@
-﻿/*namespace Dissonance.Engine.Physics
+﻿namespace Dissonance.Engine.Physics
 {
 	public struct RaycastHit
 	{
@@ -8,4 +8,4 @@
 		public Collider collider;
 		public GameObject gameObject;
 	}
-}*/
+}

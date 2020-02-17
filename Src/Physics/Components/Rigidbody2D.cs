@@ -1,4 +1,4 @@
-/*namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics
 {
 	public class Rigidbody2D : RigidbodyBase
 	{
@@ -22,8 +22,9 @@
 		{
 			base.OnEnable();
 
-			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new BulletSharp.Vector3(1f,1f,0f);
+			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new BulletSharp.Math.Vector3(1f,1f,0f);
 		}
+
 		public void ApplyForce(Vector2 force,Vector2 relativePos)
 		{
 			var btRigidbody = gameObject.rigidbodyInternal.btRigidbody;
@@ -32,7 +33,7 @@
 				btRigidbody.Activate();
 			}
 
-			btRigidbody.ApplyForce(new BulletSharp.Vector3(force.x,force.y,0f),new BulletSharp.Vector3(relativePos.x,relativePos.y,0f));
+			btRigidbody.ApplyForce(new BulletSharp.Math.Vector3(force.x,force.y,0f),new BulletSharp.Math.Vector3(relativePos.x,relativePos.y,0f));
 		}
 	}
-}*/
+}

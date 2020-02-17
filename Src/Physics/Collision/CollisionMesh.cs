@@ -1,4 +1,4 @@
-﻿/*using BulletSharp;
+﻿using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -8,4 +8,4 @@ namespace Dissonance.Engine.Physics
 
 		public abstract void SetupFromMesh(Mesh mesh);
 	}
-}*/
+}
