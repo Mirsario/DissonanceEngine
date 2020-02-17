@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>DissonanceEngine</AssemblyName>
-    <RootNamespace>DissonanceEngine</RootNamespace>
+    <RootNamespace>Dissonance.Engine</RootNamespace>
     <Platforms>AnyCPU</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>

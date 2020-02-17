@@ -1,9 +1,11 @@
 ﻿using Dissonance.Framework.Windowing;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Graphics
 {
 	public static class Screen
 	{
+		public static bool lockCursor;
+
 		internal static int width;
 		internal static int height;
 		internal static Vector2Int size;
@@ -15,8 +17,7 @@ namespace Dissonance.Engine
 		internal static Vector2Int windowLocation;
 		internal static Vector2 windowCenter;
 
-		public static bool lockCursor;
-		public static bool showCursor;
+		private static CursorState cursorState;
 
 		public static int Width => width;
 		public static int Height => height;
@@ -48,10 +49,9 @@ namespace Dissonance.Engine
 			}
 		}*/
 
-		public static bool CursorVisible {
-			set {
-				GLFW.SetInputMode(Game.window,GLFW.CURSOR,value ? GLFW.CURSOR_NORMAL : GLFW.CURSOR_HIDDEN);
-			}
+		public static CursorState CursorState {
+			get => cursorState;
+			set => GLFW.SetInputMode(Game.window,GLFW.CURSOR,(int)(cursorState = value));
 		}
 
 		internal static void UpdateValues()

@@ -1,5 +1,5 @@
-﻿using Dissonance.Framework.Windowing.Input;
-using System;
+﻿using System;
+using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine
 {
@@ -13,8 +13,7 @@ namespace Dissonance.Engine
 			//Gamepad
 		}
 
-		public readonly BindingType Type;
-		public readonly object Binding;
+		public readonly string Binding;
 
 		public float deadZone;
 		public float sensitivity;
@@ -27,22 +26,8 @@ namespace Dissonance.Engine
 				return (value>deadZone || value<-deadZone) ? (inversed ? -value : value)*sensitivity : 0f;
 			}
 		}
-		public float RawValue => Type switch {
-			BindingType.Keyboard => Input.GetKey((Keys)Binding) ? 1f : 0f,
-			BindingType.Mouse => Input.GetMouseButton((MouseButton)Binding) ? 1f : 0f,
-			_ => 0f
-		};
+		public float RawValue => Input.GetSignal(Binding);
 
-		public InputBinding(Keys input,float sensitivity = 1f,float deadZone = 0.2f,bool inversed = false) : this(sensitivity,deadZone,inversed)
-		{
-			Type = BindingType.Keyboard;
-			Binding = input;
-		}
-		public InputBinding(MouseButton input,float sensitivity = 1f,float deadZone = 0.2f,bool inversed = false) : this(sensitivity,deadZone,inversed)
-		{
-			Type = BindingType.Mouse;
-			Binding = input;
-		}
 		public InputBinding(string input,float sensitivity = 1f,float deadZone = 0.2f) : this(sensitivity,deadZone,false)
 		{
 			if(string.IsNullOrWhiteSpace(input)) {
@@ -59,21 +44,7 @@ namespace Dissonance.Engine
 				input = input.Substring(1);
 			}
 
-			if(Enum.TryParse(input,out Keys keyResult)) {
-				Type = BindingType.Keyboard;
-				Binding = keyResult;
-				return;
-			}
-
-			if(Enum.TryParse(input,out MouseButton mouseResult)) {
-				Type = BindingType.Mouse;
-				Binding = mouseResult;
-				return;
-			}
-
-			Type = BindingType.Unknown;
-
-			//throw new ArgumentException($"Unable to parse input string '{input}' to a binding.");
+			Binding = input;
 		}
 
 		protected InputBinding(float sensitivity = 1f,float deadZone = 0.2f,bool inversed = false)
@@ -83,8 +54,8 @@ namespace Dissonance.Engine
 			this.inversed = inversed;
 		}
 
-		public static implicit operator InputBinding(MouseButton button) => new InputBinding(button);
-		public static implicit operator InputBinding(Keys key) => new InputBinding(key);
+		public static implicit operator InputBinding(MouseButton button) => new InputBinding($"Mouse{button}");
+		public static implicit operator InputBinding(Keys key) => new InputBinding(key.ToString());
 		public static implicit operator InputBinding(string str) => new InputBinding(str);
 	}
 }
