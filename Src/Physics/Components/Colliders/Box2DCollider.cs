@@ -1,4 +1,4 @@
-/*using BulletSharp;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -29,4 +29,4 @@ namespace Dissonance.Engine.Physics
 			base.UpdateCollider();
 		}
 	}
-}*/
+}

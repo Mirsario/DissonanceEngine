@@ -1,4 +1,4 @@
-/*namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics
 {
 	[AllowOnlyOnePerObject]
 	public class RigidbodyBase : PhysicsComponent
@@ -6,7 +6,7 @@
 		protected bool isKinematic;
 		protected bool useGravity;
 
-		public bool WantsSleeping => gameObject.rigidbodyInternal.btRigidbody.WantsSleeping;
+		public bool WantsSleeping => gameObject.rigidbodyInternal.btRigidbody.WantsSleeping();
 
 		public bool IsKinematic {
 			get => isKinematic;
@@ -58,9 +58,6 @@
 
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Static;
 		}
-		protected override void OnDispose()
-		{
-			OnDisable();
-		}
+		protected override void OnDispose() => OnDisable();
 	}
-}*/
+}

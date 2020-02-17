@@ -35,6 +35,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="BulletSharp">
+      <HintPath>References\BulletSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>References\Ionic.Zip.dll</HintPath>
       <Private>false</Private>

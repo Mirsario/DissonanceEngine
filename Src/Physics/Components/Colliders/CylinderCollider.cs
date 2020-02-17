@@ -1,5 +1,4 @@
-/*using BulletSharp;
-using Dissonance.Engine.Utils.Extensions;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -21,12 +20,13 @@ namespace Dissonance.Engine.Physics
 		{
 			if(collShape!=null) {
 				collShape.Dispose();
+
 				collShape = null;
 			}
 
-			collShape = new CylinderShape(size.ToBulletVector3()*0.5f);
+			collShape = new CylinderShape(size*0.5f);
 
 			base.UpdateCollider();
 		}
 	}
-}*/
+}

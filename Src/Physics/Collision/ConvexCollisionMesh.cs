@@ -1,5 +1,4 @@
-﻿/*using BulletSharp;
-using Dissonance.Engine.Utils.Extensions;
+﻿using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -12,11 +11,13 @@ namespace Dissonance.Engine.Physics
 
 			int i = 0;
 
+			var vertices = mesh.Vertices;
+
 			while(i<mesh.triangles.Length) {
 				triMesh.AddTriangle(
-					mesh.vertices[mesh.triangles[i++]].ToBulletVector3(),
-					mesh.vertices[mesh.triangles[i++]].ToBulletVector3(),
-					mesh.vertices[mesh.triangles[i++]].ToBulletVector3()
+					vertices[mesh.triangles[i++]],
+					vertices[mesh.triangles[i++]],
+					vertices[mesh.triangles[i++]]
 				);
 			}
 
@@ -31,8 +32,10 @@ namespace Dissonance.Engine.Physics
 		public static explicit operator ConvexCollisionMesh(Mesh mesh)
 		{
 			var collisionMesh = new ConvexCollisionMesh();
+
 			collisionMesh.SetupFromMesh(mesh);
+
 			return collisionMesh;
 		}
 	}
-}*/
+}

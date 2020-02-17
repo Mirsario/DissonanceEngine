@@ -1,6 +1,6 @@
 namespace Dissonance.Engine
 {
-	public partial struct Vector2UShort
+	public struct Vector2UShort
 	{
 		public ushort x;
 		public ushort y;

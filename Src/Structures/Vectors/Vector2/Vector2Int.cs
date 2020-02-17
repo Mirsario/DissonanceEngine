@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
-	public partial struct Vector2Int
+	public struct Vector2Int
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2Int));
 		public static readonly Vector2Int Zero = default;

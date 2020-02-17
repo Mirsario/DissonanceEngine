@@ -1,5 +1,4 @@
-/*using BulletSharp;
-using Dissonance.Engine.Utils.Extensions;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -25,9 +24,9 @@ namespace Dissonance.Engine.Physics
 				collShape = null;
 			}
 
-			collShape = new BoxShape(size.ToBulletVector3()*0.5f);
+			collShape = new BoxShape(size*0.5f);
 
 			base.UpdateCollider();
 		}
 	}
-}*/
+}

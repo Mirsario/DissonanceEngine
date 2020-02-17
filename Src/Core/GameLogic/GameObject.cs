@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using Dissonance.Engine.Physics;
 
 namespace Dissonance.Engine
 {
@@ -14,7 +15,7 @@ namespace Dissonance.Engine
 		internal bool initialized;
 		internal List<Component> components;
 		internal Dictionary<int,List<Component>> componentsByNameHash;
-		//internal RigidbodyInternal rigidbodyInternal;
+		internal RigidbodyInternal rigidbodyInternal;
 		internal Transform transform;
 
 		public Transform Transform => transform;

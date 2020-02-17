@@ -1,27 +1,24 @@
-/*using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
-using Dissonance.Engine.Utils.Extensions;
+using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
-	//TO CONSIDER: Make this be derived from Bullet's RigidBody ?
 	internal class RigidbodyInternal : IDisposable
 	{
 		private class MotionStateInternal : MotionState
 		{
 			private readonly Transform Transform;
 
-			public override Matrix WorldTransform {
-				get => Transform.parent==null ? Transform.matrix : Transform.ToWorldSpace(Transform.matrix);
-				set => Transform.matrix = Transform.parent==null ? value : (Matrix)Transform.ToLocalSpace(value);
-			}
-
 			public MotionStateInternal(Transform transform)
 			{
 				Transform = transform;
 			}
+
+			public override void GetWorldTransform(out Matrix matrix) => matrix = (Transform.parent==null ? Transform.matrix : Transform.ToWorldSpace(Transform.matrix));
+			public override void SetWorldTransform(ref Matrix matrix) => Transform.matrix = Transform.parent==null ? matrix : (Matrix)Transform.ToLocalSpace(matrix);
 		}
 
 		//private readonly MotionStateInternal MotionState;
@@ -42,9 +39,9 @@ namespace Dissonance.Engine.Physics
 		public float MassFiltered => type==RigidbodyType.Dynamic ? mass : 0f;
 
 		public bool UseGravity {
-			get => btRigidbody.Gravity!=BulletSharp.Vector3.Zero;
+			get => btRigidbody.Gravity!=BulletSharp.Math.Vector3.Zero;
 			set {
-				btRigidbody.Gravity = (value ? PhysicsEngine.Gravity : Vector3.Zero).ToBulletVector3();
+				btRigidbody.Gravity = (value ? PhysicsEngine.Gravity : Vector3.Zero);
 
 				btRigidbody.ApplyGravity();
 			}
@@ -88,28 +85,28 @@ namespace Dissonance.Engine.Physics
 			set => btRigidbody.SetDamping(Drag,value);
 		}
 		public Vector3 Velocity {
-			get => btRigidbody.LinearVelocity.ToVector3();
+			get => btRigidbody.LinearVelocity;
 			set {
 				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 
-				btRigidbody.LinearVelocity = value.ToBulletVector3();
+				btRigidbody.LinearVelocity = value;
 			}
 		}
 		public Vector3 AngularVelocity {
-			get => btRigidbody.AngularVelocity.ToVector3();
+			get => btRigidbody.AngularVelocity;
 			set {
 				if(value!=Vector3.Zero && !btRigidbody.IsActive) {
 					btRigidbody.Activate();
 				}
 
-				btRigidbody.AngularVelocity = value.ToBulletVector3();
+				btRigidbody.AngularVelocity = value;
 			}
 		}
 		public Vector3 AngularFactor {
-			get => btRigidbody.AngularFactor.ToVector3();
-			set => btRigidbody.AngularFactor = value.ToBulletVector3();
+			get => btRigidbody.AngularFactor;
+			set => btRigidbody.AngularFactor = value;
 		}
 		public RigidbodyType Type {
 			get => type;
@@ -144,7 +141,7 @@ namespace Dissonance.Engine.Physics
 			collisionShape = new EmptyShape();
 
 			var motionState = new MotionStateInternal(gameObject.transform);
-			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero.ToBulletVector3()) {
+			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero) {
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,
 				Friction = 0.6f,
@@ -198,7 +195,7 @@ namespace Dissonance.Engine.Physics
 
 			float tempMass = MassFiltered;
 
-			var localInertia = MassFiltered<=0f ? BulletSharp.Vector3.Zero : collisionShape.CalculateLocalInertia(tempMass);
+			var localInertia = MassFiltered<=0f ? BulletSharp.Math.Vector3.Zero : collisionShape.CalculateLocalInertia(tempMass);
 
 			btRigidbody.CollisionShape = collisionShape;
 			btRigidbody.SetMassProps(tempMass,localInertia);
@@ -209,7 +206,7 @@ namespace Dissonance.Engine.Physics
 		{
 			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
 
-			BulletSharp.Vector3 localInertia = BulletSharp.Vector3.Zero;
+			BulletSharp.Math.Vector3 localInertia = BulletSharp.Math.Vector3.Zero;
 
 			float tempMass = MassFiltered;
 
@@ -227,7 +224,7 @@ namespace Dissonance.Engine.Physics
 				btRigidbody.Activate();
 			}
 
-			btRigidbody.ApplyForce(force.ToBulletVector3(),relativePos.ToBulletVector3());
+			btRigidbody.ApplyForce(force,relativePos);
 		}
 		public void Dispose()
 		{
@@ -241,4 +238,4 @@ namespace Dissonance.Engine.Physics
 
 		}
 	}
-}*/
+}

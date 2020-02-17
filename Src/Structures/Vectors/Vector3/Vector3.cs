@@ -285,9 +285,9 @@ namespace Dissonance.Engine
 
 		//Casts
 		
-		//BulletSharp.Vector3
-		//public static implicit operator BulletSharp.Vector3(Vector3 value) => new BulletSharp.Vector3(value.x,value.y,value.z);
-		//public static implicit operator Vector3(BulletSharp.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
+		//BulletSharp.Math.Vector3
+		public static implicit operator BulletSharp.Math.Vector3(Vector3 value) => new BulletSharp.Math.Vector3(value.x,value.y,value.z);
+		public static implicit operator Vector3(BulletSharp.Math.Vector3 value) => new Vector3(value.X,value.Y,value.Z);
 
 		public static unsafe implicit operator float*(Vector3 vec) => (float*)&vec;
 	}

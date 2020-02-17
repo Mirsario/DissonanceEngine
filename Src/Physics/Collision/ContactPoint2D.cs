@@ -1,4 +1,4 @@
-﻿/*namespace Dissonance.Engine.Physics
+﻿namespace Dissonance.Engine.Physics
 {
 	public struct ContactPoint2D
 	{
@@ -8,4 +8,4 @@
 		public Collider otherCollider;
 		public float separation;
 	}
-}*/
+}

@@ -10,13 +10,12 @@ namespace Dissonance.Engine.Physics
 		protected override void OnEnable()
 		{
 			capsule = new CapsuleShape(0.5f,2f);
+
 			var obj = new PairCachingGhostObject();
+
 			charController = new KinematicCharacterController(obj,capsule,0.05f);
 		}
-		protected override void OnDisable()
-		{
-			
-		}
+
 		public void Move(Vector3 offset)
 		{
 			charController.SetJumpSpeed(1f);
@@ -24,10 +23,6 @@ namespace Dissonance.Engine.Physics
 			charController.SetWalkDirection(offset);
 			charController.SetVelocityForTimeInterval(offset,Time.fixedDeltaTime);
 			charController.PlayerStep(Physics.world,Time.fixedDeltaTime);
-		}
-		public override void FixedUpdate()
-		{
-			
 		}
 	}
 }*/

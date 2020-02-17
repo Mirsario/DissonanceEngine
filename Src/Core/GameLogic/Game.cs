@@ -118,7 +118,7 @@ namespace Dissonance.Engine
 		public void Dispose()
 		{
 			Rendering.Dispose();
-			//PhysicsEngine.Dispose();
+			PhysicsEngine.Dispose();
 		}
 
 		internal void Init()
@@ -163,7 +163,7 @@ namespace Dissonance.Engine
 			Rendering.Init();
 			GUI.Init();
 			Input.Init();
-			//PhysicsEngine.Init();
+			PhysicsEngine.Init();
 			Audio.Init();
 
 			Debug.Log("Loading game...");
@@ -202,7 +202,7 @@ namespace Dissonance.Engine
 				return;
 			}
 
-			//PhysicsEngine.UpdateFixed();
+			PhysicsEngine.FixedUpdate();
 			Input.LateUpdate();
 			Audio.FixedUpdate();
 
@@ -233,7 +233,7 @@ namespace Dissonance.Engine
 				return;
 			}
 
-			//PhysicsEngine.UpdateRender();
+			PhysicsEngine.RenderUpdate();
 			Rendering.Render();
 			Input.LateUpdate();
 
