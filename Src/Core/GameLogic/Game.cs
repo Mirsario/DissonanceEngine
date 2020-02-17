@@ -132,8 +132,7 @@ namespace Dissonance.Engine
 			Time.Init();
 			Screen.UpdateValues();
 
-			Screen.lockCursor = false;
-			Screen.showCursor = true;
+			Screen.CursorState = CursorState.Normal;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
