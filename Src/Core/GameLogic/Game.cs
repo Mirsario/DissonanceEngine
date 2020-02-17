@@ -132,8 +132,7 @@ namespace Dissonance.Engine
 			Time.Init();
 			Screen.UpdateValues();
 
-			Screen.lockCursor = false;
-			Screen.showCursor = true;
+			Screen.CursorState = CursorState.Normal;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -181,18 +180,14 @@ namespace Dissonance.Engine
 
 			bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
-			if(Screen.lockCursor && isFocused) {
+			/*if(Screen.lockCursor && isFocused) {
 				var center = Screen.Center;
 
-				GLFW.SetCursorPos(Game.window,center.x,center.y);
-			}
-
-			Screen.CursorVisible = Screen.showCursor || !isFocused;
+				GLFW.SetCursorPos(window,center.x,center.y);
+			}*/
 
 			Screen.UpdateValues();
-
 			Time.UpdateFixed(Time.FixedGlobalTime+1.0/Time.TargetUpdateFrequency);
-
 			Input.Update();
 
 			FixedUpdate();

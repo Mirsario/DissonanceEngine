@@ -55,48 +55,5 @@ namespace Dissonance.Engine
 				}
 			}
 		}
-		private static void TriggerSet(float value,string triggerName)
-		{
-			/*int hash = triggerName.GetHashCode();
-
-			for(int i = 0;i<triggers.Length;i++) {
-				var trigger = triggers[i];
-				float fixedSumm = 0f;
-				float renderSumm = 0f;
-
-				
-
-				trigger.SetAnalogValue(fixedSumm,renderSumm);
-			}*/
-		}
-		private static void TriggerReset(string triggerName)
-		{
-			/*int hash = triggerName.GetHashCode();
-
-			for(int i = 0;i<triggers.Length;i++) {
-				var trigger = triggers[i];
-				float fixedSumm = 0f;
-				float renderSumm = 0f;
-
-				for(int j = 0;j<trigger.bindingCount;j++) {
-					ref var input = ref trigger.bindings[j];
-
-					if(hash==input.InputHash && triggerName==input.InputLower) {
-						input.fixedAnalogInput = 0f;
-						input.renderAnalogInput = 0f;
-					} else {
-						if(input.fixedAnalogInput>input.deadZone || input.fixedAnalogInput<-input.deadZone) {
-							fixedSumm += input.fixedAnalogInput;
-						}
-
-						if(input.renderAnalogInput>input.deadZone || input.renderAnalogInput<-input.deadZone) {
-							renderSumm += input.renderAnalogInput;
-						}
-					}
-				}
-
-				trigger.SetAnalogValue(fixedSumm,renderSumm);
-			}*/
-		}
 	}
 }

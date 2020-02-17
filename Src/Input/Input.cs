@@ -30,6 +30,7 @@ namespace Dissonance.Engine
 			prevFixedInput = new InputVariables();
 			prevRenderInput = new InputVariables();
 
+			InitSignals();
 			InitTriggers();
 			InitCallbacks();
 
@@ -44,6 +45,7 @@ namespace Dissonance.Engine
 		internal static void LateUpdate()
 		{
 			CurrentInput.inputString = string.Empty;
+			CurrentInput.mouseWheel = 0;
 
 			CurrentInput.CopyTo(PrevInput);
 		}

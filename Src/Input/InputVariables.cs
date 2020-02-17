@@ -8,9 +8,6 @@ namespace Dissonance.Engine
 	internal class InputVariables
 	{
 		//Mouse
-		//public MouseState cursorState;
-		//public MouseState mouseState;
-		//public MouseState mouseStatePrev;
 		public int mouseWheel;
 		public Vector2 mousePosition;
 		public bool[] mouseButtons = new bool[Input.MaxMouseButtons];

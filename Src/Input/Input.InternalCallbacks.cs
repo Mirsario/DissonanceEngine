@@ -11,11 +11,12 @@ namespace Dissonance.Engine
 		{
 			GLFW.SetCursorPosCallback(Game.window,MousePositionCallback);
 			GLFW.SetMouseButtonCallback(Game.window,MouseButtonCallback);
+			GLFW.SetScrollCallback(Game.window,MouseScrollCallback);
 			GLFW.SetKeyCallback(Game.window,KeyCallback);
 			GLFW.SetCharCallback(Game.window,KeyStringCallback);
 		}
 
-		private static void MousePositionCallback(IntPtr window,double x,double y)
+		internal static void MousePositionCallback(IntPtr window,double x,double y)
 		{
 			var value = new Vector2((float)x,(float)y);
 
@@ -28,6 +29,11 @@ namespace Dissonance.Engine
 
 			fixedInput.mouseButtons[(int)button] = value;
 			renderInput.mouseButtons[(int)button] = value;
+		}
+		private static void MouseScrollCallback(IntPtr window,double xOffset,double yOffset)
+		{
+			fixedInput.mouseWheel = (int)yOffset;
+			renderInput.mouseWheel = (int)yOffset;
 		}
 		private static void KeyStringCallback(IntPtr window,uint codePoint)
 		{
