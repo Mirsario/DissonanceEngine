@@ -4,7 +4,7 @@ using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine
 {
-	public class AudioClip : Asset<AudioClip>
+	public class AudioClip : Asset
 	{
 		internal uint bufferId;
 

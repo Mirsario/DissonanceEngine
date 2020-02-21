@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public class Mesh : Asset<Mesh>
+	public class Mesh : Asset
 	{
 		public delegate void ArrayCopyDelegate<T>(int meshIndex,T[] srcArray,int srcIndex,Vector3[] dstArray,int dstIndex,int length);
 

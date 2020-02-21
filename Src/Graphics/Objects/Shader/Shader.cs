@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics
 {
 	//TODO: Initialize static fields after Graphics.Init();
 	//TODO: Uniforms' code is quite terrible.
-	public partial class Shader : Asset<Shader>
+	public partial class Shader : Asset
 	{
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
