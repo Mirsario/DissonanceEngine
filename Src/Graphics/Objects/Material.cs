@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Dissonance.Engine.Utils.Internal;
+using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -15,7 +16,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static Material defaultMat;
 
-		private readonly Dictionary<string,(byte vecSize,float[] data)> UniformsFloat;
+		private readonly Dictionary<string,(byte size,float[] data)> UniformsFloat;
 		private readonly List<KeyValuePair<string,Texture>> Textures;
 
 		public readonly int Id;
@@ -92,6 +93,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			foreach(var pair in UniformsFloat) {
 				(byte vecSize,var data) = pair.Value;
+
 				int location = shader.uniforms[pair.Key].location;
 
 				switch(vecSize) {
@@ -103,12 +105,14 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		private void CheckUniform(string name,string methodName)
+		private void CheckUniform(string name)
 		{
 			Shader shader;
+
 			if((shader = Shader)==null) {
-				throw new Exception($"{methodName} cannot be used when material's Shader is null.");
+				throw new Exception($"Material's Shader is null.");
 			}
+
 			if(!shader.uniforms.ContainsKey(name)) {
 				throw new Exception($"Uniform {name} doesn't exist in shader ''{shader.Name}''.");
 			}
@@ -116,96 +120,48 @@ namespace Dissonance.Engine.Graphics
 
 		public void SetFloat(string name,float value)
 		{
-			CheckUniform(name,"SetFloat");
+			CheckUniform(name);
 
 			UniformsFloat[name] = (1,new[] { value });
 		}
 		public void SetFloat(string name,params float[] values)
 		{
-			CheckUniform(name,"SetFloat");
+			CheckUniform(name);
 
 			UniformsFloat[name] = (1,values);
 		}
+		public unsafe void SetFloat<T>(string name,byte vectorSize,T[] data) where T : unmanaged
+		{
+			if(vectorSize<1 || vectorSize>4) {
+				throw new ArgumentException($"{nameof(vectorSize)} must be in [1..4] range (inclusively.)");
+			}
+
+			CheckUniform(name);
+
+			var floatData = new float[data.Length*vectorSize];
+
+			fixed(T* tPtr = data) {
+				var floatPtr = (float*)tPtr;
+
+				for(int i = 0;i<floatData.Length;i++) {
+					floatData[i] = floatPtr[i];
+				}
+			}
+
+			UniformsFloat[name] = (vectorSize,floatData);
+		}
 		public void SetVector2(string name,Vector2 value)
 		{
-			CheckUniform(name,"SetVector2");
+			CheckUniform(name);
 
 			UniformsFloat[name] = (2,new[] { value.x,value.y });
 		}
-		public void SetVector2(string name,params Vector2[] values)
-		{
-			CheckUniform(name,"SetVector2");
-
-			const int VecLength = 2;
-
-			int iBase;
-			var data = new float[values.Length*VecLength];
-
-			for(int i = 0;i<values.Length;i++) {
-				iBase = i*VecLength;
-
-				data[iBase] = values[i].x;
-				data[iBase+1] = values[i].y;
-			}
-
-			UniformsFloat[name] = (VecLength,data);
-		}
-		public void SetVector3(string name,Vector3 value)
-		{
-			CheckUniform(name,"SetVector3");
-
-			UniformsFloat[name] = (3,new[] { value.x,value.y,value.z });
-		}
-		public void SetVector3(string name,params Vector3[] values)
-		{
-			CheckUniform(name,"SetVector3");
-
-			const int VecLength = 3;
-
-			int iBase;
-
-			var data = new float[values.Length*VecLength];
-
-			for(int i = 0;i<values.Length;i++) {
-				iBase = i*VecLength;
-
-				data[iBase] = values[i].x;
-				data[iBase+1] = values[i].y;
-				data[iBase+2] = values[i].z;
-			}
-
-			UniformsFloat[name] = (VecLength,data);
-		}
-		public void SetVector4(string name,Vector4 value)
-		{
-			CheckUniform(name,"SetVector4");
-
-			UniformsFloat[name] = (4,new[] { value.x,value.y,value.z,value.w });
-		}
-		public void SetVector4(string name,params Vector4[] values)
-		{
-			CheckUniform(name,nameof(SetVector4));
-
-			const int VecLength = 4;
-
-			int iBase;
-
-			var data = new float[values.Length*VecLength];
-
-			for(int i = 0;i<values.Length;i++) {
-				iBase = i*VecLength;
-
-				data[iBase] = values[i].x;
-				data[iBase+1] = values[i].y;
-				data[iBase+2] = values[i].z;
-				data[iBase+3] = values[i].w;
-			}
-
-			UniformsFloat[name] = (VecLength,data);
-		}
+		public void SetVector2(string name,params Vector2[] values) => SetFloat(name,2,values);
+		public void SetVector3(string name,params Vector3[] values) => SetFloat(name,3,values);
+		public void SetVector4(string name,params Vector4[] values) => SetFloat(name,4,values);
 		public void SetVector(string name,float[] val)
 		{
-			CheckUniform(name,"SetVector");
+			CheckUniform(name);
 
 			switch(val.Length) {
 				case 2:
@@ -223,7 +179,7 @@ namespace Dissonance.Engine.Graphics
 		}
 		public void SetTexture(string name,Texture texture)
 		{
-			CheckUniform(name,"SetTexture");
+			CheckUniform(name);
 
 			for(int i = 0;i<Textures.Count;i++) {
 				if(Textures[i].Key==name) {
@@ -234,6 +190,7 @@ namespace Dissonance.Engine.Graphics
 
 			Textures.Add(new KeyValuePair<string,Texture>(name,texture));
 		}
+
 		public bool GetTexture(string name,out Texture texture) => (texture = Textures.FirstOrDefault(pair => pair.Key==name).Value)!=null;
 
 		object ICloneable.Clone() => Clone();
