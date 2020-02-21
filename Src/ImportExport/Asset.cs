@@ -42,6 +42,7 @@ namespace Dissonance.Engine
 			}
 
 			var type = obj.GetType();
+
 			if(IsPrimitive(type)) {
 				return obj;
 			}
