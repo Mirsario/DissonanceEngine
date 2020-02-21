@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static CursorState CursorState {
 			get => cursorState;
-			set => GLFW.SetInputMode(Game.window,GLFW.CURSOR,(int)(cursorState = value));
+			set => GLFW.SetInputMode(Game.window,InputMode.Cursor,(int)(cursorState = value));
 		}
 
 		internal static void UpdateValues()
