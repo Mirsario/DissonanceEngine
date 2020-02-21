@@ -57,7 +57,6 @@ namespace Dissonance.Engine.Graphics
 			UniformsFloat = new Dictionary<string,(byte,float[])>();
 			Textures = new List<KeyValuePair<string,Texture>>();
 		}
-
 		public Material Clone()
 		{
 			var clone = new Material(name,Shader);
@@ -118,18 +117,6 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public void SetFloat(string name,float value)
-		{
-			CheckUniform(name);
-
-			UniformsFloat[name] = (1,new[] { value });
-		}
-		public void SetFloat(string name,params float[] values)
-		{
-			CheckUniform(name);
-
-			UniformsFloat[name] = (1,values);
-		}
 		public unsafe void SetFloat<T>(string name,byte vectorSize,T[] data) where T : unmanaged
 		{
 			if(vectorSize<1 || vectorSize>4) {
@@ -150,11 +137,11 @@ namespace Dissonance.Engine.Graphics
 
 			UniformsFloat[name] = (vectorSize,floatData);
 		}
-		public void SetVector2(string name,Vector2 value)
+		public void SetFloat(string name,params float[] values)
 		{
 			CheckUniform(name);
 
-			UniformsFloat[name] = (2,new[] { value.x,value.y });
+			UniformsFloat[name] = (1,values);
 		}
 		public void SetVector2(string name,params Vector2[] values) => SetFloat(name,2,values);
 		public void SetVector3(string name,params Vector3[] values) => SetFloat(name,3,values);
