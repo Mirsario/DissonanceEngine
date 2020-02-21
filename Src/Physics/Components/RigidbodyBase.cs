@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Dissonance.Engine.Physics
 {
 	[AllowOnlyOnePerObject]
@@ -43,6 +45,8 @@ namespace Dissonance.Engine.Physics
 
 		protected override void OnPreInit()
 		{
+			base.OnPreInit();
+
 			gameObject.rigidbodyInternal.rigidbody = this;
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Dynamic;
 		}
@@ -58,6 +62,11 @@ namespace Dissonance.Engine.Physics
 
 			gameObject.rigidbodyInternal.Type = RigidbodyType.Static;
 		}
-		protected override void OnDispose() => OnDisable();
+		protected override void OnDispose()
+		{
+			base.OnDispose();
+
+			OnDisable();
+		}
 	}
 }
