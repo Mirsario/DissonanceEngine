@@ -122,7 +122,7 @@ namespace Dissonance.Engine
 			}
 
 			if(!File.Exists(filePath)) {
-				if(throwOnFail) {
+				if(!throwOnFail) {
 					return null;
 				}
 
