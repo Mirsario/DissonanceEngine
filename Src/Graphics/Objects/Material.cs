@@ -136,6 +136,8 @@ namespace Dissonance.Engine.Graphics
 		{
 			CheckUniform(name,"SetVector2");
 
+			const int VecLength = 2;
+
 			int iBase;
 			var data = new float[values.Length*VecLength];
 
