@@ -16,7 +16,9 @@ namespace Dissonance.Engine.Utils
 			}
 
 			T[] newArray = new T[arrayLength+1];
+
 			Array.Copy(array,newArray,arrayLength);
+
 			newArray[arrayLength] = value;
 
 			array = newArray;

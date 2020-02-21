@@ -273,7 +273,7 @@ namespace Dissonance.Engine
 			int resolutionWidth = 800;
 			int resolutionHeight = 600;
 
-			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,"Unnamed Window",monitor,IntPtr.Zero);
+			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,displayName,monitor,IntPtr.Zero);
 
 			GLFW.MakeContextCurrent(window);
 
