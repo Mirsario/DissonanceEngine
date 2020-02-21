@@ -8,14 +8,14 @@ using Dissonance.Engine.Utils.Internal;
 namespace Dissonance.Engine.Graphics
 {
 	//TODO: Implement OnDispose
-	public class Material : Asset<Material>
+	public class Material : Asset, ICloneable
 	{
 		private static readonly List<Material> ById = new List<Material>();
 		private static readonly Dictionary<string,Material> ByName = new Dictionary<string,Material>();
 
 		public static Material defaultMat;
 
-		private readonly Dictionary<string,(byte vecSize, float[] data)> UniformsFloat;
+		private readonly Dictionary<string,(byte vecSize,float[] data)> UniformsFloat;
 		private readonly List<KeyValuePair<string,Texture>> Textures;
 
 		public readonly int Id;
@@ -57,11 +57,14 @@ namespace Dissonance.Engine.Graphics
 			Textures = new List<KeyValuePair<string,Texture>>();
 		}
 
-		public override Material Clone()
+		public Material Clone()
 		{
 			var clone = new Material(name,Shader);
+
 			UniformsFloat.CopyTo(clone.UniformsFloat);
+
 			clone.Textures.AddRange(Textures);
+
 			return clone;
 		}
 
@@ -111,84 +114,93 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		#region SetVariable
-		//Float
 		public void SetFloat(string name,float value)
 		{
 			CheckUniform(name,"SetFloat");
+
 			UniformsFloat[name] = (1,new[] { value });
 		}
 		public void SetFloat(string name,params float[] values)
 		{
 			CheckUniform(name,"SetFloat");
+
 			UniformsFloat[name] = (1,values);
 		}
-		#region Vector2
 		public void SetVector2(string name,Vector2 value)
 		{
 			CheckUniform(name,"SetVector2");
+
 			UniformsFloat[name] = (2,new[] { value.x,value.y });
 		}
 		public void SetVector2(string name,params Vector2[] values)
 		{
 			CheckUniform(name,"SetVector2");
 
-			const int vecLength = 2;
 			int iBase;
-			var data = new float[values.Length*vecLength];
+			var data = new float[values.Length*VecLength];
+
 			for(int i = 0;i<values.Length;i++) {
-				iBase = i*vecLength;
+				iBase = i*VecLength;
+
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
 			}
-			UniformsFloat[name] = (vecLength,data);
+
+			UniformsFloat[name] = (VecLength,data);
 		}
-		#endregion
-		#region Vector3
 		public void SetVector3(string name,Vector3 value)
 		{
 			CheckUniform(name,"SetVector3");
+
 			UniformsFloat[name] = (3,new[] { value.x,value.y,value.z });
 		}
 		public void SetVector3(string name,params Vector3[] values)
 		{
 			CheckUniform(name,"SetVector3");
 
-			const int vecLength = 3;
+			const int VecLength = 3;
+
 			int iBase;
-			var data = new float[values.Length*vecLength];
+
+			var data = new float[values.Length*VecLength];
+
 			for(int i = 0;i<values.Length;i++) {
-				iBase = i*vecLength;
+				iBase = i*VecLength;
+
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
 				data[iBase+2] = values[i].z;
 			}
-			UniformsFloat[name] = (vecLength,data);
+
+			UniformsFloat[name] = (VecLength,data);
 		}
-		#endregion
-		#region Vector4
 		public void SetVector4(string name,Vector4 value)
 		{
 			CheckUniform(name,"SetVector4");
+
 			UniformsFloat[name] = (4,new[] { value.x,value.y,value.z,value.w });
 		}
 		public void SetVector4(string name,params Vector4[] values)
 		{
-			CheckUniform(name,"SetVector4");
+			CheckUniform(name,nameof(SetVector4));
 
-			const int vecLength = 4;
+			const int VecLength = 4;
+
 			int iBase;
-			var data = new float[values.Length*vecLength];
+
+			var data = new float[values.Length*VecLength];
+
 			for(int i = 0;i<values.Length;i++) {
-				iBase = i*vecLength;
+				iBase = i*VecLength;
+
 				data[iBase] = values[i].x;
 				data[iBase+1] = values[i].y;
 				data[iBase+2] = values[i].z;
 				data[iBase+3] = values[i].w;
 			}
-			UniformsFloat[name] = (vecLength,data);
+
+			UniformsFloat[name] = (VecLength,data);
 		}
-		#endregion
 		public void SetVector(string name,float[] val)
 		{
 			CheckUniform(name,"SetVector");
@@ -220,12 +232,8 @@ namespace Dissonance.Engine.Graphics
 
 			Textures.Add(new KeyValuePair<string,Texture>(name,texture));
 		}
-		#endregion
-		#region GetVariable
-		public bool GetTexture(string name,out Texture texture)
-		{
-			return (texture = Textures.FirstOrDefault(pair => pair.Key==name).Value)!=null;
-		}
-		#endregion
+		public bool GetTexture(string name,out Texture texture) => (texture = Textures.FirstOrDefault(pair => pair.Key==name).Value)!=null;
+
+		object ICloneable.Clone() => Clone();
 	}
 }

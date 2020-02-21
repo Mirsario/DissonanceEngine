@@ -3,7 +3,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class Texture : Asset<Texture>
+	public class Texture : Asset
 	{
 		protected const PixelType DefaultPixelType = PixelType.UnsignedByte;
 		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;

@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine.Physics
 {
-	public abstract class CollisionMesh : Asset<CollisionMesh>
+	public abstract class CollisionMesh : Asset
 	{
 		internal CollisionShape collShape;
 
