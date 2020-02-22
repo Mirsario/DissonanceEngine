@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Dissonance.Framework;
 using Dissonance.Framework.Graphics;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics.RenderingPipelines
 {

@@ -1,4 +1,5 @@
 using System.IO;
+using Dissonance.Engine.IO;
 using NVorbis;
 
 namespace Dissonance.Engine

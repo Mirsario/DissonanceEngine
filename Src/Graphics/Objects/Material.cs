@@ -5,6 +5,7 @@ using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Dissonance.Engine.Utils.Internal;
 using System.Runtime.InteropServices;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {

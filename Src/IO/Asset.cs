@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO
 {
 	public abstract class Asset : IDisposable
 	{
-		protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
-
 		public virtual string AssetName => null;
 
 		public virtual void Dispose() { }

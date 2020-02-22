@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Graphics.Models
 {
 	public class ObjManager : AssetManager<Mesh>
 	{
@@ -22,8 +22,8 @@ namespace Dissonance.Engine
 			public Vector2[] uv2;
 		}
 
-		public override string[] Extensions => new [] { ".obj" };
-		
+		public override string[] Extensions => new[] { ".obj" };
+
 		public override Mesh Import(Stream stream,string fileName)
 		{
 			string text;
@@ -36,7 +36,7 @@ namespace Dissonance.Engine
 			var meshInfo = CreateOBJInfo(text);
 
 			PopulateOBJInfo(ref meshInfo,text,scale);
-	
+
 			var newVerts = new Vector3[meshInfo.faceData.Length];
 			var newUVs = new Vector2[meshInfo.faceData.Length];
 			var newNormals = new Vector3[meshInfo.faceData.Length];
@@ -64,7 +64,7 @@ namespace Dissonance.Engine
 			};
 
 			mesh.Apply();
-	
+
 			return mesh;
 		}
 		internal static MeshInfo CreateOBJInfo(string objText)
@@ -77,7 +77,7 @@ namespace Dissonance.Engine
 			var meshInfo = new MeshInfo();
 			var reader = new StringReader(objText);
 			string thisLine = reader.ReadLine();
-			char[] splitIdentifier=	{ ' ' };
+			char[] splitIdentifier = { ' ' };
 			string[] brokenString;
 
 			while(thisLine!=null) {
@@ -87,10 +87,10 @@ namespace Dissonance.Engine
 					if(thisLine!=null) {
 						thisLine = thisLine.Replace("  "," ");
 					}
-				}else{
+				} else {
 					thisLine = thisLine.Trim(); //Trim the current line
 					brokenString = thisLine.Split(splitIdentifier,50); //Split the line into an array, separating the original line by blank spaces
-					
+
 					switch(brokenString[0]) {
 						case "v":
 							vertices++;
@@ -134,15 +134,15 @@ namespace Dissonance.Engine
 			while(objText.Contains("  ")) {
 				objText = objText.Replace("  "," ");
 			}
-			
+
 			var reader = new StringReader(objText);
 			string thisLine = reader.ReadLine();
-			
+
 			var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
 			ci.NumberFormat.CurrencyDecimalSeparator = ".";
-			
-			char[] splitIdentifier = {' '};
-			char[] splitIdentifier2 = {'/'};
+
+			char[] splitIdentifier = { ' ' };
+			char[] splitIdentifier2 = { '/' };
 
 			int f = 0;
 			int f2 = 0;
@@ -156,7 +156,7 @@ namespace Dissonance.Engine
 			string[] brokenString;
 
 			while(thisLine!=null) {
-				if(!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ")	&& !thisLine.StartsWith("vt ")
+				if(!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ") && !thisLine.StartsWith("vt ")
 				&& !thisLine.StartsWith("vn ") && !thisLine.StartsWith("g ") && !thisLine.StartsWith("usemtl ")
 				&& !thisLine.StartsWith("mtllib ") && !thisLine.StartsWith("vt1 ") && !thisLine.StartsWith("vt2 ")
 				&& !thisLine.StartsWith("vc ") && !thisLine.StartsWith("usemap ")) {
@@ -179,25 +179,25 @@ namespace Dissonance.Engine
 							float.Parse(brokenString[2],CultureInfo.InvariantCulture),
 							float.Parse(brokenString[3],CultureInfo.InvariantCulture)
 						)*sizeFactor;
-					break;
+						break;
 					case "vt":
 						meshInfo.uv[vt++] = new Vector2(
 							float.Parse(brokenString[1],CultureInfo.InvariantCulture),
 							float.Parse(brokenString[2],CultureInfo.InvariantCulture)
 						);
-					break;
+						break;
 					case "vt1":
 						meshInfo.uv[vt1++] = new Vector2(
 							float.Parse(brokenString[1],CultureInfo.InvariantCulture),
 							float.Parse(brokenString[2],CultureInfo.InvariantCulture)
 						);
-					break;
+						break;
 					case "vt2":
 						meshInfo.uv[vt2++] = new Vector2(
 							float.Parse(brokenString[1],CultureInfo.InvariantCulture),
 							float.Parse(brokenString[2],CultureInfo.InvariantCulture)
 						);
-					break;
+						break;
 					case "vn":
 						meshInfo.normals[vn++] = new Vector3(
 							float.Parse(brokenString[1],CultureInfo.InvariantCulture),
@@ -211,17 +211,17 @@ namespace Dissonance.Engine
 
 						while(j<brokenString.Length && (""+brokenString[j]).Length>0) {
 							var temp = new Vector3();
-							
-							brokenBrokenString = brokenString[j].Split(splitIdentifier2,3);	//Separate the face into individual components(vert,uv,normal)
-							
+
+							brokenBrokenString = brokenString[j].Split(splitIdentifier2,3); //Separate the face into individual components(vert,uv,normal)
+
 							temp.x = Convert.ToInt32(brokenBrokenString[0]);
-							
-							if(brokenBrokenString.Length==2) {	//Some .obj files skip UV and normal
+
+							if(brokenBrokenString.Length==2) {  //Some .obj files skip UV and normal
 								temp.y = Convert.ToInt32(brokenBrokenString[1]);
 							}
 
-							if(brokenBrokenString.Length==3) {	//Some .obj files skip UV and normal
-								if(brokenBrokenString[1]!="") {	//Some .obj files skip the uv and not the normal
+							if(brokenBrokenString.Length==3) {  //Some .obj files skip UV and normal
+								if(brokenBrokenString[1]!="") { //Some .obj files skip the uv and not the normal
 									temp.y = Convert.ToInt32(brokenBrokenString[1]);
 								}
 
@@ -250,7 +250,7 @@ namespace Dissonance.Engine
 				}
 
 				thisLine = reader.ReadLine();
-				
+
 				if(thisLine!=null) {
 					//Some .obj files insert double spaces, this removes them.
 					thisLine = thisLine.Replace("  "," ");
