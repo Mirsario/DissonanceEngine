@@ -6,8 +6,6 @@ namespace Dissonance.Engine
 {
 	public abstract class Asset : IDisposable
 	{
-		protected static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone",BindingFlags.NonPublic | BindingFlags.Instance);
-
 		public virtual string AssetName => null;
 
 		public virtual void Dispose() { }
