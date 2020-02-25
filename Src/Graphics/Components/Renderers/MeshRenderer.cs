@@ -67,7 +67,7 @@ namespace Dissonance.Engine
 					renderObject = lod.mesh;
 					bounds = lod.mesh?.bounds ?? default;
 
-					return lod.mesh!=null && lod.mesh.IsReady;
+					return material!=null && lod.mesh!=null && lod.mesh.IsReady;
 				}
 
 				float sqrDist = Vector3.SqrDistance(cameraPosition,rendererPosition);
@@ -80,7 +80,7 @@ namespace Dissonance.Engine
 						renderObject = lod.mesh;
 						bounds = lod.mesh?.bounds ?? default;
 
-						return lod.mesh!=null && lod.mesh.IsReady;
+						return material!=null && lod.mesh!=null && lod.mesh.IsReady;
 					}
 				}
 			}
