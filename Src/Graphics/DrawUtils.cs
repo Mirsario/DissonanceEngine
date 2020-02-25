@@ -1,5 +1,7 @@
 #pragma warning disable 0649
 
+using Dissonance.Framework.Graphics;
+
 namespace Dissonance.Engine.Graphics
 {
 	public static class DrawUtils
@@ -36,34 +38,9 @@ namespace Dissonance.Engine.Graphics
 				triangles = new int[] {
 					0,1,2,
 					0,2,3
-				}
+				},
+				bufferUsage = BufferUsageHint.StreamDraw
 			};
 		}
-
-		/*internal static void DrawTexture(RectFloat rect,Texture texture,Vector4? color = null)
-		{
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,texture.Id);
-
-			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
-				var col = color ?? Vector4.One;
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
-			}
-			
-			var vector = new Vector4(rect.x,rect.y,rect.x+rect.width,rect.y+rect.height);
-
-			if(!GL.TryGetAttribLocation(Shader.ActiveShader.Id,"uv",out uint uvAttrib)) {
-				return;
-			}
-
-			GL.Begin(PrimitiveType.Quads);
-
-			GL.Vertex2(vector.x,1f-vector.y); GL.VertexAttrib2(uvAttrib,0f,0f);
-			GL.Vertex2(vector.x,1f-vector.w); GL.VertexAttrib2(uvAttrib,0f,1f);
-			GL.Vertex2(vector.z,1f-vector.w); GL.VertexAttrib2(uvAttrib,1f,1f);
-			GL.Vertex2(vector.z,1f-vector.y); GL.VertexAttrib2(uvAttrib,1f,0f);
-
-			GL.End();
-		}*/
 	}
 }
