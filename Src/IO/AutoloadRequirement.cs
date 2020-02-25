@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	public class AutoloadRequirement : Attribute

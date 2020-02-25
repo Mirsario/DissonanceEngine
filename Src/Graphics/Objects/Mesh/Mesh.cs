@@ -4,6 +4,7 @@ using System.Linq;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Graphics;
 using System.Runtime.CompilerServices;
+using Dissonance.Engine.IO;
 
 #pragma warning disable 0649
 

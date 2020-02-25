@@ -8,7 +8,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using Dissonance.Engine.Utils.Internal;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO
 {
 	//TODO: Still refactoring...
 	//TODO: AssetManager getter methods aren't finished.
@@ -69,7 +69,7 @@ namespace Dissonance.Engine
 
 			return outManager.Autoload(file);
 		}
-		public static T1 GetAssetManager<T1,T2>()
+		public static T1 GetAssetManager<T1, T2>()
 			where T1 : AssetManager<T2>
 			where T2 : Asset
 		{
@@ -345,13 +345,13 @@ namespace Dissonance.Engine
 		private static void NameToPath(ref string filePath,out bool multiplePathsFound)
 		{
 			multiplePathsFound = false;
-			
+
 			string fileName = Path.GetFileName(filePath);
 
 			if(nameToPath.TryGetValue(fileName,out string fullPath)) {
 				if(fullPath==null) {
 					multiplePathsFound = true;
-				}else{
+				} else {
 					filePath = fullPath;
 				}
 			}

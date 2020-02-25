@@ -5,7 +5,7 @@ using System.Linq;
 using Dissonance.Engine.Utils.Extensions;
 using Dissonance.Engine.Utils.Internal;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO
 {
 	public static partial class Resources
 	{
@@ -51,7 +51,7 @@ namespace Dissonance.Engine
 		}
 		public static string ImportText(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<string>)assetManagers[".txt"][0],throwOnFail);
 		public static byte[] ImportBytes(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<byte[]>)assetManagers[".bytes"][0],throwOnFail);
-		
+
 		//'Get' imports and caches files, or gets them from cache, if they have already been loaded.
 		public static T Get<T>(string filePath,bool throwOnFail = true) where T : class
 		{
@@ -64,7 +64,7 @@ namespace Dissonance.Engine
 
 			return ImportInternal<T>(filePath,true,null,ntpMultiplePaths,throwOnFail);
 		}
-		
+
 		//'Find' finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
 		public static bool Find<T>(string assetName,out T asset) where T : class
 			=> (asset = Find<T>(assetName))!=null;

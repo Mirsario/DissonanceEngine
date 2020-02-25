@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Dissonance.Engine.IO;
 using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine

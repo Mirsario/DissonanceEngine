@@ -5,15 +5,15 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Dissonance.Engine.IO;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Graphics
 {
 	public class ShaderManager : AssetManager<Shader[]>
 	{
 		[JsonObject]
 		private class JSON_ShaderProgram
 		{
-			#pragma warning disable CS0649
 			//Shaders
 			[JsonProperty(Required = Required.Always)] public string vertexShader;
 			[JsonProperty(Required = Required.Always)] public string fragmentShader;
@@ -22,9 +22,8 @@ namespace Dissonance.Engine
 
 			//Parameters
 			public int queue;
-			public string cullMode;
-			public string polygonMode;
-			//public string renderType;
+			public CullMode cullMode = CullMode.Front;
+			public PolygonMode polygonMode = PolygonMode.Fill;
 			public BlendingFactor blendFactorSrc = BlendingFactor.One;
 			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
 
@@ -32,10 +31,9 @@ namespace Dissonance.Engine
 			public Dictionary<string,float> floats;
 			public Dictionary<string,float[]> vectors;
 			public Dictionary<string,string> textures;
-			#pragma warning restore CS0649
 		}
 
-		public override string[] Extensions => new [] { ".program" };
+		public override string[] Extensions => new[] { ".program" };
 		public override bool Autoload(string file) => true;
 
 		public override Shader[] Import(Stream stream,string fileName)
@@ -48,7 +46,7 @@ namespace Dissonance.Engine
 
 			var shaders = new List<Shader>();
 			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string,JSON_ShaderProgram>>(jsonText);
-			
+
 			foreach(var pair in jsonShaders) {
 				string name = pair.Key;
 				var jsonShader = pair.Value;
@@ -59,15 +57,9 @@ namespace Dissonance.Engine
 
 				var shader = Shader.FromCode(name,vertexCode,fragmentCode,geometryCode,jsonShader.shaderDefines);
 
-				if(!Enum.TryParse(jsonShader.cullMode,true,out shader.cullMode)) {
-					shader.cullMode = CullMode.Front;
-				}
-
-				if(!Enum.TryParse(jsonShader.polygonMode,true,out shader.polygonMode)) {
-					shader.polygonMode = PolygonMode.Fill;
-				}
-
 				shader.queue = jsonShader.queue;
+				shader.cullMode = jsonShader.cullMode;
+				shader.polygonMode = jsonShader.polygonMode;
 				shader.blendFactorSrc = jsonShader.blendFactorSrc;
 				shader.blendFactorDst = jsonShader.blendFactorDst;
 

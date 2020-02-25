@@ -1,11 +1,12 @@
 using System.IO;
+using Dissonance.Engine.IO;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Other
 {
 	public class BytesManager : AssetManager<byte[]>
 	{
-		public override string[] Extensions => new [] { ".bytes" };
-		
+		public override string[] Extensions => new[] { ".bytes" };
+
 		public override byte[] Import(Stream stream,string fileName)
 		{
 			var bytes = new byte[stream.Length];

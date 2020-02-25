@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine
 {

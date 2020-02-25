@@ -1,16 +1,17 @@
+using Dissonance.Engine.IO;
 using Dissonance.Engine.Physics;
 using System;
 using System.IO;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Physics
 {
 	public class ConvexCollisionMeshManager : AssetManager<ConvexCollisionMesh>
 	{
 		public override string[] Extensions => new string[] { ".obj" };
-		
+
 		public override ConvexCollisionMesh Import(Stream stream,string fileName)
 		{
-			var mesh = Resources.ImportFromStream<Mesh>(stream,fileName:fileName);
+			var mesh = Resources.ImportFromStream<Mesh>(stream,fileName: fileName);
 
 			var collisionMesh = new ConvexCollisionMesh();
 

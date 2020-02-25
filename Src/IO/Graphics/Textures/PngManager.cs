@@ -3,13 +3,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Dissonance.Framework.Imaging;
 using Dissonance.Engine.Graphics;
+using Dissonance.Engine.IO;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Graphics.Textures
 {
 	public class PngManager : AssetManager<Texture>
 	{
-		public override string[] Extensions => new [] { ".png" };
-		
+		public override string[] Extensions => new[] { ".png" };
+
 		public override Texture Import(Stream stream,string fileName)
 		{
 			int length = (int)stream.Length;
@@ -18,7 +19,7 @@ namespace Dissonance.Engine
 				IntPtr ptr = Marshal.AllocHGlobal(length);
 
 				var unmanagedStream = new UnmanagedMemoryStream((byte*)ptr,length,length,FileAccess.Write);
-				
+
 				stream.CopyTo(unmanagedStream,length);
 
 				if(!IL.Load(LoadImageTypeLumps.Png,ptr,length)) {
