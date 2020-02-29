@@ -22,6 +22,7 @@ namespace Dissonance.Engine
 
 			for(int i = 0;i<methods.Length;i++) {
 				var method = methods[i];
+
 				if(method.IsVirtual) {
 					hookNameToId[method.Name] = id++;
 				}
@@ -43,6 +44,7 @@ namespace Dissonance.Engine
 
 			for(int i = 0;i<info.methodInfos.Length;i++) {
 				var methodInfo = info.methodInfos[i];
+
 				if(methodInfo!=null) {
 					hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
 				}
@@ -51,6 +53,7 @@ namespace Dissonance.Engine
 		public static void UnsubscribeEntity(ProgrammableEntity entity)
 		{
 			var type = entity.GetType();
+
 			if(!typeToInfo.TryGetValue(type,out var info)) {
 				typeToInfo[type] = info = new ProgrammableEntityTypeInfo(type);
 			}
@@ -63,6 +66,7 @@ namespace Dissonance.Engine
 				}
 
 				var arr = hooks[i];
+
 				for(int j = 0;j<arr.Count;j++) {
 					if(arr[j].Target==entity) {
 						arr.RemoveAt(j--);

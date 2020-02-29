@@ -1,4 +1,3 @@
-using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Newtonsoft.Json;
@@ -9,30 +8,8 @@ using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.IO.Graphics
 {
-	public class ShaderManager : AssetManager<Shader[]>
+	public partial class ShaderManager : AssetManager<Shader[]>
 	{
-		[JsonObject]
-		private class JSON_ShaderProgram
-		{
-			//Shaders
-			[JsonProperty(Required = Required.Always)] public string vertexShader;
-			[JsonProperty(Required = Required.Always)] public string fragmentShader;
-			public string geometryShader;
-			public string[] shaderDefines;
-
-			//Parameters
-			public int queue;
-			public CullMode cullMode = CullMode.Front;
-			public PolygonMode polygonMode = PolygonMode.Fill;
-			public BlendingFactor blendFactorSrc = BlendingFactor.One;
-			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
-
-			//Uniforms
-			public Dictionary<string,float> floats;
-			public Dictionary<string,float[]> vectors;
-			public Dictionary<string,string> textures;
-		}
-
 		public override string[] Extensions => new[] { ".program" };
 		public override bool Autoload(string file) => true;
 
@@ -45,7 +22,7 @@ namespace Dissonance.Engine.IO.Graphics
 			}
 
 			var shaders = new List<Shader>();
-			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string,JSON_ShaderProgram>>(jsonText);
+			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string,JsonShaderProgram>>(jsonText);
 
 			foreach(var pair in jsonShaders) {
 				string name = pair.Key;
