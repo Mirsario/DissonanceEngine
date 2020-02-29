@@ -13,11 +13,11 @@ namespace Dissonance.Engine.Physics
 
 			var vertices = mesh.Vertices;
 
-			while(i<mesh.triangles.Length) {
+			while(i<mesh.Triangles.Length) {
 				triMesh.AddTriangle(
-					vertices[mesh.triangles[i++]],
-					vertices[mesh.triangles[i++]],
-					vertices[mesh.triangles[i++]]
+					vertices[mesh.Triangles[i++]],
+					vertices[mesh.Triangles[i++]],
+					vertices[mesh.Triangles[i++]]
 				);
 			}
 

@@ -9,7 +9,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 	{
 		internal struct MeshInfo
 		{
-			public int[] triangles;
+			public uint[] triangles;
 			public Vector3[] faceData;
 			public Vector3[] vertices;
 			public Vector3[] normals;
@@ -54,7 +54,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,
-				triangles = meshInfo.triangles
+				Triangles = meshInfo.triangles
 			};
 
 			mesh.Apply();
@@ -111,7 +111,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 			reader.Close();
 
-			meshInfo.triangles = new int[triangles];
+			meshInfo.triangles = new uint[triangles];
 			meshInfo.vertices = new Vector3[vertices];
 			meshInfo.uv = new Vector2[vt];
 			meshInfo.normals = new Vector3[vn];
@@ -139,7 +139,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 			char[] splitIdentifier2 = { '/' };
 
 			int f = 0;
-			int f2 = 0;
+			uint f2 = 0;
 			int v = 0;
 			int vn = 0;
 			int vt = 0;
@@ -201,7 +201,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 						break;
 					case "f":
 						int j = 1;
-						var intArray = new List<int>();
+						var indexList = new List<uint>();
 
 						while(j<brokenString.Length && (""+brokenString[j]).Length>0) {
 							var temp = new Vector3();
@@ -226,7 +226,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 							meshInfo.faceData[f2] = temp;
 
-							intArray.Add(f2);
+							indexList.Add(f2);
 
 							f2++;
 						}
@@ -235,9 +235,9 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 						//Create triangles out of the face data. There will generally be more than 1 triangle per face.
 						while(j+2<brokenString.Length) {
-							meshInfo.triangles[f++] = intArray[0];
-							meshInfo.triangles[f++] = intArray[j];
-							meshInfo.triangles[f++] = intArray[++j];
+							meshInfo.triangles[f++] = indexList[0];
+							meshInfo.triangles[f++] = indexList[j];
+							meshInfo.triangles[f++] = indexList[++j];
 						}
 
 						break;

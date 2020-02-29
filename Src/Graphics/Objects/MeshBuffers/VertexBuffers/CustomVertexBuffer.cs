@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine.Graphics
 {
-	public abstract class CustomVertexBuffer : IDisposable
+	public abstract class CustomVertexBuffer : MeshBuffer
 	{
 		internal static class IDs<T> where T : CustomVertexBuffer
 		{
@@ -26,17 +26,10 @@ namespace Dissonance.Engine.Graphics
 
 		public readonly int TypeId;
 
-		public Mesh mesh;
-
-		public uint BufferId { get; protected set; }
-
 		internal CustomVertexBuffer()
 		{
 			TypeId = GetId(GetType());
 		}
-
-		public abstract void Apply();
-		public abstract void Dispose();
 
 		public static int GetId<T>() where T : CustomVertexBuffer => IDs<T>.id;
 		public static int GetId(Type type) => idByType[type];
@@ -108,8 +101,10 @@ namespace Dissonance.Engine.Graphics
 		{
 			if(BufferId!=0) {
 				GL.DeleteBuffer(BufferId);
+
 				BufferId = 0;
 			}
 		}
+		public override void SetData(byte[] data) => SetDataHelper(ref this.data,data);
 	}
 }

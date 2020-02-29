@@ -30,7 +30,7 @@
 				} : null,
 
 				//Triangles
-				triangles = new[] {
+				Triangles = new uint[] {
 					2,1,0,
 					2,3,1,
 				}
@@ -63,14 +63,14 @@
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[vertexCount],
-				triangles = new int[triIndexCount],
+				Triangles = new uint[triIndexCount],
 				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
-			var vertexMap = new int[realResolution.x,realResolution.y];
+			var vertexMap = new uint[realResolution.x,realResolution.y];
 
-			int vertex = 0;
-			int triangle = 0;
+			uint vertex = 0;
+			uint triangle = 0;
 
 			for(int y = 0;y<realResolution.y;y++) {
 				for(int x = 0;x<realResolution.x;x++) {
@@ -86,17 +86,17 @@
 
 			for(int y = 0;y<resolution.y;y++) {
 				for(int x = 0;x<resolution.x;x++) {
-					int topLeft = vertexMap[x,y];
-					int topRight = vertexMap[x+1,y];
-					int bottomLeft = vertexMap[x,y+1];
-					int bottomRight = vertexMap[x+1,y+1];
+					uint topLeft = vertexMap[x,y];
+					uint topRight = vertexMap[x+1,y];
+					uint bottomLeft = vertexMap[x,y+1];
+					uint bottomRight = vertexMap[x+1,y+1];
 
-					newMesh.triangles[triangle++] = bottomLeft;
-					newMesh.triangles[triangle++] = topRight;
-					newMesh.triangles[triangle++] = topLeft;
-					newMesh.triangles[triangle++] = bottomLeft;
-					newMesh.triangles[triangle++] = bottomRight;
-					newMesh.triangles[triangle++] = topRight;
+					newMesh.Triangles[triangle++] = bottomLeft;
+					newMesh.Triangles[triangle++] = topRight;
+					newMesh.Triangles[triangle++] = topLeft;
+					newMesh.Triangles[triangle++] = bottomLeft;
+					newMesh.Triangles[triangle++] = bottomRight;
+					newMesh.Triangles[triangle++] = topRight;
 				}
 			}
 
@@ -151,7 +151,7 @@
 				} : null,
 
 				//Triangles
-				triangles = inverted ? new[] {
+				Triangles = inverted ? new uint[] {
 					1,2,0, //Inverted
 					3,2,1,
 					5,6,4,
@@ -164,7 +164,7 @@
 					19,18,17,
 					21,20,22,
 					23,21,22
-				} : new[] {
+				} : new uint[] {
 					2,1,0, //Normal
 					2,3,1,
 					6,5,4,
@@ -206,7 +206,7 @@
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[verticeAmount],
-				triangles = new int[xRes*yRes*6]
+				Triangles = new uint[xRes*yRes*6]
 			};
 
 			if(addNormals) {
@@ -217,22 +217,26 @@
 				newMesh.Uv0 = new Vector2[verticeAmount];
 			}
 			
-			void SphereVertex(int x,int y,int index)
+			void SphereVertex(int x,int y,uint index)
 			{
 				float hAngle = x*xOffset;
 				float vAngle = y*yOffset;
+				
 				var normal = new Vector3(Mathf.Sin(hAngle)*Mathf.Sin(vAngle),Mathf.Cos(vAngle),Mathf.Cos(hAngle)*Mathf.Sin(vAngle));
+				
 				newMesh.Vertices[index] = normal*radius;
+
 				if(addNormals) {
 					newMesh.Normals[index] = normal;
 				}
+
 				if(addUVs) {
 					newMesh.Uv0[index] = new Vector2(x*xResMultiplier,y*yResMultiplier);
 				}
 			}
 
-			int vertexIndex = 0;
-			int triangleIndex = 0;
+			uint vertexIndex = 0;
+			uint triangleIndex = 0;
 
 			for(int y = 0;y<yRes;y++) {
 				for(int x = 0;x<xRes;x++) {
@@ -241,12 +245,12 @@
 					SphereVertex(x+1,y,vertexIndex+2);
 					SphereVertex(x+1,y+1,vertexIndex+3);
 
-					newMesh.triangles[triangleIndex++] = vertexIndex;
-					newMesh.triangles[triangleIndex++] = vertexIndex+1;
-					newMesh.triangles[triangleIndex++] = vertexIndex+3;
-					newMesh.triangles[triangleIndex++] = vertexIndex+2;
-					newMesh.triangles[triangleIndex++] = vertexIndex;
-					newMesh.triangles[triangleIndex++] = vertexIndex+3;
+					newMesh.Triangles[triangleIndex++] = vertexIndex;
+					newMesh.Triangles[triangleIndex++] = vertexIndex+1;
+					newMesh.Triangles[triangleIndex++] = vertexIndex+3;
+					newMesh.Triangles[triangleIndex++] = vertexIndex+2;
+					newMesh.Triangles[triangleIndex++] = vertexIndex;
+					newMesh.Triangles[triangleIndex++] = vertexIndex+3;
 
 					vertexIndex += 4;
 				}
@@ -277,14 +281,14 @@
 				},
 
 				//Triangles
-				triangles = inverted ? new[] {
+				Triangles = inverted ? new uint[] {
 					//Inverted
 					4,0,1,	9,0,4,	5,9,4,	5,4,8,
 					8,4,1,	10,8,1,	3,8,10,	3,5,8,
 					2,5,3,	7,2,3,	10,7,3,	6,7,10,
 					11,7,6,	0,11,6,	1,0,6,	1,6,10,
 					0,9,11,	11,9,2,	2,9,5,	2,7,11
-				} : new[] {
+				} : new uint[] {
 					//Normal
 					0,4,1,	0,9,4,	9,5,4,	4,5,8,
 					4,8,1,	8,10,1,	8,3,10,	5,3,8,

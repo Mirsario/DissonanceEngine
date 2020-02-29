@@ -5,14 +5,14 @@
 		public void Recalculate()
 		{
 			var vertices = mesh.Vertices;
-			var triangles = mesh.triangles;
+			var triangles = mesh.Triangles;
 
 			var newNormals = new Vector3[vertices.Length];
 
-			for(int i = 0;i<triangles.Length;i+=3) {
-				int i1 = triangles[i];
-				int i2 = triangles[i+1];
-				int i3 = triangles[i+2];
+			for(uint i = 0;i<triangles.Length;i+=3) {
+				uint i1 = triangles[i];
+				uint i2 = triangles[i+1];
+				uint i3 = triangles[i+2];
 
 				var v1 = vertices[i1];
 				var v2 = vertices[i2];
