@@ -94,7 +94,7 @@ namespace Dissonance.Engine.Graphics
 
 				var attribute = CustomVertexAttribute.GetInstance((int)attributeId);
 
-				GL.VertexAttribPointer(attributeId,attribute.Size,attribute.PointerType,attribute.IsNormalized,0,(IntPtr)attribute.Offset);
+				GL.VertexAttribPointer(attributeId,attribute.Size,attribute.PointerType,attribute.IsNormalized,attribute.Stride,(IntPtr)attribute.Offset);
 			}
 		}
 		public override void Dispose()
