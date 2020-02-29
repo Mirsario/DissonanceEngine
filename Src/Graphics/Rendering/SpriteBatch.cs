@@ -7,8 +7,8 @@ namespace Dissonance.Engine.Graphics
 		protected static readonly Vector4 DefaultUvPoints = new Vector4(0f,1f,1f,0f);
 
 		protected Mesh bufferMesh;
-		protected int vertexIndex;
-		protected int triangleIndex;
+		protected uint vertexIndex;
+		protected uint triangleIndex;
 		protected bool began;
 
 		public SpriteBatch()
@@ -27,7 +27,7 @@ namespace Dissonance.Engine.Graphics
 
 			bufferMesh.Vertices = new Vector3[vertexCount];
 			bufferMesh.Uv0 = new Vector2[vertexCount];
-			bufferMesh.triangles = new int[triangleCount];
+			bufferMesh.Triangles = new uint[triangleCount];
 
 			vertexIndex = triangleIndex = 0;
 
@@ -44,7 +44,7 @@ namespace Dissonance.Engine.Graphics
 
 			bufferMesh.Vertices = null;
 			bufferMesh.Uv0 = null;
-			bufferMesh.triangles = null;
+			bufferMesh.Triangles = null;
 
 			began = false;
 		}
@@ -58,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 
 			var vertices = bufferMesh.Vertices;
 			var uv0 = bufferMesh.Uv0;
-			var triangles = bufferMesh.triangles;
+			var triangles = bufferMesh.Triangles;
 
 			vertices[vertexIndex  ] = new Vector3(vertexPoints.x,vertexPoints.y,depth);
 			vertices[vertexIndex+1] = new Vector3(vertexPoints.x,vertexPoints.w,depth);
