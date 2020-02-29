@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Dissonance.Engine.IO;
 using Dissonance.Framework;
 using Dissonance.Framework.Graphics;
@@ -8,9 +9,12 @@ using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 namespace Dissonance.Engine.Graphics
 {
 	//TODO: Initialize static fields after Graphics.Init();
-	//TODO: Uniforms' code is quite terrible.
+	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
 	public partial class Shader : Asset
 	{
+		private static readonly Regex regexFSuffixA = new Regex(@"([^.]|^)([\d]+)f(?=[^\w])",RegexOptions.Compiled);
+		private static readonly Regex regexFSuffixB = new Regex(@"(\.)([\d]+)f(?=[^\w])",RegexOptions.Compiled);
+
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
 
@@ -68,15 +72,14 @@ namespace Dissonance.Engine.Graphics
 			code = code.Trim();
 
 			//Some broken Nvidia drivers don't support 'f' suffix, even though it was added in GLSL 1.2 decades ago. Zoinks.
-			code = RegexCache.shaderFSuffixB.Replace(code,@"$1$2");
-			code = RegexCache.shaderFSuffixA.Replace(code,@"$1$2.0");
+			code = regexFSuffixB.Replace(code,@"$1$2");
+			code = regexFSuffixA.Replace(code,@"$1$2.0");
 			
 			uint shader = GL.CreateShader(type);
 
 			GL.ShaderSource(shader,code);
 			GL.CompileShader(shader);
 
-			//TODO: This requires testing
 			string info = GL.GetShaderInfoLog(shader);
 
 			if(!string.IsNullOrEmpty(info)) {
