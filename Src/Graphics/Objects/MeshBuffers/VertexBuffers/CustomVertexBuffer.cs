@@ -84,10 +84,12 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			int tSize = Marshal.SizeOf<T>();
-			int bufferSize = data.Length*tSize;
 
 			GL.BindBuffer(Target,BufferId);
-			GL.BufferData(Target,bufferSize,data,mesh.bufferUsage);
+
+			DataLength = (uint)data.Length;
+
+			GL.BufferData(Target,(int)(DataLength*tSize),data,mesh.bufferUsage);
 
 			foreach(uint attributeId in attributes) {
 				GL.EnableVertexAttribArray(attributeId);
