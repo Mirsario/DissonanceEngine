@@ -8,7 +8,7 @@ namespace Dissonance.Engine
 	{
 		public override string[] Extensions => new [] { ".wav",".wave" };
 		
-		public override AudioClip Import(Stream stream,string fileName)
+		public override AudioClip Import(Stream stream,string filePath)
 		{
 			using var reader = new BinaryReader(stream);
 

@@ -8,7 +8,7 @@ namespace Dissonance.Engine
 	{
 		public override string[] Extensions => new [] { ".ogg" };
 		
-		public override AudioClip Import(Stream stream,string fileName)
+		public override AudioClip Import(Stream stream,string filePath)
 		{
 			using var r = new VorbisReader(stream,true);
 

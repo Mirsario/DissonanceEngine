@@ -13,7 +13,7 @@ namespace Dissonance.Engine.IO.Graphics
 		public override string[] Extensions => new[] { ".program" };
 		public override bool Autoload(string file) => true;
 
-		public override Shader[] Import(Stream stream,string fileName)
+		public override Shader[] Import(Stream stream,string filePath)
 		{
 			string jsonText;
 
