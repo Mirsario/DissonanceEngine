@@ -28,7 +28,7 @@ namespace Dissonance.Engine.IO.Graphics
 		public override string[] Extensions => new[] { ".material" };
 		public override bool Autoload(string file) => true;
 
-		public override Material Import(Stream stream,string fileName)
+		public override Material Import(Stream stream,string filePath)
 		{
 			string jsonText;
 
@@ -37,8 +37,9 @@ namespace Dissonance.Engine.IO.Graphics
 			}
 
 			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
-			jsonMat.name = FilterText(jsonMat.name,fileName);
-			jsonMat.shader = FilterText(jsonMat.shader,fileName);
+
+			jsonMat.name = FilterText(jsonMat.name,filePath);
+			jsonMat.shader = FilterText(jsonMat.shader,filePath);
 
 			var shader = Resources.Find<Shader>(jsonMat.shader);
 
@@ -50,27 +51,27 @@ namespace Dissonance.Engine.IO.Graphics
 
 			if(jsonMat.textures!=null) {
 				foreach(var pair in jsonMat.textures) {
-					material.SetTexture(FilterText(pair.Key,fileName),Resources.Import<Texture>(FilterText(pair.Value,fileName)));
+					material.SetTexture(FilterText(pair.Key,filePath),Resources.Import<Texture>(FilterText(pair.Value,filePath)));
 				}
 			}
 
 			if(jsonMat.floats!=null) {
 				foreach(var pair in jsonMat.floats) {
-					material.SetFloat(FilterText(pair.Key,fileName),pair.Value);
+					material.SetFloat(FilterText(pair.Key,filePath),pair.Value);
 				}
 			}
 
 			if(jsonMat.vectors!=null) {
 				foreach(var pair in jsonMat.vectors) {
-					material.SetVector(FilterText(pair.Key,fileName),pair.Value);
+					material.SetVector(FilterText(pair.Key,filePath),pair.Value);
 				}
 			}
 
 			return material;
 		}
 		private static string FilterText(string str,string file) => str.ReplaceCaseInsensitive(
-			("$FILE$", file),
-			("$FILENAME$", Path.GetFileNameWithoutExtension(file))
+			("$FILE$",Path.GetFileName(file)),
+			("$FILENAME$",Path.GetFileNameWithoutExtension(file))
 		);
 	}
 }

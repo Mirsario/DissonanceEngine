@@ -7,7 +7,7 @@ namespace Dissonance.Engine.IO.Other
 	{
 		public override string[] Extensions => new[] { ".bytes" };
 
-		public override byte[] Import(Stream stream,string fileName)
+		public override byte[] Import(Stream stream,string filePath)
 		{
 			var bytes = new byte[stream.Length];
 			stream.Read(bytes,0,bytes.Length);

@@ -16,19 +16,19 @@ namespace Dissonance.Engine.IO
 
 			return ImportInternal(filePath,addToCache,assetManager,ntpMultiplePaths,throwOnFail);
 		}
-		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string fileName = null) where T : class
+		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string filePath = null) where T : class
 		{
 			var type = typeof(T);
 
 			if(assetManager==null) {
-				if(fileName==null) {
+				if(filePath==null) {
 					throw new ArgumentException(
-						$"Could not figure out an AssetManager for import, since '{nameof(fileName)}' parameter is null."+
+						$"Could not figure out an AssetManager for import, since '{nameof(filePath)}' parameter is null."+
 						$"\r\nProvide a proper file name, or provide an AssetManager with the '{nameof(assetManager)}' parameter."
 					);
 				}
 
-				string ext = Path.GetExtension(fileName).ToLower();
+				string ext = Path.GetExtension(filePath).ToLower();
 
 				if(!assetManagers.TryGetValue(ext,out var managers)) {
 					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
@@ -43,7 +43,7 @@ namespace Dissonance.Engine.IO
 				assetManager = results[0];
 			}
 
-			var output = assetManager.Import(stream,fileName);
+			var output = assetManager.Import(stream,filePath);
 
 			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.RegisterAsset(),false);
 
@@ -134,7 +134,7 @@ namespace Dissonance.Engine.IO
 			}
 
 			using var stream = File.OpenRead(filePath);
-			var content = ImportFromStream(stream,assetManager,Path.GetFileName(filePath));
+			var content = ImportFromStream(stream,assetManager,filePath);
 
 			if(addToCache) {
 				AddToCache(filePath,content);
@@ -169,7 +169,7 @@ namespace Dissonance.Engine.IO
 			//TODO: Avoid these generic shenanigans.
 
 			var method = typeof(Resources).GetMethod(nameof(ImportFromStream),BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(tType);
-			var content = method.Invoke(manager,new object[] { entryStream,manager,Path.GetFileName(filePath) });
+			var content = method.Invoke(manager,new object[] { entryStream,manager,filePath });
 
 			AddToCache(filePath,content);
 

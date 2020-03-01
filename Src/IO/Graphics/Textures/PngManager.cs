@@ -11,7 +11,7 @@ namespace Dissonance.Engine.IO.Graphics.Textures
 	{
 		public override string[] Extensions => new[] { ".png" };
 
-		public override Texture Import(Stream stream,string fileName)
+		public override Texture Import(Stream stream,string filePath)
 		{
 			int length = (int)stream.Length;
 
@@ -23,7 +23,7 @@ namespace Dissonance.Engine.IO.Graphics.Textures
 				stream.CopyTo(unmanagedStream,length);
 
 				if(!IL.Load(LoadImageTypeLumps.Png,ptr,length)) {
-					throw new FileLoadException($"Unable to load image '{fileName}'.");
+					throw new FileLoadException($"Unable to load image '{filePath}'.");
 				}
 			}
 

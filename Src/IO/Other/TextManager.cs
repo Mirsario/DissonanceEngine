@@ -7,7 +7,7 @@ namespace Dissonance.Engine.IO.Other
 	{
 		public override string[] Extensions => new[] { ".txt" };
 
-		public override string Import(Stream stream,string fileName)
+		public override string Import(Stream stream,string filePath)
 		{
 			using var reader = new StreamReader(stream);
 

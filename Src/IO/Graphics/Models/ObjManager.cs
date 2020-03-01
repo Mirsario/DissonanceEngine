@@ -18,7 +18,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 		public override string[] Extensions => new[] { ".obj" };
 
-		public override Mesh Import(Stream stream,string fileName)
+		public override Mesh Import(Stream stream,string filePath)
 		{
 			string text;
 
@@ -50,7 +50,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 			}
 
 			var mesh = new Mesh {
-				name = Path.GetFileName(fileName),
+				name = Path.GetFileName(filePath),
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,

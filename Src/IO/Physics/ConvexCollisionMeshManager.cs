@@ -9,9 +9,9 @@ namespace Dissonance.Engine.IO.Physics
 	{
 		public override string[] Extensions => new string[] { ".obj" };
 
-		public override ConvexCollisionMesh Import(Stream stream,string fileName)
+		public override ConvexCollisionMesh Import(Stream stream,string filePath)
 		{
-			var mesh = Resources.ImportFromStream<Mesh>(stream,fileName: fileName);
+			var mesh = Resources.ImportFromStream<Mesh>(stream,filePath:filePath);
 
 			var collisionMesh = new ConvexCollisionMesh();
 
