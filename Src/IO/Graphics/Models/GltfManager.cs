@@ -42,19 +42,50 @@ namespace Dissonance.Engine.IO.Graphics.Models
 			//{ "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
 		};
 
-		public override string[] Extensions => new[] { ".glb" };
+		public override string[] Extensions => new[] { ".gltf",".glb" };
 
 		public override AssetPack Import(Stream stream,string fileName)
+		{
+			GltfJson json = null;
+			Stream blobStream = null;
+
+			if(fileName.EndsWith(".gltf")) {
+				byte[] textBytes = new byte[stream.Length-stream.Position];
+
+				stream.Read(textBytes,0,textBytes.Length);
+
+				HandleGltf(textBytes,ref json);
+			} else {
+				HandleGlb(stream,ref json,ref blobStream);
+			}
+
+			//TODO: Add extension support.
+			if(json.extensionsRequired!=null) {
+				foreach(var requiredExtension in json.extensionsRequired) {
+					throw new FileLoadException($"glTF Error: Required extension '{requiredExtension}' is not supported.");
+				}
+			}
+
+			var assets = new AssetPack();
+
+			LoadMeshes(json,assets,blobStream);
+
+			return assets;
+		}
+
+		protected static void HandleGltf(byte[] textBytes,ref GltfJson json)
+		{
+			json = JsonConvert.DeserializeObject<GltfJson>(Encoding.UTF8.GetString(textBytes));
+
+			File.WriteAllText("Gltf.json",JsonConvert.SerializeObject(json,Formatting.Indented,new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore }));
+		}
+		protected static void HandleGlb(Stream stream,ref GltfJson json,ref Stream blobStream)
 		{
 			using var reader = new BinaryReader(stream);
 
 			ReadHeader(reader,out _,out uint length);
 
-			var json = new GltfJson();
-			var assets = new AssetPack();
-
 			int chunkId = 0;
-			MemoryStream blobStream = null;
 
 			while(reader.BaseStream.Position<length) {
 				//Read Chunk
@@ -70,7 +101,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 				switch(chunkType) {
 					case ChunkJson:
-						json = JsonConvert.DeserializeObject<GltfJson>(Encoding.UTF8.GetString(chunkData));
+						HandleGltf(chunkData,ref json);
 						break;
 					case ChunkBinary:
 						blobStream = new MemoryStream(chunkData);
@@ -79,17 +110,6 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 				chunkId++;
 			}
-
-			//TODO: Add extension support.
-			if(json.extensionsRequired!=null) {
-				foreach(var requiredExtension in json.extensionsRequired) {
-					throw new FileLoadException($"glTF Error: Required extension '{requiredExtension}' is not supported.");
-				}
-			}
-
-			LoadMeshes(json,assets,blobStream);
-
-			return assets;
 		}
 
 		protected static void ReadHeader(BinaryReader reader,out uint version,out uint length)
@@ -105,12 +125,14 @@ namespace Dissonance.Engine.IO.Graphics.Models
 		}
 		protected static byte[] GetAccessorData(GltfJson json,GltfJson.Accessor accessor,Stream blobStream)
 		{
-			uint sizeInBytes = accessor.count*AccessorTypeSizes[accessor.type]*ComponentTypeSizes[accessor.componentType];
+			var bufferView = accessor.bufferView.HasValue ? json.bufferViews[accessor.bufferView.Value] : null;
 
-			byte[] data = new byte[sizeInBytes];
+			int elementSize = (int)(AccessorTypeSizes[accessor.type]*ComponentTypeSizes[accessor.componentType]);
+			int fullSize = (int)(bufferView?.byteLength ?? accessor.count*elementSize);
 
-			if(accessor.bufferView.HasValue) {
-				var bufferView = json.bufferViews[accessor.bufferView.Value];
+			byte[] data = new byte[fullSize];
+
+			if(bufferView!=null) {
 				uint bufferId = bufferView.buffer;
 				var buffer = json.buffers[bufferId];
 
@@ -136,7 +158,19 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 				stream.Seek(bufferView.byteOffset+accessor.byteOffset,SeekOrigin.Begin);
 
-				stream.Read(data,0,(int)bufferView.byteLength);
+				if(bufferView.byteStride==0) {
+					stream.Read(data,0,(int)bufferView.byteLength);
+				} else {
+					int bytesRead = 0;
+
+					while(bytesRead<bufferView.byteLength) {
+						stream.Read(data,bytesRead,elementSize);
+
+						bytesRead += elementSize;
+
+						stream.Seek(bufferView.byteStride,SeekOrigin.Current);
+					}
+				}
 			}
 
 			return data;
@@ -154,22 +188,16 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				foreach(var jsonPrimitive in jsonMesh.primitives) {
 					var mesh = new Mesh();
 
+					if(jsonPrimitive.mode.HasValue) {
+						mesh.PrimitiveType = jsonPrimitive.mode.Value;
+					}
+
 					if(jsonPrimitive.indices.HasValue) {
 						var jsonAccessor = json.accessors[jsonPrimitive.indices.Value];
 
 						var data = GetAccessorData(json,jsonAccessor,blobStream);
 
-						mesh.Triangles = new uint[jsonAccessor.count];
-
-						unsafe {
-							fixed(byte* bytePtr = data) {
-								var intPtr = (ushort*)bytePtr;
-
-								for(int i = 0;i<mesh.Triangles.Length;i++) {
-									mesh.Triangles[i] = intPtr[i];
-								}
-							}
-						}
+						mesh.IndexBuffer.SetData<ushort>(data,value => value);
 					}
 
 					foreach(var pair in jsonPrimitive.attributes) {
@@ -186,8 +214,6 @@ namespace Dissonance.Engine.IO.Graphics.Models
 						var data = GetAccessorData(json,jsonAccessor,blobStream);
 
 						buffer.SetData(data);
-
-						Console.WriteLine($"Wrote buffer {buffer.GetType().Name} for attribute {attribute.GetType().Name} ({attributeName})");
 					}
 
 					mesh.Apply();

@@ -319,7 +319,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 					/// <summary> The index of the material to apply to this primitive when rendering. </summary>
 					public uint? material;
 					/// <summary> The type of primitives to render. All valid values correspond to GL enums. </summary>
-					public PrimitiveType mode;
+					public PrimitiveType? mode;
 				}
 
 				/// <summary> An array of primitives, each defining geometry to be rendered with a material. </summary>
