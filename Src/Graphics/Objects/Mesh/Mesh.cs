@@ -102,9 +102,9 @@ namespace Dissonance.Engine
 			if(Vertices==null) {
 				throw new InvalidOperationException($"{nameof(Mesh)}.{nameof(Apply)}() requires {nameof(VertexBuffer)} to be ready.");
 			}
-			if(Triangles==null) {
+			/*if(Triangles==null) {
 				throw new InvalidOperationException($"{nameof(Mesh)}.{nameof(Apply)}() requires {nameof(Triangles)} to be ready.");
-			}
+			}*/
 
 			//Bind vertex array object (and generate one if needed).
 
@@ -139,6 +139,8 @@ namespace Dissonance.Engine
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer,0);
 
 			Rendering.CheckGLErrors();
+
+			currentPrimitiveType = primitiveTypeToSet;
 
 			IsReady = true;
 		}

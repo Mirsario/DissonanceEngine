@@ -6,7 +6,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class IndexBuffer : MeshBuffer
+	public class IndexBuffer : MeshBuffer, IMeshBuffer<uint>
 	{
 		protected const BufferTarget Target = BufferTarget.ElementArrayBuffer;
 
@@ -42,6 +42,8 @@ namespace Dissonance.Engine.Graphics
 				BufferId = 0;
 			}
 		}
-		public override void SetData(byte[] data) => SetDataHelper(ref this.data,data);
+		public override void SetData(byte[] byteData) => SetDataHelper(ref data,byteData);
+
+		public void SetData<TProvidedData>(byte[] byteData,Func<TProvidedData,uint> cast) where TProvidedData : unmanaged => SetDataHelper(ref data,byteData,cast);
 	}
 }

@@ -58,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 		}
 	}
 
-	public abstract class CustomVertexBuffer<T> : CustomVertexBuffer where T : unmanaged
+	public abstract class CustomVertexBuffer<T> : CustomVertexBuffer, IMeshBuffer<T> where T : unmanaged
 	{
 		public T[] data;
 
@@ -106,5 +106,7 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 		public override void SetData(byte[] data) => SetDataHelper(ref this.data,data);
+
+		public void SetData<TProvidedData>(byte[] byteData,Func<TProvidedData,T> cast) where TProvidedData : unmanaged => SetDataHelper(ref data,byteData,cast);
 	}
 }

@@ -28,10 +28,6 @@ namespace Dissonance.Engine
 
 			textBufferMesh = new Mesh();
 		}
-		internal static void Update()
-		{
-			
-		}
 		
 		public static void Box(RectFloat rect,Vector4? color)
 		{
@@ -168,6 +164,7 @@ namespace Dissonance.Engine
 
 			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
+
 				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color],col.x,col.y,col.z,col.w);
 			}
 
