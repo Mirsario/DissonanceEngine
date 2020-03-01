@@ -27,10 +27,20 @@ namespace Dissonance.Engine.Graphics
 		internal static uint currentStencilMask;
 
 		public static RenderingPipeline RenderingPipeline { get; private set; }
-		
+		public static bool DebugFramebuffers { get; set; }
+
 		//TODO: To be moved
 		private static Shader guiShader;
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI");
+
+		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
+		{
+			renderingPipelineType = typeof(T);
+
+			if(RenderingPipeline!=null) {
+				InstantiateRenderingPipeline();
+			}
+		}
 
 		internal static void PreInit()
 		{
@@ -70,7 +80,6 @@ namespace Dissonance.Engine.Graphics
 			whiteTexture = new Texture(1,1);
 			whiteTexture.SetPixels(new[] { new Pixel(1f,1f,1f,1f) });
 		}
-
 		internal static void Render()
 		{
 			drawCallsCount = 0;
@@ -140,88 +149,17 @@ namespace Dissonance.Engine.Graphics
 
 			RenderingPipeline.PostRender();
 
-			#region RenderTargetDebug
-
-			if(Input.GetKey(Keys.F)) {
-				//TODO: This is temporary
-				static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
-
-				int textureCount = 0;
-				var framebuffers = RenderingPipeline.framebuffers;
-
-				for(int i = 0;i<framebuffers.Length;i++) {
-					var fb = framebuffers[i];
-
-					for(int j = 0;j<fb.renderTextures.Count;j++) {
-						var tex = fb.renderTextures[j];
-
-						if(!IsDepthTexture(tex)) {
-							textureCount++;
-						}
-					}
-				}
-
-				if(Input.GetKey(Keys.LeftShift)) {
-					textureCount = Math.Min(textureCount,1);
-				}
-
-				int size = 1;
-
-				while(size*size<textureCount) {
-					size++;
-				}
-				
-				int x = 0;
-				int y = 0;
-				for(int i = 0;i<framebuffers.Length;i++) {
-					var framebuffer = framebuffers[i];
-
-					Framebuffer.Bind(framebuffer,FramebufferTarget.ReadFramebuffer);
-
-					for(int j = 0;j<framebuffer.renderTextures.Count;j++) {
-						var tex = framebuffer.renderTextures[j];
-
-						if(IsDepthTexture(tex)) {
-							continue;
-						}
-
-						GL.ReadBuffer(ReadBufferMode.ColorAttachment0+j);
-
-						int wSize = Screen.width/size;
-						int hSize = Screen.height/size;
-
-						GL.BlitFramebuffer(
-							0,0,tex.Width,tex.Height,
-							x*wSize,(size-y-1)*hSize,(x+1)*wSize,(size-y)*hSize,
-							ClearBufferMask.ColorBufferBit,
-							BlitFramebufferFilter.Nearest
-						);
-
-						if(++x>=size) {
-							x = 0;
-							y++;
-						}
-					}
-				}
+			if(DebugFramebuffers) {
+				BlitFramebuffers();
 			}
-
-			#endregion
 
 			GLFW.SwapBuffers(Game.window);
 
 			CheckGLErrors();
 		}
-		
-		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
-		{
-			renderingPipelineType = typeof(T);
+		internal static void Dispose() {}
 
-			if(RenderingPipeline!=null) {
-				InstantiateRenderingPipeline();
-			}
-		}
-
-		internal static void InstantiateRenderingPipeline()
+		private static void InstantiateRenderingPipeline()
 		{
 			RenderingPipeline?.Dispose();
 
@@ -229,12 +167,69 @@ namespace Dissonance.Engine.Graphics
 
 			RenderingPipeline.Init();
 		}
-		internal static void Resize(object sender,EventArgs e)
+		private static void BlitFramebuffers()
 		{
-			Screen.UpdateValues();
+			//TODO: This is temporary
+			static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
 
-			//InstantiateRenderingPipeline();
+			int textureCount = 0;
+			var framebuffers = RenderingPipeline.framebuffers;
+
+			for(int i = 0;i<framebuffers.Length;i++) {
+				var fb = framebuffers[i];
+
+				for(int j = 0;j<fb.renderTextures.Count;j++) {
+					var tex = fb.renderTextures[j];
+
+					if(!IsDepthTexture(tex)) {
+						textureCount++;
+					}
+				}
+			}
+
+			if(Input.GetKey(Keys.LeftShift)) {
+				textureCount = Math.Min(textureCount,1);
+			}
+
+			int size = 1;
+
+			while(size*size<textureCount) {
+				size++;
+			}
+
+			int x = 0;
+			int y = 0;
+
+			for(int i = 0;i<framebuffers.Length;i++) {
+				var framebuffer = framebuffers[i];
+
+				Framebuffer.Bind(framebuffer,FramebufferTarget.ReadFramebuffer);
+
+				for(int j = 0;j<framebuffer.renderTextures.Count;j++) {
+					var tex = framebuffer.renderTextures[j];
+
+					if(IsDepthTexture(tex)) {
+						continue;
+					}
+
+					GL.ReadBuffer(ReadBufferMode.ColorAttachment0+j);
+
+					int wSize = Screen.width/size;
+					int hSize = Screen.height/size;
+
+					GL.BlitFramebuffer(
+						0,0,tex.Width,tex.Height,
+						x*wSize,(size-y-1)*hSize,(x+1)*wSize,(size-y)*hSize,
+						ClearBufferMask.ColorBufferBit,
+						BlitFramebufferFilter.Nearest
+					);
+
+					if(++x>=size) {
+						x = 0;
+						y++;
+					}
+				}
+			}
 		}
-		internal static void Dispose() {}
 	}
 }
