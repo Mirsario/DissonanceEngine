@@ -73,7 +73,13 @@ namespace Dissonance.Engine
 		{
 			GL.BindVertexArray(vertexArrayId);
 
-			GL.DrawElements(currentPrimitiveType,(int)IndexBuffer.DataLength,DrawElementsType.UnsignedInt,0);
+			int indexCount = (int)IndexBuffer.DataLength;
+
+			if(indexCount>0) {
+				GL.DrawElements(currentPrimitiveType,indexCount,DrawElementsType.UnsignedInt,0);
+			} else {
+				GL.DrawArrays(currentPrimitiveType,0,(int)VertexBuffer.DataLength);
+			}
 
 			GL.BindVertexArray(0);
 		}
