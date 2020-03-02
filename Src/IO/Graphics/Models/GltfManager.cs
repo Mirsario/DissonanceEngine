@@ -128,8 +128,9 @@ namespace Dissonance.Engine.IO.Graphics.Models
 			var json = info.json;
 			var bufferView = accessor.bufferView.HasValue ? json.bufferViews[accessor.bufferView.Value] : null;
 
-			int elementSize = (int)(AccessorTypeSizes[accessor.type]*ComponentTypeSizes[accessor.componentType]);
-			int fullSize = (int)(bufferView?.byteLength ?? accessor.count*elementSize);
+			int elementSize = (int)AccessorTypeSizes[accessor.type];
+			int packSize = (int)(elementSize*ComponentTypeSizes[accessor.componentType]);
+			int fullSize = (int)(bufferView?.byteLength ?? accessor.count*packSize);
 
 			byte[] data = new byte[fullSize];
 
@@ -170,9 +171,9 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 				stream.Seek(bufferView.byteOffset+accessor.byteOffset,SeekOrigin.Begin);
 
-				if(bufferView.byteStride==0) {
+				//if(bufferView.byteStride==0) {
 					stream.Read(data,0,(int)bufferView.byteLength);
-				} else {
+				/*} else {
 					int bytesRead = 0;
 
 					while(bytesRead<bufferView.byteLength) {
@@ -182,7 +183,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 
 						stream.Seek(bufferView.byteStride,SeekOrigin.Current);
 					}
-				}
+				}*/
 			}
 
 			return data;
