@@ -6,6 +6,8 @@ namespace Dissonance.Engine.Physics
 	{
 		protected float radius = 1f;
 
+		protected override bool OwnsShape => true;
+
 		public float Radius {
 			get => radius;
 			set {

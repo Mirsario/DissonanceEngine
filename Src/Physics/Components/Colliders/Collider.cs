@@ -10,6 +10,8 @@ namespace Dissonance.Engine.Physics
 
 		private bool needsUpdate;
 
+		protected abstract bool OwnsShape { get; }
+
 		public Vector3 Offset {
 			get => offset;
 			set {
@@ -50,7 +52,9 @@ namespace Dissonance.Engine.Physics
 		{
 			base.OnDispose();
 
-			collShape?.Dispose();
+			if(OwnsShape) {
+				collShape?.Dispose();
+			}
 		}
 
 		protected void TryUpdateCollider()
