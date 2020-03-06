@@ -46,6 +46,12 @@ namespace Dissonance.Engine.Physics
 				UpdateCollider();
 			}
 		}
+		protected override void OnDispose()
+		{
+			base.OnDispose();
+
+			collShape?.Dispose();
+		}
 
 		protected void TryUpdateCollider()
 		{
