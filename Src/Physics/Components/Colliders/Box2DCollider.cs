@@ -6,6 +6,8 @@ namespace Dissonance.Engine.Physics
 	{
 		protected Vector2 size = Vector2.One;
 
+		protected override bool OwnsShape => true;
+
 		public Vector2 Size {
 			get => size;
 			set {

@@ -7,6 +7,8 @@ namespace Dissonance.Engine.Physics
 		protected float radius = 0.5f;
 		protected float height = 2f;
 
+		protected override bool OwnsShape => true;
+
 		public float Radius {
 			get => radius;
 			set {

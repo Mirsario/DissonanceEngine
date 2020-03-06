@@ -4,6 +4,8 @@ namespace Dissonance.Engine.Physics
 	{
 		protected CollisionMesh mesh;
 
+		protected override bool OwnsShape => false;
+
 		public CollisionMesh Mesh {
 			get => mesh;
 			set {

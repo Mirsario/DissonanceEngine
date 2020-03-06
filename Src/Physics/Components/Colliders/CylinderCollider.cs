@@ -5,6 +5,9 @@ namespace Dissonance.Engine.Physics
 	public class CylinderCollider : Collider
 	{
 		protected Vector3 size = Vector3.One;
+
+		protected override bool OwnsShape => true;
+
 		public Vector3 Size {
 			get => size;
 			set {
