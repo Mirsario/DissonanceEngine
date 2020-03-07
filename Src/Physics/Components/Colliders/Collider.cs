@@ -52,9 +52,9 @@ namespace Dissonance.Engine.Physics
 		{
 			base.OnDispose();
 
-			if(OwnsShape) {
+			/*if(OwnsShape) {
 				collShape?.Dispose();
-			}
+			}*/
 		}
 
 		protected void TryUpdateCollider()
