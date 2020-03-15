@@ -156,6 +156,24 @@ namespace Dissonance.Engine.Physics
 			PhysicsEngine.world.AddRigidBody(btRigidbody);
 			PhysicsEngine.rigidbodies.Add(this);
 		}
+
+		public void ApplyForce(Vector3 force,Vector3 relativePos)
+		{
+			if(!btRigidbody.IsActive) {
+				btRigidbody.Activate();
+			}
+
+			btRigidbody.ApplyForce(force,relativePos);
+		}
+		public void Dispose()
+		{
+			btRigidbody.Dispose();
+
+			collisionShape = null;
+
+			PhysicsEngine.rigidbodies.Remove(this);
+		}
+
 		internal void UpdateShape()
 		{
 			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
@@ -170,12 +188,12 @@ namespace Dissonance.Engine.Physics
 				//EmptyShape
 
 				collisionShape = new EmptyShape();
-			//}
-			//else if(colliders.Length==1) {
-			//	//Use the shape we have
-			//
-			//	collisionShape = colliders[0].collShape;
-			//	//summOffset += collider.offset;
+				//}
+				//else if(colliders.Length==1) {
+				//	//Use the shape we have
+				//
+				//	collisionShape = colliders[0].collShape;
+				//	//summOffset += collider.offset;
 			} else {
 				//CompoundShape
 
@@ -217,21 +235,6 @@ namespace Dissonance.Engine.Physics
 			btRigidbody.SetMassProps(tempMass,localInertia);
 
 			PhysicsEngine.world.AddRigidBody(btRigidbody);
-		}
-		public void ApplyForce(Vector3 force,Vector3 relativePos)
-		{
-			if(!btRigidbody.IsActive) {
-				btRigidbody.Activate();
-			}
-
-			btRigidbody.ApplyForce(force,relativePos);
-		}
-		public void Dispose()
-		{
-			btRigidbody.Dispose();
-
-			collisionShape = null;
-			PhysicsEngine.rigidbodies.Remove(this);
 		}
 		internal void AddCollision(RigidbodyInternal bodyOther)
 		{
