@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>DissonanceEngine</AssemblyName>
     <RootNamespace>Dissonance.Engine</RootNamespace>
     <Platforms>AnyCPU</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<TieredCompilation>false</TieredCompilation>
     <Optimize>false</Optimize>
   </PropertyGroup>
 
@@ -55,9 +56,5 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;$(SolutionDir)PostBuild.bat&quot; (&#xD;&#xA;    echo Running solution's PostBuild.bat...&#xD;&#xA;    call &quot;$(SolutionDir)PostBuild.bat&quot; &quot;$(ProjectName)&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot; &quot;$(TargetFileName)&quot;&#xD;&#xA;) else (&#xD;&#xA;    echo Solution's PostBuild.bat is not present.&#xD;&#xA;)" />
-  </Target>
 
 </Project>
