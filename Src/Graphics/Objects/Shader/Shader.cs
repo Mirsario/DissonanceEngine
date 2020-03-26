@@ -58,10 +58,12 @@ namespace Dissonance.Engine.Graphics
 		{
 			if(uniforms.TryGetValue(uniformName,out var uniform)) {
 				location = uniform.location;
+
 				return true;
 			}
 
 			location = -1;
+
 			return false;
 		}
 
@@ -92,7 +94,7 @@ namespace Dissonance.Engine.Graphics
 				}else if(type==ShaderType.FragmentShader) {
 					GL.AttachShader(Id,ErrorShader.fragmentShader);
 				}
-			}else{
+			} else {
 				GL.AttachShader(Id,shader);
 			}
 
@@ -100,6 +102,7 @@ namespace Dissonance.Engine.Graphics
 				throw new GraphicsException($"Unable to compile '{type}' shader '{shaderName}'");
 			}
 		}
+
 		//SetupUniforms
 		internal void SetupCommonUniforms()
 		{
@@ -404,11 +407,8 @@ namespace Dissonance.Engine.Graphics
 				ActiveShader = null;
 			}
 		}
-
-		internal static Shader FromCode(string name,string vertexCode,string fragmentCode = "",string geometryCode = "",string[] defines = null)
+		public static Shader FromCode(string name,string vertexCode,string fragmentCode = "",string geometryCode = "",string[] defines = null)
 		{
-			//Debug.Log("Compiling shader "+name);
-			
 			if(defines!=null && defines.Length==0) {
 				defines = null;
 			}
@@ -431,7 +431,7 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				for(int i = 0;i<defines.Length;i++) {
-					defString += "#define "+defines[i]+" \n";
+					defString += $"#define {defines[i]}\r\n";
 				}
 
 				PrepareCode(ref vertexCode);
@@ -466,6 +466,7 @@ namespace Dissonance.Engine.Graphics
 
 			return shader;
 		}
+
 		internal static unsafe void UniformMatrix4(int location,ref Matrix4x4 matrix,bool transpose = false)
 		{
 			fixed(float* matrix_ptr = &matrix.m00) {
