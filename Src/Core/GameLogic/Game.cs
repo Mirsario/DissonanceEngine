@@ -282,7 +282,7 @@ namespace Dissonance.Engine
 		}
 		private void PrepareGL()
 		{
-			GL.Load();
+			GL.Load(Rendering.OpenGLVersion);
 
 			Console.WriteLine("GL functions Loaded. Checking for errors...");
 

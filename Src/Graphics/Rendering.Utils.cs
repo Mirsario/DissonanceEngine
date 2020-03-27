@@ -14,8 +14,9 @@ namespace Dissonance.Engine.Graphics
 			string versionStr = GL.GetString(StringName.Version);
 			
 			var match = RegexGLVersion.Match(versionStr);
+
 			if(!match.Success) {
-				throw new Exception("Unable to read OpenGL version. This is sad...");
+				throw new Exception("Unable to catch OpenGL version with Regex.");
 			}
 
 			return new Version(match.Groups[1].Value);

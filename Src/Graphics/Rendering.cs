@@ -26,8 +26,20 @@ namespace Dissonance.Engine.Graphics
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
 
+		private static GLVersion openGLVersion = GLVersion.GL30;
+
 		public static RenderingPipeline RenderingPipeline { get; private set; }
 		public static bool DebugFramebuffers { get; set; }
+		public static GLVersion OpenGLVersion {
+			get => openGLVersion;
+			set {
+				if(Game.preInitDone) {
+					throw new InvalidOperationException("OpenGL version can only be set in 'Game.PreInit()'.");
+				}
+
+				openGLVersion = value;
+			}
+		}
 
 		//TODO: To be moved
 		private static Shader guiShader;
