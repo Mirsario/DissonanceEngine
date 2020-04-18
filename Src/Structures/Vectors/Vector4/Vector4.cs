@@ -191,7 +191,13 @@ namespace Dissonance.Engine
 		public static bool operator ==(Vector4 a,Vector4 b) => (a-b).SqrMagnitude<9.99999944E-11f;
 		public static bool operator !=(Vector4 a,Vector4 b) => (a-b).SqrMagnitude>=9.99999944E-11f;
 
+		//Casts
+
+		//float*
 		public static unsafe implicit operator float*(Vector4 vec) => (float*)&vec;
+		//System.Numerics.Vector3
+		public static implicit operator Vector4(System.Numerics.Vector4 value) => new Vector4(value.X,value.Y,value.Z,value.W);
+		public static implicit operator System.Numerics.Vector4(Vector4 value) => new System.Numerics.Vector4(value.x,value.y,value.z,value.w);
 	}
 }
 
