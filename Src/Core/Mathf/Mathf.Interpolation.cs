@@ -4,8 +4,11 @@ namespace Dissonance.Engine
 {
 	public static partial class Mathf
 	{
-		[MethodImpl(Inline)] public static float Lerp(float a,float b,float time) => a+(b-a)*Clamp01(time);
-		[MethodImpl(Inline)] public static double Lerp(double a,double b,double time) => a+(b-a)*Clamp01(time);
+		[MethodImpl(Inline)]
+		public static float Lerp(float a,float b,float time) => a+(b-a)*Clamp01(time);
+
+		[MethodImpl(Inline)]
+		public static double Lerp(double a,double b,double time) => a+(b-a)*Clamp01(time);
 
 		[MethodImpl(Inline)]
 		public static float LerpAngle(float a,float b,float t)
@@ -14,6 +17,7 @@ namespace Dissonance.Engine
 
 			return a+(num>180f ? num-360f : num)*(t<0f ? 0f : (t>1f ? 1f : t));
 		}
+
 		[MethodImpl(Inline)]
 		public static double LerpAngle(double a,double b,double t)
 		{
