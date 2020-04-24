@@ -1,60 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>DissonanceEngine</AssemblyName>
-    <RootNamespace>Dissonance.Engine</RootNamespace>
-    <Platforms>AnyCPU</Platforms>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<AssemblyName>DissonanceEngine</AssemblyName>
+		<RootNamespace>Dissonance.Engine</RootNamespace>
+		<Platforms>AnyCPU</Platforms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<TieredCompilation>false</TieredCompilation>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  
-  <Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
-  
-  <ItemGroup>
-    <Compile Remove="References\**" />
-    <EmbeddedResource Remove="References\**" />
-    <None Remove="References\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="References\BulletSharp.dll" />
-    <None Include="References\Ionic.Zip.dll" />
-    <None Include="References\Newtonsoft.Json.dll" />
-    <None Include="References\NVorbis.dll" />
-    <None Include="References\System.Runtime.CompilerServices.Unsafe.dll" />
-    <None Include="References\System.Text.Encoding.CodePages.dll" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\..\DissonanceFramework\Src\DissonanceFramework.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="BulletSharp">
-      <HintPath>References\BulletSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>References\Ionic.Zip.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>References\Newtonsoft.Json.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="NVorbis">
-      <HintPath>References\NVorbis.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Text.Encoding.CodePages">
-      <HintPath>References\System.Text.Encoding.CodePages.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+	
+	<Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
+	
+	<ItemGroup>
+		<Compile Remove="References\**" />
+		<EmbeddedResource Remove="References\**" />
+		<None Remove="References\**" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Condition="$(SolutionProjects.Contains('DissonanceFramework'))" Include="$(DissonanceFrameworkPath)" />
+		<Reference Condition="!$(SolutionProjects.Contains('DissonanceFramework'))" Include="DissonanceFramework">
+			<HintPath>../References/DissonanceFramework.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="BulletSharp">
+			<HintPath>References\BulletSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Ionic.Zip">
+			<HintPath>References\Ionic.Zip.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>References\Newtonsoft.Json.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="NVorbis">
+			<HintPath>References\NVorbis.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
 
 </Project>
