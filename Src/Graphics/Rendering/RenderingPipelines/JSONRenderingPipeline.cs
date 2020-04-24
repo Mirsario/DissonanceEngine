@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using Dissonance.Framework;
 using Dissonance.Framework.Graphics;
 using Dissonance.Engine.IO;
 

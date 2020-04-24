@@ -80,7 +80,6 @@ namespace Dissonance.Engine.Graphics
 			light2DList = new List<Light2D>();
 
 			GL.CullFace(CullFaceMode.Back);
-			GL.ClearDepth(1f);
 			GL.DepthFunc(DepthFunction.Lequal);
 
 			InstantiateRenderingPipeline();

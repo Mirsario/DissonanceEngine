@@ -1,5 +1,4 @@
 using System.IO;
-using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.IO.Other
 {

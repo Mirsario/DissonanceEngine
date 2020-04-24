@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Dissonance.Framework.Graphics;
 
 #pragma warning disable CS0649 //Value is never assigned to.

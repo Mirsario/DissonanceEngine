@@ -1,10 +1,8 @@
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.IO.Graphics
 {

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Dissonance.Framework;
 using Dissonance.Framework.Windowing;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Physics;
