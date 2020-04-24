@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Dissonance.Engine.IO;
-using Dissonance.Framework;
 using Dissonance.Framework.Graphics;
 using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 

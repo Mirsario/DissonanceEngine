@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utils.Extensions;
-using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.IO.Graphics
 {

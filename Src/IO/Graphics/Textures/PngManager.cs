@@ -3,7 +3,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Dissonance.Framework.Imaging;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.IO.Graphics.Textures
 {
