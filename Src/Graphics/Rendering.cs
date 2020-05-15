@@ -67,7 +67,7 @@ namespace Dissonance.Engine.Graphics
 				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
 
-			CheckGLErrors(); //Do not remove
+			CheckGLErrors("After checking GL version");
 
 			//FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
@@ -143,7 +143,7 @@ namespace Dissonance.Engine.Graphics
 
 			Framebuffer.Bind(null);
 
-			CheckGLErrors();
+			CheckGLErrors("Before rendering passes");
 
 			//Render passes
 			for(int i = 0;i<RenderingPipeline.RenderPasses.Length;i++) {
@@ -152,7 +152,7 @@ namespace Dissonance.Engine.Graphics
 				if(pass.enabled) {
 					pass.Render();
 
-					CheckGLErrors();
+					CheckGLErrors($"Rendering pass {pass.name} ({pass.GetType().Name})");
 				}
 			}
 
@@ -166,7 +166,7 @@ namespace Dissonance.Engine.Graphics
 
 			GLFW.SwapBuffers(Game.window);
 
-			CheckGLErrors();
+			CheckGLErrors("After swapping buffers");
 		}
 		internal static void Dispose() {}
 

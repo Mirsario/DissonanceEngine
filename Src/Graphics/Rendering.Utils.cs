@@ -22,23 +22,21 @@ namespace Dissonance.Engine.Graphics
 		}
 		
 		[Obsolete("This call of CheckGLErrors was meant to be temporary.")]
-		public static bool CheckGLErrorsTemp(bool throwException = true,object prefix = null) => CheckGLErrors(throwException,prefix);
-		public static bool CheckGLErrors(bool throwException = true,object prefix = null)
+		public static bool CheckGLErrorsTemp(string context = null,bool throwException = true) => CheckGLErrors(context,throwException);
+		public static bool CheckGLErrors(string context = null,bool throwException = true)
 		{
-			if(prefix==null) {
-				prefix = "";
-			}
-
 			GraphicsError error = GL.GetError();
 
 			switch(error) {
 				case GraphicsError.NoError:
 					return false;
 				default:
+					string message = $"Error: '{error}'. Context: '{context ?? "Not provided"}'.";
+
 					if(throwException) {
-						throw new GraphicsException(prefix.ToString()+error);
-					}else{
-						Debug.Log(prefix.ToString()+error,stackframeOffset:2);
+						throw new GraphicsException(message);
+					} else {
+						Debug.Log(message,stackframeOffset:2);
 					}
 
 					return true;
