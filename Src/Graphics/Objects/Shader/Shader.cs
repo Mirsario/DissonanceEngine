@@ -97,7 +97,7 @@ namespace Dissonance.Engine.Graphics
 				GL.AttachShader(Id,shader);
 			}
 
-			if(Rendering.CheckGLErrors(false)) {
+			if(Rendering.CheckGLErrors(throwException:false)) {
 				throw new GraphicsException($"Unable to compile '{type}' shader '{shaderName}'");
 			}
 		}
@@ -364,11 +364,9 @@ namespace Dissonance.Engine.Graphics
 			//Set uniform locations
 			uniforms = new Dictionary<string,ShaderUniform>();
 
-			Rendering.CheckGLErrors();
+			Rendering.CheckGLErrors($"Start of {nameof(Shader)}.{nameof(Init)}()");
 
 			GL.GetProgram(Id,GetProgramParameter.ActiveUniforms,out int uniformCount);
-
-			Rendering.CheckGLErrors();
 
 			const int MaxUniformNameLength = 32;
 
@@ -386,7 +384,7 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			Rendering.CheckGLErrors();
+			Rendering.CheckGLErrors($"End of {nameof(Shader)}.{nameof(Init)}()");
 		}
 
 		public static void SetShader(Shader shader)

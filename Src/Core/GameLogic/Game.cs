@@ -283,9 +283,9 @@ namespace Dissonance.Engine
 		{
 			GL.Load(Rendering.OpenGLVersion);
 
-			Console.WriteLine("GL functions Loaded. Checking for errors...");
+			Console.WriteLine("GL functions Loaded.");
 
-			Rendering.CheckGLErrors();
+			Rendering.CheckGLErrors("Post GL.Load()");
 
 			Console.WriteLine("No errors.");
 
