@@ -15,6 +15,13 @@ namespace Dissonance.Engine
 		public delegate void ArrayCopyDelegate<T>(uint meshIndex,T[] srcArray,uint srcIndex,Vector3[] dstArray,uint dstIndex,uint length);
 
 		public readonly IndexBuffer IndexBuffer;
+		//Cached Vertex Buffers
+		public readonly VertexBuffer VertexBuffer;
+		public readonly NormalBuffer NormalBuffer;
+		public readonly TangentBuffer TangentBuffer;
+		public readonly ColorBuffer ColorBuffer;
+		public readonly Uv0Buffer Uv0Buffer;
+		public readonly BoneWeightsBuffer BoneWeightsBuffer;
 
 		private readonly CustomVertexBuffer[] VertexBuffers;
 
@@ -33,22 +40,14 @@ namespace Dissonance.Engine
 			set => primitiveTypeToSet = value;
 		}
 
-		//Ref to Index Buffer's array
+		//Shortcut refs to buffers' arrays
 		public ref uint[] Triangles => ref IndexBuffer.data;
-		//Vertex Buffer shortcuts
-		public VertexBuffer VertexBuffer => GetBuffer<VertexBuffer>();
-		public NormalBuffer NormalBuffer => GetBuffer<NormalBuffer>();
-		public TangentBuffer TangentBuffer => GetBuffer<TangentBuffer>();
-		public ColorBuffer ColorBuffer => GetBuffer<ColorBuffer>();
-		public Uv0Buffer Uv0Buffer => GetBuffer<Uv0Buffer>();
-		public BoneWeightsBuffer BoneWeightsBuffer => GetBuffer<BoneWeightsBuffer>();
-		//Refs to Vertex Buffers' arrays
-		public ref Vector3[] Vertices => ref VertexData<VertexBuffer,Vector3>();
-		public ref Vector3[] Normals => ref VertexData<NormalBuffer,Vector3>();
-		public ref Vector4[] Tangents => ref VertexData<TangentBuffer,Vector4>();
-		public ref Vector4[] Colors => ref VertexData<ColorBuffer,Vector4>();
-		public ref Vector2[] Uv0 => ref VertexData<Uv0Buffer,Vector2>();
-		public ref BoneWeights[] BoneWeights => ref VertexData<BoneWeightsBuffer,BoneWeights>();
+		public ref Vector3[] Vertices => ref VertexBuffer.data;
+		public ref Vector3[] Normals => ref NormalBuffer.data;
+		public ref Vector4[] Tangents => ref TangentBuffer.data;
+		public ref Vector4[] Colors => ref ColorBuffer.data;
+		public ref Vector2[] Uv0 => ref Uv0Buffer.data;
+		public ref BoneWeights[] BoneWeights => ref BoneWeightsBuffer.data;
 
 		public Mesh()
 		{
@@ -67,6 +66,13 @@ namespace Dissonance.Engine
 
 				VertexBuffers[i] = instance;
 			}
+
+			VertexBuffer = GetBuffer<VertexBuffer>();
+			NormalBuffer = GetBuffer<NormalBuffer>();
+			TangentBuffer = GetBuffer<TangentBuffer>();
+			ColorBuffer = GetBuffer<ColorBuffer>();
+			Uv0Buffer = GetBuffer<Uv0Buffer>();
+			BoneWeightsBuffer = GetBuffer<BoneWeightsBuffer>();
 		}
 
 		public virtual void Render()
