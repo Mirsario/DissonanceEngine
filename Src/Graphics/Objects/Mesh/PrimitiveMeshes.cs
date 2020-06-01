@@ -30,7 +30,7 @@
 				} : null,
 
 				//Triangles
-				Triangles = new uint[] {
+				Indices = new uint[] {
 					2,1,0,
 					2,3,1,
 				}
@@ -63,7 +63,7 @@
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[vertexCount],
-				Triangles = new uint[triIndexCount],
+				Indices = new uint[triIndexCount],
 				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
@@ -91,12 +91,12 @@
 					uint bottomLeft = vertexMap[x,y+1];
 					uint bottomRight = vertexMap[x+1,y+1];
 
-					newMesh.Triangles[triangle++] = bottomLeft;
-					newMesh.Triangles[triangle++] = topRight;
-					newMesh.Triangles[triangle++] = topLeft;
-					newMesh.Triangles[triangle++] = bottomLeft;
-					newMesh.Triangles[triangle++] = bottomRight;
-					newMesh.Triangles[triangle++] = topRight;
+					newMesh.Indices[triangle++] = bottomLeft;
+					newMesh.Indices[triangle++] = topRight;
+					newMesh.Indices[triangle++] = topLeft;
+					newMesh.Indices[triangle++] = bottomLeft;
+					newMesh.Indices[triangle++] = bottomRight;
+					newMesh.Indices[triangle++] = topRight;
 				}
 			}
 
@@ -151,7 +151,7 @@
 				} : null,
 
 				//Triangles
-				Triangles = inverted ? new uint[] {
+				Indices = inverted ? new uint[] {
 					1,2,0, //Inverted
 					3,2,1,
 					5,6,4,
@@ -206,7 +206,7 @@
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[verticeAmount],
-				Triangles = new uint[xRes*yRes*6]
+				Indices = new uint[xRes*yRes*6]
 			};
 
 			if(addNormals) {
@@ -245,12 +245,12 @@
 					SphereVertex(x+1,y,vertexIndex+2);
 					SphereVertex(x+1,y+1,vertexIndex+3);
 
-					newMesh.Triangles[triangleIndex++] = vertexIndex;
-					newMesh.Triangles[triangleIndex++] = vertexIndex+1;
-					newMesh.Triangles[triangleIndex++] = vertexIndex+3;
-					newMesh.Triangles[triangleIndex++] = vertexIndex+2;
-					newMesh.Triangles[triangleIndex++] = vertexIndex;
-					newMesh.Triangles[triangleIndex++] = vertexIndex+3;
+					newMesh.Indices[triangleIndex++] = vertexIndex;
+					newMesh.Indices[triangleIndex++] = vertexIndex+1;
+					newMesh.Indices[triangleIndex++] = vertexIndex+3;
+					newMesh.Indices[triangleIndex++] = vertexIndex+2;
+					newMesh.Indices[triangleIndex++] = vertexIndex;
+					newMesh.Indices[triangleIndex++] = vertexIndex+3;
 
 					vertexIndex += 4;
 				}
@@ -281,7 +281,7 @@
 				},
 
 				//Triangles
-				Triangles = inverted ? new uint[] {
+				Indices = inverted ? new uint[] {
 					//Inverted
 					4,0,1,	9,0,4,	5,9,4,	5,4,8,
 					8,4,1,	10,8,1,	3,8,10,	3,5,8,

@@ -41,7 +41,7 @@ namespace Dissonance.Engine
 		}
 
 		//Shortcut refs to buffers' arrays
-		public ref uint[] Triangles => ref IndexBuffer.data;
+		public ref uint[] Indices => ref IndexBuffer.data;
 		public ref Vector3[] Vertices => ref VertexBuffer.data;
 		public ref Vector3[] Normals => ref NormalBuffer.data;
 		public ref Vector4[] Tangents => ref TangentBuffer.data;
@@ -213,10 +213,10 @@ namespace Dissonance.Engine
 			normalCopyAction ??= DefaultCopyAction;
 
 			int newVertexCount = meshes.Sum(m => m.Vertices.Length);
-			int newTriangleCount = meshes.Sum(m => m.Triangles.Length);
+			int newTriangleCount = meshes.Sum(m => m.Indices.Length);
 
 			Mesh newMesh = new Mesh {
-				Triangles = new uint[newTriangleCount],
+				Indices = new uint[newTriangleCount],
 				Vertices = new Vector3[newVertexCount],
 				Normals = new Vector3[newVertexCount],
 				Uv0 = new Vector2[newVertexCount],
@@ -235,19 +235,19 @@ namespace Dissonance.Engine
 				
 				Array.Copy(mesh.Uv0,0,newMesh.Uv0,vertex,vertexCount);
 
-				//Triangles
-				uint triangleIndexCount = (uint)mesh.Triangles.Length;
+				//Indices
+				uint indexCount = (uint)mesh.Indices.Length;
 
 				if(vertex==0) {
-					Array.Copy(mesh.Triangles,newMesh.Triangles,triangleIndexCount);
+					Array.Copy(mesh.Indices,newMesh.Indices,indexCount);
 				} else {
-					for(int k = 0;k<triangleIndexCount;k++) {
-						newMesh.Triangles[triangleIndex+k] = mesh.Triangles[k]+vertex;
+					for(int k = 0;k<indexCount;k++) {
+						newMesh.Indices[triangleIndex+k] = mesh.Indices[k]+vertex;
 					}
 				}
 
 				vertex += vertexCount;
-				triangleIndex += triangleIndexCount;
+				triangleIndex += indexCount;
 
 				meshIndex++;
 			}

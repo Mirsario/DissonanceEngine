@@ -12,9 +12,9 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			var vertices = mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
-			var triangles = mesh.Triangles;
-			bool isIndexed = triangles!=null;
-			int indexCount = isIndexed ? triangles.Length : vertices.Length;
+			var indices = mesh.Indices;
+			bool isIndexed = indices!=null;
+			int indexCount = isIndexed ? indices.Length : vertices.Length;
 
 			if(!isIndexed && indexCount%3!=0) {
 				throw new InvalidOperationException($"{nameof(Recalculate)}() requires vertex count to be divisable by 3, if no indices are provided.");
@@ -26,9 +26,9 @@ namespace Dissonance.Engine.Graphics
 				uint i1,i2,i3;
 
 				if(isIndexed) {
-					i1 = triangles[i];
-					i2 = triangles[i+1];
-					i3 = triangles[i+2];
+					i1 = indices[i];
+					i2 = indices[i+1];
+					i3 = indices[i+2];
 				} else {
 					i1 = i;
 					i2 = i+1;

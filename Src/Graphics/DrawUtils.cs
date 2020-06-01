@@ -35,7 +35,7 @@ namespace Dissonance.Engine.Graphics
 			bufferMesh = new Mesh {
 				Vertices = new Vector3[4],
 				Uv0 = new Vector2[4],
-				Triangles = new uint[] {
+				Indices = new uint[] {
 					0,1,2,
 					0,2,3
 				},

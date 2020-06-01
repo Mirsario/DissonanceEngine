@@ -54,7 +54,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,
-				Triangles = meshInfo.triangles
+				Indices = meshInfo.triangles
 			};
 
 			mesh.Apply();

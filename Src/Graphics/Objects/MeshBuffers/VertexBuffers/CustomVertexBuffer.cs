@@ -69,6 +69,7 @@ namespace Dissonance.Engine.Graphics
 			if(data==null) {
 				if(BufferId!=0) {
 					GL.DeleteBuffer(BufferId);
+
 					BufferId = 0;
 				}
 

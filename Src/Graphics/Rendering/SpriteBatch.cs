@@ -27,7 +27,7 @@ namespace Dissonance.Engine.Graphics
 
 			bufferMesh.Vertices = new Vector3[vertexCount];
 			bufferMesh.Uv0 = new Vector2[vertexCount];
-			bufferMesh.Triangles = new uint[triangleCount];
+			bufferMesh.Indices = new uint[triangleCount];
 
 			vertexIndex = triangleIndex = 0;
 
@@ -44,7 +44,7 @@ namespace Dissonance.Engine.Graphics
 
 			bufferMesh.Vertices = null;
 			bufferMesh.Uv0 = null;
-			bufferMesh.Triangles = null;
+			bufferMesh.Indices = null;
 
 			began = false;
 		}
@@ -58,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 
 			var vertices = bufferMesh.Vertices;
 			var uv0 = bufferMesh.Uv0;
-			var triangles = bufferMesh.Triangles;
+			var indices = bufferMesh.Indices;
 
 			vertices[vertexIndex  ] = new Vector3(vertexPoints.x,vertexPoints.y,depth);
 			vertices[vertexIndex+1] = new Vector3(vertexPoints.x,vertexPoints.w,depth);
@@ -70,12 +70,12 @@ namespace Dissonance.Engine.Graphics
 			uv0[vertexIndex+2] = new Vector2(uvPoints.z,uvPoints.y);
 			uv0[vertexIndex+3] = new Vector2(uvPoints.z,uvPoints.w);
 
-			triangles[triangleIndex++] = vertexIndex;
-			triangles[triangleIndex++] = vertexIndex+1;
-			triangles[triangleIndex++] = vertexIndex+2;
-			triangles[triangleIndex++] = vertexIndex;
-			triangles[triangleIndex++] = vertexIndex+2;
-			triangles[triangleIndex++] = vertexIndex+3;
+			indices[triangleIndex++] = vertexIndex;
+			indices[triangleIndex++] = vertexIndex+1;
+			indices[triangleIndex++] = vertexIndex+2;
+			indices[triangleIndex++] = vertexIndex;
+			indices[triangleIndex++] = vertexIndex+2;
+			indices[triangleIndex++] = vertexIndex+3;
 
 			vertexIndex += 4;
 		}

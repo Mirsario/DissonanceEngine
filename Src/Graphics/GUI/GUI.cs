@@ -190,7 +190,7 @@ namespace Dissonance.Engine
 
 			textBufferMesh.Vertices = new Vector3[numCharacters*4];
 			textBufferMesh.Uv0 = new Vector2[numCharacters*4];
-			textBufferMesh.Triangles = new uint[numCharacters*6];
+			textBufferMesh.Indices = new uint[numCharacters*6];
 
 			uint vertex = 0;
 			uint triangle = 0;
@@ -209,12 +209,12 @@ namespace Dissonance.Engine
 					textBufferMesh.Uv0[vertex+2] = uvs[2];
 					textBufferMesh.Uv0[vertex+3] = uvs[3];
 					
-					textBufferMesh.Triangles[triangle++] = vertex;
-					textBufferMesh.Triangles[triangle++] = vertex+1;
-					textBufferMesh.Triangles[triangle++] = vertex+2;
-					textBufferMesh.Triangles[triangle++] = vertex;
-					textBufferMesh.Triangles[triangle++] = vertex+2;
-					textBufferMesh.Triangles[triangle++] = vertex+3;
+					textBufferMesh.Indices[triangle++] = vertex;
+					textBufferMesh.Indices[triangle++] = vertex+1;
+					textBufferMesh.Indices[triangle++] = vertex+2;
+					textBufferMesh.Indices[triangle++] = vertex;
+					textBufferMesh.Indices[triangle++] = vertex+2;
+					textBufferMesh.Indices[triangle++] = vertex+3;
 
 					vertex += 4;
 				}

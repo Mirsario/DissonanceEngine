@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Graphics
 	{
 		public void Recalculate(Vector2[] uv = null)
 		{
-			var triangles = mesh.Triangles ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(mesh.Triangles)} array to be ready.");
+			var indices = mesh.Indices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(mesh.Indices)} array to be ready.");
 			var vertices = mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
 			var normals = mesh.Normals ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(NormalBuffer)} to be ready. Call {nameof(NormalBuffer)}.{nameof(NormalBuffer.Recalculate)}() first?");
 
@@ -19,10 +19,10 @@ namespace Dissonance.Engine.Graphics
 
 			data = new Vector4[vertexCount];
 
-			for(int i = 0;i<triangles.Length;i+=3) {
-				uint i1 = triangles[i];
-				uint i2 = triangles[i+1];
-				uint i3 = triangles[i+2];
+			for(int i = 0;i<indices.Length;i+=3) {
+				uint i1 = indices[i];
+				uint i2 = indices[i+1];
+				uint i3 = indices[i+2];
 
 				var v1 = vertices[i1];
 				var v2 = vertices[i2];
