@@ -266,8 +266,8 @@ namespace Dissonance.Engine
 				throw new Exception("Unable to initialize GLFW!");
 			}
 
-			GLFW.WindowHint(WindowHint.ContextVersionMajor,3); //Targeted major version
-			GLFW.WindowHint(WindowHint.ContextVersionMinor,2); //Targeted minor version
+			GLFW.WindowHint(WindowHint.ContextVersionMajor,Rendering.OpenGLVersion.Major); //Targeted major version
+			GLFW.WindowHint(WindowHint.ContextVersionMinor,Rendering.OpenGLVersion.Minor); //Targeted minor version
 
 			IntPtr monitor = IntPtr.Zero;
 			int resolutionWidth = 800;

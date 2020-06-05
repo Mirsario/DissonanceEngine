@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Dissonance.Engine.Graphics.RenderingPipelines;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
@@ -26,15 +28,20 @@ namespace Dissonance.Engine.Graphics
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
 
-		private static GLVersion openGLVersion = GLVersion.GL30;
+		private static Version openGLVersion = new Version(3,0);
+		private static GL.DebugCallback debugCallback;
 
 		public static RenderingPipeline RenderingPipeline { get; private set; }
 		public static bool DebugFramebuffers { get; set; }
-		public static GLVersion OpenGLVersion {
+		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
 				if(Game.preInitDone) {
-					throw new InvalidOperationException("OpenGL version can only be set in 'Game.PreInit()'.");
+					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
+				}
+
+				if(!GL.SupportedVersions.Contains(value)) {
+					throw new InvalidOperationException($"OpenGL version '{value}' is unknown or not supported. The following versions are supported:\r\n{string.Join("\r\n",GL.SupportedVersions.Select(v => $"{v};"))}.");
 				}
 
 				openGLVersion = value;
@@ -61,13 +68,14 @@ namespace Dissonance.Engine.Graphics
 		internal static void Init()
 		{
 			var glVersion = GetOpenGLVersion();
-			var minVersion = new Version("2.0");
 
-			if(glVersion<minVersion) {
-				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {minVersion}\r\nYour OpenGL version is: {glVersion}");
+			if(glVersion<openGLVersion) {
+				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {openGLVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
 
 			CheckGLErrors("After checking GL version");
+
+			TryEnablingDebugging();
 
 			//FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
