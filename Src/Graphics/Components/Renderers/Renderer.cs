@@ -1,20 +1,44 @@
 using System;
+using System.Collections.Generic;
 using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine
 {
 	public abstract class Renderer : Component
 	{
+		private static readonly List<Renderer> Renderers = new List<Renderer>();
+
+		public static int RendererCount {
+			get {
+				lock(Renderers) {
+					return Renderers.Count;
+				}
+			}
+		}
+
 		public Func<bool?> PreCullingModifyResult { get; set; }
 		public Func<bool,bool> PostCullingModifyResult { get; set; }
 
 		public abstract Material Material { get; set; }
 
-		protected override void OnEnable() => Rendering.rendererList.Add(this);
-		protected override void OnDisable() => Rendering.rendererList.Remove(this);
+		protected override void OnEnable()
+		{
+			lock(Renderers) {
+				Renderers.Add(this);
+			}
+		}
+		protected override void OnDisable()
+		{
+			lock(Renderers) {
+				Renderers.Remove(this);
+			}
+		}
+
 		protected override void OnDispose()
 		{
-			Rendering.rendererList.Remove(this);
+			lock(Renderers) {
+				Renderers.Remove(this);
+			}
 
 			Material = null;
 		}
@@ -23,5 +47,14 @@ namespace Dissonance.Engine
 
 		public abstract bool GetRenderData(Vector3 rendererPosition,Vector3 cameraPosition,out Material material,out Bounds bounds,out object renderObject);
 		public abstract void Render(object renderObject);
+
+		public static IEnumerable<Renderer> EnumerateRenderers()
+		{
+			lock(Renderers) {
+				foreach(var renderer in Renderers) {
+					yield return renderer;
+				}
+			}
+		}
 	}
 }

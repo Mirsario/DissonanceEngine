@@ -19,7 +19,6 @@ namespace Dissonance.Engine.Graphics
 		public static Vector4 clearColor = Vector4.Zero;
 
 		internal static List<Camera> cameraList;
-		internal static List<Renderer> rendererList;
 		internal static List<Light> lightList;
 		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
@@ -83,7 +82,6 @@ namespace Dissonance.Engine.Graphics
 			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~",tex,new Vector2(12f,16f),0) { size = 16 };
 
 			cameraList = new List<Camera>();
-			rendererList = new List<Renderer>();
 			lightList = new List<Light>();
 			light2DList = new List<Light2D>();
 
