@@ -4,7 +4,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public static partial class Rendering
+	partial class Rendering
 	{
 		private static readonly Regex RegexGLVersion = new Regex(@".*?([\d.]+).*",RegexOptions.Compiled);
 		
