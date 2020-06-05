@@ -50,7 +50,6 @@ namespace Dissonance.Engine.Graphics
 				};
 
 				GL.DebugMessageCallback(debugCallback,IntPtr.Zero);
-				GL.End();
 			}
 			catch {
 				Debug.Log("Couldn't enable GL debugging.");
