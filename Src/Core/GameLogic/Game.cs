@@ -44,6 +44,8 @@ namespace Dissonance.Engine
 
 		public void Run(string[] args = null)
 		{
+			Console.WriteLine("Loading game...");
+
 			Console.BufferHeight = short.MaxValue-1;
 
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
