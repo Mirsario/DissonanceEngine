@@ -46,7 +46,7 @@ namespace Dissonance.Engine.Graphics
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = Rendering.rendererList.Count;
+			int rendererCount = Renderer.RendererCount;
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
 			sw.Restart();
@@ -87,9 +87,7 @@ namespace Dissonance.Engine.Graphics
 					int numToRenderer = 0;
 
 					UseStopwatch(ref rendererLoopMs,() => {
-						for(int r = 0;r<rendererCount;r++) {
-							var renderer = Rendering.rendererList[r];
-
+						foreach(var renderer in Renderer.EnumerateRenderers()) {
 							if(!renderer.Enabled) {
 								continue;
 							}
