@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Dissonance.Framework;
@@ -35,7 +36,10 @@ namespace Dissonance.Engine.Core
 			{
 				if(assemblyName==argsName || argsName.StartsWith(assemblyName+",")) {
 					try {
-						assembly = assemblyCache[argsName] = Assembly.Load((byte[])Properties.Resources.ResourceManager.GetObject(assemblyName));
+						var obj = Properties.Resources.ResourceManager.GetObject(assemblyName);
+						var data = (byte[])obj;
+
+						assembly = assemblyCache[argsName] = Assembly.Load(data);
 
 						return true;
 					}
@@ -55,12 +59,60 @@ namespace Dissonance.Engine.Core
 			AppDomain.CurrentDomain.AssemblyResolve += (obj,args) => {
 				string argsName = args.Name;
 
+				Console.WriteLine($"Resolving {argsName}...");
+
 				if(assemblyCache.TryGetValue(argsName,out var assembly)) {
 					return assembly;
 				}
 
 				for(int i = 0;i<EmbeddedAssemblies.Length;i++) {
 					if(TryGetAssembly(EmbeddedAssemblies[i],argsName,out assembly)) {
+						Console.WriteLine($"Resolved as '{assembly.GetName().Name}'.");
+
+						//TODO: Move this somewhere, and find a way to unhardcode?
+						if(assembly.FullName.StartsWith("BulletSharp,")) {
+							NativeLibrary.SetDllImportResolver(assembly,(name,assembly,path) => {
+								IntPtr pointer = IntPtr.Zero;
+
+								var libraryNames = name switch {
+									"libbulletc" => OSUtils.GetOS() switch {
+										OSUtils.OS.Windows => new[] { "libbulletc.dll" },
+										OSUtils.OS.Linux => new[] { "libbulletc.so" },
+										OSUtils.OS.OSX => new[] { "libbulletc.so" },
+										_ => null
+									},
+									_ => null
+								};
+
+								if(libraryNames==null) {
+									return pointer;
+								}
+
+								var paths = new List<string>();
+
+								for(int i = 0;i<DllManager.LibraryDirectories.Length;i++) {
+									string libraryDirectory = DllManager.LibraryDirectories[i];
+
+									for(int j = 0;j<libraryNames.Length;j++) {
+										paths.Add(Path.Combine(libraryDirectory,libraryNames[j]));
+									}
+								}
+
+								foreach(string currentPath in paths) {
+									try {
+										pointer = NativeLibrary.Load(currentPath,assembly,path);
+									}
+									catch { }
+
+									if(pointer!=IntPtr.Zero) {
+										break;
+									}
+								}
+
+								return pointer;
+							});
+						}
+
 						return assembly;
 					}
 				}
@@ -68,47 +120,7 @@ namespace Dissonance.Engine.Core
 				return null;
 			};
 
-			//TODO: Move this somewhere.
-			NativeLibrary.SetDllImportResolver(typeof(BulletSharp.BulletObject).Assembly,(name,assembly,path) => {
-				IntPtr pointer = IntPtr.Zero;
-
-				var libraryNames = name switch {
-					"libbulletc" => OSUtils.GetOS() switch {
-						OSUtils.OS.Windows => new[] { "libbulletc.dll" },
-						OSUtils.OS.Linux => new[] { "libbulletc.so" },
-						OSUtils.OS.OSX => new[] { "libbulletc.so" },
-						_ => null
-					},
-					_ => null
-				};
-
-				if(libraryNames==null) {
-					return pointer;
-				}
-
-				var paths = new List<string>();
-
-				for(int i = 0;i<DllManager.LibraryDirectories.Length;i++) {
-					string libraryDirectory = DllManager.LibraryDirectories[i];
-
-					for(int j = 0;j<libraryNames.Length;j++) {
-						paths.Add(Path.Combine(libraryDirectory,libraryNames[j]));
-					}
-				}
-
-				foreach(string currentPath in paths) {
-					try {
-						pointer = NativeLibrary.Load(currentPath,assembly,path);
-					}
-					catch { }
-
-					if(pointer!=IntPtr.Zero) {
-						break;
-					}
-				}
-
-				return pointer;
-			});
+			Console.WriteLine($"Loaded assemblies:\r\n{string.Join(",\r\n",AppDomain.CurrentDomain.GetAssemblies().Select(a => a.ToString()))}.");
 		}
 	}
 }
