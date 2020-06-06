@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Dissonance.Engine.Graphics.Objects.Shader;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
 using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 
 namespace Dissonance.Engine.Graphics
 {
+	//TODO: Should this be renamed to ShaderProgram?
 	//TODO: Initialize static fields after Graphics.Init();
 	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
 	public partial class Shader : Asset
 	{
-		private static readonly Regex regexFSuffixA = new Regex(@"([^.]|^)([\d]+)f(?=[^\w])",RegexOptions.Compiled);
-		private static readonly Regex regexFSuffixB = new Regex(@"(\.)([\d]+)f(?=[^\w])",RegexOptions.Compiled);
-
 		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
 
@@ -22,13 +22,7 @@ namespace Dissonance.Engine.Graphics
 		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
-		public readonly uint Id;
-		public readonly string Name;
-
 		public int queue;
-		public uint vertexShader;
-		public uint fragmentShader;
-		public uint geometryShader;
 		public uint stencilMask;
 		public string[] defines;
 		public BlendingFactor blendFactorSrc;
@@ -41,14 +35,54 @@ namespace Dissonance.Engine.Graphics
 		internal int[] defaultUniformIndex = new int[DSU.Count];
 		internal List<Material> materialAttachments = new List<Material>();
 
+		private IntPtr namePtr;
+
+		public SubShader VertexShader { get; set; }
+		public SubShader FragmentShader { get; set; }
+		public SubShader GeometryShader { get; set; }
+		public uint Id { get; private set; }
+		public string Name { get; private set; }
+
 		public override string AssetName => Name;
 
-		private Shader(string name)
+		private Shader(string name = null)
 		{
 			Name = name;
 			Id = GL.CreateProgram();
+
+			if(Name!=null) {
+				namePtr = Marshal.StringToHGlobalAnsi(Name);
+
+				GL.ObjectLabel(GLConstants.PROGRAM,Id,Name.Length,namePtr);
+			}
 		}
 
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			if(Id>0) {
+				GL.DeleteProgram(Id);
+
+				Id = 0;
+			}
+
+			VertexShader?.Dispose();
+			FragmentShader?.Dispose();
+			GeometryShader?.Dispose();
+
+			VertexShader = null;
+			FragmentShader = null;
+			GeometryShader = null;
+
+			if(namePtr!=IntPtr.Zero) {
+				Marshal.FreeHGlobal(namePtr);
+
+				namePtr = IntPtr.Zero;
+			}
+
+			Name = null;
+		}
 		public override string ToString() => Name;
 
 		public int GetUniformLocation(string uniformName)
@@ -68,40 +102,6 @@ namespace Dissonance.Engine.Graphics
 
 		internal void MaterialDetach(Material material) => materialAttachments.Remove(material);
 		internal void MaterialAttach(Material material) => materialAttachments.Add(material);
-		internal void CompileShader(ShaderType type,string code,string shaderName = "")
-		{
-			code = code.Trim();
-
-			//Some broken Nvidia drivers don't support 'f' suffix, even though it was added in GLSL 1.2 decades ago. Zoinks.
-			code = regexFSuffixB.Replace(code,@"$1$2");
-			code = regexFSuffixA.Replace(code,@"$1$2.0");
-			
-			uint shader = GL.CreateShader(type);
-
-			GL.ShaderSource(shader,code);
-			GL.CompileShader(shader);
-
-			string info = GL.GetShaderInfoLog(shader);
-
-			if(!string.IsNullOrEmpty(info)) {
-				Debug.Log($"Error compilling shader:\r\n{info}\r\n\r\n{code}");
-
-				GL.DeleteShader(shader);
-
-				if(type==ShaderType.VertexShader) {
-					GL.AttachShader(Id,ErrorShader.vertexShader);
-				}else if(type==ShaderType.FragmentShader) {
-					GL.AttachShader(Id,ErrorShader.fragmentShader);
-				}
-			} else {
-				GL.AttachShader(Id,shader);
-			}
-
-			if(Rendering.CheckGLErrors(throwException:false)) {
-				throw new GraphicsException($"Unable to compile '{type}' shader '{shaderName}'");
-			}
-		}
-
 		//SetupUniforms
 		internal void SetupCommonUniforms()
 		{
@@ -440,16 +440,24 @@ namespace Dissonance.Engine.Graphics
 				defines = defines
 			};
 
-			void TryCompileCode(Shader s,ShaderType shaderType,string code)
+			static void TryCompileShader(Shader shader,ShaderType shaderType,string code,Action<Shader,SubShader> setter)
 			{
 				if(!string.IsNullOrEmpty(code)) {
-					s.CompileShader(shaderType,code,name);
+					var subShader = new SubShader(shaderType);
+
+					if(subShader.CompileShader(code)) {
+						setter(shader,subShader);
+
+						GL.AttachShader(shader.Id,subShader.Id);
+					} else {
+						subShader.Dispose();
+					}
 				}
 			}
 
-			TryCompileCode(shader,ShaderType.VertexShader,vertexCode);
-			TryCompileCode(shader,ShaderType.FragmentShader,fragmentCode);
-			TryCompileCode(shader,ShaderType.GeometryShader,geometryCode);
+			TryCompileShader(shader,ShaderType.VertexShader,vertexCode,(shader,subShader) => shader.VertexShader = subShader);
+			TryCompileShader(shader,ShaderType.FragmentShader,fragmentCode,(shader,subShader) => shader.FragmentShader = subShader);
+			TryCompileShader(shader,ShaderType.GeometryShader,geometryCode,(shader,subShader) => shader.GeometryShader = subShader);
 
 			for(int i = 0;i<CustomVertexAttribute.Count;i++) {
 				var attribute = CustomVertexAttribute.GetInstance(i);
