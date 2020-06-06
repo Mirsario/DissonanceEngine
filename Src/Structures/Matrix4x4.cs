@@ -266,7 +266,7 @@ namespace Dissonance.Engine
 				q.x = (row1.z-row2.y)*sq;
 				q.y = (row2.x-row0.z)*sq;
 				q.z = (row0.y-row1.x)*sq;
-			}else if(row0.x>row1.y && row0.x>row2.z) {
+			} else if(row0.x>row1.y && row0.x>row2.z) {
 				float sq = 2f*Mathf.Sqrt(1f+row0.x-row1.y-row2.z);
 
 				q.x = 0.25f*sq;
@@ -274,7 +274,7 @@ namespace Dissonance.Engine
 				q.w = (row2.y-row1.z)*sq;
 				q.y = (row1.x+row0.y)*sq;
 				q.z = (row2.x+row0.z)*sq;
-			}else if(row1.y>row2.z) {
+			} else if(row1.y>row2.z) {
 				float sq = 2f*Mathf.Sqrt(1f+row1.y-row0.x-row2.z);
 
 				q.y = 0.25f*sq;
@@ -282,7 +282,7 @@ namespace Dissonance.Engine
 				q.w = (row2.x-row0.z)*sq;
 				q.x = (row1.x+row0.y)*sq;
 				q.z = (row2.y+row1.z)*sq;
-			}else{
+			} else {
 				float sq = 2f*Mathf.Sqrt(1f+row2.z-row0.x-row1.y);
 
 				q.z = 0.25f*sq;
@@ -304,11 +304,11 @@ namespace Dissonance.Engine
 				v1 = -Mathf.HalfPI;
 				v2 = 0f;
 				v3 = Mathf.Atan2(m02,m00);
-			}else if(m21>1f) { //down
+			} else if(m21>1f) { //down
 				v1 = Mathf.HalfPI;
 				v2 = 0f;
 				v3 = -Mathf.Atan2(m02,m00);
-			}else{
+			} else {
 				v1 = Mathf.Asin(m21);
 				v2 = Mathf.Atan2(-m20,m22);
 				v3 = Mathf.Atan2(-m01,m11);
@@ -344,14 +344,14 @@ namespace Dissonance.Engine
 				q.y = (tempRow1[0]+tempRow0[1])*sq;
 				q.z = (tempRow2[0]+tempRow0[2])*sq;
 				q.w = (tempRow2[1]-tempRow1[2])*sq;
-			}else if(tempRow1[1]>tempRow2[2]) {
+			} else if(tempRow1[1]>tempRow2[2]) {
 				float sq = 2f*Mathf.Sqrt(1f+tempRow1[1]-tempRow0[0]-tempRow2[2]);
 				q.y = 0.25f*sq;
 				sq = 1f/sq;
 				q.w = (tempRow2[0]-tempRow0[2])*sq;
 				q.x = (tempRow1[0]+tempRow0[1])*sq;
 				q.z = (tempRow2[1]+tempRow1[2])*sq;
-			}else{
+			} else {
 				float sq = 1f/(2f*Mathf.Sqrt(1f+tempRow2[2]-tempRow0[0]-tempRow1[1]));
 				sq = 1f/sq;
 

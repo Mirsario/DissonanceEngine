@@ -118,7 +118,7 @@ namespace Dissonance.Engine
 				result.x = x/den;
 				result.y = y/den;
 				result.z = z/den;
-			}else{
+			} else {
 				result.x = 1f;
 				result.y = 0f;
 				result.z = 0f;

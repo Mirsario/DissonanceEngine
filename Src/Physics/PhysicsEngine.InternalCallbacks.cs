@@ -84,7 +84,7 @@ namespace Dissonance.Engine.Physics
 						}
 
 						thisRB.collisions.Add(new Collision(otherRB.gameObject,rigidbody,null,contacts));
-					}else if(thisRB.rigidbody is Rigidbody2D rigidbody2D) {
+					} else if(thisRB.rigidbody is Rigidbody2D rigidbody2D) {
 						var contacts = new ContactPoint2D[numContacts];
 
 						for(int k = 0;k<numContacts;k++) {

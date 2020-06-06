@@ -331,7 +331,9 @@ namespace Dissonance.Engine.IO
 								continue;
 							}
 
-							var method = typeof(Resources).GetMethod("Import",BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(tType);
+							var method = typeof(Resources)
+								.GetMethod("Import",BindingFlags.Public | BindingFlags.Static)
+								.MakeGenericMethod(tType);
 
 							method.Invoke(manager,new object[] { fileList[k],true,manager,true });
 						}

@@ -116,7 +116,7 @@ namespace Dissonance.Engine.Graphics
 				if(camera.orthographic) {
 					float max = Mathf.Max(Screen.Width,Screen.Height);
 					camera.matrix_proj = Matrix4x4.CreateOrthographic(Screen.Width/max*camera.orthographicSize,Screen.Height/max*camera.orthographicSize,camera.nearClip,camera.farClip);
-				}else{
+				} else {
 					camera.matrix_proj = Matrix4x4.CreatePerspectiveFOV(camera.fov*Mathf.Deg2Rad,aspectRatio,camera.nearClip,camera.farClip);
 				}
 

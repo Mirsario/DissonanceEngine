@@ -162,7 +162,7 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 							throw new GraphicsException("Render pass type always requires a valid shader, provided in a ''shader'' field.");
 						}
 					}
-				}else{
+				} else {
 					//Multiple shaders
 					if(pass.shader!=null) {
 						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");

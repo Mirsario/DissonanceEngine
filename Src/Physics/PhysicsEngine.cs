@@ -62,10 +62,10 @@ namespace Dissonance.Engine.Physics
 						matrix.SetRotationAndScale(transform.Rotation,transform.LocalScale);
 						transform.updatePhysicsScale = false;
 						transform.updatePhysicsRotation = false;
-					}else if(transform.updatePhysicsScale) {
+					} else if(transform.updatePhysicsScale) {
 						matrix.SetScale(transform.LocalScale);
 						transform.updatePhysicsScale = false;
-					}else if(transform.updatePhysicsRotation) {
+					} else if(transform.updatePhysicsRotation) {
 						matrix.SetRotation(transform.Rotation);
 						transform.updatePhysicsRotation = false;
 					}
