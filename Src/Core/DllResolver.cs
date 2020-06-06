@@ -59,16 +59,12 @@ namespace Dissonance.Engine.Core
 			AppDomain.CurrentDomain.AssemblyResolve += (obj,args) => {
 				string argsName = args.Name;
 
-				Console.WriteLine($"Resolving {argsName}...");
-
 				if(assemblyCache.TryGetValue(argsName,out var assembly)) {
 					return assembly;
 				}
 
 				for(int i = 0;i<EmbeddedAssemblies.Length;i++) {
 					if(TryGetAssembly(EmbeddedAssemblies[i],argsName,out assembly)) {
-						Console.WriteLine($"Resolved as '{assembly.GetName().Name}'.");
-
 						//TODO: Move this somewhere, and find a way to unhardcode?
 						if(assembly.FullName.StartsWith("BulletSharp,")) {
 							NativeLibrary.SetDllImportResolver(assembly,(name,assembly,path) => {
@@ -119,8 +115,6 @@ namespace Dissonance.Engine.Core
 
 				return null;
 			};
-
-			Console.WriteLine($"Loaded assemblies:\r\n{string.Join(",\r\n",AppDomain.CurrentDomain.GetAssemblies().Select(a => a.ToString()))}.");
 		}
 	}
 }
