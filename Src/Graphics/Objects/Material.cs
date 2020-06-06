@@ -82,7 +82,7 @@ namespace Dissonance.Engine.Graphics
 					GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 					GL.Uniform1(uniform.location,i);
 				}
-			}else if(shader.uniforms.TryGetValue("mainTex",out uniform)) {
+			} else if(shader.uniforms.TryGetValue("mainTex",out uniform)) {
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.BindTexture(TextureTarget.Texture2D,Rendering.whiteTexture.Id);
 				GL.Uniform1(uniform.location,0);

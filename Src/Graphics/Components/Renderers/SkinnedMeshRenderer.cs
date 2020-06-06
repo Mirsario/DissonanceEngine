@@ -18,7 +18,7 @@ namespace Dissonance.Engine
 
 					if(value.skeleton!=null) {
 						skeleton = value.skeleton.Instantiate(Transform);
-					}else{
+					} else {
 						Debug.Log($"{gameObject.Name} - mesh's skeleton is null");
 					}
 				}

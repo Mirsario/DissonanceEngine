@@ -165,7 +165,7 @@ namespace Dissonance.Engine.Graphics
 
 			if(fb!=null) {
 				GL.DrawBuffers(fb.drawBuffers.Length,fb.drawBuffers);
-			}else{
+			} else {
 				GL.DrawBuffer(DrawBufferMode.FrontLeft);
 			}
 		}

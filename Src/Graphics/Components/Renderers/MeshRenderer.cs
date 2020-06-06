@@ -13,7 +13,7 @@ namespace Dissonance.Engine
 			set {
 				if(value==null) {
 					lodMeshes = value;
-				}else{
+				} else {
 					bool hadNull = false;
 
 					if(value.Length==0) {
@@ -40,7 +40,7 @@ namespace Dissonance.Engine
 			set {
 				if(lodMeshes!=null) {
 					lodMeshes[0] = value;
-				}else{
+				} else {
 					LODMeshes = new[] { value };
 				}
 			}

@@ -43,7 +43,7 @@ namespace Dissonance.Engine
 
 						enabled = true;
 					}
-				}else{
+				} else {
 					OnDisable();
 
 					ProgrammableEntityHooks.UnsubscribeEntity(this);
