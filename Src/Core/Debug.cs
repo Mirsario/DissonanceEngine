@@ -7,73 +7,24 @@ namespace Dissonance.Engine
 {
 	public static class Debug
 	{
-		private struct LineInfo
+		public static void Log(object message,bool showTrace = false,int stackframeOffset = 1)
 		{
-			public string text;
-			public string id;
-
-			public LineInfo(string text,string id)
-			{
-				this.text = text;
-				this.id = id;
-			}
-		}
-
-		private static readonly List<LineInfo> Lines = new List<LineInfo>();
-		private static readonly Dictionary<string,List<Stopwatch>> Stopwatches = new Dictionary<string,List<Stopwatch>>();
-
-		public static void StartStopwatch(string name)
-		{
-			if(!Stopwatches.TryGetValue(name,out var stopwatchList)) {
-				Stopwatches[name] = stopwatchList = new List<Stopwatch>();
-			}
-
-			var stopwatch = new Stopwatch();
-
-			stopwatch.Start();
-
-			stopwatchList.Add(stopwatch);
-		}
-		public static void EndStopwatch(string name)
-		{
-			if(Stopwatches.TryGetValue(name,out var stopwatchList) && stopwatchList.Count>0) {
-				int i = stopwatchList.Count-1;
-
-				var stopwatch = stopwatchList[i];
-
-				stopwatch.Stop();
-
-				Log(name+": "+stopwatch.Elapsed.TotalMilliseconds);
-
-				stopwatchList.RemoveAt(i);
-			}
-		}
-		public static void Log(object message,bool showTrace = false,string uniqueId = null,int stackframeOffset = 1)
-		{
-			string text = message.ToString();
-
-			if(uniqueId!=null) {
-				for(int i = 0,j = 0;i<Lines.Count;i++) {
-					if(Lines[i].id==uniqueId) {
-						RemoveLine(i);
-						Lines.RemoveAt(i);
-
-						i--;
-						j++;
-					}
-				}
-
-				text = uniqueId+": "+text;
-			}
-
 			var stackTrace = new StackTrace(true);
 			var stackFrames = stackTrace.GetFrames();
+			var stackFrame = stackFrames[stackframeOffset];
+			string fileName = Path.GetFileName(stackFrame.GetFileName());
+			int lineNumber = stackFrames[stackframeOffset].GetFileLineNumber();
 
-			text = "["+Path.GetFileName(stackFrames[stackframeOffset].GetFileName())+", line "+stackFrames[stackframeOffset].GetFileLineNumber()+"] "+text;
+			Console.ForegroundColor = ConsoleColor.DarkGray;
 
-			SplitWrite(text);
+			var stackFrameMethod = stackFrame.GetMethod();
+			string sourceName = stackFrameMethod!=null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown";
 
-			Lines.Add(new LineInfo(text,uniqueId));
+			Console.Write($"[{sourceName} - {fileName}, line {lineNumber}] ");
+
+			Console.ForegroundColor = ConsoleColor.Gray;
+
+			SplitWrite(message.ToString());
 
 			if(showTrace) {
 				for(int i = 1;i<stackFrames.Length;i++) {
@@ -85,6 +36,7 @@ namespace Dissonance.Engine
 					string frameText = "  "+Path.GetFileName(stackFrames[i].GetFileName())+":"+method.Name+"(";
 
 					var parameters = method.GetParameters();
+
 					for(int j = 0;j<parameters.Length;j++) {
 						frameText += (j>0?",":"")+parameters[j].ParameterType.Name;
 					}

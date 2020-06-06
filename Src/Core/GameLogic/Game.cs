@@ -44,7 +44,7 @@ namespace Dissonance.Engine
 
 		public void Run(string[] args = null)
 		{
-			Console.WriteLine("Loading game...");
+			Debug.Log("Loading engine...");
 
 			Console.BufferHeight = short.MaxValue-1;
 
@@ -78,44 +78,13 @@ namespace Dissonance.Engine
 			PrepareGLFW();
 			PrepareGL();
 
-			Console.WriteLine("Loading DevIL...");
-
 			IL.Init();
 
-			Console.WriteLine("DevIL loaded.");
-			Console.WriteLine("Calling Init()...");
-
 			Init();
-
-			Console.WriteLine("Going into the UpdateLoop()...");
-
 			UpdateLoop();
 
 			GLFW.DestroyWindow(window);
 			GLFW.Terminate();
-
-			//Rendering.window = window = new GameWindow(DefaultWidth,DefaultHeight,GraphicsMode.Default,displayName); //,GameWindowFlags.Default,DisplayDevice.Default,1,0,GraphicsContextFlags.Default,null,false);
-
-			//window.VSync = VSyncMode.On;
-
-			/*window.Load += (obj,e) => Init();
-			window.Resize += Rendering.Resize;
-			window.WindowStateChanged += (sender,e) => {
-				Debug.Log("State changed");
-
-				Rendering.Resize(sender,e);
-			};
-			window.UpdateFrame += FixedUpdateInternal;
-			window.RenderFrame += RenderUpdateInternal;
-			window.KeyUp += Input.KeyUp;
-			window.KeyPress += Input.KeyPress;
-			window.KeyDown += Input.KeyDown;
-			window.MouseUp += Input.MouseUp;
-			window.MouseDown += Input.MouseDown;
-			window.FocusedChanged += OnFocusChange;
-			window.Closing += ApplicationQuit;
-
-			window.Run(Time.TargetUpdateFrequency,Time.TargetRenderFrequency);*/
 		}
 		public void Dispose()
 		{
@@ -125,8 +94,6 @@ namespace Dissonance.Engine
 
 		internal void Init()
 		{
-			Debug.Log("Loading engine...");
-
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 			Debug.Log($"Assets directory is '{assetsPath}'.");
 			//AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
@@ -257,9 +224,9 @@ namespace Dissonance.Engine
 		//Test
 		private void PrepareGLFW()
 		{
-			Console.WriteLine("GLFW Preparing...");
+			Debug.Log("Preparing GLFW...");
 
-			GLFW.SetErrorCallback((GLFWError code,string description) => Console.WriteLine(code switch {
+			GLFW.SetErrorCallback((GLFWError code,string description) => Debug.Log(code switch {
 				GLFWError.VersionUnavailable => throw new GraphicsException(description),
 				_ => $"GLFW Error {code}: {description}"
 			}));
@@ -280,18 +247,18 @@ namespace Dissonance.Engine
 			GLFW.MakeContextCurrent(window);
 
 			GLFW.SwapInterval(0);
+
+			Debug.Log("Initialized GLFW.");
 		}
 		private void PrepareGL()
 		{
-			GL.Load(Rendering.OpenGLVersion);
+			Debug.Log("Preparing OpenGL...");
 
-			Console.WriteLine("GL functions Loaded.");
+			GL.Load(Rendering.OpenGLVersion);
 
 			Rendering.CheckGLErrors("Post GL.Load()");
 
-			Console.WriteLine("No errors.");
-
-			Console.WriteLine($"Loaded OpenGL {GL.GetString(StringName.Version)}");
+			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
 		}
 		private void UpdateLoop()
 		{
