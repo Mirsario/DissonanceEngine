@@ -370,17 +370,21 @@ namespace Dissonance.Engine.Graphics
 
 			const int MaxUniformNameLength = 32;
 
-			for(int location = 0;location<uniformCount;location++) {
-				GL.GetActiveUniform(Id,(uint)location,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
+			Debug.Log($"Initializing shader {Name}...");
 
-				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,location));
+			for(int i = 0;i<uniformCount;i++) {
+				GL.GetActiveUniform(Id,(uint)i,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
+
+				int location = GL.GetUniformLocation(Id,uniformName); //Uniform location != uniform index, and that's pretty ridiculous and painful.
+
+				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,i));
 
 				//Optimization for engine's uniforms
 				int indexOf = Array.IndexOf(DSU.names,uniformName);
 
 				if(indexOf>=0) {
 					hasDefaultUniform[indexOf] = true;
-					defaultUniformIndex[indexOf] = location;
+					defaultUniformIndex[indexOf] = i;
 				}
 			}
 
