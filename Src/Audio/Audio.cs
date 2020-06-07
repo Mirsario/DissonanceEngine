@@ -23,7 +23,7 @@ namespace Dissonance.Engine
 		{
 			try {
 				audioDevice = ALC.OpenDevice(null);
-				audioContext = ALC.CreateContext(audioDevice,new int[] { });
+				audioContext = ALC.CreateContext(audioDevice,null);
 			}
 			catch(Exception e) {
 				throw new AudioException("An issue occured during Audio initialization.",e);
