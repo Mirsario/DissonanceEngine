@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using Dissonance.Engine.Graphics.Objects.Shader;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
@@ -37,11 +36,11 @@ namespace Dissonance.Engine.Graphics
 
 		private IntPtr namePtr;
 
+		public uint Id { get; private set; }
+		public string Name { get; private set; }
 		public SubShader VertexShader { get; set; }
 		public SubShader FragmentShader { get; set; }
 		public SubShader GeometryShader { get; set; }
-		public uint Id { get; private set; }
-		public string Name { get; private set; }
 
 		public override string AssetName => Name;
 
