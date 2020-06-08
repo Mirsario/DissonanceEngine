@@ -370,8 +370,6 @@ namespace Dissonance.Engine.Graphics
 
 			const int MaxUniformNameLength = 32;
 
-			Debug.Log($"Initializing shader {Name}...");
-
 			for(int i = 0;i<uniformCount;i++) {
 				GL.GetActiveUniform(Id,(uint)i,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
 
