@@ -375,14 +375,14 @@ namespace Dissonance.Engine.Graphics
 
 				int location = GL.GetUniformLocation(Id,uniformName); //Uniform location != uniform index, and that's pretty ridiculous and painful.
 
-				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,i));
+				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,location));
 
 				//Optimization for engine's uniforms
 				int indexOf = Array.IndexOf(DSU.names,uniformName);
 
 				if(indexOf>=0) {
 					hasDefaultUniform[indexOf] = true;
-					defaultUniformIndex[indexOf] = i;
+					defaultUniformIndex[indexOf] = location;
 				}
 			}
 
