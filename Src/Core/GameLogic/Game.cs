@@ -46,8 +46,6 @@ namespace Dissonance.Engine
 		{
 			Debug.Log("Loading engine...");
 
-			Console.BufferHeight = short.MaxValue-1;
-
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
 
 			DllResolver.Init();
