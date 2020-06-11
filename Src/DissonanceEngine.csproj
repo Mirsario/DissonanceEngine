@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
@@ -25,7 +25,7 @@
 	<ItemGroup>
 		<ProjectReference Condition="$(SolutionProjects.Contains('DissonanceFramework'))" Include="$(DissonanceFrameworkPath)" />
 		<Reference Condition="!$(SolutionProjects.Contains('DissonanceFramework'))" Include="DissonanceFramework">
-			<HintPath>../References/DissonanceFramework.dll</HintPath>
+			<HintPath>References/DissonanceFramework.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	
