@@ -235,12 +235,18 @@ namespace Dissonance.Engine
 
 			GLFW.WindowHint(WindowHint.ContextVersionMajor,Rendering.OpenGLVersion.Major); //Targeted major version
 			GLFW.WindowHint(WindowHint.ContextVersionMinor,Rendering.OpenGLVersion.Minor); //Targeted minor version
+			GLFW.WindowHint(WindowHint.OpenGLForwardCompat,1);
+			GLFW.WindowHint(WindowHint.OpenGLProfile,GLFW.OPENGL_CORE_PROFILE);
 
 			IntPtr monitor = IntPtr.Zero;
 			int resolutionWidth = 800;
 			int resolutionHeight = 600;
 
 			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,displayName,monitor,IntPtr.Zero);
+
+			if(window==IntPtr.Zero) {
+				throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
+			}
 
 			GLFW.MakeContextCurrent(window);
 
