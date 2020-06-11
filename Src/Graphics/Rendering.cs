@@ -13,6 +13,9 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	public static partial class Rendering
 	{
+		public static readonly Version MinOpenGLVersion = new Version(3,2);
+		public static readonly Version[] SupportedOpenGLVersions = GL.SupportedVersions.Where(v => v>=MinOpenGLVersion).ToArray();
+
 		public static int drawCallsCount;
 		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);
 		public static Vector4 clearColor = Vector4.Zero;
@@ -26,7 +29,7 @@ namespace Dissonance.Engine.Graphics
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
 
-		private static Version openGLVersion = new Version(3,0);
+		private static Version openGLVersion = MinOpenGLVersion;
 		private static GL.DebugCallback debugCallback;
 
 		public static RenderingPipeline RenderingPipeline { get; private set; }
@@ -39,7 +42,7 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				if(!GL.SupportedVersions.Contains(value)) {
-					throw new InvalidOperationException($"OpenGL version '{value}' is unknown or not supported. The following versions are supported:\r\n{string.Join("\r\n",GL.SupportedVersions.Select(v => $"{v};"))}.");
+					throw new ArgumentException($"OpenGL version '{value}' is unknown or not supported. The following versions are supported:\r\n{string.Join("\r\n",SupportedOpenGLVersions.Select(v => $"{v};"))}.");
 				}
 
 				openGLVersion = value;
