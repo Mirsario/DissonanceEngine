@@ -10,6 +10,8 @@ namespace Dissonance.Engine
 
 		public static InputTrigger RegisterTrigger(string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null)
 			=> RegisterTrigger(typeof(InputTrigger),name,bindings,minValue,maxValue);
+		public static T GetTrigger<T>() where T : SingletonInputTrigger
+			=> (T)triggers[SingletonInputTrigger.Info<T>.Id];
 
 		internal static InputTrigger RegisterTrigger(Type type,string name,InputBinding[] bindings,float? minValue = null,float? maxValue = null)
 		{
