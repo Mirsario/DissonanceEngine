@@ -20,7 +20,8 @@ namespace Dissonance.Engine.Graphics
 
 		public List<RenderTexture> renderTextures;
 		public Renderbuffer[] renderbuffers;
-		public DrawBuffersEnum[] drawBuffers;
+
+		private DrawBuffersEnum[] drawBuffers;
 
 		internal FramebufferAttachment nextDefaultAttachment = FramebufferAttachment.ColorAttachment0;
 		internal int maxTextureWidth;
@@ -97,8 +98,10 @@ namespace Dissonance.Engine.Graphics
 			textureToAttachment.Remove(texture);
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+
 			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
 				int index = Array.IndexOf(drawBuffers,drawBuffersEnum);
+
 				if(index>=0) {
 					ArrayUtils.Remove(ref drawBuffers,index);
 				}
@@ -121,16 +124,19 @@ namespace Dissonance.Engine.Graphics
 		public Framebuffer WithRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
 		{
 			AttachRenderTexture(texture,attachmentType);
+
 			return this;
 		}
 		public Framebuffer WithRenderTextures(params RenderTexture[] textures)
 		{
 			AttachRenderTextures(textures);
+			
 			return this;
 		}
 		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
 		{
 			AttachRenderbuffer(renderbuffer,attachmentType);
+			
 			return this;
 		}
 
@@ -165,8 +171,6 @@ namespace Dissonance.Engine.Graphics
 
 			if(fb!=null) {
 				GL.DrawBuffers(fb.drawBuffers.Length,fb.drawBuffers);
-			} else {
-				GL.DrawBuffer(DrawBufferMode.FrontLeft);
 			}
 		}
 	}
