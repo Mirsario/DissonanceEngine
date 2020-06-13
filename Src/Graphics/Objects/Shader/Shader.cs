@@ -52,7 +52,11 @@ namespace Dissonance.Engine.Graphics
 			if(Name!=null) {
 				namePtr = Marshal.StringToHGlobalAnsi(Name);
 
-				GL.ObjectLabel(GLConstants.PROGRAM,Id,Name.Length,namePtr);
+				//TODO: Add a way to check if a function is implemented. Maybe make internal delegates accessible with properrties?
+				try {
+					GL.ObjectLabel(GLConstants.PROGRAM,Id,Name.Length,namePtr);
+				}
+				catch { }
 			}
 		}
 
