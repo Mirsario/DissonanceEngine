@@ -73,7 +73,7 @@ namespace Dissonance.Engine.Core
 									"libbulletc" => OSUtils.GetOS() switch {
 										OSUtils.OS.Windows => new[] { "libbulletc.dll" },
 										OSUtils.OS.Linux => new[] { "libbulletc.so" },
-										OSUtils.OS.OSX => new[] { "libbulletc.so" },
+										OSUtils.OS.OSX => new[] { "libbulletc.dylib" },
 										_ => null
 									},
 									_ => null
