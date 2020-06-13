@@ -7,8 +7,11 @@ namespace Dissonance.Engine.Graphics
 	{
 		private static void TryEnablingDebugging()
 		{
+			//TODO: Add a way to avoid trycatches like this.
 			try {
 				GL.Enable(EnableCap.DebugOutput);
+
+				CheckGLErrors("After attempting to enable debugging.");
 
 				debugCallback = (uint source,uint type,uint id,uint severity,int length,string message,IntPtr userParameter) => {
 					if(severity==GLConstants.DEBUG_SEVERITY_NOTIFICATION) {
