@@ -56,7 +56,7 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void UpdateValues()
 		{
-			GLFW.GetFramebufferSize(Game.window,out width,out height);
+			GLFW.GetWindowSize(Game.window,out width,out height);
 
 			size = new Vector2Int(width,height);
 			sizeFloat = (Vector2)size;
