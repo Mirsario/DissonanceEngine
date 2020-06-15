@@ -6,28 +6,22 @@ namespace Dissonance.Engine.Graphics
 	{
 		public static bool lockCursor;
 
-		internal static int width;
-		internal static int height;
-		internal static Vector2Int size;
-		internal static Vector2 sizeFloat;
-		internal static Vector2 center;
-		internal static RectInt rectangle;
-		internal static int windowX;
-		internal static int windowY;
-		internal static Vector2Int windowLocation;
-		internal static Vector2 windowCenter;
-
 		private static CursorState cursorState;
 
-		public static int Width => width;
-		public static int Height => height;
-		public static Vector2Int Size => size;
-		public static Vector2 Center => center;
-		public static RectInt Rectangle => rectangle;
-		public static int WindowX => windowX;
-		public static int WindowY => windowY;
-		public static Vector2Int WindowLocation => windowLocation;
-		public static Vector2 WindowCenter => windowCenter;
+		//Framebuffer
+		public static int Width { get; private set; }
+		public static int Height { get; private set; }
+		public static Vector2Int Size { get; private set; }
+		public static RectInt Rectangle { get; private set; }
+		public static Vector2 Center { get; private set; }
+		//Window
+		public static int WindowX { get; internal set; }
+		public static int WindowY { get; internal set; }
+		public static int WindowWidth { get; internal set; }
+		public static int WindowHeight { get; internal set; }
+		public static Vector2Int WindowSize { get; internal set; }
+		public static Vector2Int WindowLocation { get; internal set; }
+		public static Vector2 WindowCenter { get; internal set; }
 
 		/*public static bool Fullscreen {
 			get => GLFW.GetWindowMonitor(Rendering.window)!=IntPtr.Zero;
@@ -56,17 +50,29 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void UpdateValues()
 		{
-			GLFW.GetWindowSize(Game.window,out width,out height);
+			//Framebuffer
+			GLFW.GetFramebufferSize(Game.window,out int framebufferWidth,out int framebufferHeight);
 
-			size = new Vector2Int(width,height);
-			sizeFloat = (Vector2)size;
-			center = new Vector2(width*0.5f,height*0.5f);
-			rectangle = new RectInt(0,0,width,height);
+			Width = framebufferWidth;
+			Height = framebufferHeight;
 
-			GLFW.GetWindowPos(Game.window,out windowX,out windowY);
+			Size = new Vector2Int(framebufferWidth,framebufferHeight);
+			Center = new Vector2(framebufferWidth*0.5f,framebufferHeight*0.5f);
+			Rectangle = new RectInt(0,0,framebufferWidth,framebufferHeight);
 
-			windowLocation = new Vector2Int(windowX,windowY);
-			windowCenter = new Vector2(windowX+width*0.5f,windowY+height*0.5f);
+			//Window
+			GLFW.GetWindowPos(Game.window,out int windowX,out int windowY);
+			GLFW.GetWindowSize(Game.window,out int windowWidth,out int windowHeight);
+
+			WindowX = windowX;
+			WindowY = windowY;
+			WindowWidth = windowWidth;
+			WindowHeight = windowHeight;
+
+			WindowSize = new Vector2Int(windowWidth,windowHeight);
+			WindowLocation = new Vector2Int(windowX,windowY);
+
+			WindowCenter = new Vector2(windowX+windowWidth*0.5f,windowY+windowHeight*0.5f);
 		}
 	}
 }
