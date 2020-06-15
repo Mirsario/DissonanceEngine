@@ -117,7 +117,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if(hasDefaultUniform[DSU.ScreenResolution]) {
-				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],Screen.sizeFloat.x,Screen.sizeFloat.y);
+				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],(float)Screen.Width,(float)Screen.Height);
 			}
 
 			if(hasDefaultUniform[DSU.Time]) {

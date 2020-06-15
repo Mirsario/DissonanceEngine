@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
 
@@ -18,7 +19,7 @@ namespace Dissonance.Engine
 
 		internal static void MousePositionCallback(IntPtr window,double x,double y)
 		{
-			var value = new Vector2((float)x,(float)y);
+			var value = new Vector2((float)x,(float)y)*(Screen.Size/Screen.WindowSize);
 
 			fixedInput.mousePosition = value;
 			renderInput.mousePosition = value;
