@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dissonance.Engine.Core.GameLogic
+namespace Dissonance.Engine.Core
 {
 	[Flags]
 	public enum GameFlags

@@ -5,7 +5,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.GameLogic;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Physics;
