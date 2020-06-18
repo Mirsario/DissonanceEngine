@@ -48,36 +48,47 @@ namespace Dissonance.Engine
 			frustum[0,1] = clip[ 7]-clip[ 4];
 			frustum[0,2] = clip[11]-clip[ 8];
 			frustum[0,3] = clip[15]-clip[12];
+
 			NormalizePlane(0);
+
 			//Left
 			frustum[1,0] = clip[ 3]+clip[ 0]; 
 			frustum[1,1] = clip[ 7]+clip[ 4];
 			frustum[1,2] = clip[11]+clip[ 8];
 			frustum[1,3] = clip[15]+clip[12];
+
 			NormalizePlane(1);
+
 			//Bottom
 			frustum[2,0] = clip[ 3]+clip[ 1]; 
 			frustum[2,1] = clip[ 7]+clip[ 5];
 			frustum[2,2] = clip[11]+clip[ 9];
 			frustum[2,3] = clip[15]+clip[13];
+
 			NormalizePlane(2);
+
 			//Top
 			frustum[3,0] = clip[ 3]-clip[ 1];
 			frustum[3,1] = clip[ 7]-clip[ 5];
 			frustum[3,2] = clip[11]-clip[ 9];
 			frustum[3,3] = clip[15]-clip[13];
+
 			NormalizePlane(3);
+
 			//Back
 			frustum[4,0] = clip[ 3]-clip[ 2]; 
 			frustum[4,1] = clip[ 7]-clip[ 6];
 			frustum[4,2] = clip[11]-clip[10];
 			frustum[4,3] = clip[15]-clip[14];
+
 			NormalizePlane(4);
+
 			//Front
 			frustum[5,0] = clip[ 3]+clip[ 2]; 
 			frustum[5,1] = clip[ 7]+clip[ 6];
 			frustum[5,2] = clip[11]+clip[10];
 			frustum[5,3] = clip[15]+clip[14];
+
 			NormalizePlane(5);
 		}
 		public bool PointInFrustum(Vector3 point)
@@ -87,6 +98,7 @@ namespace Dissonance.Engine
 					return false;
 				}
 			}
+
 			return true;
 		}
 		public bool BoxInFrustum(Vector3 point,Vector3 extents)
@@ -97,39 +109,44 @@ namespace Dissonance.Engine
 			float y2 = point.y+extents.y;
 			float z1 = point.z-extents.z;
 			float z2 = point.z+extents.z;
+
 			for(int i = 0;i<6;i++) {
-				if(frustum[i,0]*x1+frustum[i,1]*y1+frustum[i,2]*z1+frustum[i,3]>0) {
+				float f0 = frustum[i,0];
+				float f1 = frustum[i,1];
+				float f2 = frustum[i,2];
+				float f3 = frustum[i,3];
+
+				float f0x1 = f0*x1;
+				float f0x2 = f0*x2;
+				float f1y1 = f1*y1;
+				float f1y2 = f1*y2;
+				float f2z1 = f2*z1;
+				float f2z2 = f2*z2;
+
+				if(f0x1+f1y1+f2z1+f3>0
+				|| f0x2+f1y1+f2z1+f3>0
+				|| f0x1+f1y2+f2z1+f3>0
+				|| f0x2+f1y2+f2z1+f3>0
+				|| f0x1+f1y1+f2z2+f3>0
+				|| f0x2+f1y1+f2z2+f3>0
+				|| f0x1+f1y2+f2z2+f3>0
+				|| f0x2+f1y2+f2z2+f3>0) {
 					continue;
 				}
-				if(frustum[i,0]*x2+frustum[i,1]*y1+frustum[i,2]*z1+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x1+frustum[i,1]*y2+frustum[i,2]*z1+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x2+frustum[i,1]*y2+frustum[i,2]*z1+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x1+frustum[i,1]*y1+frustum[i,2]*z2+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x2+frustum[i,1]*y1+frustum[i,2]*z2+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x1+frustum[i,1]*y2+frustum[i,2]*z2+frustum[i,3]>0) {
-					continue;
-				}
-				if(frustum[i,0]*x2+frustum[i,1]*y2+frustum[i,2]*z2+frustum[i,3]>0) {
-					continue;
-				}
+
 				return false;
 			}
+
 			return true;
 		}
 
 		private void NormalizePlane(int side)
 		{
-			float magnitude = Mathf.Sqrt(frustum[side,0]*frustum[side,0]+frustum[side,1]*frustum[side,1]+frustum[side,2]*frustum[side,2]);
+			float magnitude = Mathf.Sqrt(
+				frustum[side,0]*frustum[side,0]+
+				frustum[side,1]*frustum[side,1]+
+				frustum[side,2]*frustum[side,2]
+			);
 
 			frustum[side,0] /= magnitude;
 			frustum[side,1] /= magnitude;
