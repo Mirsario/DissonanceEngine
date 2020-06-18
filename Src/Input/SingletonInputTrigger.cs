@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Dissonance.Engine
 {
@@ -6,7 +7,7 @@ namespace Dissonance.Engine
 	{
 		public static class Info<T> where T : SingletonInputTrigger
 		{
-			public static readonly int Id;
+			public static int id;
 		}
 
 		protected SingletonInputTrigger() : base() {}
@@ -30,7 +31,7 @@ namespace Dissonance.Engine
 				var trigger = Input.RegisterTrigger(type,type.Name,null);
 
 				typeof(Info<>).MakeGenericType(type)
-					.GetField("Id",BindingFlags.Static|BindingFlags.Public)
+					.GetField(nameof(Info<SingletonInputTrigger>.id),BindingFlags.Static|BindingFlags.Public)
 					.SetValue(null,trigger.Id);
 			}
 		}
