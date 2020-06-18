@@ -45,11 +45,5 @@ namespace Dissonance.Engine.Utils.Internal
 
 			return result;
 		}
-
-		//TODO: Get rid of this
-		public static bool IsMicrosoftAssembly(Assembly assembly) => assembly.Location.EndsWith("mscorlib.dll")
-			|| assembly.FullName.Contains("PublicKeyToken = b77a5c561934e089")
-			|| assembly.FullName.Contains("PublicKeyToken = b03f5f7f11d50a3a")
-			|| assembly.FullName.Contains("PublicKeyToken = 31bf3856ad364e35");
 	}
 }
