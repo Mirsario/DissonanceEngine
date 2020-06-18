@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public static partial class Mathf
+	partial class Mathf
 	{
 		[MethodImpl(Inline)] public static int Min(int a,int b) => Math.Min(a,b);
 		[MethodImpl(Inline)] public static float Min(float a,float b) => Math.Min(a,b);
