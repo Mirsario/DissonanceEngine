@@ -36,6 +36,8 @@ namespace Dissonance.Engine.Graphics
 
 		internal void Init()
 		{
+			Rendering.CheckGLErrors($"Before setting up rendering pipeline {GetType().Name}");
+
 			var framebuffersList = new List<Framebuffer>();
 			var renderPassesList = new List<RenderPass>();
 
