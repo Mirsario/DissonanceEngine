@@ -37,14 +37,9 @@ namespace Dissonance.Engine
 			}
 		}
 
-		protected override void OnEnable() => Rendering.cameraList.Add(this);
-		protected override void OnDisable() => Rendering.cameraList.Remove(this);
-		protected override void OnDispose() => Rendering.cameraList.Remove(this);
-
-		public override void FixedUpdate()
-		{
-			
-		}
+		protected override void OnEnable() => Rendering.cameraList?.Add(this);
+		protected override void OnDisable() => Rendering.cameraList?.Remove(this);
+		protected override void OnDispose() => Rendering.cameraList?.Remove(this);
 
 		public void CalculateFrustum(Matrix4x4 clip)
 		{

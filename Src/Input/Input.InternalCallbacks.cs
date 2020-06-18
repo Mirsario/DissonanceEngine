@@ -10,6 +10,10 @@ namespace Dissonance.Engine
 	{
 		internal static void InitCallbacks()
 		{
+			if(Game.window==IntPtr.Zero) {
+				return;
+			}
+
 			GLFW.SetCursorPosCallback(Game.window,MousePositionCallback);
 			GLFW.SetMouseButtonCallback(Game.window,MouseButtonCallback);
 			GLFW.SetScrollCallback(Game.window,MouseScrollCallback);

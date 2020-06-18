@@ -36,9 +36,9 @@ namespace Dissonance.Engine
 		private static uint renderFPS;
 
 		//Time
-		public static float GameTime => Game.fixedUpdate ? fixedTime : renderTime;
-		public static float GlobalTime => Game.fixedUpdate ? fixedTimeReal : renderTimeReal;
-		public static float DeltaTime => Game.fixedUpdate ? FixedDeltaTime : RenderDeltaTime;
+		public static float GameTime => Game.IsFixedUpdate ? fixedTime : renderTime;
+		public static float GlobalTime => Game.IsFixedUpdate ? fixedTimeReal : renderTimeReal;
+		public static float DeltaTime => Game.IsFixedUpdate ? FixedDeltaTime : RenderDeltaTime;
 
 		public static float FixedGameTime => fixedTime;
 		public static float RenderGameTime => renderTime;

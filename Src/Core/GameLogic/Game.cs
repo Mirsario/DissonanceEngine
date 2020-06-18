@@ -1,17 +1,16 @@
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using Dissonance.Framework.Windowing;
-using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Physics;
-using Dissonance.Engine.Core;
-using Dissonance.Framework.Graphics;
-using Dissonance.Framework.Imaging;
-using System.Diagnostics;
 using System.Threading;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.GameLogic;
+using Dissonance.Engine.Graphics;
 using Dissonance.Engine.IO;
+using Dissonance.Engine.Physics;
+using Dissonance.Framework.Imaging;
+using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {
@@ -21,7 +20,7 @@ namespace Dissonance.Engine
 	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
 	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
-	public class Game : IDisposable
+	public partial class Game : IDisposable
 	{
 		//Debug
 		private const bool BigScreen = true;
@@ -33,19 +32,38 @@ namespace Dissonance.Engine
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
 		public static Dictionary<string,string> filePaths;
-		public static IntPtr window;
-		
-		internal static Game instance;
-		internal static bool shouldQuit;
-		internal static bool preInitDone;
-		internal static bool fixedUpdate;
+
+		internal static IntPtr window;
+
+		[ThreadStatic]
+		private static Game instance;
 
 		public static bool HasFocus	{ get; internal set; } = true;
+		public static bool IsFixedUpdate => instance?.fixedUpdate ?? false;
 
-		public void Run(string[] args = null)
+		internal static Game Instance => instance; //TODO: In a perfect world, properties and fields like this one would not exist. But this is not a perfect world.
+
+		internal bool shouldQuit;
+		internal bool preInitDone;
+		internal bool fixedUpdate;
+
+		public GameFlags Flags { get; private set; }
+		public bool NoGraphics { get; private set; }
+		public bool NoAudio { get; private set; }
+
+		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
+			if(Instance!=null) {
+				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create a new thread.");
+			}
+
 			Debug.Log("Loading engine...");
 
+			Flags = flags;
+			NoGraphics = (Flags & GameFlags.NoGraphics)!=0;
+			NoAudio = (Flags & GameFlags.NoAudio)!=0;
+
+			instance = this;
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
 
 			DllResolver.Init();
@@ -66,28 +84,43 @@ namespace Dissonance.Engine
 
 			assetsPath = Path.GetFullPath(assetsPath);
 
+			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
+
 			Layers.Init();
 			Time.PreInit();
-			Rendering.PreInit();
+
+			if(!NoGraphics) {
+				Rendering.PreInit();
+			}
+
 			PreInit();
 
 			preInitDone = true;
 
-			PrepareGLFW();
-			PrepareGL();
+			if(!NoGraphics) {
+				PrepareGLFW();
+				PrepareGL();
+			}
 
 			IL.Init();
 
 			Init();
 			UpdateLoop();
 
-			GLFW.DestroyWindow(window);
-			GLFW.Terminate();
+			if(!NoGraphics) {
+				GLFW.DestroyWindow(window);
+				GLFW.Terminate();
+			}
 		}
 		public void Dispose()
 		{
-			Rendering.Dispose();
+			if(!NoGraphics) {
+				Rendering.Dispose();
+			}
+
 			PhysicsEngine.Dispose();
+
+			instance = null;
 		}
 
 		internal void Init()
@@ -102,8 +135,6 @@ namespace Dissonance.Engine
 			Screen.CursorState = CursorState.Normal;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-
-			instance = this;
 
 			ReflectionCache.Init();
 			RenderPass.Init();
@@ -127,11 +158,18 @@ namespace Dissonance.Engine
 			CustomVertexAttribute.Initialize();
 
 			Resources.Init();
-			Rendering.Init();
-			GUI.Init();
+
+			if(!NoGraphics) {
+				Rendering.Init();
+				GUI.Init();
+			}
+
 			Input.Init();
 			PhysicsEngine.Init();
-			Audio.Init();
+
+			if(!NoAudio) {
+				Audio.Init();
+			}
 
 			Debug.Log("Loading game...");
 
@@ -171,7 +209,10 @@ namespace Dissonance.Engine
 
 			PhysicsEngine.FixedUpdate();
 			Input.LateUpdate();
-			Audio.FixedUpdate();
+
+			if(!NoAudio) {
+				Audio.FixedUpdate();
+			}
 
 			Time.PostFixedUpdate();
 		}
@@ -206,10 +247,11 @@ namespace Dissonance.Engine
 
 			Time.PostRenderUpdate();
 		}
-		internal void ApplicationQuit(object sender,CancelEventArgs e)
+		internal void ApplicationQuit(object sender,EventArgs e)
 		{
 			shouldQuit = true;
-			instance.Dispose();
+
+			instance?.Dispose();
 		}
 
 		public virtual void PreInit() {}
@@ -219,51 +261,6 @@ namespace Dissonance.Engine
 		public virtual void OnGUI() {}
 		public virtual void OnApplicationQuit() {}
 
-		//Test
-		private void PrepareGLFW()
-		{
-			Debug.Log("Preparing GLFW...");
-
-			GLFW.SetErrorCallback((GLFWError code,string description) => Debug.Log(code switch {
-				GLFWError.VersionUnavailable => throw new GraphicsException(description),
-				_ => $"GLFW Error {code}: {description}"
-			}));
-
-			if(GLFW.Init()==0) {
-				throw new Exception("Unable to initialize GLFW!");
-			}
-
-			GLFW.WindowHint(WindowHint.ContextVersionMajor,Rendering.OpenGLVersion.Major); //Targeted major version
-			GLFW.WindowHint(WindowHint.ContextVersionMinor,Rendering.OpenGLVersion.Minor); //Targeted minor version
-			GLFW.WindowHint(WindowHint.OpenGLForwardCompat,1);
-			GLFW.WindowHint(WindowHint.OpenGLProfile,GLFW.OPENGL_CORE_PROFILE);
-
-			IntPtr monitor = IntPtr.Zero;
-			int resolutionWidth = 800;
-			int resolutionHeight = 600;
-
-			window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,displayName,monitor,IntPtr.Zero);
-
-			if(window==IntPtr.Zero) {
-				throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
-			}
-
-			GLFW.MakeContextCurrent(window);
-
-			GLFW.SwapInterval(0);
-
-			Debug.Log("Initialized GLFW.");
-		}
-		private void PrepareGL()
-		{
-			Debug.Log("Preparing OpenGL...");
-
-			GL.Load(Rendering.OpenGLVersion);
-
-			Rendering.CheckGLErrors("Post GL.Load()");
-
-			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
-		}
 		private void UpdateLoop()
 		{
 			Stopwatch updateStopwatch = new Stopwatch();
@@ -278,7 +275,10 @@ namespace Dissonance.Engine
 				GLFW.PollEvents();
 
 				FixedUpdateInternal();
-				RenderUpdateInternal();
+
+				if(!NoGraphics) {
+					RenderUpdateInternal();
+				}
 
 				TimeSpan sleepTimeSpan = nextUpdateTime-updateStopwatch.Elapsed;
 
