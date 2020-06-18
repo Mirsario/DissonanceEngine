@@ -19,7 +19,7 @@ namespace Dissonance.Engine
 			engineReferences = engineAssembly.GetReferencedAssemblies();
 			engineTypes = engineAssembly.GetTypes();
 
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !InternalUtils.IsMicrosoftAssembly(a) && !engineReferences.Any(r => r.Name.Equals(a.GetName().Name))).ToList();
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic && !a.GetName().Name.StartsWith("System.") && !engineReferences.Any(r => r.Name.Equals(a.GetName().Name))).ToList();
 
 			assemblies.Remove(engineAssembly);
 			assemblies.Insert(0,engineAssembly);
