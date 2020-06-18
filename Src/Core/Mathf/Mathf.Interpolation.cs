@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public static partial class Mathf
+	partial class Mathf
 	{
 		[MethodImpl(Inline)]
 		public static float Lerp(float a,float b,float time) => a+(b-a)*Clamp01(time);

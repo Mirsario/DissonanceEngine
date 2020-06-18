@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public static partial class Mathf
+	partial class Mathf
 	{
 		[MethodImpl(Inline)] public static sbyte Clamp(sbyte value,sbyte min,sbyte max) => value<min ? min : (value>max ? max : value);
 		[MethodImpl(Inline)] public static byte Clamp(byte value,byte min,byte max) => value<min ? min : (value>max ? max : value);

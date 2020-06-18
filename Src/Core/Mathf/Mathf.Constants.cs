@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Dissonance.Engine
 {
 	//Very aggressive class, be careful
-	public static partial class Mathf
+	partial class Mathf
 	{
 		public const float NegativeInfinity = float.NegativeInfinity;
 		public const float Infinity = float.PositiveInfinity;

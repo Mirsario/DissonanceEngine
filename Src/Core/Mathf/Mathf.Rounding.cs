@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public static partial class Mathf
+	partial class Mathf
 	{
 		[MethodImpl(Inline)] public static float Ceil(float f) => (float)Math.Ceiling(f);
 		[MethodImpl(Inline)] public static double Ceil(double d) => Math.Ceiling(d);

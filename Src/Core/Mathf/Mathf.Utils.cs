@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public static partial class Mathf
+	partial class Mathf
 	{
 		[MethodImpl(Inline)] public static int Repeat(int t,int length) => t>=0 ? t%length : (int.MaxValue+t+1)%length;
 		[MethodImpl(Inline)] public static float Repeat(float t,float length) => t-Floor(t/length)*length;
