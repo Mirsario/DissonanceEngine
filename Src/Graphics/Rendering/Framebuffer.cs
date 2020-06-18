@@ -39,6 +39,8 @@ namespace Dissonance.Engine.Graphics
 
 		public void AttachRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
 		{
+			Rendering.CheckGLErrors($"At the start of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
+
 			Bind(this);
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
@@ -57,6 +59,8 @@ namespace Dissonance.Engine.Graphics
 
 			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
 			maxTextureHeight = Math.Max(maxTextureHeight,texture.Height);
+
+			Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 		}
 		public void AttachRenderTextures(params RenderTexture[] textures) => AttachRenderTextures((IEnumerable<RenderTexture>)textures);
 		public void AttachRenderTextures(IEnumerable<RenderTexture> textures)

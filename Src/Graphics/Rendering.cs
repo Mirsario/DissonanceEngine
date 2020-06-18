@@ -78,10 +78,14 @@ namespace Dissonance.Engine.Graphics
 
 			TryEnablingDebugging();
 
+			CheckGLErrors($"After trying to enable debugging.");
+
 			//FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
 			var tex = Resources.Import<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
 			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~",tex,new Vector2(12f,16f),0) { size = 16 };
+			
+			CheckGLErrors($"After initializing a default font.");
 
 			cameraList = new List<Camera>();
 			lightList = new List<Light>();
@@ -98,6 +102,8 @@ namespace Dissonance.Engine.Graphics
 			
 			whiteTexture = new Texture(1,1);
 			whiteTexture.SetPixels(new[] { new Pixel(1f,1f,1f,1f) });
+
+			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
 		internal static void Render()
 		{
