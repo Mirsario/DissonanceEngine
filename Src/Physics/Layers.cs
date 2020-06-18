@@ -19,7 +19,7 @@ namespace Dissonance.Engine.Physics
 		public static void AddLayers<T>() where T : Enum => AddLayers(Enum.GetNames(typeof(T)));
 		public static void AddLayers(params string[] layerNames)
 		{
-			if(Game.preInitDone) {
+			if(Game.Instance?.preInitDone!=false) {
 				throw new Exception("Cannot add layers after Game.PreInit() call has finished.");
 			}
 

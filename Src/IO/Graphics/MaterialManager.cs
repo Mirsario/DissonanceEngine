@@ -27,7 +27,7 @@ namespace Dissonance.Engine.IO.Graphics
 		}
 
 		public override string[] Extensions => new[] { ".material" };
-		public override bool Autoload(string file) => true;
+		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
 
 		public override Material Import(Stream stream,string filePath)
 		{

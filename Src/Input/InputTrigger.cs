@@ -55,7 +55,7 @@ namespace Dissonance.Engine
 			}
 		}
 
-		internal ref SummInput CurrentInput => ref (Game.fixedUpdate ? ref fixedInput : ref renderInput);
+		internal ref SummInput CurrentInput => ref (Game.Instance?.preInitDone!=false ? ref fixedInput : ref renderInput);
 
 		internal InputTrigger() {}
 

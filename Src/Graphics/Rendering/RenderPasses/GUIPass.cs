@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Graphics
 			Rendering.SetBlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
 			GUI.canDraw = true;
 
-			Game.instance.OnGUI();
+			Game.Instance?.OnGUI();
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.OnGUI));
 
 			GUI.canDraw = false;

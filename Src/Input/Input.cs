@@ -20,8 +20,8 @@ namespace Dissonance.Engine
 		//Keyboard
 		public static string InputString => CurrentInput.inputString;
 
-		internal static InputVariables CurrentInput => Game.fixedUpdate ? fixedInput : renderInput;
-		internal static InputVariables PrevInput => Game.fixedUpdate ? prevFixedInput : prevRenderInput;
+		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
+		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
 
 		internal static void Init()
 		{

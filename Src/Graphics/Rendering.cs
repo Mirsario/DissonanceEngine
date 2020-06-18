@@ -31,13 +31,14 @@ namespace Dissonance.Engine.Graphics
 
 		private static Version openGLVersion = MinOpenGLVersion;
 		private static GL.DebugCallback debugCallback;
+		private static Shader guiShader; //TODO: To be moved
 
-		public static RenderingPipeline RenderingPipeline { get; private set; }
+		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
 		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
-				if(Game.preInitDone) {
+				if(Game.Instance?.preInitDone!=false) {
 					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
 				}
 
@@ -48,16 +49,14 @@ namespace Dissonance.Engine.Graphics
 				openGLVersion = value;
 			}
 		}
-
-		//TODO: To be moved
-		private static Shader guiShader;
-		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI");
+		
+		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
 		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
 		{
 			renderingPipelineType = typeof(T);
 
-			if(RenderingPipeline!=null) {
+			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
 				InstantiateRenderingPipeline();
 			}
 		}
