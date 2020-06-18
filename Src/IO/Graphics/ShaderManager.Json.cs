@@ -3,6 +3,8 @@ using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
+#pragma warning disable CS0649
+
 namespace Dissonance.Engine.IO.Graphics
 {
 	public partial class ShaderManager

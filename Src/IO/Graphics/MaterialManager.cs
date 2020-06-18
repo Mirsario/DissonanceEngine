@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 
+#pragma warning disable CS0649
+
 namespace Dissonance.Engine.IO.Graphics
 {
 	[AutoloadRequirement(typeof(ShaderManager))]
