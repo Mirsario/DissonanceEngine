@@ -1,17 +1,20 @@
 using System;
+using Dissonance.Engine.Core.Modules;
 
 namespace Dissonance.Engine.Physics
 {
-	public static class Layers
+	public sealed class Layers : EngineModule
 	{
+		public const int MaxLayers = sizeof(ulong)*8;
+
 		private static ulong[] indexToMask;
 		private static string[] indexToName;
 		private static int layerCount;
 
-		internal static void Init()
+		protected override void PreInit()
 		{
-			indexToMask = new ulong[64];
-			indexToName = new string[64];
+			indexToMask = new ulong[MaxLayers];
+			indexToName = new string[MaxLayers];
 
 			AddLayers("Default");
 		}

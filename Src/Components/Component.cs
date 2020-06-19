@@ -109,6 +109,7 @@ namespace Dissonance.Engine
 					}
 
 					var attributes = type.GetCustomAttributes<ComponentAttribute>();
+
 					foreach(var attribute in attributes) {
 						attribute.SetParameters(type);
 					}

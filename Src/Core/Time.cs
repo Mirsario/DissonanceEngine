@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
+using Dissonance.Engine.Core.Modules;
+using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {
-	public static class Time
+	public sealed class Time : EngineModule
 	{
 		//Target Framerate
 		internal static double targetUpdateFrequency = 60;
@@ -96,22 +98,25 @@ namespace Dissonance.Engine
 			}
 		}
 
-		internal static void PreInit()
+		//Initialization
+		protected override void PreInit()
 		{
-			//var device = DisplayDevice.Default;
-
 			targetRenderFrequency = 60; //device.RefreshRate;
 			targetUpdateFrequency = 60;
 		}
-		internal static void Init()
+		protected override void Init()
 		{
 			fixedStopwatch = new Stopwatch();
 			renderStopwatch = new Stopwatch();
 		}
-		internal static void PreFixedUpdate() => fixedStopwatch.Restart();
-		internal static void PreRenderUpdate() => renderStopwatch.Restart();
-		internal static void UpdateFixed(double newTime)
+		//Fixed Update
+		[HookPosition(-100000)]
+		protected override void PreFixedUpdate()
 		{
+			fixedStopwatch.Restart();
+
+			double newTime = FixedGlobalTime+1.0/TargetUpdateFrequency;
+
 			//Real time
 			fixedTimeRealPrev = fixedTimeReal;
 			fixedTimeReal = (float)newTime;
@@ -122,8 +127,16 @@ namespace Dissonance.Engine
 
 			fixedUpdateCount++;
 		}
-		internal static void UpdateRender(double newTime)
+		[HookPosition(100000)]
+		protected override void PostFixedUpdate() => MeasureFPS(ref fixedFPS,ref fixedFrame,fixedTime,fixedTimePrev,fixedStopwatch,ref fixedMs,ref fixedMsTemp);
+		//Render Update
+		[HookPosition(-100000)]
+		protected override void PreRenderUpdate()
 		{
+			renderStopwatch.Restart();
+
+			double newTime = GLFW.GetTime();
+
 			//Real time
 			renderTimeRealPrev = renderTimeReal;
 			renderTimeReal = (float)newTime;
@@ -137,8 +150,8 @@ namespace Dissonance.Engine
 
 			renderUpdateCount++;
 		}
-		internal static void PostFixedUpdate() => MeasureFPS(ref fixedFPS,ref fixedFrame,fixedTime,fixedTimePrev,fixedStopwatch,ref fixedMs,ref fixedMsTemp);
-		internal static void PostRenderUpdate() => MeasureFPS(ref renderFPS,ref renderFrame,renderTime,renderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
+		[HookPosition(100000)]
+		protected override void PostRenderUpdate() => MeasureFPS(ref renderFPS,ref renderFrame,renderTime,renderTimePrev,renderStopwatch,ref renderMs,ref renderMsTemp);
 
 		private static void MeasureFPS(ref uint fps,ref uint frames,float time,float timePrev,Stopwatch stopwatch,ref float ms,ref float msTemp) //Move this somewhere
 		{

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics.RenderingPipelines;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
@@ -11,7 +12,7 @@ namespace Dissonance.Engine.Graphics
 {
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
-	public static partial class Rendering
+	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new Version(3,2);
 		public static readonly Version[] SupportedOpenGLVersions = GL.SupportedVersions.Where(v => v>=MinOpenGLVersion).ToArray();
@@ -52,20 +53,13 @@ namespace Dissonance.Engine.Graphics
 		
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
-		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
-		{
-			renderingPipelineType = typeof(T);
+		public override bool AutoLoad => base.AutoLoad;
 
-			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
-				InstantiateRenderingPipeline();
-			}
-		}
-
-		internal static void PreInit()
+		protected override void PreInit()
 		{
 			renderingPipelineType = typeof(DeferredRendering);
 		}
-		internal static void Init()
+		protected override void Init()
 		{
 			var glVersion = GetOpenGLVersion();
 
@@ -83,7 +77,7 @@ namespace Dissonance.Engine.Graphics
 			//TODO: Add AssetManager for fonts and remove this hardcode
 			var tex = Resources.Import<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
 			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~",tex,new Vector2(12f,16f),0) { size = 16 };
-			
+
 			CheckGLErrors($"After initializing a default font.");
 
 			cameraList = new List<Camera>();
@@ -98,12 +92,22 @@ namespace Dissonance.Engine.Graphics
 			PrimitiveMeshes.Init();
 
 			DrawUtils.Init();
-			
+
 			whiteTexture = new Texture(1,1);
 			whiteTexture.SetPixels(new[] { new Pixel(1f,1f,1f,1f) });
 
 			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
+
+		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
+		{
+			renderingPipelineType = typeof(T);
+
+			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
+				InstantiateRenderingPipeline();
+			}
+		}
+
 		internal static void Render()
 		{
 			drawCallsCount = 0;
