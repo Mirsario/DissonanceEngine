@@ -56,6 +56,10 @@ namespace Dissonance.Engine
 				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create a new thread.");
 			}
 
+			DllResolver.Init();
+			ReflectionCache.Init();
+			InitializeModules();
+
 			Debug.Log("Loading engine...");
 
 			Flags = flags;
@@ -64,8 +68,6 @@ namespace Dissonance.Engine
 
 			instance = this;
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
-
-			DllResolver.Init();
 
 			if(args!=null) {
 				string joinedArgs = string.Join(" ",args);
@@ -85,13 +87,7 @@ namespace Dissonance.Engine
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
 
-			Layers.Init();
-			Time.PreInit();
-
-			if(!NoGraphics) {
-				Rendering.PreInit();
-			}
-
+			moduleHooks.PreInit?.Invoke();
 			PreInit();
 
 			preInitDone = true;
@@ -104,6 +100,7 @@ namespace Dissonance.Engine
 			IL.Init();
 
 			Init();
+
 			UpdateLoop();
 
 			if(!NoGraphics) {
@@ -126,16 +123,13 @@ namespace Dissonance.Engine
 		{
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 			Debug.Log($"Assets directory is '{assetsPath}'.");
-			//AppDomain.CurrentDomain.SetupInformation.PrivateBinPath = "/References/";
 
-			Time.Init();
 			Screen.UpdateValues();
 
 			Screen.CursorState = CursorState.Normal;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-			ReflectionCache.Init();
 			RenderPass.Init();
 			Rand.Init();
 			ProgrammableEntityHooks.Initialize();
@@ -159,7 +153,6 @@ namespace Dissonance.Engine
 			Resources.Init();
 
 			if(!NoGraphics) {
-				Rendering.Init();
 				GUI.Init();
 			}
 
@@ -169,6 +162,8 @@ namespace Dissonance.Engine
 			if(!NoAudio) {
 				Audio.Init();
 			}
+
+			moduleHooks.Init?.Invoke();
 
 			Debug.Log("Loading game...");
 
@@ -180,7 +175,11 @@ namespace Dissonance.Engine
 		{
 			fixedUpdate = true;
 
-			Time.PreFixedUpdate();
+			if(shouldQuit) {
+				return;
+			}
+
+			moduleHooks.PreFixedUpdate?.Invoke();
 
 			bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
@@ -191,7 +190,6 @@ namespace Dissonance.Engine
 			}*/
 
 			Screen.UpdateValues();
-			Time.UpdateFixed(Time.FixedGlobalTime+1.0/Time.TargetUpdateFrequency);
 			Input.Update();
 
 			FixedUpdate();
@@ -213,7 +211,7 @@ namespace Dissonance.Engine
 				Audio.FixedUpdate();
 			}
 
-			Time.PostFixedUpdate();
+			moduleHooks.PostFixedUpdate?.Invoke();
 		}
 		internal void RenderUpdateInternal()
 		{
@@ -223,9 +221,8 @@ namespace Dissonance.Engine
 				return;
 			}
 
-			Time.PreRenderUpdate();
+			moduleHooks.PreRenderUpdate?.Invoke();
 
-			Time.UpdateRender(GLFW.GetTime());
 			Input.Update();
 
 			RenderUpdate();
@@ -244,7 +241,7 @@ namespace Dissonance.Engine
 			Rendering.Render();
 			Input.LateUpdate();
 
-			Time.PostRenderUpdate();
+			moduleHooks.PostRenderUpdate?.Invoke();
 		}
 		internal void ApplicationQuit(object sender,EventArgs e)
 		{

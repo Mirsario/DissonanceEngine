@@ -12,12 +12,15 @@ namespace Dissonance.Engine
 			MethodInfo GetMethodInfo(string methodName)
 			{
 				var method = type.GetMethod(methodName,BindingFlags.Public|BindingFlags.Instance);
+				
 				if(method==null) {
 					throw new ArgumentException($"Method '{methodName}' does not exist in type '{type.Name}'.",nameof(methodName));
 				}
+
 				if(method.DeclaringType==typeof(ProgrammableEntity)) {
 					return null;
 				}
+
 				return method;
 			}
 
