@@ -47,6 +47,13 @@ namespace Dissonance.Engine
 		public bool NoGraphics { get; private set; }
 		public bool NoAudio { get; private set; }
 
+		public virtual void PreInit() { }
+		public virtual void Start() { }
+		public virtual void FixedUpdate() { }
+		public virtual void RenderUpdate() { }
+		public virtual void OnGUI() { }
+		public virtual void OnApplicationQuit() { }
+
 		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
 			if(Instance!=null) {
@@ -186,13 +193,6 @@ namespace Dissonance.Engine
 
 			instance?.Dispose();
 		}
-
-		public virtual void PreInit() {}
-		public virtual void Start() {}
-		public virtual void FixedUpdate() {}
-		public virtual void RenderUpdate() {}
-		public virtual void OnGUI() {}
-		public virtual void OnApplicationQuit() {}
 
 		private void UpdateLoop()
 		{
