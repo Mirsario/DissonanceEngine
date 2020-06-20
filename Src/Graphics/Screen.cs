@@ -1,8 +1,10 @@
-﻿using Dissonance.Framework.Windowing;
+﻿using Dissonance.Engine.Core.Modules;
+using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	public static class Screen
+	[ModuleDependency(typeof(Windowing))]
+	public sealed class Screen : EngineModule
 	{
 		public static bool lockCursor;
 
@@ -48,7 +50,10 @@ namespace Dissonance.Engine.Graphics
 			set => GLFW.SetInputMode(Game.window,InputMode.Cursor,(int)(cursorState = value));
 		}
 
-		internal static void UpdateValues()
+		protected override void Init() => UpdateValues();
+		protected override void PreRenderUpdate() => UpdateValues();
+
+		private static void UpdateValues()
 		{
 			//Framebuffer
 			GLFW.GetFramebufferSize(Game.window,out int framebufferWidth,out int framebufferHeight);
