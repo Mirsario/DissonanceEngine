@@ -7,12 +7,16 @@ using Ionic.Zip;
 using System.Text;
 using System.Runtime.Serialization;
 using Dissonance.Engine.Utils.Internal;
+using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
 {
 	//TODO: Still refactoring...
 	//TODO: AssetManager getter methods aren't finished.
-	public static partial class Resources
+	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
+	[ModuleDependency(typeof(Windowing))]
+	public sealed partial class Resources : EngineModule
 	{
 		public const string BuiltInAssetsFolder = "BuiltInAssets/";
 
@@ -25,6 +29,20 @@ namespace Dissonance.Engine.IO
 		internal static Dictionary<Type,Dictionary<string,object>> cacheByName;
 		internal static Dictionary<string,byte[]> builtInAssets;
 		internal static bool importingBuiltInAssets;
+
+		protected override void Init()
+		{
+			assetManagers = new Dictionary<string,List<AssetManager>>();
+			nameToPath = new Dictionary<string,string>(InternalUtils.strComparerInvariantIgnoreCase);
+			cacheByPath = new Dictionary<Type,Dictionary<string,object>>();
+			cacheByName = new Dictionary<Type,Dictionary<string,object>>();
+			builtInAssets = new Dictionary<string,byte[]>(InternalUtils.strComparerInvariantIgnoreCase);
+
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+			LoadManagers();
+			AutoloadResources();
+		}
 
 		public static void AddToCache<T>(string filePath,T content)
 		{
@@ -89,19 +107,6 @@ namespace Dissonance.Engine.IO
 		public static void RegisterFormats<T>(AssetManager<T> importer,string[] formats,bool allowOverwriting = false) where T : class
 			=> RegisterFormats(typeof(T),importer,formats,allowOverwriting);
 
-		internal static void Init()
-		{
-			assetManagers = new Dictionary<string,List<AssetManager>>();
-			nameToPath = new Dictionary<string,string>(InternalUtils.strComparerInvariantIgnoreCase);
-			cacheByPath = new Dictionary<Type,Dictionary<string,object>>();
-			cacheByName = new Dictionary<Type,Dictionary<string,object>>();
-			builtInAssets = new Dictionary<string,byte[]>(InternalUtils.strComparerInvariantIgnoreCase);
-
-			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-			LoadManagers();
-			AutoloadResources();
-		}
 		internal static string[] GetFilesRecursive(string path,string[] searchPattern = null,string[] ignoredPaths = null)
 		{
 			if(searchPattern==null) {

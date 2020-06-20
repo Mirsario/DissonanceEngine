@@ -1,25 +1,19 @@
 using System;
+using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine
 {
-	public static class Audio
+	[ModuleDependency(typeof(Windowing))]
+	public sealed class Audio : EngineModule
 	{
 		internal static IntPtr audioDevice;
 		internal static IntPtr audioContext;
 
-		[Obsolete("This call is supposed to be temporary.")]
-		public static void CheckALErrorsTemp() => CheckALErrors();
-		public static void CheckALErrors()
-		{
-			var error = AL.GetError();
+		public override bool AutoLoad => !Game.NoAudio;
 
-			if(error!=AudioError.NoError) {
-				throw new Exception("AudioError: "+error);
-			}
-		}
-
-		internal static void Init()
+		protected override void Init()
 		{
 			try {
 				audioDevice = ALC.OpenDevice(null);
@@ -34,12 +28,24 @@ namespace Dissonance.Engine
 			}
 
 			CheckALErrors();
-			
+
 			AL.DistanceModel(DistanceModel.LinearDistanceClamped);
 
 			CheckALErrors();
 		}
-		internal static void FixedUpdate() => CheckALErrors();
+		protected override void FixedUpdate() => CheckALErrors();
+
+		[Obsolete("This call is supposed to be temporary.")]
+		public static void CheckALErrorsTemp() => CheckALErrors();
+		public static void CheckALErrors()
+		{
+			var error = AL.GetError();
+
+			if(error!=AudioError.NoError) {
+				throw new Exception("AudioError: "+error);
+			}
+		}
+
 		internal static void Dispose() {}
 	}
 }

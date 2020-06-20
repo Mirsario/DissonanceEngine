@@ -2,13 +2,15 @@ using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Graphics;
 using System.Linq;
 using Dissonance.Engine.IO;
+using Dissonance.Engine.Core.Modules;
 
 namespace Dissonance.Engine
 {
-	public static class GUI
+	[ModuleDependency(typeof(Resources),typeof(Rendering))]
+	public sealed class GUI : EngineModule
 	{
-		public static GUISkin skin;
 		public static Font font;
+		public static GUISkin skin;
 		public static Texture texDefaultInactive;
 		public static Texture texDefault;
 		public static Texture texDefaultHover;
@@ -18,7 +20,7 @@ namespace Dissonance.Engine
 
 		private static Mesh textBufferMesh;
 
-		internal static void Init()
+		protected override void Init()
 		{
 			texDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
 			texDefault = Resources.Import<Texture>("BuiltInAssets/GUI/Default.png");

@@ -7,7 +7,7 @@ using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.IO
 {
-	public static partial class Resources
+	partial class Resources
 	{
 		//'Import' simply imports files, optionally caching them for Get.
 		public static T Import<T>(string filePath,bool addToCache = true,AssetManager<T> assetManager = null,bool throwOnFail = true) where T : class

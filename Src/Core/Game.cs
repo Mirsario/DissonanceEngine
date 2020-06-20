@@ -8,15 +8,12 @@ using Dissonance.Engine.Core;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Physics;
-using Dissonance.Framework.Imaging;
 using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {
-	//TODO: A lot of code here is temporary.
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering
-	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
 	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	public partial class Game : IDisposable
@@ -92,13 +89,6 @@ namespace Dissonance.Engine
 
 			preInitDone = true;
 
-			if(!NoGraphics) {
-				PrepareGLFW();
-				PrepareGL();
-			}
-
-			IL.Init();
-
 			Init();
 
 			UpdateLoop();
@@ -150,18 +140,8 @@ namespace Dissonance.Engine
 			CustomVertexBuffer.Initialize();
 			CustomVertexAttribute.Initialize();
 
-			Resources.Init();
-
-			if(!NoGraphics) {
-				GUI.Init();
-			}
-
 			Input.Init();
 			PhysicsEngine.Init();
-
-			if(!NoAudio) {
-				Audio.Init();
-			}
 
 			moduleHooks.Init?.Invoke();
 
@@ -174,10 +154,6 @@ namespace Dissonance.Engine
 		internal void FixedUpdateInternal()
 		{
 			fixedUpdate = true;
-
-			if(shouldQuit) {
-				return;
-			}
 
 			moduleHooks.PreFixedUpdate?.Invoke();
 
@@ -193,23 +169,12 @@ namespace Dissonance.Engine
 			Input.Update();
 
 			FixedUpdate();
-
-			if(shouldQuit) {
-				return;
-			}
 			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
-
-			if(shouldQuit) {
-				return;
-			}
+			moduleHooks.FixedUpdate?.Invoke();
 
 			PhysicsEngine.FixedUpdate();
 			Input.LateUpdate();
-
-			if(!NoAudio) {
-				Audio.FixedUpdate();
-			}
 
 			moduleHooks.PostFixedUpdate?.Invoke();
 		}
@@ -217,28 +182,16 @@ namespace Dissonance.Engine
 		{
 			fixedUpdate = false;
 
-			if(shouldQuit) {
-				return;
-			}
-
 			moduleHooks.PreRenderUpdate?.Invoke();
 
 			Input.Update();
 
 			RenderUpdate();
-
-			if(shouldQuit) {
-				return;
-			}
 			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
-
-			if(shouldQuit) {
-				return;
-			}
+			moduleHooks.RenderUpdate?.Invoke();
 
 			PhysicsEngine.RenderUpdate();
-			Rendering.Render();
 			Input.LateUpdate();
 
 			moduleHooks.PostRenderUpdate?.Invoke();
@@ -268,6 +221,10 @@ namespace Dissonance.Engine
 			TimeSpan nextUpdateTime = default;
 
 			while(GLFW.WindowShouldClose(window)==0) {
+				if(shouldQuit) {
+					return;
+				}
+
 				GLFW.PollEvents();
 
 				FixedUpdateInternal();
