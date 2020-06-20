@@ -104,7 +104,6 @@ namespace Dissonance.Engine
 				Rendering.Dispose();
 			}
 
-			PhysicsEngine.Dispose();
 			if(modules!=null) {
 				for(int i = 0;i<modules.Count;i++) {
 					modules[i]?.Dispose();
@@ -148,7 +147,6 @@ namespace Dissonance.Engine
 			CustomVertexAttribute.Initialize();
 
 			Input.Init();
-			PhysicsEngine.Init();
 
 			moduleHooks.Init?.Invoke();
 
@@ -180,7 +178,6 @@ namespace Dissonance.Engine
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
 			moduleHooks.FixedUpdate?.Invoke();
 
-			PhysicsEngine.FixedUpdate();
 			Input.LateUpdate();
 
 			moduleHooks.PostFixedUpdate?.Invoke();
@@ -198,7 +195,6 @@ namespace Dissonance.Engine
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
 			moduleHooks.RenderUpdate?.Invoke();
 
-			PhysicsEngine.RenderUpdate();
 			Input.LateUpdate();
 
 			moduleHooks.PostRenderUpdate?.Invoke();

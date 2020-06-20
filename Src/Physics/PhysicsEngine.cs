@@ -1,10 +1,11 @@
 using BulletSharp;
+using Dissonance.Engine.Core.Modules;
 using System;
 using System.Collections.Generic;
 
 namespace Dissonance.Engine.Physics
 {
-	public static partial class PhysicsEngine
+	public sealed partial class PhysicsEngine : EngineModule
 	{
 		internal static DbvtBroadphase broadphase;
 		internal static DiscreteDynamicsWorld world;
@@ -20,7 +21,7 @@ namespace Dissonance.Engine.Physics
 			set => world.Gravity = value;
 		}
 
-		public static void Init()
+		protected override void Init()
 		{
 			collisionShapes = new List<CollisionShape>();
 			collidersToUpdate = new List<Collider>();
@@ -40,15 +41,17 @@ namespace Dissonance.Engine.Physics
 			PersistentManifold.ContactProcessed += Callback_ContactProcessed;
 			PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
 		}
-		public static void FixedUpdate()
+		protected override void PostFixedUpdate()
 		{
 			for(int i = 0;i<rigidbodies.Count;i++) {
 				var rigidbody = rigidbodies[i];
+
 				if(!rigidbody.enabled) {
 					continue;
 				}
 
 				var transform = rigidbody.gameObject.transform;
+
 				if(transform.updatePhysicsPosition || transform.updatePhysicsScale || transform.updatePhysicsRotation) {
 					Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
 
@@ -76,11 +79,12 @@ namespace Dissonance.Engine.Physics
 
 			world.StepSimulation(Time.FixedDeltaTime);
 		}
-		public static void RenderUpdate()
+		protected override void PostRenderUpdate()
 		{
 			//world.StepSimulation(Time.renderDeltaTime,1,0f);
 			//fixedStep = false;
 		}
+
 		public static bool Raycast(Vector3 origin,Vector3 direction,out RaycastHit hit,float range = 100000f,Func<ulong,ulong> mask = null,Func<GameObject,bool?> customFilter = null,bool debug = false)
 		{
 			direction.Normalize();
@@ -115,7 +119,7 @@ namespace Dissonance.Engine.Physics
 
 			return true;
 		}
-		public static void Dispose()
+		protected override void OnDispose()
 		{
 			world?.Dispose();
 			dispatcher?.Dispose();
