@@ -17,8 +17,8 @@ namespace Dissonance.Engine
 		internal GameObject gameObject;
 
 		protected bool beenEnabledBefore;
-
 		protected bool enabled;
+
 		public bool Enabled {
 			get => enabled;
 			set {

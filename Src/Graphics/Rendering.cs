@@ -12,6 +12,7 @@ namespace Dissonance.Engine.Graphics
 {
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
+	[ModuleDependency(typeof(Resources),typeof(Windowing))]
 	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new Version(3,2);
@@ -98,17 +99,7 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
-
-		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
-		{
-			renderingPipelineType = typeof(T);
-
-			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
-				InstantiateRenderingPipeline();
-			}
-		}
-
-		internal static void Render()
+		protected override void RenderUpdate()
 		{
 			drawCallsCount = 0;
 
@@ -186,6 +177,16 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors("After swapping buffers");
 		}
+
+		public static void SetRenderingPipeline<T>() where T : RenderingPipeline, new()
+		{
+			renderingPipelineType = typeof(T);
+
+			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
+				InstantiateRenderingPipeline();
+			}
+		}
+
 		internal static void Dispose() {}
 
 		private static void InstantiateRenderingPipeline()

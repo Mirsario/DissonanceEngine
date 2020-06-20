@@ -71,7 +71,7 @@ namespace Dissonance.Engine.Graphics
 					throw new Exception("All images must have the same number of multisample samples.");
 
 				case FramebufferStatus.FramebufferIncompleteLayerTargets :
-					throw new Exception("If a layered image is attached to one attachment,then all attachments must be layered attachments. The attached layers do not have to have the same number of layers,nor do the layers have to come from the same kind of texture.");
+					throw new Exception("If a layered image is attached to one attachment, then all attachments must be layered attachments. The attached layers do not have to have the same number of layers, nor do the layers have to come from the same kind of texture.");
 
 				case FramebufferStatus.FramebufferUnsupported:
 					throw new Exception("Attempt to use an unsupported format combinaton!");

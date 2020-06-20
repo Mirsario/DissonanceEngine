@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Utils.Internal
 	internal static class HookUtils
 	{
 		/// <summary> Fills delegate fields/properties on <typeparamref name="THookHolder"/> type with ordered combined delegates made from virtual methods of <paramref name="objects"/> array. </summary>
-		public static void BuildHooksFromVirtualMethods<THookHolder,TMethodHolder>(IEnumerable<TMethodHolder> objects,THookHolder hookHolderInstance = null)
+		public static void BuildHooksFromVirtualMethods<THookHolder,TMethodHolder>(IEnumerable<TMethodHolder> objects,THookHolder hookHolderInstance = null,Comparison<(TMethodHolder methodHolder,Delegate method,int hookPosition)> customSorting = null)
 			where THookHolder : class
 			where TMethodHolder : class
 		{
@@ -54,7 +54,7 @@ namespace Dissonance.Engine.Utils.Internal
 				}
 
 				var methodFlags = BindingFlags.Instance|(method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic);
-				var delegates = new List<(Delegate func,int order)>();
+				var delegates = new List<(TMethodHolder methodHolder,Delegate method,int hookPosition)>();
 
 				//Enumerate objects to search for overrides of the current virtual method.
 				foreach(var obj in objects) {
@@ -72,12 +72,13 @@ namespace Dissonance.Engine.Utils.Internal
 					var func = objMethod.CreateDelegate(hookMemberValueType,obj);
 					int priority = objMethod.GetCustomAttribute<HookPositionAttribute>()?.Position ?? 0;
 
-					delegates.Add((func,priority));
+					delegates.Add((obj,func,priority));
 				}
 
+				delegates.Sort(customSorting ?? ((tupleA,tupleB) => tupleA.hookPosition>tupleB.hookPosition ? 1 : -1));
+
 				var combinedDelegate = Delegate.Combine(delegates
-					.OrderBy(tuple => tuple.order)
-					.Select(tuple => tuple.func)
+					.Select(tuple => tuple.method)
 					.ToArray()
 				);
 
