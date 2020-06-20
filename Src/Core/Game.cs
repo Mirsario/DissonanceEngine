@@ -100,10 +100,6 @@ namespace Dissonance.Engine
 		}
 		public void Dispose()
 		{
-			if(!NoGraphics) {
-				Rendering.Dispose();
-			}
-
 			if(modules!=null) {
 				for(int i = 0;i<modules.Count;i++) {
 					modules[i]?.Dispose();
@@ -119,8 +115,6 @@ namespace Dissonance.Engine
 		{
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 			Debug.Log($"Assets directory is '{assetsPath}'.");
-
-			Screen.UpdateValues();
 
 			Screen.CursorState = CursorState.Normal;
 
@@ -146,8 +140,6 @@ namespace Dissonance.Engine
 			CustomVertexBuffer.Initialize();
 			CustomVertexAttribute.Initialize();
 
-			Input.Init();
-
 			moduleHooks.Init?.Invoke();
 
 			Debug.Log("Loading game...");
@@ -162,23 +154,17 @@ namespace Dissonance.Engine
 
 			moduleHooks.PreFixedUpdate?.Invoke();
 
-			bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
+			/*bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
-			/*if(Screen.lockCursor && isFocused) {
+			if(Screen.lockCursor && isFocused) {
 				var center = Screen.Center;
 
 				GLFW.SetCursorPos(window,center.x,center.y);
 			}*/
 
-			Screen.UpdateValues();
-			Input.Update();
-
 			FixedUpdate();
-			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
 			moduleHooks.FixedUpdate?.Invoke();
-
-			Input.LateUpdate();
 
 			moduleHooks.PostFixedUpdate?.Invoke();
 		}
@@ -188,14 +174,9 @@ namespace Dissonance.Engine
 
 			moduleHooks.PreRenderUpdate?.Invoke();
 
-			Input.Update();
-
 			RenderUpdate();
-			
 			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
 			moduleHooks.RenderUpdate?.Invoke();
-
-			Input.LateUpdate();
 
 			moduleHooks.PostRenderUpdate?.Invoke();
 		}

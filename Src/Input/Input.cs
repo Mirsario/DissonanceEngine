@@ -1,8 +1,9 @@
+using Dissonance.Engine.Core.Modules;
 using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine
 {
-	public static partial class Input
+	public sealed partial class Input : EngineModule
 	{
 		public const int MaxMouseButtons = 12;
 		public const int MaxGamepads = 4;
@@ -23,7 +24,7 @@ namespace Dissonance.Engine
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
 
-		internal static void Init()
+		protected override void Init()
 		{
 			fixedInput = new InputVariables();
 			renderInput = new InputVariables();
@@ -36,13 +37,20 @@ namespace Dissonance.Engine
 
 			SingletonInputTrigger.StaticInit();
 		}
-		internal static void Update()
+		protected override void PreFixedUpdate() => PreUpdate();
+		protected override void PostFixedUpdate() => PostUpdate();
+		protected override void PreRenderUpdate() => PreUpdate();
+		protected override void PostRenderUpdate() => PostUpdate();
+
+		private void PreUpdate()
 		{
 			CurrentInput.Update();
 
 			UpdateTriggers();
+
+			CheckSpecialCombinations();
 		}
-		internal static void LateUpdate()
+		private void PostUpdate()
 		{
 			CurrentInput.inputString = string.Empty;
 			CurrentInput.mouseWheel = 0;
