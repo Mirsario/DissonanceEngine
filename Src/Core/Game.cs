@@ -105,6 +105,13 @@ namespace Dissonance.Engine
 			}
 
 			PhysicsEngine.Dispose();
+			if(modules!=null) {
+				for(int i = 0;i<modules.Count;i++) {
+					modules[i]?.Dispose();
+				}
+
+				modules = null;
+			}
 
 			instance = null;
 		}

@@ -2,13 +2,15 @@
 
 namespace Dissonance.Engine.Core.Modules
 {
-	public abstract class EngineModule
+	public abstract class EngineModule : IDisposable
 	{
 		public virtual bool AutoLoad => true;
 
 		public Game Game { get; internal set; }
 		public Type[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
+
+		public void Dispose() => OnDispose();
 
 		//Init
 
@@ -39,5 +41,9 @@ namespace Dissonance.Engine.Core.Modules
 
 		[VirtualMethodHook(typeof(EngineModuleHooks),nameof(EngineModuleHooks.PostRenderUpdate),false,true)]
 		protected virtual void PostRenderUpdate() { }
+
+		//Etc
+
+		protected virtual void OnDispose() { }
 	}
 }
