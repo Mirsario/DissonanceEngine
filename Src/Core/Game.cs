@@ -203,12 +203,10 @@ namespace Dissonance.Engine
 
 			TimeSpan nextUpdateTime = default;
 
-			while(GLFW.WindowShouldClose(window)==0) {
-				if(shouldQuit) {
-					return;
+			while(shouldQuit && (NoGraphics || GLFW.WindowShouldClose(window)==0)) {
+				if(!NoGraphics) {
+					GLFW.PollEvents();
 				}
-
-				GLFW.PollEvents();
 
 				FixedUpdateInternal();
 

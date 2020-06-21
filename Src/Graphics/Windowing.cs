@@ -19,6 +19,12 @@ namespace Dissonance.Engine.Graphics
 
 			IL.Init();
 		}
+		protected override void OnDispose()
+		{
+			if(Game.window!=IntPtr.Zero) {
+				GLFW.SetWindowShouldClose(Game.window,1);
+			}
+		}
 
 		private void PrepareGLFW()
 		{
