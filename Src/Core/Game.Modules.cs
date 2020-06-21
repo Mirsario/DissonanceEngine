@@ -35,7 +35,15 @@ namespace Dissonance.Engine
 			}
 
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
-				=> module.Dependencies?.Select(type => modules.FirstOrDefault(m => m.GetType()==type) ?? throw new Exception($"Unable to find module of type '{type.Name}', required by module '{module.GetType().Name}'."));
+				=> module.Dependencies?.Select(dependency => {
+					var result = modules.FirstOrDefault(m => m.GetType()==dependency.type);
+
+					if(result==null && !dependency.optional) {
+						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{module.GetType().Name}'.");
+					}
+
+					return result;
+				});
 
 			modules = DependencyUtils.DependencySort(modules,GetDirectDependencies,true).ToList();
 

@@ -26,7 +26,9 @@ namespace Dissonance.Engine.Utils.Internal
 
 				if(dependenciesList!=null) {
 					foreach(var dep in dependenciesList) {
-						DependencySortRecursion(dep,visited,sorted,dependencies,throwOnRecursion);
+						if(dep!=null) {
+							DependencySortRecursion(dep,visited,sorted,dependencies,throwOnRecursion);
+						}
 					}
 				}
 

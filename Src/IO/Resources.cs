@@ -15,7 +15,7 @@ namespace Dissonance.Engine.IO
 	//TODO: Still refactoring...
 	//TODO: AssetManager getter methods aren't finished.
 	//TODO: Redesign resource importing so that one file could output multiple amounts and kinds of assets
-	[ModuleDependency(typeof(Windowing))]
+	[ModuleDependency(true,typeof(Windowing))]
 	public sealed partial class Resources : EngineModule
 	{
 		public const string BuiltInAssetsFolder = "BuiltInAssets/";
