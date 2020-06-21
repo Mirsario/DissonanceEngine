@@ -60,15 +60,15 @@ namespace Dissonance.Engine
 				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create a new thread.");
 			}
 
+			Flags = flags;
+			NoGraphics = (Flags & GameFlags.NoGraphics)!=0;
+			NoAudio = (Flags & GameFlags.NoAudio)!=0;
+
 			DllResolver.Init();
 			ReflectionCache.Init();
 			InitializeModules();
 
 			Debug.Log("Loading engine...");
-
-			Flags = flags;
-			NoGraphics = (Flags & GameFlags.NoGraphics)!=0;
-			NoAudio = (Flags & GameFlags.NoAudio)!=0;
 
 			instance = this;
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
@@ -128,7 +128,6 @@ namespace Dissonance.Engine
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
-			Rand.Init();
 			ProgrammableEntityHooks.Initialize();
 			GameObject.StaticInit();
 			

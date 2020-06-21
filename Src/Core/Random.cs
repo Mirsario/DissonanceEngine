@@ -1,9 +1,9 @@
 using System;
+using Dissonance.Engine.Core.Modules;
 
 namespace Dissonance.Engine
 {
-	//TODO: Redesign
-	public class Rand
+	public sealed class Rand : EngineModule
 	{
 		internal static Random staticRandom;
 
@@ -29,39 +29,19 @@ namespace Dissonance.Engine
 			}
 		}
 		
-		public Rand(int seed)
+		/*public Rand(int seed)
 		{
 			this.seed = seed;
 
 			random = new Random(seed);
-		}
-
-		public float NextFloat(float minValue,float maxValue)
-		{
-			if(minValue>maxValue) {
-				float tempVal = maxValue;
-				maxValue = minValue;
-				minValue = tempVal;
-			}
-
-			return minValue+(float)random.NextDouble()*(maxValue-minValue);
-		}
-		public int NextInt(int minValue,int maxValue)
-		{
-			if(minValue>maxValue) {
-				int tempVal = maxValue;
-				maxValue = minValue;
-				minValue = tempVal;
-			}
-
-			return random.Next(minValue,maxValue);
-		}
+		}*/
 		
-		public static void Init()
+		protected override void Init()
 		{
 			globalSeed = (int)DateTime.Now.Ticks;
 			staticRandom = new Random(globalSeed);
 		}
+
 		public static int Next(int maxValue) => staticRandom.Next(maxValue);
 		public static float Next(float maxValue) => (float)staticRandom.NextDouble()*maxValue;
 		public static int Range(int minValue,int maxValue) => staticRandom.Next(minValue,maxValue);
