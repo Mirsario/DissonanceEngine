@@ -54,7 +54,7 @@ namespace Dissonance.Engine.Graphics
 		
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
-		public override bool AutoLoad => base.AutoLoad;
+		public override bool AutoLoad => !Game.NoGraphics;
 
 		protected override void PreInit()
 		{

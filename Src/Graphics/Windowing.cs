@@ -10,6 +10,8 @@ namespace Dissonance.Engine.Graphics
 	{
 		private static readonly object GlfwLock = new object();
 
+		public override bool AutoLoad => !Game.NoGraphics;
+
 		protected override void PreInit()
 		{
 			PrepareGLFW();
