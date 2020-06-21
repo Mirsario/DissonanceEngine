@@ -98,21 +98,15 @@ namespace Dissonance.Engine
 
 		internal static void Init()
 		{
-			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
-				foreach(var type in assembly.GetTypes()) {
-					if(!typeof(Component).IsAssignableFrom(type)) {
-						continue;
-					}
+			foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
+				if(!typeParameters.ContainsKey(type)) {
+					typeParameters[type] = new ComponentParameters();
+				}
 
-					if(!typeParameters.ContainsKey(type)) {
-						typeParameters[type] = new ComponentParameters();
-					}
+				var attributes = type.GetCustomAttributes<ComponentAttribute>();
 
-					var attributes = type.GetCustomAttributes<ComponentAttribute>();
-
-					foreach(var attribute in attributes) {
-						attribute.SetParameters(type);
-					}
+				foreach(var attribute in attributes) {
+					attribute.SetParameters(type);
 				}
 			}
 		}

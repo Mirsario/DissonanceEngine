@@ -20,6 +20,8 @@ namespace Dissonance.Engine
 
 		private static Mesh textBufferMesh;
 
+		public override bool AutoLoad => !Game.NoGraphics;
+
 		protected override void Init()
 		{
 			texDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");

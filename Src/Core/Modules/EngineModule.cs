@@ -7,7 +7,7 @@ namespace Dissonance.Engine.Core.Modules
 		public virtual bool AutoLoad => true;
 
 		public Game Game { get; internal set; }
-		public Type[] Dependencies { get; internal set; }
+		public ModuleDependency[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
 
 		public void Dispose() => OnDispose();
