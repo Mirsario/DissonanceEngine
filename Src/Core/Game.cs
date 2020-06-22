@@ -27,7 +27,6 @@ namespace Dissonance.Engine
 		public static string name = "UntitledGame";
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
-		public static Dictionary<string,string> filePaths;
 
 		internal static IntPtr window;
 
@@ -135,12 +134,6 @@ namespace Dissonance.Engine
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
 			}
 
-			filePaths = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
-
-			foreach(string file in Resources.GetFilesRecursive(assetsPath,null,new[] { $"{assetsPath}/bin",$"{assetsPath}/obj" })) {
-				filePaths[Path.GetFileName(file)] = file;
-			}
-			
 			Component.Init();
 
 			CustomVertexBuffer.Initialize();
@@ -239,6 +232,7 @@ namespace Dissonance.Engine
 			#if WINDOWS
 			
 			var exception = (Exception)e.ExceptionObject;
+
 			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
 			
 			#endif
