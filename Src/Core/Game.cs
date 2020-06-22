@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Physics;
@@ -127,14 +128,11 @@ namespace Dissonance.Engine
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
-			ProgrammableEntityHooks.Initialize();
 			GameObject.StaticInit();
 			
 			if(!Directory.Exists(assetsPath)) {
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
 			}
-
-			Component.Init();
 
 			CustomVertexBuffer.Initialize();
 			CustomVertexAttribute.Initialize();
@@ -162,7 +160,7 @@ namespace Dissonance.Engine
 			}*/
 
 			FixedUpdate();
-			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
+			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
 			moduleHooks.FixedUpdate?.Invoke();
 
 			moduleHooks.PostFixedUpdate?.Invoke();
@@ -174,7 +172,7 @@ namespace Dissonance.Engine
 			moduleHooks.PreRenderUpdate?.Invoke();
 
 			RenderUpdate();
-			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
+			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
 			moduleHooks.RenderUpdate?.Invoke();
 
 			moduleHooks.PostRenderUpdate?.Invoke();
