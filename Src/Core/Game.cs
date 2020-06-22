@@ -224,8 +224,15 @@ namespace Dissonance.Engine
 			}
 		}
 
-		public static void Quit() => GLFW.SetWindowShouldClose(window,1);
-		
+		public static void Quit()
+		{
+			Instance.shouldQuit = true;
+
+			if(window!=IntPtr.Zero) {
+				GLFW.SetWindowShouldClose(window,1);
+			}
+		}
+
 		private static void OnFocusChange(IntPtr _,int isFocused) => HasFocus = isFocused!=0;
 		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
 		{
