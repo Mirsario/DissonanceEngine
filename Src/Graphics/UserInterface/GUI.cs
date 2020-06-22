@@ -24,7 +24,7 @@ namespace Dissonance.Engine.Graphics.UserInterface
 
 		private static Mesh textBufferMesh;
 
-		public override bool AutoLoad => !Game.NoGraphics;
+		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void Init()
 		{

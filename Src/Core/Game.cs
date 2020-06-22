@@ -45,7 +45,7 @@ namespace Dissonance.Engine.Core
 		internal bool fixedUpdate;
 
 		public GameFlags Flags { get; private set; }
-		public bool NoGraphics { get; private set; }
+		public bool NoWindow { get; private set; }
 		public bool NoAudio { get; private set; }
 
 		public virtual void PreInit() { }
@@ -62,7 +62,7 @@ namespace Dissonance.Engine.Core
 			}
 
 			Flags = flags;
-			NoGraphics = (Flags & GameFlags.NoGraphics)!=0;
+			NoWindow = (Flags & GameFlags.NoWindow)!=0;
 			NoAudio = (Flags & GameFlags.NoAudio)!=0;
 
 			DllResolver.Init();
@@ -101,7 +101,7 @@ namespace Dissonance.Engine.Core
 
 			UpdateLoop();
 
-			if(!NoGraphics) {
+			if(!NoWindow) {
 				GLFW.DestroyWindow(window);
 				GLFW.Terminate();
 			}
@@ -195,14 +195,14 @@ namespace Dissonance.Engine.Core
 
 			TimeSpan nextUpdateTime = default;
 
-			while(!shouldQuit && (NoGraphics || GLFW.WindowShouldClose(window)==0)) {
-				if(!NoGraphics) {
+			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(window)==0)) {
+				if(!NoWindow) {
 					GLFW.PollEvents();
 				}
 
 				FixedUpdateInternal();
 
-				if(!NoGraphics) {
+				if(!NoWindow) {
 					RenderUpdateInternal();
 				}
 
