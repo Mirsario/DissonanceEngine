@@ -11,7 +11,7 @@ namespace Dissonance.Engine.Graphics
 	{
 		private static readonly object GlfwLock = new object();
 
-		public override bool AutoLoad => !Game.NoGraphics;
+		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void PreInit()
 		{

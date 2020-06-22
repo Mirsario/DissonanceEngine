@@ -52,7 +52,7 @@ namespace Dissonance.Engine.Graphics
 			set => GLFW.SetInputMode(Game.window,InputMode.Cursor,(int)(cursorState = value));
 		}
 
-		public override bool AutoLoad => !Game.NoGraphics;
+		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void Init() => UpdateValues();
 		protected override void PreRenderUpdate() => UpdateValues();

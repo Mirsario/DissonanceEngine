@@ -10,7 +10,7 @@ namespace Dissonance.Engine.IO.Graphics
 	public partial class ShaderManager : AssetManager<Shader[]>
 	{
 		public override string[] Extensions => new[] { ".program" };
-		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
+		public override bool Autoload(string file) => !Game.Instance.NoWindow;
 
 		public override Shader[] Import(Stream stream,string filePath)
 		{

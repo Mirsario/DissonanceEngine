@@ -62,7 +62,7 @@ namespace Dissonance.Engine.Graphics
 		
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
-		public override bool AutoLoad => !Game.NoGraphics;
+		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void PreInit()
 		{
@@ -194,7 +194,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			renderingPipelineType = typeof(T);
 
-			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
+			if(RenderingPipeline!=null && Game.Instance?.NoWindow==false) {
 				InstantiateRenderingPipeline();
 			}
 		}
