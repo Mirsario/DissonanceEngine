@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using Dissonance.Engine.Physics;
+using Dissonance.Engine.Core.ProgrammableEntities;
+using Dissonance.Engine.Core.Components;
 
 namespace Dissonance.Engine
 {
@@ -24,7 +26,7 @@ namespace Dissonance.Engine
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
 		}
 
-		protected GameObject() {}
+		protected GameObject() : base() {}
 
 		internal static void StaticInit()
 		{
@@ -49,7 +51,7 @@ namespace Dissonance.Engine
 
 			gameObjects.Add(this);
 
-			ProgrammableEntityHooks.SubscribeEntity(this);
+			ProgrammableEntityManager.SubscribeEntity(this);
 
 			OnInit();
 
@@ -57,7 +59,7 @@ namespace Dissonance.Engine
 		}
 		public void Dispose()
 		{
-			ProgrammableEntityHooks.UnsubscribeEntity(this);
+			ProgrammableEntityManager.UnsubscribeEntity(this);
 
 			OnDispose();
 
@@ -90,7 +92,7 @@ namespace Dissonance.Engine
 		public T AddComponent<T>(bool enable = true) where T : Component
 		{
 			var componentType = typeof(T);
-			var parameters = Component.typeParameters[componentType];	
+			var parameters = ComponentManager.typeParameters[componentType];	
 			if(parameters.allowOnlyOnePerObject) {
 				if(CountComponents<T>()>=1) {
 					throw new Exception("You can't add more than 1 component of type "+componentType.Name+" to a single gameobject");

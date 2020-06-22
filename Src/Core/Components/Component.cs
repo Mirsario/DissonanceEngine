@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using Dissonance.Engine.Core.ProgrammableEntities;
+using Dissonance.Engine.Core.Components;
 
 namespace Dissonance.Engine
 {
 	public class Component : ProgrammableEntity, IDisposable
 	{
-		internal static Dictionary<Type,ComponentParameters> typeParameters = new Dictionary<Type,ComponentParameters>();
-		internal static Dictionary<Type,List<Component>> typeInstances = new Dictionary<Type,List<Component>>();
-		
 		public readonly string Name;
 
 		internal readonly int NameHash;
@@ -28,9 +27,9 @@ namespace Dissonance.Engine
 
 				if(value) {
 					var type = GetType();
-					var parameters = typeParameters[type];
+					var parameters = ComponentManager.typeParameters[type];
 
-					if(!parameters.allowOnlyOneInWorld || !typeInstances.TryGetValue(type,out var list) || !list.Any(q => q.enabled)) {
+					if(!parameters.allowOnlyOneInWorld || !ComponentManager.typeInstances.TryGetValue(type,out var list) || !list.Any(q => q.enabled)) {
 						if(!beenEnabledBefore) {
 							OnInit();
 
@@ -39,14 +38,14 @@ namespace Dissonance.Engine
 
 						OnEnable();
 
-						ProgrammableEntityHooks.SubscribeEntity(this);
+						ProgrammableEntityManager.SubscribeEntity(this);
 
 						enabled = true;
 					}
 				} else {
 					OnDisable();
 
-					ProgrammableEntityHooks.UnsubscribeEntity(this);
+					ProgrammableEntityManager.UnsubscribeEntity(this);
 
 					enabled = false;
 				}
@@ -56,14 +55,14 @@ namespace Dissonance.Engine
 		public GameObject GameObject => gameObject;
 		public Transform Transform => gameObject.transform;
 		
-		internal Component()
+		protected Component() : base()
 		{
 			var type = GetType();
 			Name = type.Name;
 			NameHash = Name.GetHashCode();
 
-			if(!typeInstances.TryGetValue(type,out var list)) {
-				typeInstances[type] = list = new List<Component>();
+			if(!ComponentManager.typeInstances.TryGetValue(type,out var list)) {
+				ComponentManager.typeInstances[type] = list = new List<Component>();
 			}
 
 			list.Add(this);
@@ -77,11 +76,11 @@ namespace Dissonance.Engine
 
 		public void Dispose()
 		{
-			ProgrammableEntityHooks.UnsubscribeEntity(this);
+			ProgrammableEntityManager.UnsubscribeEntity(this);
 
 			OnDispose();
 
-			typeInstances[GetType()]?.Remove(this);
+			ComponentManager.typeInstances[GetType()]?.Remove(this);
 
 			var dict = gameObject.componentsByNameHash;
 
@@ -95,20 +94,5 @@ namespace Dissonance.Engine
 		}
 
 		internal void PreInit() => OnPreInit();
-
-		internal static void Init()
-		{
-			foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
-				if(!typeParameters.ContainsKey(type)) {
-					typeParameters[type] = new ComponentParameters();
-				}
-
-				var attributes = type.GetCustomAttributes<ComponentAttribute>();
-
-				foreach(var attribute in attributes) {
-					attribute.SetParameters(type);
-				}
-			}
-		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Dissonance.Engine.Core.ProgrammableEntities;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -15,7 +16,7 @@ namespace Dissonance.Engine.Graphics
 			GUI.canDraw = true;
 
 			Game.Instance?.OnGUI();
-			ProgrammableEntityHooks.InvokeHook(nameof(ProgrammableEntity.OnGUI));
+			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.OnGUI));
 
 			GUI.canDraw = false;
 
