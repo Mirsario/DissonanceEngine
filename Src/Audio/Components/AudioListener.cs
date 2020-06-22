@@ -1,8 +1,10 @@
 using System;
+using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Core.Components.Attributes;
+using Dissonance.Engine.Structures;
 using Dissonance.Framework.Audio;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Audio.Components
 {
 	[AllowOnlyOneInWorld]
 	public class AudioListener : Component
@@ -21,8 +23,8 @@ namespace Dissonance.Engine
 			Vector3 up = Transform.Up;
 
 			AL.Listener(ListenerFloatArray.Orientation,new[] {
-				lookAt.x,	lookAt.y,	lookAt.z,
-				up.x,		up.y,		up.z
+				lookAt.x,   lookAt.y,   lookAt.z,
+				up.x,       up.y,       up.z
 			});
 		}
 	}

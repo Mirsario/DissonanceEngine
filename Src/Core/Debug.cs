@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core
 {
 	public static class Debug
 	{
@@ -37,7 +37,7 @@ namespace Dissonance.Engine
 					var parameters = method.GetParameters();
 
 					for(int j = 0;j<parameters.Length;j++) {
-						frameText += (j>0?",":"")+parameters[j].ParameterType.Name;
+						frameText += (j>0 ? "," : "")+parameters[j].ParameterType.Name;
 					}
 
 					frameText += ") at line "+stackFrames[i].GetFileLineNumber();
@@ -48,7 +48,7 @@ namespace Dissonance.Engine
 		}
 		public static void SplitWrite(string str)
 		{
-			var lines = str.Split(new[]{"\r\n","\n"},StringSplitOptions.None);
+			var lines = str.Split(new[] { "\r\n","\n" },StringSplitOptions.None);
 
 			for(int i = 0;i<lines.Length;i++) {
 				Console.WriteLine(lines[i]);

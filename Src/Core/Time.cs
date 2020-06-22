@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Framework.Windowing;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core
 {
 	public sealed class Time : EngineModule
 	{
@@ -167,4 +167,3 @@ namespace Dissonance.Engine
 		}
 	}
 }
- 

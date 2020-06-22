@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utils.Extensions;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Graphics.Shaders;
+using Dissonance.Engine.Graphics.Textures;
 
 #pragma warning disable CS0649
 

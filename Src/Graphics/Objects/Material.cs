@@ -5,6 +5,11 @@ using Dissonance.Framework.Graphics;
 using Dissonance.Engine.Utils.Extensions;
 using Dissonance.Engine.Utils.Internal;
 using Dissonance.Engine.IO;
+using Dissonance.Engine.Structures;
+using Dissonance.Engine.Graphics.Renderers;
+using Dissonance.Engine.Graphics.Enums;
+using Dissonance.Engine.Graphics.Shaders;
+using Dissonance.Engine.Graphics.Textures;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -71,13 +76,16 @@ namespace Dissonance.Engine.Graphics
 		internal void ApplyTextures(Shader shader)
 		{
 			ShaderUniform uniform;
+
 			if(Textures.Count>0) {
 				for(int i = 0;i<Textures.Count && i<32;i++) {
 					string textureName = Textures[i].Key;
 					var texture = Textures[i].Value;
+					
 					if(texture==null || !shader.uniforms.TryGetValue(textureName,out uniform)) {
 						continue;
 					}
+
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+i));
 					GL.BindTexture(TextureTarget.Texture2D,texture.Id);
 					GL.Uniform1(uniform.location,i);
@@ -106,9 +114,9 @@ namespace Dissonance.Engine.Graphics
 
 		private void CheckUniform(string name)
 		{
-			Shader shader;
+			Shader shader = Shader;
 
-			if((shader = Shader)==null) {
+			if(shader==null) {
 				throw new Exception($"Material's Shader is null.");
 			}
 

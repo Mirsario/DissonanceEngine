@@ -1,7 +1,7 @@
 ﻿using Dissonance.Framework.Graphics;
-using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Dissonance.Engine.Graphics.Enums;
 
 #pragma warning disable CS0649
 

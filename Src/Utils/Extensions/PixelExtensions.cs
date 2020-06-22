@@ -1,5 +1,6 @@
 using System;
-using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Structures;
 
 namespace Dissonance.Engine.Utils.Extensions
 {

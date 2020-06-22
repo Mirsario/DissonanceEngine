@@ -1,4 +1,5 @@
-using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Graphics.Shaders;
 using Dissonance.Engine.Utils.Extensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;

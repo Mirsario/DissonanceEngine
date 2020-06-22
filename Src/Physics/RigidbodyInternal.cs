@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
 using BulletSharp.Math;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Structures;
+using Vector3 = Dissonance.Engine.Structures.Vector3;
 
 namespace Dissonance.Engine.Physics
 {
@@ -41,7 +44,7 @@ namespace Dissonance.Engine.Physics
 		public bool UseGravity {
 			get => btRigidbody.Gravity!=BulletSharp.Math.Vector3.Zero;
 			set {
-				btRigidbody.Gravity = (value ? PhysicsEngine.Gravity : Vector3.Zero);
+				btRigidbody.Gravity = value ? PhysicsEngine.Gravity : Vector3.Zero;
 
 				btRigidbody.ApplyGravity();
 			}

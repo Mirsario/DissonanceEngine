@@ -4,14 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Internal;
 using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.IO;
-using Dissonance.Engine.Physics;
+using Dissonance.Engine.Graphics.Meshes.Buffers;
+using Dissonance.Engine.Graphics.Meshes.VertexAttributes;
+using Dissonance.Engine.Graphics.RenderPasses;
 using Dissonance.Framework.Windowing;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core
 {
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering
@@ -34,7 +35,7 @@ namespace Dissonance.Engine
 		[ThreadStatic]
 		private static Game instance;
 
-		public static bool HasFocus	{ get; internal set; } = true;
+		public static bool HasFocus { get; internal set; } = true;
 		public static bool IsFixedUpdate => instance?.fixedUpdate ?? false;
 
 		internal static Game Instance => instance; //TODO: In a perfect world, properties and fields like this one would not exist. But this is not a perfect world.
@@ -129,7 +130,7 @@ namespace Dissonance.Engine
 
 			RenderPass.Init();
 			GameObject.StaticInit();
-			
+
 			if(!Directory.Exists(assetsPath)) {
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
 			}
@@ -227,15 +228,15 @@ namespace Dissonance.Engine
 		private static void OnFocusChange(IntPtr _,int isFocused) => HasFocus = isFocused!=0;
 		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
 		{
-			#if WINDOWS
+#if WINDOWS
 			
 			var exception = (Exception)e.ExceptionObject;
 
 			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
 			
-			#endif
-			
-			Quit();	
+#endif
+
+			Quit();
 		}
 	}
 }

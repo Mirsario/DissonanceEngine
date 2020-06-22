@@ -1,4 +1,5 @@
 ﻿using BulletSharp;
+using Dissonance.Engine.Graphics.Meshes;
 
 namespace Dissonance.Engine.Physics
 {

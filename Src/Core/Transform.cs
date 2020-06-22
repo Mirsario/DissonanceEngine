@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core
 {
 	public class Transform
 	{
@@ -79,11 +80,11 @@ namespace Dissonance.Engine
 			set {
 				var tempPos = matrix.ExtractTranslation();
 				var tempScale = matrix.ExtractScale();
-				
+
 				var m = Matrix4x4.CreateRotation(value);
 
 				matrix = m;
-				
+
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
@@ -108,9 +109,9 @@ namespace Dissonance.Engine
 			set {
 				var tempPos = matrix.ExtractTranslation();
 				var tempScale = matrix.ExtractScale();
-				
+
 				matrix = parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
-				
+
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
@@ -122,11 +123,11 @@ namespace Dissonance.Engine
 			set {
 				var tempPos = matrix.ExtractTranslation();
 				var tempScale = matrix.ExtractScale();
-				
+
 				value.NormalizeEuler();
 
 				matrix = Matrix4x4.CreateRotation(value);
-				
+
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Dissonance.Engine.Core;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics

@@ -1,13 +1,13 @@
 using System.IO;
-using Dissonance.Engine.IO;
+using Dissonance.Engine.Audio;
 using NVorbis;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Audio
 {
 	public class OggManager : AssetManager<AudioClip>
 	{
-		public override string[] Extensions => new [] { ".ogg" };
-		
+		public override string[] Extensions => new[] { ".ogg" };
+
 		public override AudioClip Import(Stream stream,string filePath)
 		{
 			using var r = new VorbisReader(stream,true);

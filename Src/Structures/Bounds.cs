@@ -1,4 +1,4 @@
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Structures
 {
 	public struct Bounds
 	{

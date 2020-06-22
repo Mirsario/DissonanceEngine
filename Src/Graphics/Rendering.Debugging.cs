@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Dissonance.Engine.Core;
+using Dissonance.Framework.Graphics;
 using System;
 
 namespace Dissonance.Engine.Graphics

@@ -1,6 +1,7 @@
 using System;
+using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Structures
 {
 	public struct Quaternion
 	{
@@ -18,18 +19,22 @@ namespace Dissonance.Engine
 		public Quaternion Normalized {
 			get {
 				var quaternion = this;
+
 				quaternion.Normalize();
+
 				return quaternion;
 			}
 		}
 		public Quaternion Inverted {
 			get {
 				var quaternion = this;
+
 				quaternion.w = -quaternion.w;
+
 				return quaternion;
 			}
 		}
-		
+
 		public float this[int index] {
 			get => index switch {
 				0 => x,
@@ -39,12 +44,21 @@ namespace Dissonance.Engine
 				_ => throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3, inclusively."),
 			};
 			set {
-				switch (index) {
-					case 0: x = value; return;
-					case 1: y = value; return;
-					case 2: z = value; return;
-					case 3: w = value; return;
-					default: throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3, inclusively.");
+				switch(index) {
+					case 0:
+						x = value;
+						return;
+					case 1:
+						y = value;
+						return;
+					case 2:
+						z = value;
+						return;
+					case 3:
+						w = value;
+						return;
+					default:
+						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3, inclusively.");
 				}
 			}
 		}
@@ -94,7 +108,7 @@ namespace Dissonance.Engine
 				result.z = 0f;
 			} else {
 				float asinArg = 2f*(w*x-y*x); //NaN prevention
-				result.x = Mathf.NormalizeEuler((float)Math.Asin(asinArg<-1f ? -1f : (asinArg>1f ? 1f : asinArg))*Mathf.Rad2Deg); // Pitch
+				result.x = Mathf.NormalizeEuler((float)Math.Asin(asinArg<-1f ? -1f : asinArg>1f ? 1f : asinArg)*Mathf.Rad2Deg); // Pitch
 				result.y = Mathf.NormalizeEuler((float)Math.Atan2(2f*w*y+2f*x*x,1-2f*(x*x+y*y))*Mathf.Rad2Deg); // Yaw
 				result.z = Mathf.NormalizeEuler((float)Math.Atan2(2f*w*x+2f*x*y,1-2f*(x*x+x*x))*Mathf.Rad2Deg); // Roll
 			}
@@ -214,8 +228,8 @@ namespace Dissonance.Engine
 			quaternion.w = -quaternion.w;
 			return quaternion;
 		}
-		
-		public static Vector3 operator*(Quaternion rotation,Vector3 point)
+
+		public static Vector3 operator *(Quaternion rotation,Vector3 point)
 		{
 			float num1 = rotation.x*2f;
 			float num2 = rotation.y*2f;
@@ -235,7 +249,7 @@ namespace Dissonance.Engine
 			result.z = (num8-num11)*point.x+(num9+num10)*point.y+(1f-(num4+num5))*point.z;
 			return result;
 		}
-		public static Quaternion operator*(Quaternion q,Quaternion other)
+		public static Quaternion operator *(Quaternion q,Quaternion other)
 		{
 			Quaternion result;
 			result.x = other.w*q.x+other.x*q.w+other.y*q.z-other.z*q.y;

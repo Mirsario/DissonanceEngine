@@ -1,16 +1,17 @@
-﻿using Dissonance.Framework.Windowing.Input;
+﻿using Dissonance.Engine.Structures;
+using Dissonance.Framework.Windowing.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Input
 {
 	internal class InputVariables
 	{
 		//Mouse
 		public int mouseWheel;
 		public Vector2 mousePosition;
-		public bool[] mouseButtons = new bool[Input.MaxMouseButtons];
+		public bool[] mouseButtons = new bool[InputEngine.MaxMouseButtons];
 
 		//Keyboard
 		public Dictionary<Keys,byte> pressedKeys = new Dictionary<Keys,byte>(); //Value is amount of ticks left until released.
@@ -58,7 +59,7 @@ namespace Dissonance.Engine
 				other.pressedButtons.Add(str);
 			}
 
-			for(int i = 0;i<Input.MaxMouseButtons;i++) {
+			for(int i = 0;i<InputEngine.MaxMouseButtons;i++) {
 				other.mouseButtons[i] = mouseButtons[i];
 			}
 		}
@@ -72,7 +73,7 @@ namespace Dissonance.Engine
 			pressedButtons.Clear();
 
 			if(resetArrays) {
-				for(int i = 0;i<Input.MaxMouseButtons;i++) {
+				for(int i = 0;i<InputEngine.MaxMouseButtons;i++) {
 					mouseButtons[i] = false;
 				}
 			}

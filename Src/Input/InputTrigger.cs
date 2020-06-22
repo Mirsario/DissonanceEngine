@@ -1,6 +1,7 @@
 ﻿using System;
+using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Input
 {
 	public class InputTrigger
 	{
@@ -57,7 +58,7 @@ namespace Dissonance.Engine
 
 		internal ref SummInput CurrentInput => ref (Game.Instance?.preInitDone!=false ? ref fixedInput : ref renderInput);
 
-		internal InputTrigger() {}
+		internal InputTrigger() { }
 
 		internal virtual void Init(int id,string name,InputBinding[] bindings,float minValue,float maxValue)
 		{

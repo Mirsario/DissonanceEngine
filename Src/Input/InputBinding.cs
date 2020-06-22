@@ -1,7 +1,7 @@
 ﻿using System;
 using Dissonance.Framework.Windowing.Input;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Input
 {
 	public class InputBinding
 	{
@@ -23,10 +23,10 @@ namespace Dissonance.Engine
 			get {
 				float value = RawValue;
 
-				return (value>deadZone || value<-deadZone) ? (inversed ? -value : value)*sensitivity : 0f;
+				return value>deadZone || value<-deadZone ? (inversed ? -value : value)*sensitivity : 0f;
 			}
 		}
-		public float RawValue => Input.GetSignal(Binding);
+		public float RawValue => InputEngine.GetSignal(Binding);
 
 		public InputBinding(string input,float sensitivity = 1f,float deadZone = 0.2f) : this(sensitivity,deadZone,false)
 		{
