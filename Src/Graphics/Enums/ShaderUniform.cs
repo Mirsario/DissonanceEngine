@@ -1,6 +1,6 @@
 using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics.Enums
 {
 	public class ShaderUniform
 	{

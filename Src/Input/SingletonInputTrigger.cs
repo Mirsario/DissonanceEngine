@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
+using Dissonance.Engine.Core.Internal;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Input
 {
 	public abstract class SingletonInputTrigger : InputTrigger
 	{
@@ -9,7 +10,7 @@ namespace Dissonance.Engine
 			public static int id;
 		}
 
-		protected SingletonInputTrigger() : base() {}
+		protected SingletonInputTrigger() : base() { }
 
 		protected abstract void Init(out string name,out InputBinding[] bindings,out float minValue,out float maxValue);
 
@@ -27,7 +28,7 @@ namespace Dissonance.Engine
 					continue;
 				}
 
-				var trigger = Input.RegisterTrigger(type,type.Name,null);
+				var trigger = InputEngine.RegisterTrigger(type,type.Name,null);
 
 				typeof(Info<>).MakeGenericType(type)
 					.GetField(nameof(Info<SingletonInputTrigger>.id),BindingFlags.Static|BindingFlags.Public)

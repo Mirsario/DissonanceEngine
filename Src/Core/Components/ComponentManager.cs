@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dissonance.Engine.Core.Components.Attributes;
+using Dissonance.Engine.Core.Internal;
 using Dissonance.Engine.Core.Modules;
 
 namespace Dissonance.Engine.Core.Components

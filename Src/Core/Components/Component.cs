@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 using Dissonance.Engine.Core.ProgrammableEntities;
-using Dissonance.Engine.Core.Components;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core.Components
 {
 	public class Component : ProgrammableEntity, IDisposable
 	{
@@ -54,7 +52,7 @@ namespace Dissonance.Engine
 
 		public GameObject GameObject => gameObject;
 		public Transform Transform => gameObject.transform;
-		
+
 		protected Component() : base()
 		{
 			var type = GetType();
@@ -68,11 +66,11 @@ namespace Dissonance.Engine
 			list.Add(this);
 		}
 
-		protected virtual void OnPreInit() {}
+		protected virtual void OnPreInit() { }
 		protected virtual void OnInit() { }
-		protected virtual void OnEnable() {}
-		protected virtual void OnDisable() {}
-		protected virtual void OnDispose() {}
+		protected virtual void OnEnable() { }
+		protected virtual void OnDisable() { }
+		protected virtual void OnDispose() { }
 
 		public void Dispose()
 		{

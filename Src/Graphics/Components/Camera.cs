@@ -1,7 +1,9 @@
 using System;
-using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Graphics.Components
 {
 	public class Camera : Component
 	{
@@ -44,48 +46,48 @@ namespace Dissonance.Engine
 		public void CalculateFrustum(Matrix4x4 clip)
 		{
 			//Right
-			frustum[0,0] = clip[ 3]-clip[ 0]; 
-			frustum[0,1] = clip[ 7]-clip[ 4];
-			frustum[0,2] = clip[11]-clip[ 8];
+			frustum[0,0] = clip[3]-clip[0];
+			frustum[0,1] = clip[7]-clip[4];
+			frustum[0,2] = clip[11]-clip[8];
 			frustum[0,3] = clip[15]-clip[12];
 
 			NormalizePlane(0);
 
 			//Left
-			frustum[1,0] = clip[ 3]+clip[ 0]; 
-			frustum[1,1] = clip[ 7]+clip[ 4];
-			frustum[1,2] = clip[11]+clip[ 8];
+			frustum[1,0] = clip[3]+clip[0];
+			frustum[1,1] = clip[7]+clip[4];
+			frustum[1,2] = clip[11]+clip[8];
 			frustum[1,3] = clip[15]+clip[12];
 
 			NormalizePlane(1);
 
 			//Bottom
-			frustum[2,0] = clip[ 3]+clip[ 1]; 
-			frustum[2,1] = clip[ 7]+clip[ 5];
-			frustum[2,2] = clip[11]+clip[ 9];
+			frustum[2,0] = clip[3]+clip[1];
+			frustum[2,1] = clip[7]+clip[5];
+			frustum[2,2] = clip[11]+clip[9];
 			frustum[2,3] = clip[15]+clip[13];
 
 			NormalizePlane(2);
 
 			//Top
-			frustum[3,0] = clip[ 3]-clip[ 1];
-			frustum[3,1] = clip[ 7]-clip[ 5];
-			frustum[3,2] = clip[11]-clip[ 9];
+			frustum[3,0] = clip[3]-clip[1];
+			frustum[3,1] = clip[7]-clip[5];
+			frustum[3,2] = clip[11]-clip[9];
 			frustum[3,3] = clip[15]-clip[13];
 
 			NormalizePlane(3);
 
 			//Back
-			frustum[4,0] = clip[ 3]-clip[ 2]; 
-			frustum[4,1] = clip[ 7]-clip[ 6];
+			frustum[4,0] = clip[3]-clip[2];
+			frustum[4,1] = clip[7]-clip[6];
 			frustum[4,2] = clip[11]-clip[10];
 			frustum[4,3] = clip[15]-clip[14];
 
 			NormalizePlane(4);
 
 			//Front
-			frustum[5,0] = clip[ 3]+clip[ 2]; 
-			frustum[5,1] = clip[ 7]+clip[ 6];
+			frustum[5,0] = clip[3]+clip[2];
+			frustum[5,1] = clip[7]+clip[6];
 			frustum[5,2] = clip[11]+clip[10];
 			frustum[5,3] = clip[15]+clip[14];
 

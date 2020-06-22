@@ -1,3 +1,5 @@
+using Dissonance.Engine.Core.Components;
+
 namespace Dissonance.Engine.Physics
 {
 	public abstract class PhysicsComponent : Component

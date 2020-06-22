@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core.Components.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class,AllowMultiple = false,Inherited = true)]
 	public abstract class ComponentAttribute : Attribute

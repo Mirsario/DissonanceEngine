@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Audio;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Audio
 {
 	public class AudioClip : Asset
 	{
@@ -47,10 +47,11 @@ namespace Dissonance.Engine
 				AL.BufferData(bufferId,format,(IntPtr)ptr,data.Length*Marshal.SizeOf<T>(),sampleRate);
 			}
 
-			Audio.CheckALErrors();
+			AudioEngine.CheckALErrors();
 		}
 
-		public static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch {
+		public static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch
+		{
 			1 => channels==1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
 			2 => channels==1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
 			4 => channels==1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,

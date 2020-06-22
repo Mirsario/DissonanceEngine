@@ -1,6 +1,7 @@
 using System;
+using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Structures
 {
 	public struct Matrix4x4
 	{
@@ -10,7 +11,7 @@ namespace Dissonance.Engine
 
 		public static readonly Matrix4x4 Identity = new Matrix4x4(Vector4.UnitX,Vector4.UnitY,Vector4.UnitZ,Vector4.UnitW);
 		public static readonly Matrix4x4 Zero = new Matrix4x4(Vector4.Zero,Vector4.Zero,Vector4.Zero,Vector4.Zero);
-
+		
 		public float m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33;
 
 		public float Determinant {
@@ -78,8 +79,10 @@ namespace Dissonance.Engine
 		}
 
 		public float this[int row,int column] {
-			get => column switch {
-				0 => row switch {
+			get => column switch
+			{
+				0 => row switch
+				{
 					0 => m00,
 					1 => m01,
 					2 => m02,
@@ -87,7 +90,8 @@ namespace Dissonance.Engine
 					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
 				},
 
-				1 => row switch {
+				1 => row switch
+				{
 					0 => m10,
 					1 => m11,
 					2 => m12,
@@ -95,7 +99,8 @@ namespace Dissonance.Engine
 					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
 				},
 
-				2 => row switch {
+				2 => row switch
+				{
 					0 => m20,
 					1 => m21,
 					2 => m22,
@@ -103,7 +108,8 @@ namespace Dissonance.Engine
 					_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column)),
 				},
 
-				3 => row switch {
+				3 => row switch
+				{
 					0 => m30,
 					1 => m31,
 					2 => m32,
@@ -115,43 +121,85 @@ namespace Dissonance.Engine
 			};
 			set {
 				switch(column) {
-					case 0: switch(row) {
-						case 0:	m00 = value; return;
-						case 1:	m01 = value; return;
-						case 2:	m02 = value; return;
-						case 3:	m03 = value; return;
-						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
-					}
+					case 0:
+						switch(row) {
+							case 0:
+								m00 = value;
+								return;
+							case 1:
+								m01 = value;
+								return;
+							case 2:
+								m02 = value;
+								return;
+							case 3:
+								m03 = value;
+								return;
+							default:
+								throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
+						}
 
-					case 1: switch(row) {
-						case 0:	m10 = value; return;
-						case 1:	m11 = value; return;
-						case 2:	m12 = value; return;
-						case 3:	m13 = value; return;
-						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
-					}
+					case 1:
+						switch(row) {
+							case 0:
+								m10 = value;
+								return;
+							case 1:
+								m11 = value;
+								return;
+							case 2:
+								m12 = value;
+								return;
+							case 3:
+								m13 = value;
+								return;
+							default:
+								throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
+						}
 
-					case 2: switch(row) {
-						case 0:	m20 = value; return;
-						case 1:	m21 = value; return;
-						case 2:	m22 = value; return;
-						case 3:	m23 = value; return;
-						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
-					}
-					case 3: switch(row) {
-						case 0:	m30 = value; return;
-						case 1:	m31 = value; return;
-						case 2:	m32 = value; return;
-						case 3:	m33 = value; return;
-						default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
-					}
+					case 2:
+						switch(row) {
+							case 0:
+								m20 = value;
+								return;
+							case 1:
+								m21 = value;
+								return;
+							case 2:
+								m22 = value;
+								return;
+							case 3:
+								m23 = value;
+								return;
+							default:
+								throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
+						}
+					case 3:
+						switch(row) {
+							case 0:
+								m30 = value;
+								return;
+							case 1:
+								m31 = value;
+								return;
+							case 2:
+								m32 = value;
+								return;
+							case 3:
+								m33 = value;
+								return;
+							default:
+								throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
+						}
 
-					default: throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
+					default:
+						throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage,row,column));
 				}
 			}
 		}
 		public float this[int id] {
-			get => id switch {
+			get => id switch
+			{
 				0 => m00,
 				1 => m01,
 				2 => m02,
@@ -172,46 +220,103 @@ namespace Dissonance.Engine
 			};
 			set {
 				switch(id) {
-					case 0:	m00 = value; break;
-					case 1:	m01 = value; break;
-					case 2:	m02 = value; break;
-					case 3:	m03 = value; break;
-					case 4:	m10 = value; break;
-					case 5:	m11 = value; break;
-					case 6:	m12 = value; break;
-					case 7:	m13 = value; break;
-					case 8:	m20 = value; break;
-					case 9:	m21 = value; break;
-					case 10: m22 = value; break;
-					case 11: m23 = value; break;
-					case 12: m30 = value; break;
-					case 13: m31 = value; break;
-					case 14: m32 = value; break;
-					case 15: m33 = value; break;
-					default: throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15].");
+					case 0:
+						m00 = value;
+						break;
+					case 1:
+						m01 = value;
+						break;
+					case 2:
+						m02 = value;
+						break;
+					case 3:
+						m03 = value;
+						break;
+					case 4:
+						m10 = value;
+						break;
+					case 5:
+						m11 = value;
+						break;
+					case 6:
+						m12 = value;
+						break;
+					case 7:
+						m13 = value;
+						break;
+					case 8:
+						m20 = value;
+						break;
+					case 9:
+						m21 = value;
+						break;
+					case 10:
+						m22 = value;
+						break;
+					case 11:
+						m23 = value;
+						break;
+					case 12:
+						m30 = value;
+						break;
+					case 13:
+						m31 = value;
+						break;
+					case 14:
+						m32 = value;
+						break;
+					case 15:
+						m33 = value;
+						break;
+					default:
+						throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15].");
 				}
 			}
 		}
 
 		public Matrix4x4(float m00,float m01,float m02,float m03,float m10,float m11,float m12,float m13,float m20,float m21,float m22,float m23,float m30,float m31,float m32,float m33)
 		{
-			this.m00 = m00; this.m01 = m01; this.m02 = m02; this.m03 = m03;
-			this.m10 = m10; this.m11 = m11; this.m12 = m12; this.m13 = m13;
-			this.m20 = m20; this.m21 = m21; this.m22 = m22; this.m23 = m23;
-			this.m30 = m30; this.m31 = m31; this.m32 = m32; this.m33 = m33;
+			this.m00 = m00;
+			this.m01 = m01;
+			this.m02 = m02;
+			this.m03 = m03;
+			this.m10 = m10;
+			this.m11 = m11;
+			this.m12 = m12;
+			this.m13 = m13;
+			this.m20 = m20;
+			this.m21 = m21;
+			this.m22 = m22;
+			this.m23 = m23;
+			this.m30 = m30;
+			this.m31 = m31;
+			this.m32 = m32;
+			this.m33 = m33;
 		}
 		public Matrix4x4(Vector4 row0,Vector4 row1,Vector4 row2,Vector4 row3)
 		{
-			m00 = row0.x; m01 = row0.y; m02 = row0.z; m03 = row0.w;
-			m10 = row1.x; m11 = row1.y; m12 = row1.z; m13 = row1.w;
-			m20 = row2.x; m21 = row2.y; m22 = row2.z; m23 = row2.w;
-			m30 = row3.x; m31 = row3.y; m32 = row3.z; m33 = row3.w;
+			m00 = row0.x;
+			m01 = row0.y;
+			m02 = row0.z;
+			m03 = row0.w;
+			m10 = row1.x;
+			m11 = row1.y;
+			m12 = row1.z;
+			m13 = row1.w;
+			m20 = row2.x;
+			m21 = row2.y;
+			m22 = row2.z;
+			m23 = row2.w;
+			m30 = row3.x;
+			m31 = row3.y;
+			m32 = row3.z;
+			m33 = row3.w;
 		}
 
 		public override string ToString() => $"[{m00}, {m01}, {m02}, {m03},\n {m10}, {m11}, {m12}, {m13},\n {m20}, {m21}, {m22}, {m23},\n {m30}, {m31}, {m32}, {m33}]";
 		public override int GetHashCode() => Row0.GetHashCode()^Row1.GetHashCode()<<2^Row2.GetHashCode()>>2^Row3.GetHashCode()>>1;
 		public override bool Equals(object other) => other is Matrix4x4 matrix && Equals(matrix);
-		
+
 		//Clear
 		public void ClearTranslation()
 		{
@@ -298,8 +403,8 @@ namespace Dissonance.Engine
 		}
 		public Vector3 ExtractEuler()
 		{
-			float v1,v2,v3;
-			
+			float v1, v2, v3;
+
 			if(m21<-1f) { //up
 				v1 = -Mathf.HalfPI;
 				v2 = 0f;
@@ -383,7 +488,7 @@ namespace Dissonance.Engine
 			m10 *= scale.y;
 			m11 *= scale.y;
 			m12 *= scale.y;
-			
+
 			m20 *= scale.z;
 			m21 *= scale.z;
 			m22 *= scale.z;
@@ -407,9 +512,15 @@ namespace Dissonance.Engine
 			float wy = q.w*y;
 			float wz = q.w*z;
 
-			m00 = (1f-(yy+zz))*scale.x;	m01 = (xy+wz)*scale.x;		m02 = (xz-wy)*scale.x;
-			m10 = (xy-wz)*scale.y;		m11 = (1f-(xx+zz))*scale.y;	m12 = (yz+wx)*scale.y;
-			m20 = (xz+wy)*scale.z;		m21 = (yz-wx)*scale.z;		m22 = (1f-(xx+yy))*scale.z;
+			m00 = (1f-(yy+zz))*scale.x;
+			m01 = (xy+wz)*scale.x;
+			m02 = (xz-wy)*scale.x;
+			m10 = (xy-wz)*scale.y;
+			m11 = (1f-(xx+zz))*scale.y;
+			m12 = (yz+wx)*scale.y;
+			m20 = (xz+wy)*scale.z;
+			m21 = (yz-wx)*scale.z;
+			m22 = (1f-(xx+yy))*scale.z;
 		}
 		//Etc
 		public bool Equals(Matrix4x4 o)
@@ -607,13 +718,13 @@ namespace Dissonance.Engine
 			float sY = Mathf.Sin(-eulerRotY);
 			float cZ = Mathf.Cos(eulerRotZ);
 			float sZ = Mathf.Sin(eulerRotZ);
-			
+
 			//ZXY
 			return new Matrix4x4(
-				cY*cZ-sX*sY*sZ,	-cX*sZ,			cZ*sY+cY*sX*sZ,	0f,
-				cZ*sX*sY+cY*sZ,	cX*cZ,			-cY*cZ*sX+sY*sZ,0f,
-				-cX*sY,			sX,				cX*cY,			0f,
-				0f,				0f,				0f,				1f
+				cY*cZ-sX*sY*sZ,-cX*sZ,cZ*sY+cY*sX*sZ,0f,
+				cZ*sX*sY+cY*sZ,cX*cZ,-cY*cZ*sX+sY*sZ,0f,
+				-cX*sY,sX,cX*cY,0f,
+				0f,0f,0f,1f
 			);
 		}
 		public static Matrix4x4 CreateRotation(Quaternion q)
@@ -635,10 +746,10 @@ namespace Dissonance.Engine
 			float wz = q.w*z;
 
 			return new Matrix4x4(
-				1-(yy+zz),	xy+wz,		xz-wy,		0f,
-				xy-wz,		1f-(xx+zz),	yz+wx,		0f,
-				xz+wy,		yz-wx,		1f-(xx+yy),	0f,
-				0f,			0f,			0f,			1f
+				1-(yy+zz),xy+wz,xz-wy,0f,
+				xy-wz,1f-(xx+zz),yz+wx,0f,
+				xz+wy,yz-wx,1f-(xx+yy),0f,
+				0f,0f,0f,1f
 			);
 		}
 		public static Matrix4x4 CreateFromAxisAngle(Vector3 axis,float angle)
@@ -799,17 +910,17 @@ namespace Dissonance.Engine
 			result.m01 = y.x;
 			result.m02 = z.x;
 			result.m03 = 0f;
-			
+
 			result.m10 = x.y;
 			result.m11 = y.y;
 			result.m12 = z.y;
 			result.m13 = 0f;
-			
+
 			result.m20 = x.z;
 			result.m21 = y.z;
 			result.m22 = z.z;
 			result.m23 = 0f;
-			
+
 			result.m30 = -(x.x*eye.x+x.y*eye.y+x.z*eye.z);
 			result.m31 = -(y.x*eye.x+y.y*eye.y+y.z*eye.z);
 			result.m32 = -(z.x*eye.x+z.y*eye.y+z.z*eye.z);
@@ -835,7 +946,7 @@ namespace Dissonance.Engine
 		public static Matrix4x4 operator *(Matrix4x4 lhs,Matrix4x4 rhs)
 		{
 			Matrix4x4 result;
-			
+
 			result.m00 = lhs.m00*rhs.m00+lhs.m01*rhs.m10+lhs.m02*rhs.m20+lhs.m03*rhs.m30;
 			result.m01 = lhs.m00*rhs.m01+lhs.m01*rhs.m11+lhs.m02*rhs.m21+lhs.m03*rhs.m31;
 			result.m02 = lhs.m00*rhs.m02+lhs.m01*rhs.m12+lhs.m02*rhs.m22+lhs.m03*rhs.m32;
@@ -883,15 +994,27 @@ namespace Dissonance.Engine
 
 		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new Matrix4x4(v.M11,v.M12,v.M13,v.M14,v.M21,v.M22,v.M23,v.M24,v.M31,v.M32,v.M33,v.M34,v.M41,v.M42,v.M43,v.M44);
 		public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new BulletSharp.Math.Matrix {
-			M11 = v.m00,M12 = v.m01,M13 = v.m02,M14 = v.m03,
-			M21 = v.m10,M22 = v.m11,M23 = v.m12,M24 = v.m13,
-			M31 = v.m20,M32 = v.m21,M33 = v.m22,M34 = v.m23,
-			M41 = v.m30,M42 = v.m31,M43 = v.m32,M44 = v.m33
+			M11 = v.m00,
+			M12 = v.m01,
+			M13 = v.m02,
+			M14 = v.m03,
+			M21 = v.m10,
+			M22 = v.m11,
+			M23 = v.m12,
+			M24 = v.m13,
+			M31 = v.m20,
+			M32 = v.m21,
+			M33 = v.m22,
+			M34 = v.m23,
+			M41 = v.m30,
+			M42 = v.m31,
+			M43 = v.m32,
+			M44 = v.m33
 		};
 		public static implicit operator double[](Matrix4x4 value)
 		{
 			var output = new double[16];
-			
+
 			for(int i = 0;i<16;i++) {
 				output[i] = value[i];
 			}

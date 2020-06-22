@@ -1,13 +1,13 @@
 using System;
 using System.IO;
-using Dissonance.Engine.IO;
+using Dissonance.Engine.Audio;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.IO.Audio
 {
 	public class WavManager : AssetManager<AudioClip>
 	{
-		public override string[] Extensions => new [] { ".wav",".wave" };
-		
+		public override string[] Extensions => new[] { ".wav",".wave" };
+
 		public override AudioClip Import(Stream stream,string filePath)
 		{
 			using var reader = new BinaryReader(stream);

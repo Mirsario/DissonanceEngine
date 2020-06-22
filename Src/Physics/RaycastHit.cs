@@ -1,4 +1,7 @@
-﻿namespace Dissonance.Engine.Physics
+﻿using Dissonance.Engine.Core;
+using Dissonance.Engine.Structures;
+
+namespace Dissonance.Engine.Physics
 {
 	public struct RaycastHit
 	{

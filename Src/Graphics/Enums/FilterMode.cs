@@ -1,4 +1,4 @@
-﻿namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics.Enums
 {
 	public enum FilterMode
 	{

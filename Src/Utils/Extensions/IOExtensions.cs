@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Dissonance.Engine.Structures;
 
 namespace Dissonance.Engine.Utils.Extensions
 {

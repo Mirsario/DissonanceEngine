@@ -1,9 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dissonance.Engine.Core;
 using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Graphics.Components;
+using Dissonance.Engine.Graphics.Meshes;
 using Dissonance.Engine.Graphics.RenderingPipelines;
+using Dissonance.Engine.Graphics.Shaders;
+using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Graphics.UserInterface;
+using Dissonance.Engine.Input;
 using Dissonance.Engine.IO;
+using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
@@ -26,7 +34,7 @@ namespace Dissonance.Engine.Graphics
 		internal static List<Light> lightList;
 		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
-		internal static Type renderingPipelineType;
+		internal static System.Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
@@ -219,7 +227,7 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			if(Input.GetKey(Keys.LeftShift)) {
+			if(InputEngine.GetKey(Keys.LeftShift)) {
 				textureCount = Math.Min(textureCount,1);
 			}
 

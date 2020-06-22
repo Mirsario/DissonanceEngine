@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dissonance.Engine.Core.Internal;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Utils.Internal;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Core
 {
 	partial class Game
 	{
@@ -45,7 +46,7 @@ namespace Dissonance.Engine
 					return result;
 				});
 
-			modules = DependencyUtils.DependencySort(modules,GetDirectDependencies,true).ToList();
+			modules = modules.DependencySort(GetDirectDependencies,true).ToList();
 
 			for(int i = 0;i<modules.Count;i++) {
 				modules[i].DependencyIndex = i;
@@ -55,10 +56,10 @@ namespace Dissonance.Engine
 		}
 		private void RebuildModuleHooks()
 		{
-			static int CustomSorting((EngineModule module,Delegate method,int position) tupleA,(EngineModule module,Delegate method,int position) tupleB)
-				=> (tupleA.module.DependencyIndex<tupleB.module.DependencyIndex && tupleA.position<tupleB.position) ? -1 : 1;
+			static int CustomSorting((EngineModule module, Delegate method, int position) tupleA,(EngineModule module, Delegate method, int position) tupleB)
+				=> tupleA.module.DependencyIndex<tupleB.module.DependencyIndex && tupleA.position<tupleB.position ? -1 : 1;
 
-			HookUtils.BuildHooksFromVirtualMethods(modules,moduleHooks,customSorting:CustomSorting);
+			HookUtils.BuildHooksFromVirtualMethods(modules,moduleHooks,customSorting: CustomSorting);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Dissonance.Engine.Core.Components;
 
 namespace Dissonance.Engine.Core.Components.Attributes
 {

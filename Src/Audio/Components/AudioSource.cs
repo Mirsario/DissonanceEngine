@@ -1,7 +1,9 @@
+using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Structures;
 using Dissonance.Framework.Audio;
 using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Audio.Components
 {
 	public class AudioSource : Component
 	{
@@ -155,7 +157,7 @@ namespace Dissonance.Engine
 				}
 			}
 		}
-		
+
 		protected override void OnInit()
 		{
 			AL.GenSource(out sourceId);

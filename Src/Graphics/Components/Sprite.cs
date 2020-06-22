@@ -1,6 +1,8 @@
-using Dissonance.Engine.Graphics;
+using Dissonance.Engine.Graphics.Meshes;
+using Dissonance.Engine.Graphics.Renderers;
+using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine.Graphics.Components
 {
 	public class Sprite : Renderer
 	{
@@ -93,7 +95,8 @@ namespace Dissonance.Engine
 		}
 		public override void Render(object renderObject)
 		{
-			Vector4 uvPoints = spriteEffects switch {
+			Vector4 uvPoints = spriteEffects switch
+			{
 				SpriteEffects.FlipHorizontally|SpriteEffects.FlipVertically => new Vector4(sourceUV.z,sourceUV.w,sourceUV.x,sourceUV.y),
 				SpriteEffects.FlipHorizontally => new Vector4(sourceUV.z,sourceUV.y,sourceUV.x,sourceUV.w),
 				SpriteEffects.FlipVertically => new Vector4(sourceUV.x,sourceUV.w,sourceUV.z,sourceUV.y),
@@ -111,8 +114,8 @@ namespace Dissonance.Engine
 			float yOrigin = 1f-origin.y;
 
 			vertices = new Vector4(
-				(-origin.x)*xSize,
-				(-yOrigin)*ySize,
+				-origin.x*xSize,
+				-yOrigin*ySize,
 				(1f-origin.x)*xSize,
 				(1f-yOrigin)*ySize
 			);
