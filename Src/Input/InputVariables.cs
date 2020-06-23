@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Input
 
 		//Keyboard
 		public Dictionary<Keys,byte> pressedKeys = new Dictionary<Keys,byte>(); //Value is amount of ticks left until released.
-		public string inputString = "";
+		public string inputString = string.Empty;
 
 		//Gamepads
 		//public GamePadState[] gamepadStates = new GamePadState[Input.MaxGamepads];
