@@ -35,7 +35,10 @@ namespace Dissonance.Engine.Input
 
 			InitSignals();
 			InitTriggers();
-			InitCallbacks();
+
+			if(!Game.NoWindow) {
+				InitCallbacks();
+			}
 
 			SingletonInputTrigger.StaticInit();
 		}
@@ -46,6 +49,10 @@ namespace Dissonance.Engine.Input
 
 		private void PreUpdate()
 		{
+			if(Game.NoWindow) {
+				return;
+			}
+
 			CurrentInput.Update();
 
 			UpdateTriggers();
@@ -54,6 +61,10 @@ namespace Dissonance.Engine.Input
 		}
 		private void PostUpdate()
 		{
+			if(Game.NoWindow) {
+				return;
+			}
+
 			CurrentInput.inputString = string.Empty;
 			CurrentInput.mouseWheel = 0;
 
