@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Dissonance.Engine.Core
 {
-	internal class AssemblyCache
+	public static class AssemblyCache
 	{
 		public static Type[] AllTypes { get; private set; }
 		public static Type[] EngineTypes { get; private set; }

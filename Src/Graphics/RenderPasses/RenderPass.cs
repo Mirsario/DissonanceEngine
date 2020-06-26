@@ -5,8 +5,8 @@ using System.Runtime.Serialization;
 using Dissonance.Engine.Structures;
 using Dissonance.Engine.Graphics.Components;
 using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Core.Internal;
 using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Core;
 
 #pragma warning disable IDE0051 // Remove unused private members
 
