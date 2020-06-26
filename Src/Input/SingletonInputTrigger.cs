@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Dissonance.Engine.Core.Internal;
+using Dissonance.Engine.Core;
 
 namespace Dissonance.Engine.Input
 {

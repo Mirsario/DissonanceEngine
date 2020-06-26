@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Structures;
 

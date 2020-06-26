@@ -10,7 +10,6 @@ using Dissonance.Engine.Utils.Internal;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Internal;
 
 namespace Dissonance.Engine.IO
 {

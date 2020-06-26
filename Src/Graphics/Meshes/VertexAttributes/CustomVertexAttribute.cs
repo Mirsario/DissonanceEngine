@@ -1,4 +1,4 @@
-﻿using Dissonance.Engine.Core.Internal;
+﻿using Dissonance.Engine.Core;
 using Dissonance.Engine.Graphics.Meshes.Buffers;
 using Dissonance.Framework.Graphics;
 using System;
