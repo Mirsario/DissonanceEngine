@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Core.Components
 
 		protected override void Init()
 		{
-			foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
+			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
 				if(!typeParameters.ContainsKey(type)) {
 					typeParameters[type] = new ComponentParameters();
 				}

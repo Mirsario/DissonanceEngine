@@ -46,7 +46,7 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 			var instanceList = new List<CustomVertexAttribute>();
 			var bufferAttachmentsList = new List<int>[CustomVertexBuffer.Count];
 
-			foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(CustomVertexAttribute).IsAssignableFrom(t) && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition()==typeof(CustomVertexAttribute<>))) {
+			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexAttribute).IsAssignableFrom(t) && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition()==typeof(CustomVertexAttribute<>))) {
 				var instance = (CustomVertexAttribute)Activator.CreateInstance(type,true);
 
 				int id = instanceList.Count;

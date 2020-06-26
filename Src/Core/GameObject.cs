@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Core
 {
 	public class GameObject : ProgrammableEntity, IDisposable
 	{
-		internal static List<GameObject> gameObjects;
+		private static GameObjectManager Manager => Game.Instance.GetModule<GameObjectManager>();
 
 		public byte layer;
 		public string name;
@@ -29,11 +29,6 @@ namespace Dissonance.Engine.Core
 
 		protected GameObject() : base() { }
 
-		internal static void StaticInit()
-		{
-			gameObjects = new List<GameObject>();
-		}
-
 		public virtual void OnInit() { }
 		public virtual void OnDispose() { }
 
@@ -50,7 +45,7 @@ namespace Dissonance.Engine.Core
 				return;
 			}
 
-			gameObjects.Add(this);
+			Manager.gameObjects.Add(this);
 
 			ProgrammableEntityManager.SubscribeEntity(this);
 
@@ -74,7 +69,7 @@ namespace Dissonance.Engine.Core
 			componentsByNameHash.Clear();
 			componentsByNameHash = null;
 
-			gameObjects.Remove(this);
+			Manager.gameObjects.Remove(this);
 		}
 
 		public T AddComponent<T>(Action<T> initializer) where T : Component => AddComponent(true,initializer);
@@ -176,37 +171,8 @@ namespace Dissonance.Engine.Core
 		}
 
 		public static T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true) where T : GameObject
-			=> (T)Instantiate(typeof(T),name,position,rotation,scale,init);
-		public static GameObject Instantiate(Type type,string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true)
-		{
-			if(!typeof(GameObject).IsAssignableFrom(type)) {
-				throw new ArgumentException("'type' must derive from GameObject class.");
-			}
-
-			var obj = (GameObject)Activator.CreateInstance(type,true);
-
-			obj.PreInit();
-
-			if(name!=default) {
-				obj.Name = name;
-			}
-			if(position!=default) {
-				obj.transform.Position = position;
-			}
-			if(rotation!=default) {
-				obj.transform.Rotation = rotation;
-			}
-			if(scale.HasValue) {
-				obj.transform.LocalScale = scale.Value;
-			}
-
-			if(init) {
-				obj.Init();
-			}
-
-			return obj;
-		}
-
-		public static IEnumerable<GameObject> GetGameObjects() => gameObjects;
+			=> Manager.Instantiate<T>(name,position,rotation,scale,init);
+		public static GameObject Instantiate(Type type,string name = default,Vector3? position = default,Quaternion? rotation = default,Vector3? scale = null,bool init = true)
+			=> Manager.Instantiate(type,name,position,rotation,scale,init);
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -26,19 +27,31 @@ namespace Dissonance.Engine.Core
 		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;
 		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;
 
+		private static readonly ConcurrentQueue<Game> Instances = new ConcurrentQueue<Game>();
+
 		public static string name = "UntitledGame";
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
 
 		internal static IntPtr window;
 
+		private static volatile Game globalInstance;
+		private static volatile bool multipleInstances;
 		[ThreadStatic]
-		private static Game instance;
+		private static Game threadStaticInstance;
 
 		public static bool HasFocus { get; internal set; } = true;
-		public static bool IsFixedUpdate => instance?.fixedUpdate ?? false;
+		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
 
-		internal static Game Instance => instance; //TODO: In a perfect world, properties and fields like this one would not exist. But this is not a perfect world.
+		public static Game Instance {
+			get {
+				if(multipleInstances) {
+					return threadStaticInstance ?? throw new InvalidOperationException($"Multiple Game instances were created, but there is no instance associated with the current thread.");
+				}
+
+				return globalInstance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
+			}
+		}
 
 		internal bool shouldQuit;
 		internal bool preInitDone;
@@ -57,21 +70,29 @@ namespace Dissonance.Engine.Core
 
 		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
-			if(Instance!=null) {
-				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create a new thread.");
+			if(threadStaticInstance!=null) {
+				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
 			}
+
+			if(globalInstance==null) {
+				globalInstance = this;
+			}
+
+			Instances.Enqueue(this);
+
+			multipleInstances = Instances.Count>1;
 
 			Flags = flags;
 			NoWindow = (Flags & GameFlags.NoWindow)!=0;
 			NoAudio = (Flags & GameFlags.NoAudio)!=0;
 
 			DllResolver.Init();
-			ReflectionCache.Init();
+			AssemblyCache.Init();
 			InitializeModules();
 
 			Debug.Log("Loading engine...");
 
-			instance = this;
+			threadStaticInstance = this;
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
 
 			if(args!=null) {
@@ -105,6 +126,8 @@ namespace Dissonance.Engine.Core
 				GLFW.DestroyWindow(window);
 				GLFW.Terminate();
 			}
+
+			Dispose();
 		}
 		public void Dispose()
 		{
@@ -116,7 +139,11 @@ namespace Dissonance.Engine.Core
 				modules = null;
 			}
 
-			instance = null;
+			threadStaticInstance = null;
+
+			if(globalInstance==this) {
+				globalInstance = null;
+			}
 		}
 
 		internal void Init()
@@ -129,7 +156,6 @@ namespace Dissonance.Engine.Core
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
-			GameObject.StaticInit();
 
 			if(!Directory.Exists(assetsPath)) {
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
@@ -182,7 +208,7 @@ namespace Dissonance.Engine.Core
 		{
 			shouldQuit = true;
 
-			instance?.Dispose();
+			threadStaticInstance?.Dispose();
 		}
 
 		private void UpdateLoop()

@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Input
 
 		internal static void StaticInit()
 		{
-			foreach(var type in ReflectionCache.allTypes) {
+			foreach(var type in AssemblyCache.AllTypes) {
 				if(type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
 					continue;
 				}

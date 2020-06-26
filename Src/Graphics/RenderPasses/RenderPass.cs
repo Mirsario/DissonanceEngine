@@ -113,7 +113,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 			fullNameToType = new Dictionary<string,Type>();
 			fullNameToInfo = new Dictionary<string,RenderPassInfoAttribute>();
 
-			foreach(var type in ReflectionCache.engineTypes) {
+			foreach(var type in AssemblyCache.EngineTypes) {
 				if(!type.IsAbstract && typeof(RenderPass).IsAssignableFrom(type)) {
 					string fullName = type.FullName;
 					fullNameToType[fullName] = type;

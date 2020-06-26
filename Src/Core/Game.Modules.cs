@@ -11,15 +11,39 @@ namespace Dissonance.Engine.Core
 	partial class Game
 	{
 		private List<EngineModule> modules;
+		private Dictionary<Type,List<EngineModule>> modulesByType;
 		private EngineModuleHooks moduleHooks;
+
+		public bool TryGetModule<T>(out T result) where T : EngineModule
+		{
+			if(!modulesByType.TryGetValue(typeof(T),out var list)) {
+				result = default;
+
+				return false;
+			}
+
+			result = (T)list[0];
+
+			return true;
+		}
+		public T GetModule<T>() where T : EngineModule
+		{
+			if(TryGetModule<T>(out var result)) {
+				return result;
+			}
+
+			throw new ArgumentException($"{nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
+		}
 
 		private void InitializeModules()
 		{
 			moduleHooks = new EngineModuleHooks();
-			modules = new List<EngineModule>();
 
-			lock(ReflectionCache.allTypes) {
-				foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
+			modules = new List<EngineModule>();
+			modulesByType = new Dictionary<Type,List<EngineModule>>();
+
+			lock(AssemblyCache.AllTypes) {
+				foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
 					var instance = (EngineModule)Activator.CreateInstance(type);
 
 					instance.Game = this;
@@ -30,6 +54,11 @@ namespace Dissonance.Engine.Core
 						.ToArray();
 
 					if(instance.AutoLoad) {
+						if(!modulesByType.TryGetValue(type,out var list)) {
+							modulesByType[type] = list = new List<EngineModule>();
+						}
+
+						list.Add(instance);
 						modules.Add(instance);
 					}
 				}
@@ -56,7 +85,7 @@ namespace Dissonance.Engine.Core
 		}
 		private void RebuildModuleHooks()
 		{
-			static int CustomSorting((EngineModule module, Delegate method, int position) tupleA,(EngineModule module, Delegate method, int position) tupleB)
+			static int CustomSorting((EngineModule module,Delegate method,int position) tupleA,(EngineModule module,Delegate method,int position) tupleB)
 				=> tupleA.module.DependencyIndex<tupleB.module.DependencyIndex && tupleA.position<tupleB.position ? -1 : 1;
 
 			HookUtils.BuildHooksFromVirtualMethods(modules,moduleHooks,customSorting: CustomSorting);

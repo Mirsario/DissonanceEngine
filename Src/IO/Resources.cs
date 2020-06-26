@@ -149,7 +149,7 @@ namespace Dissonance.Engine.IO
 		{
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
 
-			foreach(var type in ReflectionCache.allTypes) {
+			foreach(var type in AssemblyCache.AllTypes) {
 				if(type.IsAbstract || !typeof(AssetManager).IsAssignableFrom(type)) {
 					continue;
 				}

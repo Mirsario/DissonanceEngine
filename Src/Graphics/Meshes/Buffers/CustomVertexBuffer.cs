@@ -44,7 +44,7 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 
 			var typeList = new List<Type>();
 
-			foreach(var type in ReflectionCache.allTypes.Where(t => !t.IsAbstract && typeof(CustomVertexBuffer).IsAssignableFrom(t))) {
+			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexBuffer).IsAssignableFrom(t))) {
 				typeof(IDs<>)
 					.MakeGenericType(type)
 					.GetField(nameof(IDs<CustomVertexBuffer>.id),BindingFlags.Public|BindingFlags.Static)
