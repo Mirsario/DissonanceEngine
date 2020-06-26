@@ -145,6 +145,7 @@ namespace Dissonance.Engine.Core
 				globalInstance = null;
 			}
 		}
+		public void AssociateWithCurrentThread() => threadStaticInstance = this;
 
 		internal void Init()
 		{
