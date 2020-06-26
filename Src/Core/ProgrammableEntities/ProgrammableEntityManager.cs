@@ -6,11 +6,14 @@ using System.Collections.Concurrent;
 
 namespace Dissonance.Engine.Core.ProgrammableEntities
 {
+	//TODO: Refactor, get rid of string keyed dictionaries.
 	internal sealed class ProgrammableEntityManager : EngineModule
 	{
-		internal static List<Action>[] hooks;
-		internal static Dictionary<string,int> hookNameToId;
-		internal static ConcurrentDictionary<Type,MethodInfo[]> hookMethodsCache;
+		private static ProgrammableEntityManager Instance => Game.Instance.GetModule<ProgrammableEntityManager>();
+
+		internal List<Action>[] hooks;
+		internal Dictionary<string,int> hookNameToId;
+		internal ConcurrentDictionary<Type,MethodInfo[]> hookMethodsCache;
 
 		protected override void Init()
 		{
@@ -42,6 +45,8 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 
 		public static void SubscribeEntity(ProgrammableEntity entity)
 		{
+			var instance = Instance;
+
 			var type = entity.GetType();
 			var methods = GetHookMethodsByType(type);
 
@@ -49,12 +54,14 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 				var methodInfo = methods[i];
 
 				if(methodInfo!=null) {
-					hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
+					instance.hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
 				}
 			}
 		}
 		public static void UnsubscribeEntity(ProgrammableEntity entity)
 		{
+			var instance = Instance;
+
 			var type = entity.GetType();
 			var methods = GetHookMethodsByType(type);
 
@@ -65,7 +72,7 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 					continue;
 				}
 
-				var arr = hooks[i];
+				var arr = instance.hooks[i];
 
 				for(int j = 0;j<arr.Count;j++) {
 					if(arr[j].Target==entity) {
@@ -74,10 +81,10 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 				}
 			}
 		}
-		public static void InvokeHook(string name) => InvokeHook(hookNameToId[name]);
+		public static void InvokeHook(string name) => InvokeHook(Instance.hookNameToId[name]);
 		public static void InvokeHook(int id)
 		{
-			var list = hooks[id];
+			var list = Instance.hooks[id];
 
 			for(int i = 0;i<list.Count;i++) {
 				list[i]();
@@ -86,10 +93,12 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 
 		private static MethodInfo[] GetHookMethodsByType(Type type)
 		{
-			if(!hookMethodsCache.TryGetValue(type,out var methods)) {
-				methods = new MethodInfo[hooks.Length];
+			var instance = Instance;
 
-				foreach(var pair in hookNameToId) {
+			if(!instance.hookMethodsCache.TryGetValue(type,out var methods)) {
+				methods = new MethodInfo[instance.hooks.Length];
+
+				foreach(var pair in instance.hookNameToId) {
 					string methodName = pair.Key;
 					var method = type.GetMethod(methodName,BindingFlags.Public|BindingFlags.Instance);
 
@@ -102,7 +111,7 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 					}
 				}
 
-				hookMethodsCache[type] = methods;
+				instance.hookMethodsCache[type] = methods;
 			}
 
 			return methods;
