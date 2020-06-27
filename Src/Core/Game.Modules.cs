@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Utils;
 using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Core

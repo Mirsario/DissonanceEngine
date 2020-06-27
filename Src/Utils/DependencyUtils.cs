@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Utils.Internal
+namespace Dissonance.Engine.Utils
 {
-	internal static class DependencyUtils
+	public static class DependencyUtils
 	{
 		public static IEnumerable<T> DependencySort<T>(this IEnumerable<T> source,Func<T,IEnumerable<T>> dependencies,bool throwOnRecursion = true)
 		{
