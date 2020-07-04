@@ -1,11 +1,14 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Text;
 
 namespace Dissonance.Engine.Core
 {
 	public static class Debug
 	{
+		public static readonly object LoggingLock = new object(); 
+
 		public static void Log(object message,bool showTrace = false,int stackframeOffset = 1)
 		{
 			var stackTrace = new StackTrace(true);
@@ -14,44 +17,40 @@ namespace Dissonance.Engine.Core
 			string fileName = Path.GetFileName(stackFrame.GetFileName());
 			int lineNumber = stackFrames[stackframeOffset].GetFileLineNumber();
 
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-
 			var stackFrameMethod = stackFrame.GetMethod();
 			string sourceName = stackFrameMethod!=null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown";
 
-			Console.Write($"[{sourceName} - {fileName}, line {lineNumber}] ");
+			lock(LoggingLock) {
+				Console.ForegroundColor = ConsoleColor.DarkGray;
 
-			Console.ForegroundColor = ConsoleColor.Gray;
+				Console.Write($"[{sourceName} - {fileName}, line {lineNumber}] ");
 
-			SplitWrite(message.ToString());
+				Console.ForegroundColor = ConsoleColor.Gray;
 
-			if(showTrace) {
-				for(int i = 1;i<stackFrames.Length;i++) {
-					if(stackFrames[i].GetFileName()==null) {
-						break;
+				Console.WriteLine(message);
+
+				if(showTrace) {
+					var stringBuilder = new StringBuilder();
+
+					for(int i = 1;i<stackFrames.Length;i++) {
+						if(stackFrames[i].GetFileName()==null) {
+							break;
+						}
+
+						var method = stackFrames[i].GetMethod();
+						var parameters = method.GetParameters();
+
+						stringBuilder.Append($"  {Path.GetFileName(stackFrames[i].GetFileName())}:{method.Name}(");
+
+						for(int j = 0;j<parameters.Length;j++) {
+							stringBuilder.Append($"{(j>0 ? "," : "")}{parameters[j].ParameterType.Name}");
+						}
+
+						stringBuilder.Append($") at line {stackFrames[i].GetFileLineNumber()}");
 					}
 
-					var method = stackFrames[i].GetMethod();
-					string frameText = "  "+Path.GetFileName(stackFrames[i].GetFileName())+":"+method.Name+"(";
-
-					var parameters = method.GetParameters();
-
-					for(int j = 0;j<parameters.Length;j++) {
-						frameText += (j>0 ? "," : "")+parameters[j].ParameterType.Name;
-					}
-
-					frameText += ") at line "+stackFrames[i].GetFileLineNumber();
-
-					SplitWrite(frameText);
+					Console.Write(stringBuilder);
 				}
-			}
-		}
-		public static void SplitWrite(string str)
-		{
-			var lines = str.Split(new[] { "\r\n","\n" },StringSplitOptions.None);
-
-			for(int i = 0;i<lines.Length;i++) {
-				Console.WriteLine(lines[i]);
 			}
 		}
 		public static void RemoveLine(int line)
