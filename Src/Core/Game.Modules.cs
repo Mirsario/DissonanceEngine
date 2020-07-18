@@ -26,10 +26,14 @@ namespace Dissonance.Engine.Core
 
 			return true;
 		}
-		public T GetModule<T>() where T : EngineModule
+		public T GetModule<T>(bool throwOnFailure = false) where T : EngineModule
 		{
 			if(TryGetModule<T>(out var result)) {
 				return result;
+			}
+
+			if(!throwOnFailure) {
+				return null;
 			}
 
 			throw new ArgumentException($"{nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");

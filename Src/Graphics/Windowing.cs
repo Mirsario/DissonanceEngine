@@ -13,6 +13,8 @@ namespace Dissonance.Engine.Graphics
 
 		public override bool AutoLoad => !Game.NoWindow;
 
+		public IntPtr WindowHandle { get; private set; }
+
 		protected override void PreInit()
 		{
 			PrepareGLFW();
@@ -22,8 +24,8 @@ namespace Dissonance.Engine.Graphics
 		}
 		protected override void OnDispose()
 		{
-			if(Game.window!=IntPtr.Zero) {
-				GLFW.SetWindowShouldClose(Game.window,1);
+			if(WindowHandle!=IntPtr.Zero) {
+				GLFW.SetWindowShouldClose(WindowHandle,1);
 			}
 		}
 
@@ -51,13 +53,13 @@ namespace Dissonance.Engine.Graphics
 				int resolutionWidth = 800;
 				int resolutionHeight = 600;
 
-				Game.window = GLFW.CreateWindow(resolutionWidth,resolutionHeight,Game.displayName,monitor,IntPtr.Zero);
+				WindowHandle = GLFW.CreateWindow(resolutionWidth,resolutionHeight,Game.displayName,monitor,IntPtr.Zero);
 
-				if(Game.window==IntPtr.Zero) {
+				if(WindowHandle==IntPtr.Zero) {
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
-				GLFW.MakeContextCurrent(Game.window);
+				GLFW.MakeContextCurrent(WindowHandle);
 				GLFW.SwapInterval(0);
 			}
 

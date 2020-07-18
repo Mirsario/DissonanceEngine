@@ -1,5 +1,6 @@
 using Dissonance.Engine.Core;
 using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Windowing.Input;
 
@@ -26,8 +27,12 @@ namespace Dissonance.Engine.Input
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
 
+		private Windowing windowing;
+
 		protected override void Init()
 		{
+			Game.TryGetModule(out windowing);
+
 			fixedInput = new InputVariables();
 			renderInput = new InputVariables();
 			prevFixedInput = new InputVariables();
@@ -46,6 +51,7 @@ namespace Dissonance.Engine.Input
 		protected override void PostFixedUpdate() => PostUpdate();
 		protected override void PreRenderUpdate() => PreUpdate();
 		protected override void PostRenderUpdate() => PostUpdate();
+		protected override void OnDispose() => windowing = null;
 
 		private void PreUpdate()
 		{

@@ -10,19 +10,6 @@ namespace Dissonance.Engine.Input
 {
 	partial class InputEngine
 	{
-		internal static void InitCallbacks()
-		{
-			if(Game.window==IntPtr.Zero) {
-				return;
-			}
-
-			GLFW.SetCursorPosCallback(Game.window,MousePositionCallback);
-			GLFW.SetMouseButtonCallback(Game.window,MouseButtonCallback);
-			GLFW.SetScrollCallback(Game.window,MouseScrollCallback);
-			GLFW.SetKeyCallback(Game.window,KeyCallback);
-			GLFW.SetCharCallback(Game.window,KeyStringCallback);
-		}
-
 		internal static void MousePositionCallback(IntPtr window,double x,double y)
 		{
 			var value = new Vector2((float)x,(float)y)*(Screen.Size/Screen.WindowSize);
@@ -75,6 +62,25 @@ namespace Dissonance.Engine.Input
 					});
 					break;
 			}
+		}
+
+		private void InitCallbacks()
+		{
+			if(windowing==null) {
+				return;
+			}
+
+			var windowHandle = windowing.WindowHandle;
+
+			if(windowHandle==IntPtr.Zero) {
+				return;
+			}
+
+			GLFW.SetCursorPosCallback(windowHandle,MousePositionCallback);
+			GLFW.SetMouseButtonCallback(windowHandle,MouseButtonCallback);
+			GLFW.SetScrollCallback(windowHandle,MouseScrollCallback);
+			GLFW.SetKeyCallback(windowHandle,KeyCallback);
+			GLFW.SetCharCallback(windowHandle,KeyStringCallback);
 		}
 	}
 }
