@@ -36,7 +36,7 @@ namespace Dissonance.Engine.Core
 				return null;
 			}
 
-			throw new ArgumentException($"{nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
+			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
 		}
 
 		private void InitializeModules()
