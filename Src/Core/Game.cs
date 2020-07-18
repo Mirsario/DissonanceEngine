@@ -64,7 +64,7 @@ namespace Dissonance.Engine.Core
 		public virtual void FixedUpdate() { }
 		public virtual void RenderUpdate() { }
 		public virtual void OnGUI() { }
-		public virtual void OnApplicationQuit() { }
+		public virtual void OnDispose() { }
 
 		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
@@ -129,6 +129,8 @@ namespace Dissonance.Engine.Core
 		}
 		public void Dispose()
 		{
+			OnDispose();
+
 			if(modules!=null) {
 				for(int i = 0;i<modules.Count;i++) {
 					modules[i]?.Dispose();
@@ -243,6 +245,12 @@ namespace Dissonance.Engine.Core
 		public static void Quit()
 		{
 			var instance = Instance;
+
+			if(instance.shouldQuit) {
+				return;
+			}
+
+			Debug.Log("Game stopping...");
 
 			instance.shouldQuit = true;
 
