@@ -47,9 +47,11 @@ namespace Dissonance.Engine.Physics
 		{
 			var worldDispatcher = world.Dispatcher;
 			int numManifolds = worldDispatcher.NumManifolds;
-			
-			for(int i = 0;i<rigidbodies.Count;i++) {
-				rigidbodies[i].collisions.Clear();
+
+			var instance = Instance;
+
+			for(int i = 0;i<instance.rigidbodies.Count;i++) {
+				instance.rigidbodies[i].collisions.Clear();
 			}
 
 			for(int i = 0;i<numManifolds;i++) {
