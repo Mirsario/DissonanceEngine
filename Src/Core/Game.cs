@@ -33,8 +33,6 @@ namespace Dissonance.Engine.Core
 		public static string displayName = "Untitled Game";
 		public static string assetsPath;
 
-		internal static IntPtr window;
-
 		private static volatile Game globalInstance;
 		private static volatile bool multipleInstances;
 		[ThreadStatic]
@@ -122,8 +120,8 @@ namespace Dissonance.Engine.Core
 
 			UpdateLoop();
 
-			if(!NoWindow) {
-				GLFW.DestroyWindow(window);
+			if(!NoWindow && TryGetModule<Windowing>(out var windowing)) {
+				GLFW.DestroyWindow(windowing.WindowHandle);
 				GLFW.Terminate();
 			}
 
@@ -151,8 +149,6 @@ namespace Dissonance.Engine.Core
 		{
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 			Debug.Log($"Assets directory is '{assetsPath}'.");
-
-			Screen.CursorState = CursorState.Normal;
 
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -220,9 +216,10 @@ namespace Dissonance.Engine.Core
 
 			static TimeSpan FrequencyToTimeSpan(double frequency) => new TimeSpan((long)(TimeSpan.TicksPerSecond*(1d/frequency)));
 
+			var windowing = GetModule<Windowing>();
 			TimeSpan nextUpdateTime = default;
 
-			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(window)==0)) {
+			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle)==0)) {
 				if(!NoWindow) {
 					GLFW.PollEvents();
 				}
@@ -245,10 +242,12 @@ namespace Dissonance.Engine.Core
 
 		public static void Quit()
 		{
-			Instance.shouldQuit = true;
+			var instance = Instance;
 
-			if(window!=IntPtr.Zero) {
-				GLFW.SetWindowShouldClose(window,1);
+			instance.shouldQuit = true;
+
+			if(instance.TryGetModule<Windowing>(out var windowing) && windowing.WindowHandle!=IntPtr.Zero) {
+				GLFW.SetWindowShouldClose(windowing.WindowHandle,1);
 			}
 		}
 

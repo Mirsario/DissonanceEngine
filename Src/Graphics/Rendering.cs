@@ -64,8 +64,11 @@ namespace Dissonance.Engine.Graphics
 
 		public override bool AutoLoad => !Game.NoWindow;
 
+		private Windowing windowing;
+
 		protected override void PreInit()
 		{
+			windowing = Game.GetModule<Windowing>(true);
 			renderingPipelineType = typeof(DeferredRendering);
 		}
 		protected override void Init()
@@ -181,12 +184,14 @@ namespace Dissonance.Engine.Graphics
 				BlitFramebuffers();
 			}
 
-			GLFW.SwapBuffers(Game.window);
+			GLFW.SwapBuffers(windowing.WindowHandle);
 
 			CheckGLErrors("After swapping buffers");
 		}
 		protected override void OnDispose()
 		{
+			windowing = null;
+
 			//TODO:
 		}
 

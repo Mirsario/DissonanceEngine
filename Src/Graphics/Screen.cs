@@ -1,4 +1,5 @@
-﻿using Dissonance.Engine.Core;
+﻿using System;
+using Dissonance.Engine.Core;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Windowing;
@@ -49,18 +50,31 @@ namespace Dissonance.Engine.Graphics
 
 		public static CursorState CursorState {
 			get => cursorState;
-			set => GLFW.SetInputMode(Game.window,InputMode.Cursor,(int)(cursorState = value));
+			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>(true).WindowHandle,InputMode.Cursor,(int)(cursorState = value));
 		}
+
+		private Windowing windowing;
 
 		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void Init() => UpdateValues();
 		protected override void PreRenderUpdate() => UpdateValues();
 
-		private static void UpdateValues()
+		protected override void PreInit()
 		{
+			windowing = Game.GetModule<Windowing>(true);
+		}
+		protected override void OnDispose()
+		{
+			windowing = null;
+		}
+
+		private void UpdateValues()
+		{
+			var windowHandle = windowing.WindowHandle;
+
 			//Framebuffer
-			GLFW.GetFramebufferSize(Game.window,out int framebufferWidth,out int framebufferHeight);
+			GLFW.GetFramebufferSize(windowHandle,out int framebufferWidth,out int framebufferHeight);
 
 			Width = framebufferWidth;
 			Height = framebufferHeight;
@@ -70,8 +84,8 @@ namespace Dissonance.Engine.Graphics
 			Rectangle = new RectInt(0,0,framebufferWidth,framebufferHeight);
 
 			//Window
-			GLFW.GetWindowPos(Game.window,out int windowX,out int windowY);
-			GLFW.GetWindowSize(Game.window,out int windowWidth,out int windowHeight);
+			GLFW.GetWindowPos(windowHandle,out int windowX,out int windowY);
+			GLFW.GetWindowSize(windowHandle,out int windowWidth,out int windowHeight);
 
 			WindowX = windowX;
 			WindowY = windowY;
