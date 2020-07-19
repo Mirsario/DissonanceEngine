@@ -2,12 +2,18 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Dissonance.Engine.Core
 {
 	public static class Debug
 	{
-		public static readonly object LoggingLock = new object(); 
+		public static readonly object LoggingLock = new object();
+		public static readonly Dictionary<string,ConsoleColor> ThreadNameToColor = new Dictionary<string,ConsoleColor>();
+
+		public static bool LogCurrentThread { get; set; }
+		public static bool LogAssembly { get; set; } = true;
 
 		public static void Log(object message,bool showTrace = false,int stackframeOffset = 1)
 		{
@@ -16,14 +22,27 @@ namespace Dissonance.Engine.Core
 			var stackFrame = stackFrames[stackframeOffset];
 			string fileName = Path.GetFileName(stackFrame.GetFileName());
 			int lineNumber = stackFrames[stackframeOffset].GetFileLineNumber();
-
 			var stackFrameMethod = stackFrame.GetMethod();
-			string sourceName = stackFrameMethod!=null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown";
 
 			lock(LoggingLock) {
-				Console.ForegroundColor = ConsoleColor.DarkGray;
+				string threadName = Thread.CurrentThread.Name;
+				bool logThread = LogCurrentThread && threadName!=null;
 
-				Console.Write($"[{sourceName} - {fileName}, line {lineNumber}] ");
+				lock(ThreadNameToColor) {
+					Console.ForegroundColor = logThread && ThreadNameToColor.TryGetValue(threadName,out var consoleColor) ? consoleColor : ConsoleColor.DarkGray;
+				}
+
+				Console.Write("[");
+
+				if(logThread) {
+					Console.Write($"{Thread.CurrentThread.Name} - ");
+				}
+
+				if(LogAssembly) {
+					Console.Write($"{(stackFrameMethod!=null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
+				}
+
+				Console.Write($"{fileName}, line {lineNumber}] ");
 
 				Console.ForegroundColor = ConsoleColor.Gray;
 
