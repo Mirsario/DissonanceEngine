@@ -9,111 +9,7 @@ namespace Dissonance.Engine.IO
 {
 	partial class Resources
 	{
-		//'Import' simply imports files, optionally caching them for Get.
-		public static T Import<T>(string filePath,bool addToCache = true,AssetManager<T> assetManager = null,bool throwOnFail = true) where T : class
-		{
-			NameToPath(ref filePath,out bool ntpMultiplePaths);
-
-			return ImportInternal(filePath,addToCache,assetManager,ntpMultiplePaths,throwOnFail);
-		}
-		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string filePath = null) where T : class
-		{
-			var type = typeof(T);
-
-			if(assetManager==null) {
-				if(filePath==null) {
-					throw new ArgumentException(
-						$"Could not figure out an AssetManager for import, since '{nameof(filePath)}' parameter is null."+
-						$"\r\nProvide a proper file name, or provide an AssetManager with the '{nameof(assetManager)}' parameter."
-					);
-				}
-
-				string ext = Path.GetExtension(filePath).ToLower();
-
-				if(!assetManagers.TryGetValue(ext,out var managers)) {
-					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
-				}
-
-				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
-
-				if(results.Length==0) {
-					throw new NotImplementedException($"Could not find any '{ext}' asset managers which would return a '{type.Name}'.");
-				}
-
-				assetManager = results[0];
-			}
-
-			var output = assetManager.Import(stream,filePath);
-
-			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.RegisterAsset(),false);
-
-			return output;
-		}
-		public static string ImportText(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<string>)assetManagers[".txt"][0],throwOnFail);
-		public static byte[] ImportBytes(string filePath,bool addToCache = false,bool throwOnFail = true) => Import(filePath,addToCache,(AssetManager<byte[]>)assetManagers[".bytes"][0],throwOnFail);
-
-		//'Get' imports and caches files, or gets them from cache, if they have already been loaded.
-		public static T Get<T>(string filePath,bool throwOnFail = true) where T : class
-		{
-			ReadyPath(ref filePath);
-			NameToPath(ref filePath,out bool ntpMultiplePaths);
-
-			if(cacheByPath.TryGetValue(typeof(T),out var dict) && dict.TryGetValue(filePath,out var obj) && obj is T content) {
-				return content;
-			}
-
-			return ImportInternal<T>(filePath,true,null,ntpMultiplePaths,throwOnFail);
-		}
-
-		//'Find' finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
-		public static bool Find<T>(string assetName,out T asset) where T : class
-			=> (asset = Find<T>(assetName))!=null;
-		public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
-		{
-			var type = typeof(T);
-
-			if(cacheByName.TryGetValue(type,out var realDict) && realDict.TryGetValue(assetName,out var obj) && obj is T content) {
-				return content;
-			}
-
-			if(throwOnFail) {
-				throw new Exception($"Couldn't find '{typeof(T).Name}' asset with name '{assetName}'.");
-			}
-
-			return null;
-		}
-
-		//'Export' exports assets
-		public static void Export<T>(T asset,string filePath,AssetManager<T> assetManager = null) where T : class
-		{
-			var type = typeof(T);
-			ReadyPath(ref filePath);
-
-			if(assetManager==null) {
-				string ext = Path.GetExtension(filePath).ToLower();
-				if(!assetManagers.TryGetValue(ext,out var managers)) {
-					throw new NotImplementedException("Could not find any asset managers for the ''"+ext+"'' extension.");
-				}
-				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
-				if(results.Length!=1) {
-					if(results.Length==0) {
-						throw new NotImplementedException("Could not find any ''"+ext+"'' asset managers which would return a "+type.Name+".");
-					}
-					throw new NotImplementedException(
-						"Found more than 1 ''"+ext+"'' asset managers which would return a "+type.Name+
-						":\n"+string.Join(",\n",results.Select(q => q.GetType().Name))+
-						"\n\nPlease specify which asset manager should be used via the ''assetManager'' parameter."
-					);
-				}
-				assetManager = results[0];
-			}
-
-			using var stream = File.OpenWrite(filePath);
-
-			assetManager.Export(asset,stream);
-		}
-
-		internal static T ImportInternal<T>(string filePath,bool addToCache,AssetManager<T> assetManager,bool ntpMultiplePaths,bool throwOnFail = true) where T : class
+		internal T ImportInternal<T>(string filePath,bool addToCache,AssetManager<T> assetManager,bool ntpMultiplePaths,bool throwOnFail = true) where T : class
 		{
 			ReadyPath(ref filePath);
 
@@ -142,7 +38,7 @@ namespace Dissonance.Engine.IO
 
 			return content;
 		}
-		internal static object ImportBuiltInAsset(string filePath,AssetManager manager = null,byte[] data = null)
+		internal object ImportBuiltInAsset(string filePath,AssetManager manager = null,byte[] data = null)
 		{
 			ReadyPath(ref filePath);
 
@@ -174,6 +70,121 @@ namespace Dissonance.Engine.IO
 			AddToCache(filePath,content);
 
 			return content;
+		}
+
+		//'Import' simply imports files, optionally caching them for Get.
+		public static T Import<T>(string filePath,bool addToCache = true,AssetManager<T> assetManager = null,bool throwOnFail = true) where T : class
+		{
+			var instance = Instance;
+
+			instance.NameToPath(ref filePath,out bool ntpMultiplePaths);
+
+			return instance.ImportInternal(filePath,addToCache,assetManager,ntpMultiplePaths,throwOnFail);
+		}
+		public static T ImportFromStream<T>(Stream stream,AssetManager<T> assetManager = null,string filePath = null) where T : class
+		{
+			var type = typeof(T);
+
+			if(assetManager==null) {
+				if(filePath==null) {
+					throw new ArgumentException(
+						$"Could not figure out an AssetManager for import, since '{nameof(filePath)}' parameter is null."+
+						$"\r\nProvide a proper file name, or provide an AssetManager with the '{nameof(assetManager)}' parameter."
+					);
+				}
+
+				string ext = Path.GetExtension(filePath).ToLower();
+
+				if(!Instance.assetManagers.TryGetValue(ext,out var managers)) {
+					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
+				}
+
+				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
+
+				if(results.Length==0) {
+					throw new NotImplementedException($"Could not find any '{ext}' asset managers which would return a '{type.Name}'.");
+				}
+
+				assetManager = results[0];
+			}
+
+			var output = assetManager.Import(stream,filePath);
+
+			InternalUtils.ObjectOrCollectionCall<Asset>(output,asset => asset.RegisterAsset(),false);
+
+			return output;
+		}
+		public static string ImportText(string filePath,bool addToCache = false,bool throwOnFail = true)
+			=> Import(filePath,addToCache,(AssetManager<string>)Instance.assetManagers[".txt"][0],throwOnFail);
+		public static byte[] ImportBytes(string filePath,bool addToCache = false,bool throwOnFail = true)
+			=> Import(filePath,addToCache,(AssetManager<byte[]>)Instance.assetManagers[".bytes"][0],throwOnFail);
+
+		//'Get' imports and caches files, or gets them from cache, if they have already been loaded.
+		public static T Get<T>(string filePath,bool throwOnFail = true) where T : class
+		{
+			var instance = Instance;
+
+			instance.ReadyPath(ref filePath);
+			instance.NameToPath(ref filePath,out bool ntpMultiplePaths);
+
+			if(instance.cacheByPath.TryGetValue(typeof(T),out var dict) && dict.TryGetValue(filePath,out var obj) && obj is T content) {
+				return content;
+			}
+
+			return instance.ImportInternal<T>(filePath,true,null,ntpMultiplePaths,throwOnFail);
+		}
+
+		//'Find' finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
+		public static bool Find<T>(string assetName,out T asset) where T : class
+			=> (asset = Find<T>(assetName))!=null;
+		public static T Find<T>(string assetName,bool throwOnFail = true) where T : class
+		{
+			var type = typeof(T);
+
+			if(Instance.cacheByName.TryGetValue(type,out var realDict) && realDict.TryGetValue(assetName,out var obj) && obj is T content) {
+				return content;
+			}
+
+			if(throwOnFail) {
+				throw new Exception($"Couldn't find '{typeof(T).Name}' asset with name '{assetName}'.");
+			}
+
+			return null;
+		}
+
+		//'Export' exports assets
+		public static void Export<T>(T asset,string filePath,AssetManager<T> assetManager = null) where T : class
+		{
+			var type = typeof(T);
+			var instance = Instance;
+
+			instance.ReadyPath(ref filePath);
+
+			if(assetManager==null) {
+				string ext = Path.GetExtension(filePath).ToLower();
+
+				if(!instance.assetManagers.TryGetValue(ext,out var managers)) {
+					throw new NotImplementedException($"Could not find any asset managers for the '{ext}' extension.");
+				}
+
+				var results = managers.SelectIgnoreNull(q => q as AssetManager<T>).ToArray();
+
+				if(results.Length!=1) {
+					if(results.Length==0) {
+						throw new NotImplementedException($"Could not find any '{ext}' asset managers which would return a {type.Name}.");
+					}
+
+					throw new NotImplementedException(
+						$"Found more than 1 '{ext}' asset managers which would return a {type.Name}:\r\n{string.Join(",\r\n",results.Select(q => q.GetType().Name))}\r\n\r\nPlease specify which asset manager should be used via the '{nameof(assetManager)}' parameter."
+					);
+				}
+
+				assetManager = results[0];
+			}
+
+			using var stream = File.OpenWrite(filePath);
+
+			assetManager.Export(asset,stream);
 		}
 	}
 }

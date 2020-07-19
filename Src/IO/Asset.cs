@@ -16,8 +16,10 @@ namespace Dissonance.Engine.IO
 			if(name!=null) {
 				var type = GetType();
 
-				if(!Resources.cacheByName.TryGetValue(type,out var dict)) {
-					Resources.cacheByName[type] = dict = new Dictionary<string,object>();
+				var resources = Resources.Instance;
+
+				if(!resources.cacheByName.TryGetValue(type,out var dict)) {
+					resources.cacheByName[type] = dict = new Dictionary<string,object>();
 				}
 
 				dict[name] = this;
