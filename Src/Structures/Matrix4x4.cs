@@ -3,7 +3,7 @@ using Dissonance.Engine.Core;
 
 namespace Dissonance.Engine.Structures
 {
-	public struct Matrix4x4
+	public partial struct Matrix4x4
 	{
 		public const int Length = 16;
 
@@ -14,29 +14,30 @@ namespace Dissonance.Engine.Structures
 		
 		public float m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33;
 
-		public float Determinant {
-			get {
-				return m00*m11*m22*m33-m00*m11*m23*m32+m00*m12*m23*m31-m00*m12*m21*m33+
-					   m00*m13*m21*m32-m00*m13*m22*m31-m01*m12*m23*m30+m01*m12*m20*m33-
-					   m01*m13*m20*m32+m01*m13*m22*m30-m01*m10*m22*m33+m01*m10*m23*m32+
-					   m02*m13*m20*m31-m02*m13*m21*m30+m02*m10*m21*m33-m02*m10*m23*m31+
-					   m02*m11*m23*m30-m02*m11*m20*m33-m03*m10*m21*m32+m03*m10*m22*m31-
-					   m03*m11*m22*m30+m03*m11*m20*m32-m03*m12*m20*m31+m03*m12*m21*m30;
-			}
-		}
+		public float Determinant =>
+			m00*m11*m22*m33-m00*m11*m23*m32+m00*m12*m23*m31-m00*m12*m21*m33+
+			m00*m13*m21*m32-m00*m13*m22*m31-m01*m12*m23*m30+m01*m12*m20*m33-
+			m01*m13*m20*m32+m01*m13*m22*m30-m01*m10*m22*m33+m01*m10*m23*m32+
+			m02*m13*m20*m31-m02*m13*m21*m30+m02*m10*m21*m33-m02*m10*m23*m31+
+			m02*m11*m23*m30-m02*m11*m20*m33-m03*m10*m21*m32+m03*m10*m22*m31-
+			m03*m11*m22*m30+m03*m11*m20*m32-m03*m12*m20*m31+m03*m12*m21*m30;
 
 		public Matrix4x4 Transpose => throw new NotImplementedException(); //Matrix4x4.Transpose(this);
 		public Matrix4x4 Normalized {
 			get {
 				var matrix = this;
+
 				matrix.Normalize();
+
 				return matrix;
 			}
 		}
 		public Matrix4x4 Inverted {
 			get {
 				var matrix = this;
+
 				matrix.Invert();
+
 				return matrix;
 			}
 		}
@@ -269,7 +270,7 @@ namespace Dissonance.Engine.Structures
 						m33 = value;
 						break;
 					default:
-						throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15].");
+						throw new IndexOutOfRangeException($"[{id}] single matrix index must be in [0..15] range.");
 				}
 			}
 		}
@@ -341,8 +342,7 @@ namespace Dissonance.Engine.Structures
 			Row2 = new Vector4(0f,0f,mag2,m23);
 		}
 		//Extract
-		public Vector3 ExtractTranslation()
-			=> new Vector3(m30,m31,m32);
+		public Vector3 ExtractTranslation() => new Vector3(m30,m31,m32);
 		public Vector3 ExtractScale()
 		{
 			Vector3 result;
@@ -353,7 +353,26 @@ namespace Dissonance.Engine.Structures
 
 			return result;
 		}
+		public Vector3 ExtractEuler()
+		{
+			float v1, v2, v3;
 
+			if(m21<-1f) { //up
+				v1 = -Mathf.HalfPI;
+				v2 = 0f;
+				v3 = Mathf.Atan2(m02,m00);
+			} else if(m21>1f) { //down
+				v1 = Mathf.HalfPI;
+				v2 = 0f;
+				v3 = -Mathf.Atan2(m02,m00);
+			} else {
+				v1 = Mathf.Asin(m21);
+				v2 = Mathf.Atan2(-m20,m22);
+				v3 = Mathf.Atan2(-m01,m11);
+			}
+
+			return new Vector3(-v1,-v2,v3)*Mathf.Rad2Deg;
+		}
 		public Quaternion ExtractQuaternion()
 		{
 			var row0 = Row0.XYZ.Normalized;
@@ -395,75 +414,6 @@ namespace Dissonance.Engine.Structures
 				q.w = (row1.x-row0.y)*sq;
 				q.x = (row2.x+row0.z)*sq;
 				q.y = (row2.y+row1.z)*sq;
-			}
-
-			q.Normalize();
-
-			return q;
-		}
-		public Vector3 ExtractEuler()
-		{
-			float v1, v2, v3;
-
-			if(m21<-1f) { //up
-				v1 = -Mathf.HalfPI;
-				v2 = 0f;
-				v3 = Mathf.Atan2(m02,m00);
-			} else if(m21>1f) { //down
-				v1 = Mathf.HalfPI;
-				v2 = 0f;
-				v3 = -Mathf.Atan2(m02,m00);
-			} else {
-				v1 = Mathf.Asin(m21);
-				v2 = Mathf.Atan2(-m20,m22);
-				v3 = Mathf.Atan2(-m01,m11);
-			}
-
-			return new Vector3(-v1,-v2,v3)*Mathf.Rad2Deg;
-		}
-		public Quaternion ExtractQuaternion2(bool row_normalise = true)
-		{
-			var tempRow0 = (Vector3)Row0;
-			var tempRow1 = (Vector3)Row1;
-			var tempRow2 = (Vector3)Row2;
-
-			if(row_normalise) {
-				tempRow0.Normalize();
-				tempRow1.Normalize();
-				tempRow2.Normalize();
-			}
-
-			var q = new Quaternion();
-			float trace = 0.25f*(tempRow0[0]+tempRow1[1]+tempRow2[2]+1f);
-			if(trace>0) {
-				float sq = 1f/(4f*Mathf.Sqrt(trace));
-
-				q.x = (tempRow1[2]-tempRow2[1])*sq;
-				q.y = (tempRow2[0]-tempRow0[2])*sq;
-				q.z = (tempRow0[1]-tempRow1[0])*sq;
-				q.w = sq;
-			} else if(tempRow0[0]>tempRow1[1] && tempRow0[0]>tempRow2[2]) {
-				float sq = 1f/(2f*Mathf.Sqrt(1f+tempRow0[0]-tempRow1[1]-tempRow2[2]));
-
-				q.x = 0.25f*sq;
-				q.y = (tempRow1[0]+tempRow0[1])*sq;
-				q.z = (tempRow2[0]+tempRow0[2])*sq;
-				q.w = (tempRow2[1]-tempRow1[2])*sq;
-			} else if(tempRow1[1]>tempRow2[2]) {
-				float sq = 2f*Mathf.Sqrt(1f+tempRow1[1]-tempRow0[0]-tempRow2[2]);
-				q.y = 0.25f*sq;
-				sq = 1f/sq;
-				q.w = (tempRow2[0]-tempRow0[2])*sq;
-				q.x = (tempRow1[0]+tempRow0[1])*sq;
-				q.z = (tempRow2[1]+tempRow1[2])*sq;
-			} else {
-				float sq = 1f/(2f*Mathf.Sqrt(1f+tempRow2[2]-tempRow0[0]-tempRow1[1]));
-				sq = 1f/sq;
-
-				q.x = (tempRow2[0]+tempRow0[2])*sq;
-				q.y = (tempRow2[1]+tempRow1[2])*sq;
-				q.z = 0.25f*sq;
-				q.w = (tempRow1[0]-tempRow0[1])*sq;
 			}
 
 			q.Normalize();
@@ -524,7 +474,9 @@ namespace Dissonance.Engine.Structures
 		}
 		//Etc
 		public bool Equals(Matrix4x4 o)
-			=> m00==o.m00 && m01==o.m01 && m02==o.m02 && m03==o.m03 && m10==o.m10 && m11==o.m11 && m12==o.m12 && m13==o.m13 && m20==o.m20 && m21==o.m21 && m22==o.m22 && m23==o.m23;
+			=> m00==o.m00 && m01==o.m01 && m02==o.m02 && m03==o.m03
+			&& m10==o.m10 && m11==o.m11 && m12==o.m12 && m13==o.m13
+			&& m20==o.m20 && m21==o.m21 && m22==o.m22 && m23==o.m23;
 		public void Normalize()
 		{
 			float d = Determinant;
@@ -645,381 +597,6 @@ namespace Dissonance.Engine.Structures
 			m31 = inverse[3,1];
 			m32 = inverse[3,2];
 			m33 = inverse[3,3];
-		}
-
-		//Translation
-		public static Matrix4x4 CreateTranslation(Vector3 vec) => CreateTranslation(vec.x,vec.y,vec.z);
-		public static Matrix4x4 CreateTranslation(float x,float y,float z)
-		{
-			var result = Identity;
-
-			result.m30 = x;
-			result.m31 = y;
-			result.m32 = z;
-
-			return result;
-		}
-		//Rotation
-		public static Matrix4x4 CreateRotationX(float eulerAngle)
-		{
-			float angle = eulerAngle*Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
-
-			var result = Identity;
-
-			result.m11 = cos;
-			result.m12 = sin;
-			result.m21 = -sin;
-			result.m22 = cos;
-
-			return result;
-		}
-		public static Matrix4x4 CreateRotationY(float eulerAngle)
-		{
-			float angle = eulerAngle*Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
-
-			var result = Identity;
-
-			result.m00 = cos;
-			result.m02 = -sin;
-			result.m20 = sin;
-			result.m22 = cos;
-
-			return result;
-		}
-		public static Matrix4x4 CreateRotationZ(float eulerAngle)
-		{
-			float angle = eulerAngle*Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
-
-			var result = Identity;
-
-			result.m00 = cos;
-			result.m01 = sin;
-			result.m10 = -sin;
-			result.m11 = cos;
-
-			return result;
-		}
-		public static Matrix4x4 CreateRotation(Vector3 vec) => CreateRotation(vec.x,vec.y,vec.z);
-		public static Matrix4x4 CreateRotation(float eulerRotX,float eulerRotY,float eulerRotZ)
-		{
-			eulerRotX *= Mathf.Deg2Rad;
-			eulerRotY *= Mathf.Deg2Rad;
-			eulerRotZ *= Mathf.Deg2Rad;
-
-			float cX = Mathf.Cos(-eulerRotX);
-			float sX = Mathf.Sin(-eulerRotX);
-			float cY = Mathf.Cos(-eulerRotY);
-			float sY = Mathf.Sin(-eulerRotY);
-			float cZ = Mathf.Cos(eulerRotZ);
-			float sZ = Mathf.Sin(eulerRotZ);
-
-			//ZXY
-			return new Matrix4x4(
-				cY*cZ-sX*sY*sZ,-cX*sZ,cZ*sY+cY*sX*sZ,0f,
-				cZ*sX*sY+cY*sZ,cX*cZ,-cY*cZ*sX+sY*sZ,0f,
-				-cX*sY,sX,cX*cY,0f,
-				0f,0f,0f,1f
-			);
-		}
-		public static Matrix4x4 CreateRotation(Quaternion q)
-		{
-			float x = q.x*2f;
-			float y = q.y*2f;
-			float z = q.z*2f;
-
-			float xx = q.x*x;
-			float yy = q.y*y;
-			float zz = q.z*z;
-
-			float xy = q.x*y;
-			float xz = q.x*z;
-			float yz = q.y*z;
-
-			float wx = q.w*x;
-			float wy = q.w*y;
-			float wz = q.w*z;
-
-			return new Matrix4x4(
-				1-(yy+zz),xy+wz,xz-wy,0f,
-				xy-wz,1f-(xx+zz),yz+wx,0f,
-				xz+wy,yz-wx,1f-(xx+yy),0f,
-				0f,0f,0f,1f
-			);
-		}
-		public static Matrix4x4 CreateFromAxisAngle(Vector3 axis,float angle)
-		{
-			var result = Identity;
-
-			axis.Normalize();
-
-			float axisX = axis.x;
-			float axisY = axis.y;
-			float axisZ = axis.z;
-
-			float cos = Mathf.Cos(-angle);
-			float sin = Mathf.Sin(-angle);
-			float t = 1f-cos;
-
-			float tXX = t*axisX*axisX;
-			float tXY = t*axisX*axisY;
-			float tXZ = t*axisX*axisZ;
-
-			float tYY = t*axisY*axisY;
-			float tYZ = t*axisY*axisZ;
-			float tZZ = t*axisZ*axisZ;
-
-			float sinX = sin*axisX;
-			float sinY = sin*axisY;
-			float sinZ = sin*axisZ;
-
-			result.m00 = tXX+cos;
-			result.m01 = tXY-sinZ;
-			result.m02 = tXZ+sinY;
-			result.m03 = 0;
-
-			result.m10 = tXY+sinZ;
-			result.m11 = tYY+cos;
-			result.m12 = tYZ-sinX;
-			result.m13 = 0;
-
-			result.m20 = tXZ-sinY;
-			result.m21 = tYZ+sinX;
-			result.m22 = tZZ+cos;
-			result.m23 = 0;
-
-			result.Row3 = Vector4.UnitW;
-
-			return result;
-		}
-		//Scale
-		public static Matrix4x4 CreateScale(float xyz) => CreateScale(xyz,xyz,xyz);
-		public static Matrix4x4 CreateScale(Vector3 vec) => CreateScale(vec.x,vec.y,vec.z);
-		public static Matrix4x4 CreateScale(float x,float y,float z)
-		{
-			var result = Identity;
-
-			result.m00 = x;
-			result.m11 = y;
-			result.m22 = z;
-
-			return result;
-		}
-		//Projection
-		public static Matrix4x4 CreateOrthographic(float width,float height,float zNear,float zFar) => CreateOrthographicOffCenter(-width/2,width/2,-height/2,height/2,zNear,zFar);
-		public static Matrix4x4 CreateOrthographicOffCenter(float left,float right,float bottom,float top,float zNear,float zFar)
-		{
-			var result = Identity;
-			float invRL = 1f/(right-left);
-			float invTB = 1f/(top-bottom);
-			float invFN = 1f/(zFar-zNear);
-
-			result.m00 = 2*invRL;
-			result.m11 = 2*invTB;
-			result.m22 = -2*invFN;
-			result.m30 = -(right+left)*invRL;
-			result.m31 = -(top+bottom)*invTB;
-			result.m32 = -(zFar+zNear)*invFN;
-
-			return result;
-		}
-		public static Matrix4x4 CreatePerspectiveFOV(float fovY,float aspect,float zNear,float zFar)
-		{
-			if(fovY<=0 || fovY>Math.PI) {
-				throw new ArgumentOutOfRangeException(nameof(fovY));
-			}
-
-			if(aspect<=0) {
-				throw new ArgumentOutOfRangeException(nameof(aspect));
-			}
-
-			if(zNear<=0) {
-				throw new ArgumentOutOfRangeException(nameof(zNear));
-			}
-
-			if(zFar<=0) {
-				throw new ArgumentOutOfRangeException(nameof(zFar));
-			}
-
-			float yMax = zNear*(float)Math.Tan(0.5f*fovY);
-			float yMin = -yMax;
-			float xMin = yMin*aspect;
-			float xMax = yMax*aspect;
-
-			return CreatePerspective(xMin,xMax,yMin,yMax,zNear,zFar);
-		}
-		public static Matrix4x4 CreatePerspective(float left,float right,float bottom,float top,float zNear,float zFar)
-		{
-			var result = Identity;
-
-			if(zNear<=0) {
-				throw new ArgumentOutOfRangeException(nameof(zNear));
-			}
-
-			if(zFar<=0) {
-				throw new ArgumentOutOfRangeException(nameof(zFar));
-			}
-
-			if(zNear>=zFar) {
-				throw new ArgumentOutOfRangeException(nameof(zNear));
-			}
-
-			float x = 2f*zNear/(right-left);
-			float y = 2f*zNear/(top-bottom);
-			float a = (right+left)/(right-left);
-			float b = (top+bottom)/(top-bottom);
-			float c = -(zFar+zNear)/(zFar-zNear);
-			float d = -(2f*zFar*zNear)/(zFar-zNear);
-
-			result.m00 = x;
-			result.m01 = 0;
-			result.m02 = 0;
-			result.m03 = 0;
-
-			result.m10 = 0;
-			result.m11 = y;
-			result.m12 = 0;
-			result.m13 = 0;
-
-			result.m20 = -a;
-			result.m21 = -b;
-			result.m22 = -c;
-			result.m23 = 1;
-
-			result.m30 = 0;
-			result.m31 = 0;
-			result.m32 = d;
-			result.m33 = 0;
-
-			return result;
-		}
-		public static Matrix4x4 LookAt(Vector3 eye,Vector3 target,Vector3 up)
-		{
-			var z = Vector3.Normalize(target-eye);
-			var x = Vector3.Normalize(Vector3.Cross(up,z));
-			var y = Vector3.Normalize(Vector3.Cross(z,x));
-
-			Matrix4x4 result;
-
-			result.m00 = x.x;
-			result.m01 = y.x;
-			result.m02 = z.x;
-			result.m03 = 0f;
-
-			result.m10 = x.y;
-			result.m11 = y.y;
-			result.m12 = z.y;
-			result.m13 = 0f;
-
-			result.m20 = x.z;
-			result.m21 = y.z;
-			result.m22 = z.z;
-			result.m23 = 0f;
-
-			result.m30 = -(x.x*eye.x+x.y*eye.y+x.z*eye.z);
-			result.m31 = -(y.x*eye.x+y.y*eye.y+y.z*eye.z);
-			result.m32 = -(z.x*eye.x+z.y*eye.y+z.z*eye.z);
-			result.m33 = 1f;
-
-			return result;
-		}
-		//Etc
-		public static Matrix4x4 Normalize(Matrix4x4 matrix)
-		{
-			matrix.Normalize();
-
-			return matrix;
-		}
-		public static Matrix4x4 Invert(Matrix4x4 matrix)
-		{
-			matrix.Invert();
-
-			return matrix;
-		}
-
-		//Operators
-		public static Matrix4x4 operator *(Matrix4x4 lhs,Matrix4x4 rhs)
-		{
-			Matrix4x4 result;
-
-			result.m00 = lhs.m00*rhs.m00+lhs.m01*rhs.m10+lhs.m02*rhs.m20+lhs.m03*rhs.m30;
-			result.m01 = lhs.m00*rhs.m01+lhs.m01*rhs.m11+lhs.m02*rhs.m21+lhs.m03*rhs.m31;
-			result.m02 = lhs.m00*rhs.m02+lhs.m01*rhs.m12+lhs.m02*rhs.m22+lhs.m03*rhs.m32;
-			result.m03 = lhs.m00*rhs.m03+lhs.m01*rhs.m13+lhs.m02*rhs.m23+lhs.m03*rhs.m33;
-			result.m10 = lhs.m10*rhs.m00+lhs.m11*rhs.m10+lhs.m12*rhs.m20+lhs.m13*rhs.m30;
-			result.m11 = lhs.m10*rhs.m01+lhs.m11*rhs.m11+lhs.m12*rhs.m21+lhs.m13*rhs.m31;
-			result.m12 = lhs.m10*rhs.m02+lhs.m11*rhs.m12+lhs.m12*rhs.m22+lhs.m13*rhs.m32;
-			result.m13 = lhs.m10*rhs.m03+lhs.m11*rhs.m13+lhs.m12*rhs.m23+lhs.m13*rhs.m33;
-			result.m20 = lhs.m20*rhs.m00+lhs.m21*rhs.m10+lhs.m22*rhs.m20+lhs.m23*rhs.m30;
-			result.m21 = lhs.m20*rhs.m01+lhs.m21*rhs.m11+lhs.m22*rhs.m21+lhs.m23*rhs.m31;
-			result.m22 = lhs.m20*rhs.m02+lhs.m21*rhs.m12+lhs.m22*rhs.m22+lhs.m23*rhs.m32;
-			result.m23 = lhs.m20*rhs.m03+lhs.m21*rhs.m13+lhs.m22*rhs.m23+lhs.m23*rhs.m33;
-			result.m30 = lhs.m30*rhs.m00+lhs.m31*rhs.m10+lhs.m32*rhs.m20+lhs.m33*rhs.m30;
-			result.m31 = lhs.m30*rhs.m01+lhs.m31*rhs.m11+lhs.m32*rhs.m21+lhs.m33*rhs.m31;
-			result.m32 = lhs.m30*rhs.m02+lhs.m31*rhs.m12+lhs.m32*rhs.m22+lhs.m33*rhs.m32;
-			result.m33 = lhs.m30*rhs.m03+lhs.m31*rhs.m13+lhs.m32*rhs.m23+lhs.m33*rhs.m33;
-
-			return result;
-		}
-		public static Vector2 operator *(Vector2 vec,Matrix4x4 matrix) => new Vector2(vec.x*matrix.m00+vec.y*matrix.m10+matrix.m30,vec.x*matrix.m01+vec.y*matrix.m11+matrix.m31);
-		public static Vector3 operator *(Matrix4x4 m,Vector3 v)
-		{
-			Vector3 result;
-
-			result.x = m.m00*v.x+m.m01*v.y+m.m02*v.z+m.m30;
-			result.y = m.m10*v.x+m.m11*v.y+m.m12*v.z+m.m31;
-			result.z = m.m20*v.x+m.m21*v.y+m.m22*v.z+m.m32;
-
-			return result;
-		}
-		public static Vector4 operator *(Matrix4x4 lhs,Vector4 v)
-		{
-			Vector4 result;
-
-			result.x = lhs.m00*v.x+lhs.m01*v.y+lhs.m02*v.z+lhs.m03*v.w;
-			result.y = lhs.m10*v.x+lhs.m11*v.y+lhs.m12*v.z+lhs.m13*v.w;
-			result.z = lhs.m20*v.x+lhs.m21*v.y+lhs.m22*v.z+lhs.m23*v.w;
-			result.w = lhs.m30*v.x+lhs.m31*v.y+lhs.m32*v.z+lhs.m33*v.w;
-
-			return result;
-		}
-
-		public static bool operator ==(Matrix4x4 left,Matrix4x4 right) => left.Equals(right);
-		public static bool operator !=(Matrix4x4 left,Matrix4x4 right) => !left.Equals(right);
-
-		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new Matrix4x4(v.M11,v.M12,v.M13,v.M14,v.M21,v.M22,v.M23,v.M24,v.M31,v.M32,v.M33,v.M34,v.M41,v.M42,v.M43,v.M44);
-		public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new BulletSharp.Math.Matrix {
-			M11 = v.m00,
-			M12 = v.m01,
-			M13 = v.m02,
-			M14 = v.m03,
-			M21 = v.m10,
-			M22 = v.m11,
-			M23 = v.m12,
-			M24 = v.m13,
-			M31 = v.m20,
-			M32 = v.m21,
-			M33 = v.m22,
-			M34 = v.m23,
-			M41 = v.m30,
-			M42 = v.m31,
-			M43 = v.m32,
-			M44 = v.m33
-		};
-		public static implicit operator double[](Matrix4x4 value)
-		{
-			var output = new double[16];
-
-			for(int i = 0;i<16;i++) {
-				output[i] = value[i];
-			}
-
-			return output;
 		}
 	}
 }
