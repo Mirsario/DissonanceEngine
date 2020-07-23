@@ -34,7 +34,7 @@ namespace Dissonance.Engine.Graphics
 		internal static List<Light> lightList;
 		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
-		internal static System.Type renderingPipelineType;
+		internal static Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
