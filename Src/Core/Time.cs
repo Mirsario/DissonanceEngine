@@ -66,11 +66,6 @@ namespace Dissonance.Engine.Core
 				}
 
 				Instance.targetUpdateFrequency = value;
-
-				//TODO: Reimplement
-				/*if(Game.window!=null) {
-					Game.window.TargetUpdateFrequency = targetUpdateFrequency;
-				}*/
 			}
 		}
 		public static double TargetRenderFrequency {
@@ -81,11 +76,6 @@ namespace Dissonance.Engine.Core
 				}
 
 				Instance.targetRenderFrequency = value;
-
-				//TODO: Reimplement
-				/*if(Game.window!=null) {
-					Game.window.TargetRenderFrequency = targetRenderFrequency;
-				}*/
 			}
 		}
 
