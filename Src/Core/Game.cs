@@ -68,17 +68,7 @@ namespace Dissonance.Engine.Core
 
 		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
-			if(threadStaticInstance!=null) {
-				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
-			}
-
-			if(globalInstance==null) {
-				globalInstance = this;
-			}
-
-			Instances.Enqueue(this);
-
-			multipleInstances = Instances.Count>1;
+			RegisterInstance();
 
 			Flags = flags;
 			NoWindow = (Flags & GameFlags.NoWindow)!=0;
@@ -90,7 +80,7 @@ namespace Dissonance.Engine.Core
 
 			Debug.Log("Loading engine...");
 
-			threadStaticInstance = this;
+			//TODO: Move this.
 			assetsPath = "Assets"+Path.DirectorySeparatorChar;
 
 			if(args!=null) {
@@ -210,6 +200,18 @@ namespace Dissonance.Engine.Core
 			threadStaticInstance?.Dispose();
 		}
 
+		private void RegisterInstance()
+		{
+			if(threadStaticInstance!=null) {
+				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
+			}
+
+			Instances.Enqueue(this);
+
+			globalInstance ??= this;
+			threadStaticInstance = this;
+			multipleInstances = Instances.Count>1;
+		}
 		private void UpdateLoop()
 		{
 			Stopwatch updateStopwatch = new Stopwatch();
