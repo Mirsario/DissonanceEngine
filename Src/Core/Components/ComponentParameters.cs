@@ -1,8 +1,8 @@
 namespace Dissonance.Engine.Core.Components
 {
-	internal class ComponentParameters
+	public class ComponentParameters
 	{
-		public bool allowOnlyOnePerObject = false;
-		public bool allowOnlyOneInWorld = false;
+		public bool allowOnlyOnePerObject;
+		public bool allowOnlyOneInWorld;
 	}
 }
