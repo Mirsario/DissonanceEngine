@@ -11,12 +11,6 @@ namespace Dissonance.Engine.Input
 		public const int MaxMouseButtons = 12;
 		public const int MaxGamepads = 4;
 
-		internal static InputVariables fixedInput;
-		internal static InputVariables renderInput;
-		internal static InputVariables prevFixedInput;
-		internal static InputVariables prevRenderInput;
-
-		public static InputTrigger[] Triggers => triggers;
 		//Mouse
 		public static Vector2 MouseDelta => PrevInput.mousePosition-CurrentInput.mousePosition;
 		public static Vector2 MousePosition => CurrentInput.mousePosition;
@@ -24,8 +18,14 @@ namespace Dissonance.Engine.Input
 		//Keyboard
 		public static string InputString => CurrentInput.inputString;
 
-		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
-		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
+		internal static InputEngine Instance => Game.Instance.GetModule<InputEngine>(true);
+		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? Instance.fixedInput : Instance.renderInput;
+		internal static InputVariables PrevInput => Game.IsFixedUpdate ? Instance.prevFixedInput : Instance.prevRenderInput;
+
+		internal InputVariables fixedInput;
+		internal InputVariables renderInput;
+		internal InputVariables prevFixedInput;
+		internal InputVariables prevRenderInput;
 
 		private Windowing windowing;
 
