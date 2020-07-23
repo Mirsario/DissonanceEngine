@@ -125,7 +125,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 			}
 
 			if(hasDefaultUniform[DSU.Time]) {
-				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.renderTime);
+				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.RenderGameTime);
 			}
 
 			if(hasDefaultUniform[DSU.AmbientColor]) {
