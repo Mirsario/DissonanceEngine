@@ -88,7 +88,8 @@ namespace Dissonance.Engine.Core
 		public T AddComponent<T>(bool enable = true) where T : Component
 		{
 			var componentType = typeof(T);
-			var parameters = ComponentManager.typeParameters[componentType];
+			var parameters = ComponentManager.GetParameters(componentType);
+
 			if(parameters.allowOnlyOnePerObject) {
 				if(CountComponents<T>()>=1) {
 					throw new Exception("You can't add more than 1 component of type "+componentType.Name+" to a single gameobject");

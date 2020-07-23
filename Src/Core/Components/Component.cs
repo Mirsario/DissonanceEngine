@@ -25,9 +25,9 @@ namespace Dissonance.Engine.Core.Components
 
 				if(value) {
 					var type = GetType();
-					var parameters = ComponentManager.typeParameters[type];
+					var parameters = ComponentManager.GetParameters(type);
 
-					if(!parameters.allowOnlyOneInWorld || !ComponentManager.typeInstances.TryGetValue(type,out var list) || !list.Any(q => q.enabled)) {
+					if(!parameters.allowOnlyOneInWorld || !ComponentManager.TryGetInstanceList(type,out var list) || !list.Any(q => q.enabled)) {
 						if(!beenEnabledBefore) {
 							OnInit();
 
@@ -56,14 +56,11 @@ namespace Dissonance.Engine.Core.Components
 		protected Component() : base()
 		{
 			var type = GetType();
+
 			Name = type.Name;
 			NameHash = Name.GetHashCode();
 
-			if(!ComponentManager.typeInstances.TryGetValue(type,out var list)) {
-				ComponentManager.typeInstances[type] = list = new List<Component>();
-			}
-
-			list.Add(this);
+			ComponentManager.RegisterInstance(type,this);
 		}
 
 		protected virtual void OnPreInit() { }
@@ -78,7 +75,7 @@ namespace Dissonance.Engine.Core.Components
 
 			OnDispose();
 
-			ComponentManager.typeInstances[GetType()]?.Remove(this);
+			ComponentManager.UnregisterInstance(GetType(),this);
 
 			var dict = gameObject.componentsByNameHash;
 
