@@ -26,12 +26,6 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 		public ulong? layerMask;
 
-		private Stopwatch sw;
-
-		public override void OnInit()
-		{
-			sw = new Stopwatch();
-		}
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
@@ -57,182 +51,141 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 			int rendererCount = ComponentManager.CountComponents<Renderer>();
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
-			sw.Restart();
-
-			void UseStopwatch(ref long addTo,Action action)
-			{
-				long tempMs = sw.ElapsedTicks;
-
-				action();
-
-				addTo += sw.ElapsedTicks-tempMs;
-			}
-
-			long rendererLoopMs = 0;
-			long sortingMs = 0;
-			long renderMs = 0;
-			long totalMs = 0;
-
-			bool doSort = !InputEngine.GetKey(Keys.U);
-
 			//CameraLoop
-			UseStopwatch(ref totalMs,() => {
-				foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
-					var viewport = GetViewport(camera);
-					GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
+			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
+				var viewport = GetViewport(camera);
+				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
-					camera.OnRenderStart?.Invoke(camera);
+				camera.OnRenderStart?.Invoke(camera);
 
-					var cameraPos = camera.Transform.Position;
+				var cameraPos = camera.Transform.Position;
 
-					//RendererLoop
-					if(rendererCount==0) {
+				//RendererLoop
+				if(rendererCount==0) {
+					continue;
+				}
+
+				int numToRenderer = 0;
+
+				foreach(var renderer in ComponentManager.EnumerateComponents<Renderer>()) {
+					if(!renderer.Enabled) {
 						continue;
 					}
 
-					int numToRenderer = 0;
+					//TODO: To be optimized
+					if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.layer) & layerMaskValue)==0) {
+						continue;
+					}
 
-					UseStopwatch(ref rendererLoopMs,() => {
-						foreach(var renderer in ComponentManager.EnumerateComponents<Renderer>()) {
-							if(!renderer.Enabled) {
-								continue;
-							}
+					var meshPos = renderer.Transform.Position;
 
-							//TODO: To be optimized
-							if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.layer) & layerMaskValue)==0) {
-								continue;
-							}
+					if(!renderer.GetRenderData(meshPos,cameraPos,out var material,out var bounds,out var renderObject)) {
+						continue;
+					}
 
-							var meshPos = renderer.Transform.Position;
+					var shader = material.Shader;
+					if(shader==null) {
+						continue;
+					}
 
-							if(!renderer.GetRenderData(meshPos,cameraPos,out var material,out var bounds,out var renderObject)) {
-								continue;
-							}
+					bool cullResult = renderer.PreCullingModifyResult?.Invoke() ?? camera.orthographic || camera.BoxInFrustum(meshPos+bounds.center,bounds.extents*renderer.Transform.LocalScale);
+					var postCullResult = renderer.PostCullingModifyResult?.Invoke(cullResult);
+					if(postCullResult!=null) {
+						cullResult = postCullResult.Value;
+					}
 
-							var shader = material.Shader;
-							if(shader==null) {
-								continue;
-							}
-
-							bool cullResult = renderer.PreCullingModifyResult?.Invoke() ?? camera.orthographic || camera.BoxInFrustum(meshPos+bounds.center,bounds.extents*renderer.Transform.LocalScale);
-							var postCullResult = renderer.PostCullingModifyResult?.Invoke(cullResult);
-							if(postCullResult!=null) {
-								cullResult = postCullResult.Value;
-							}
-
-							if(cullResult) {
-								ref var entry = ref renderQueue[numToRenderer++];
-								entry.shader = shader;
-								entry.material = material;
-								entry.renderer = renderer;
-								entry.renderObject = renderObject;
-							}
-						}
-					});
-
-					//Sort the render queue
-					UseStopwatch(ref sortingMs,() => {
-						if(doSort) {
-							for(int i = 0;i<numToRenderer-1;i++) {
-								for(int j = i+1;j<numToRenderer;j++) {
-									ref var iTuple = ref renderQueue[i];
-									ref var jTuple = ref renderQueue[j];
-
-									if(iTuple.shader.queue>jTuple.shader.queue || iTuple.shader.Id>jTuple.shader.Id || iTuple.material.Id>jTuple.material.Id) {
-										var temp = iTuple;
-										iTuple = jTuple;
-										jTuple = temp;
-									}
-								}
-							}
-						}
-					});
-
-					//Render
-					UseStopwatch(ref renderMs,() => {
-						for(int i = 0;i<numToRenderer;i++) {
-							var entry = renderQueue[i];
-							var shader = entry.shader;
-							var material = entry.material;
-							var renderer = entry.renderer;
-							var renderObject = entry.renderObject;
-
-							//Update Shader
-							if(lastShader!=shader) {
-								Shader.SetShader(shader);
-
-								shader.SetupCommonUniforms();
-								shader.SetupCameraUniforms(camera,cameraPos);
-
-								//Update CullMode
-								if(lastCullMode!=shader.cullMode) {
-									if(shader.cullMode==CullMode.Off) {
-										GL.Disable(EnableCap.CullFace);
-									} else {
-										if(lastCullMode==CullMode.Off) {
-											GL.Enable(EnableCap.CullFace);
-										}
-
-										GL.CullFace((CullFaceMode)shader.cullMode);
-									}
-
-									lastCullMode = shader.cullMode;
-								}
-
-								//Update PolygonMode
-								if(lastPolygonMode!=shader.polygonMode) {
-									GL.PolygonMode(MaterialFace.FrontAndBack,lastPolygonMode = shader.polygonMode);
-								}
-
-								lastShader = shader;
-							}
-
-							//Update Material
-							if(lastMaterial!=material) {
-								material.ApplyTextures(shader);
-								material.ApplyUniforms(shader);
-
-								lastMaterial = material;
-							}
-
-							//Render mesh
-
-							//Mark matrices for recalculation
-							for(int k = DefaultShaderUniforms.World;k<=DefaultShaderUniforms.ProjInverse;k++) {
-								uniformComputed[k] = false;
-							}
-
-							shader.SetupMatrixUniformsCached(
-								renderer.Transform,uniformComputed,
-								ref world,ref worldInverse,
-								ref worldView,ref worldViewInverse,
-								ref worldViewProj,ref worldViewProjInverse,
-								ref camera.matrix_view,ref camera.matrix_viewInverse,
-								ref camera.matrix_proj,ref camera.matrix_projInverse
-							);
-
-							renderer.ApplyUniforms(shader);
-							renderer.Render(renderObject);
-
-							Rendering.drawCallsCount++;
-						}
-					});
-
-					camera.OnRenderEnd?.Invoke(camera);
+					if(cullResult) {
+						ref var entry = ref renderQueue[numToRenderer++];
+						entry.shader = shader;
+						entry.material = material;
+						entry.renderer = renderer;
+						entry.renderObject = renderObject;
+					}
 				}
-			});
 
-			if(InputEngine.GetKeyDown(Keys.Y)) {
-				void LogStat(string name,long ticks,int tabs = 2) => Debug.Log($"{name}: {new string('\t',tabs)}{ticks} ticks \t({ticks/(float)totalMs*100f:0.00}%)");
+				//Sort the render queue
+				for(int i = 0;i<numToRenderer-1;i++) {
+					for(int j = i+1;j<numToRenderer;j++) {
+						ref var iTuple = ref renderQueue[i];
+						ref var jTuple = ref renderQueue[j];
 
-				Debug.Log($"RENDER STATS:");
+						if(iTuple.shader.queue>jTuple.shader.queue || iTuple.shader.Id>jTuple.shader.Id || iTuple.material.Id>jTuple.material.Id) {
+							var temp = iTuple;
+							iTuple = jTuple;
+							jTuple = temp;
+						}
+					}
+				}
 
-				LogStat(nameof(totalMs),totalMs);
-				LogStat(nameof(rendererLoopMs),rendererLoopMs,1);
-				LogStat(nameof(sortingMs),sortingMs);
-				LogStat(nameof(renderMs),renderMs);
+				//Render
+				for(int i = 0;i<numToRenderer;i++) {
+					var entry = renderQueue[i];
+					var shader = entry.shader;
+					var material = entry.material;
+					var renderer = entry.renderer;
+					var renderObject = entry.renderObject;
 
-				Debug.Log($"");
+					//Update Shader
+					if(lastShader!=shader) {
+						Shader.SetShader(shader);
+
+						shader.SetupCommonUniforms();
+						shader.SetupCameraUniforms(camera,cameraPos);
+
+						//Update CullMode
+						if(lastCullMode!=shader.cullMode) {
+							if(shader.cullMode==CullMode.Off) {
+								GL.Disable(EnableCap.CullFace);
+							} else {
+								if(lastCullMode==CullMode.Off) {
+									GL.Enable(EnableCap.CullFace);
+								}
+
+								GL.CullFace((CullFaceMode)shader.cullMode);
+							}
+
+							lastCullMode = shader.cullMode;
+						}
+
+						//Update PolygonMode
+						if(lastPolygonMode!=shader.polygonMode) {
+							GL.PolygonMode(MaterialFace.FrontAndBack,lastPolygonMode = shader.polygonMode);
+						}
+
+						lastShader = shader;
+					}
+
+					//Update Material
+					if(lastMaterial!=material) {
+						material.ApplyTextures(shader);
+						material.ApplyUniforms(shader);
+
+						lastMaterial = material;
+					}
+
+					//Render mesh
+
+					//Mark matrices for recalculation
+					for(int k = DefaultShaderUniforms.World;k<=DefaultShaderUniforms.ProjInverse;k++) {
+						uniformComputed[k] = false;
+					}
+
+					shader.SetupMatrixUniformsCached(
+						renderer.Transform,uniformComputed,
+						ref world,ref worldInverse,
+						ref worldView,ref worldViewInverse,
+						ref worldViewProj,ref worldViewProjInverse,
+						ref camera.matrix_view,ref camera.matrix_viewInverse,
+						ref camera.matrix_proj,ref camera.matrix_projInverse
+					);
+
+					renderer.ApplyUniforms(shader);
+					renderer.Render(renderObject);
+
+					Rendering.drawCallsCount++;
+				}
+
+				camera.OnRenderEnd?.Invoke(camera);
 			}
 
 			GL.PolygonMode(MaterialFace.FrontAndBack,PolygonMode.Fill);
