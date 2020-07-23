@@ -1,4 +1,5 @@
-﻿using Dissonance.Engine.Graphics.Components;
+﻿using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Graphics.Components;
 using Dissonance.Engine.Graphics.Meshes;
 using Dissonance.Engine.Graphics.Shaders;
 using Dissonance.Engine.Structures;
@@ -38,16 +39,15 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 			worldView = default, worldViewInverse = default,
 			worldViewProj = default, worldViewProjInverse = default;
 
-			for(int i = 0;i<Rendering.cameraList.Count;i++) {
-				var camera = Rendering.cameraList[i];
-
+			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewRect = camera.ViewPixel;
 				GL.Viewport(viewRect.x,viewRect.y,viewRect.width,viewRect.height);
 
 				var cameraPos = camera.Transform.Position;
 
-				for(int j = 0;j<shaders.Length;j++) {
-					var activeShader = shaders[j];
+				for(int i = 0;i<shaders.Length;i++) {
+					var activeShader = shaders[i];
+
 					if(activeShader==null) {
 						continue;
 					}
@@ -57,16 +57,16 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 					activeShader.SetupCommonUniforms();
 					activeShader.SetupCameraUniforms(camera,cameraPos);
 
-					var lightType = (Light.Type)j;
+					var lightType = (Light.Type)i;
 
 					//TODO: Update & optimize this
-					for(int k = 0;k<passedTextures.Length;k++) {
-						var tex = passedTextures[k];
-						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+k));
+					for(int j = 0;j<passedTextures.Length;j++) {
+						var tex = passedTextures[j];
+						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+j));
 						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
 
 						if(activeShader.TryGetUniformLocation(tex.name,out int location)) {
-							GL.Uniform1(location,k);
+							GL.Uniform1(location,j);
 						}
 					}
 
@@ -77,7 +77,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 					activeShader.TryGetUniformLocation("lightIntensity",out int uniformLightIntensity);
 					activeShader.TryGetUniformLocation("lightColor",out int uniformLightColor);
 
-					foreach(var light in Rendering.lightList) {
+					foreach(var light in ComponentManager.EnumerateComponents<Light>()) {
 						if(light.type!=lightType) {
 							continue;
 						}

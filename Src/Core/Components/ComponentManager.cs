@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Dissonance.Engine.Core.Components.Attributes;
 using Dissonance.Engine.Core.Modules;
+using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Core.Components
 {
@@ -12,12 +13,14 @@ namespace Dissonance.Engine.Core.Components
 		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
 
 		private Dictionary<Type,List<Component>> typeInstances = new Dictionary<Type,List<Component>>();
+		private Dictionary<Type,List<Component>> exactTypeInstances = new Dictionary<Type,List<Component>>();
 		private Dictionary<Type,ComponentParameters> typeParameters = new Dictionary<Type,ComponentParameters>();
 
 		protected override void Init()
 		{
-			typeInstances = new Dictionary<Type,List<Component>>();
 			typeParameters = new Dictionary<Type,ComponentParameters>();
+			typeInstances = new Dictionary<Type,List<Component>>();
+			exactTypeInstances = new Dictionary<Type,List<Component>>();
 
 			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
 				if(!typeParameters.TryGetValue(type,out var parameters)) {
@@ -33,37 +36,59 @@ namespace Dissonance.Engine.Core.Components
 		}
 
 		public static ComponentParameters GetParameters(Type type) => Instance.typeParameters[type];
-		public static bool TryGetInstanceList(Type type,out IReadOnlyList<Component> list)
+		//Count
+		public static int CountComponents(Type type,bool exactType = false)
+			=> (exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var list) ? list.Count : 0;
+		public static int CountComponents<T>(bool exactType = false)
+			=> CountComponents(typeof(T),exactType);
+		//Enumerate
+		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false)
+			=> (exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var list) ? list : Enumerable.Empty<Component>();
+		public static IEnumerable<T> EnumerateComponents<T>(bool exactType = false) where T : Component
 		{
-			bool result = Instance.typeInstances.TryGetValue(type,out var originalList);
-
-			list = originalList;
-
-			return result;
+			foreach(var component in EnumerateComponents(typeof(T),exactType)) {
+				yield return (T)component;
+			}
 		}
 
 		internal static void RegisterInstance(Type type,Component component)
 		{
-			var typeInstances = Instance.typeInstances;
+			void AddToList(Type key,Dictionary<Type,List<Component>> dictionary)
+			{
+				if(!dictionary.TryGetValue(key,out var list)) {
+					dictionary[key] = list = new List<Component>();
+				}
 
-			if(!typeInstances.TryGetValue(type,out var list)) {
-				typeInstances[type] = list = new List<Component>();
+				list.Add(component);
 			}
 
-			list.Add(component);
+			AddToList(type,Instance.exactTypeInstances);
+
+			//TODO: This could've been made faster.
+			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type,true,typeof(Component))) {
+				AddToList(baseType,Instance.typeInstances);
+			}
 		}
 		internal static void UnregisterInstance(Type type,Component component)
 		{
-			var typeInstances = Instance.typeInstances;
+			void RemoveFromList(Type key,Dictionary<Type,List<Component>> dictionary)
+			{
+				if(!dictionary.TryGetValue(key,out var list)) {
+					return;
+				}
 
-			if(!typeInstances.TryGetValue(type,out var list)) {
-				return;
+				list.Remove(component);
+
+				if(list.Count==0) {
+					dictionary.Remove(type);
+				}
 			}
 
-			list.Remove(component);
+			RemoveFromList(type,Instance.typeInstances);
 
-			if(list.Count==0) {
-				typeInstances.Remove(type);
+			//Same as above.
+			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type,true,typeof(Component))) {
+				RemoveFromList(baseType,Instance.typeInstances);
 			}
 		}
 	}

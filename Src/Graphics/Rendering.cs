@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics.Components;
 using Dissonance.Engine.Graphics.Meshes;
@@ -30,9 +31,6 @@ namespace Dissonance.Engine.Graphics
 		public static Vector3 ambientColor = new Vector3(0.1f,0.1f,0.1f);
 		public static Vector4 clearColor = Vector4.Zero;
 
-		internal static List<Camera> cameraList;
-		internal static List<Light> lightList;
-		internal static List<Light2D> light2DList;
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
@@ -92,10 +90,6 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"After initializing a default font.");
 
-			cameraList = new List<Camera>();
-			lightList = new List<Light>();
-			light2DList = new List<Light2D>();
-
 			GL.CullFace(CullFaceMode.Back);
 			GL.DepthFunc(DepthFunction.Lequal);
 
@@ -115,9 +109,7 @@ namespace Dissonance.Engine.Graphics
 			drawCallsCount = 0;
 
 			//Calculate view and projection matrices, culling frustums
-			for(int i = 0;i<cameraList.Count;i++) {
-				var camera = cameraList[i];
-
+			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewSize = camera.ViewPixel;
 				float aspectRatio = viewSize.width/(float)viewSize.height;
 
