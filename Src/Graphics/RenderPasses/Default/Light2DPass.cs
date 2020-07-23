@@ -1,4 +1,6 @@
-﻿using Dissonance.Engine.Graphics.Meshes;
+﻿using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Graphics.Components;
+using Dissonance.Engine.Graphics.Meshes;
 using Dissonance.Engine.Graphics.Shaders;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
@@ -23,9 +25,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 			passShader.SetupCommonUniforms();
 
-			for(int i = 0;i<Rendering.cameraList.Count;i++) {
-				var camera = Rendering.cameraList[i];
-
+			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewport = GetViewport(camera);
 				GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
@@ -47,7 +47,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 				int uniformLightIntensity = GL.GetUniformLocation(passShader.Id,"lightIntensity");
 				int uniformLightColor = GL.GetUniformLocation(passShader.Id,"lightColor");
 
-				foreach(var light in Rendering.light2DList) {
+				foreach(var light in ComponentManager.EnumerateComponents<Light2D>()) {
 					var lightPos = light.Transform.Position;
 					var world = Matrix4x4.CreateScale(light.range+1f)*Matrix4x4.CreateTranslation(lightPos);
 

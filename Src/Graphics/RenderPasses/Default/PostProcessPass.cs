@@ -1,4 +1,6 @@
-﻿using Dissonance.Engine.Graphics.Shaders;
+﻿using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Graphics.Components;
+using Dissonance.Engine.Graphics.Shaders;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
@@ -18,9 +20,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 			GL.Viewport(0,0,Screen.Width,Screen.Height);
 
-			for(int i = 0;i<Rendering.cameraList.Count;i++) {
-				var camera = Rendering.cameraList[i];
-
+			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewport = GetViewport(camera);
 
 				passShader.SetupCameraUniforms(camera,camera.Transform.Position);

@@ -27,7 +27,7 @@ namespace Dissonance.Engine.Core.Components
 					var type = GetType();
 					var parameters = ComponentManager.GetParameters(type);
 
-					if(!parameters.allowOnlyOneInWorld || !ComponentManager.TryGetInstanceList(type,out var list) || !list.Any(q => q.enabled)) {
+					if(!parameters.allowOnlyOneInWorld || !ComponentManager.EnumerateComponents(type).Any(q => q.enabled)) {
 						if(!beenEnabledBefore) {
 							OnInit();
 

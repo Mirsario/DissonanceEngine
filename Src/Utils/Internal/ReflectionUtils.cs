@@ -5,11 +5,13 @@ namespace Dissonance.Engine.Utils.Internal
 {
 	internal static class ReflectionUtils
 	{
-		public static IEnumerable<Type> EnumerateBaseTypes(Type type)
+		public static IEnumerable<Type> EnumerateBaseTypes(Type type,bool includingOriginal = false,Type stopAt = null)
 		{
-			type = type.BaseType;
+			if(!includingOriginal) {
+				type = type.BaseType;
+			}
 
-			while(type!=null) {
+			while(type!=stopAt) {
 				yield return type;
 
 				type = type.BaseType;

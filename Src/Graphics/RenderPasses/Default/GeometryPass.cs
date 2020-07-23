@@ -9,6 +9,8 @@ using Dissonance.Engine.Graphics.Renderers;
 using Dissonance.Engine.Graphics.Enums;
 using Dissonance.Engine.Graphics.Shaders;
 using Debug = Dissonance.Engine.Core.Debug;
+using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Graphics.Components;
 
 namespace Dissonance.Engine.Graphics.RenderPasses.Default
 {
@@ -52,7 +54,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = Renderer.RendererCount;
+			int rendererCount = ComponentManager.CountComponents<Renderer>();
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
 			sw.Restart();
@@ -75,9 +77,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 			//CameraLoop
 			UseStopwatch(ref totalMs,() => {
-				for(int c = 0;c<Rendering.cameraList.Count;c++) {
-					var camera = Rendering.cameraList[c];
-
+				foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 					var viewport = GetViewport(camera);
 					GL.Viewport(viewport.x,viewport.y,viewport.width,viewport.height);
 
@@ -93,7 +93,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 					int numToRenderer = 0;
 
 					UseStopwatch(ref rendererLoopMs,() => {
-						foreach(var renderer in Renderer.EnumerateRenderers()) {
+						foreach(var renderer in ComponentManager.EnumerateComponents<Renderer>()) {
 							if(!renderer.Enabled) {
 								continue;
 							}
