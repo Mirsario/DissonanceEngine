@@ -1,14 +1,9 @@
 ﻿using Dissonance.Engine.Physics;
 using Dissonance.Framework.Graphics;
-using System;
-using System.Diagnostics;
-using Dissonance.Framework.Windowing.Input;
 using Dissonance.Engine.Structures;
-using Dissonance.Engine.Input;
 using Dissonance.Engine.Graphics.Renderers;
 using Dissonance.Engine.Graphics.Enums;
 using Dissonance.Engine.Graphics.Shaders;
-using Debug = Dissonance.Engine.Core.Debug;
 using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Graphics.Components;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Dissonance.Engine.Core;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Windowing;
