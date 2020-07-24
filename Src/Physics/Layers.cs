@@ -8,11 +8,11 @@ namespace Dissonance.Engine.Physics
 	{
 		public const int MaxLayers = sizeof(ulong)*8;
 
+		internal static Layers Instance => Game.Instance.GetModule<Layers>(true);
+
 		private ulong[] indexToMask;
 		private string[] indexToName;
 		private int layerCount;
-
-		internal static Layers Instance => Game.Instance.GetModule<Layers>(true);
 
 		protected override void PreInit()
 		{
