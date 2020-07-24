@@ -8,9 +8,11 @@ namespace Dissonance.Engine.Physics
 	{
 		public const int MaxLayers = sizeof(ulong)*8;
 
-		private static ulong[] indexToMask;
-		private static string[] indexToName;
-		private static int layerCount;
+		private ulong[] indexToMask;
+		private string[] indexToName;
+		private int layerCount;
+
+		internal static Layers Instance => Game.Instance.GetModule<Layers>(true);
 
 		protected override void PreInit()
 		{
@@ -27,32 +29,38 @@ namespace Dissonance.Engine.Physics
 				throw new Exception("Cannot add layers after Game.PreInit() call has finished.");
 			}
 
-			int newLength = layerCount+layerNames.Length;
+			var instance = Instance;
+			int newLength = instance.layerCount+layerNames.Length;
+
 			if(newLength>=64) {
 				throw new Exception("Cannot add more than 64 layers.");
 			}
 
-			for(int i = 0,j = layerCount;i<layerNames.Length;i++,j++) {
-				indexToMask[j] = (ulong)1 << j;
-				indexToName[j] = layerNames[i];
+			for(int i = 0,j = instance.layerCount;i<layerNames.Length;i++,j++) {
+				instance.indexToMask[j] = (ulong)1 << j;
+				instance.indexToName[j] = layerNames[i];
 			}
 
-			layerCount += layerNames.Length;
+			instance.layerCount += layerNames.Length;
 		}
 
 		public static ulong GetLayerMask(int index)
 		{
-			if(index<0 || index>=layerCount) {
+			var instance = Instance;
+
+			if(index<0 || index>=instance.layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
-			return indexToMask[index];
+			return instance.indexToMask[index];
 		}
 		public static ulong GetLayerMask(string name)
 		{
-			for(int i = 0;i<layerCount;i++) {
-				if(indexToName[i]==name) {
-					return indexToMask[i];
+			var instance = Instance;
+
+			for(int i = 0;i<instance.layerCount;i++) {
+				if(instance.indexToName[i]==name) {
+					return instance.indexToMask[i];
 				}
 			}
 
@@ -61,17 +69,21 @@ namespace Dissonance.Engine.Physics
 
 		public static string GetLayerName(int index)
 		{
-			if(index<0 || index>=layerCount) {
+			var instance = Instance;
+
+			if(index<0 || index>=instance.layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
-			return indexToName[index];
+			return instance.indexToName[index];
 		}
 		public static string GetLayerName(ulong flag)
 		{
-			for(int i = 0;i<layerCount;i++) {
-				if(indexToMask[i]==flag) {
-					return indexToName[i];
+			var instance = Instance;
+
+			for(int i = 0;i<instance.layerCount;i++) {
+				if(instance.indexToMask[i]==flag) {
+					return instance.indexToName[i];
 				}
 			}
 
@@ -80,8 +92,10 @@ namespace Dissonance.Engine.Physics
 
 		public static byte GetLayerIndex(string name)
 		{
-			for(int i = 0;i<layerCount;i++) {
-				if(indexToName[i]==name) {
+			var instance = Instance;
+
+			for(int i = 0;i<instance.layerCount;i++) {
+				if(instance.indexToName[i]==name) {
 					return (byte)i;
 				}
 			}
@@ -90,8 +104,10 @@ namespace Dissonance.Engine.Physics
 		}
 		public static byte GetLayerIndex(ulong flag)
 		{
-			for(int i = 0;i<layerCount;i++) {
-				if(indexToMask[i]==flag) {
+			var instance = Instance;
+
+			for(int i = 0;i<instance.layerCount;i++) {
+				if(instance.indexToMask[i]==flag) {
 					return (byte)i;
 				}
 			}
