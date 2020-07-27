@@ -71,8 +71,8 @@ namespace Dissonance.Engine.Core
 			RegisterInstance();
 
 			Flags = flags;
-			NoWindow = (Flags & GameFlags.Graphics)==0;
-			NoAudio = (Flags & GameFlags.Audio)!=0;
+			NoWindow = !Flags.HasFlag(GameFlags.Graphics);
+			NoAudio = !Flags.HasFlag(GameFlags.Audio);
 
 			DllResolver.Init();
 			AssemblyCache.Init();
