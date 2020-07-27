@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Utils;
 using Dissonance.Engine.Utils.Internal;
@@ -14,6 +15,17 @@ namespace Dissonance.Engine.Core
 		private Dictionary<Type,List<EngineModule>> modulesByType;
 		private EngineModuleHooks moduleHooks;
 
+		public void AddModule(EngineModule module)
+		{
+			var type = module.GetType();
+
+			if(!modulesByType.TryGetValue(type,out var list)) {
+				modulesByType[type] = list = new List<EngineModule>();
+			}
+
+			list.Add(module);
+			modules.Add(module);
+		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
 			if(!modulesByType.TryGetValue(typeof(T),out var list)) {
@@ -48,6 +60,12 @@ namespace Dissonance.Engine.Core
 
 			lock(AssemblyCache.AllTypes) {
 				foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
+					var autoload = AutoloadAttribute.Get(type);
+
+					if(!autoload.NeedsAutoloading) {
+						continue;
+					}
+
 					var instance = (EngineModule)Activator.CreateInstance(type);
 
 					instance.Game = this;
@@ -57,14 +75,7 @@ namespace Dissonance.Engine.Core
 						.SelectMany(a => a.Dependencies)
 						.ToArray();
 
-					if(instance.AutoLoad) {
-						if(!modulesByType.TryGetValue(type,out var list)) {
-							modulesByType[type] = list = new List<EngineModule>();
-						}
-
-						list.Add(instance);
-						modules.Add(instance);
-					}
+					AddModule(instance);
 				}
 			}
 

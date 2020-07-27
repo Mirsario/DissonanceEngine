@@ -7,9 +7,12 @@ using Dissonance.Engine.Structures;
 using Dissonance.Engine.Graphics.Shaders;
 using Dissonance.Engine.Graphics.Meshes;
 using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Core.Attributes;
+using Dissonance.Engine.Core;
 
 namespace Dissonance.Engine.Graphics.UserInterface
 {
+	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
 	[ModuleDependency(typeof(Resources),typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
@@ -23,8 +26,6 @@ namespace Dissonance.Engine.Graphics.UserInterface
 		internal static bool canDraw;
 
 		private static Mesh textBufferMesh;
-
-		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void Init()
 		{

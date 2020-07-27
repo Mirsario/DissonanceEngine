@@ -1,4 +1,6 @@
 using System;
+using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Audio;
@@ -6,12 +8,11 @@ using Dissonance.Framework.Audio;
 namespace Dissonance.Engine.Audio
 {
 	[ModuleDependency(typeof(Windowing))]
+	[Autoload(RequiredGameFlags = GameFlags.Audio)]
 	public sealed class AudioEngine : EngineModule
 	{
 		internal static IntPtr audioDevice;
 		internal static IntPtr audioContext;
-
-		public override bool AutoLoad => !Game.NoAudio;
 
 		protected override void Init()
 		{

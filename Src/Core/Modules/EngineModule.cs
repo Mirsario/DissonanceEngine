@@ -4,8 +4,6 @@ namespace Dissonance.Engine.Core.Modules
 {
 	public abstract class EngineModule : IDisposable
 	{
-		public virtual bool AutoLoad => true;
-
 		public Game Game { get; internal set; }
 		public ModuleDependency[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
