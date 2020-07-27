@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics.Components;
@@ -20,6 +21,7 @@ namespace Dissonance.Engine.Graphics
 {
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
+	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
 	[ModuleDependency(typeof(Windowing),typeof(Screen),typeof(Resources))]
 	public sealed partial class Rendering : EngineModule
 	{
@@ -58,8 +60,6 @@ namespace Dissonance.Engine.Graphics
 		}
 		
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
-
-		public override bool AutoLoad => !Game.NoWindow;
 
 		private Windowing windowing;
 

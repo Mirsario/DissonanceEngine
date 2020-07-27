@@ -1,4 +1,5 @@
 ﻿using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Structures;
 using Dissonance.Framework.Windowing;
@@ -6,6 +7,7 @@ using Dissonance.Framework.Windowing;
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(typeof(Windowing))]
+	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
 	public sealed class Screen : EngineModule
 	{
 		public static bool lockCursor;
@@ -53,8 +55,6 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		private Windowing windowing;
-
-		public override bool AutoLoad => !Game.NoWindow;
 
 		protected override void Init() => UpdateValues();
 		protected override void PreRenderUpdate() => UpdateValues();

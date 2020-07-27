@@ -5,8 +5,9 @@ namespace Dissonance.Engine.Core
 	[Flags]
 	public enum GameFlags
 	{
-		None,
-		NoWindow = 1,
-		NoAudio = 2
+		None = 0,
+		Default = Graphics|Audio,
+		Graphics = 1,
+		Audio = 2
 	}
 }

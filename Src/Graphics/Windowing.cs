@@ -1,5 +1,6 @@
 ﻿using System;
 using Dissonance.Engine.Core;
+using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Framework.Graphics;
 using Dissonance.Framework.Imaging;
@@ -7,11 +8,10 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
+	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
 	public sealed class Windowing : EngineModule
 	{
 		private static readonly object GlfwLock = new object();
-
-		public override bool AutoLoad => !Game.NoWindow;
 
 		public IntPtr WindowHandle { get; private set; }
 
