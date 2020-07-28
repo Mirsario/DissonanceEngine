@@ -23,7 +23,7 @@ namespace Dissonance.Engine.IO
 
 		private static readonly string[] DefaultSearchPattern = { "*" };
 
-		internal static Resources Instance => Game.Instance.GetModule<Resources>(true);
+		internal static Resources Instance => Game.Instance.GetModule<Resources>();
 
 		internal Dictionary<string,List<AssetManager>> assetManagers;
 		internal IEnumerable<IEnumerable<AssetManager>> autoloadOrder;

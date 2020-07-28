@@ -65,7 +65,7 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void PreInit()
 		{
-			windowing = Game.GetModule<Windowing>(true);
+			windowing = Game.GetModule<Windowing>();
 			renderingPipelineType = typeof(DeferredRendering);
 		}
 		protected override void Init()

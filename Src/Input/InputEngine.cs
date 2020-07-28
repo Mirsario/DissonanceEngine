@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Input
 		//Keyboard
 		public static string InputString => CurrentInput.inputString;
 
-		internal static InputEngine Instance => Game.Instance.GetModule<InputEngine>(true);
+		internal static InputEngine Instance => Game.Instance.GetModule<InputEngine>();
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? Instance.fixedInput : Instance.renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? Instance.prevFixedInput : Instance.prevRenderInput;
 
