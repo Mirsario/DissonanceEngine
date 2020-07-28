@@ -11,6 +11,7 @@ namespace Dissonance.Engine.Core
 {
 	partial class Game
 	{
+		private bool modulesReady;
 		private List<EngineModule> modules;
 		private Dictionary<Type,List<EngineModule>> modulesByType;
 		private EngineModuleHooks moduleHooks;
@@ -25,6 +26,10 @@ namespace Dissonance.Engine.Core
 
 			list.Add(module);
 			modules.Add(module);
+
+			if(modulesReady) {
+				RefreshModules();
+			}
 		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
@@ -54,7 +59,6 @@ namespace Dissonance.Engine.Core
 		private void InitializeModules()
 		{
 			moduleHooks = new EngineModuleHooks();
-
 			modules = new List<EngineModule>();
 			modulesByType = new Dictionary<Type,List<EngineModule>>();
 
@@ -79,6 +83,17 @@ namespace Dissonance.Engine.Core
 				}
 			}
 
+			RefreshModules();
+
+			modulesReady = true;
+		}
+		private void RefreshModules()
+		{
+			SortModules();
+			RebuildModuleHooks();
+		}
+		private void SortModules()
+		{
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
 				=> module.Dependencies?.Select(dependency => {
 					var result = modules.FirstOrDefault(m => m.GetType()==dependency.type);
@@ -95,8 +110,6 @@ namespace Dissonance.Engine.Core
 			for(int i = 0;i<modules.Count;i++) {
 				modules[i].DependencyIndex = i;
 			}
-
-			RebuildModuleHooks();
 		}
 		private void RebuildModuleHooks()
 		{
