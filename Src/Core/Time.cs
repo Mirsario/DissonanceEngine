@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Core
 			public uint updateCount;
 		}
 
-		internal static Time Instance => Game.Instance.GetModule<Time>(true);
+		internal static Time Instance => Game.Instance.GetModule<Time>();
 
 		//Auto
 		public static float GameTime => Game.IsFixedUpdate ? FixedGameTime : RenderGameTime;

@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed partial class PhysicsEngine : EngineModule
 	{
-		internal static PhysicsEngine Instance => Game.Instance.GetModule<PhysicsEngine>(true);
+		internal static PhysicsEngine Instance => Game.Instance.GetModule<PhysicsEngine>();
 
 		internal DbvtBroadphase broadphase;
 		internal DiscreteDynamicsWorld world;

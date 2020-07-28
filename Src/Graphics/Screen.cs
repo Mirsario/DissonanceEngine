@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static CursorState CursorState {
 			get => cursorState;
-			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>(true).WindowHandle,InputMode.Cursor,(int)(cursorState = value));
+			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>().WindowHandle,InputMode.Cursor,(int)(cursorState = value));
 		}
 
 		private Windowing windowing;
@@ -61,7 +61,7 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void PreInit()
 		{
-			windowing = Game.GetModule<Windowing>(true);
+			windowing = Game.GetModule<Windowing>();
 		}
 		protected override void OnDispose()
 		{

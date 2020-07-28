@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Core
 
 			return true;
 		}
-		public T GetModule<T>(bool throwOnFailure = false) where T : EngineModule
+		public T GetModule<T>(bool throwOnFailure = true) where T : EngineModule
 		{
 			if(TryGetModule<T>(out var result)) {
 				return result;

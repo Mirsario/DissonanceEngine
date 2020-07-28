@@ -220,7 +220,7 @@ namespace Dissonance.Engine.Core
 
 			static TimeSpan FrequencyToTimeSpan(double frequency) => new TimeSpan((long)(TimeSpan.TicksPerSecond*(1d/frequency)));
 
-			var windowing = GetModule<Windowing>();
+			var windowing = GetModule<Windowing>(false);
 			TimeSpan nextUpdateTime = default;
 
 			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle)==0)) {
