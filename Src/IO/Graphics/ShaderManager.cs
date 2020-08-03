@@ -29,7 +29,7 @@ namespace Dissonance.Engine.IO.Graphics
 
 				string vertexCode = Resources.ImportText(jsonShader.vertexShader);
 				string fragmentCode = Resources.ImportText(jsonShader.fragmentShader);
-				string geometryCode = jsonShader.geometryShader.IsEmptyOrNull() ? "" : Resources.ImportText(jsonShader.geometryShader);
+				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Resources.ImportText(jsonShader.geometryShader) : null;
 
 				var shader = Shader.FromCode(name,vertexCode,fragmentCode,geometryCode,jsonShader.shaderDefines);
 

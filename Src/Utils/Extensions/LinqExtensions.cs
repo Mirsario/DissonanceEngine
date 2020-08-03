@@ -29,10 +29,10 @@ namespace Dissonance.Engine.Utils.Extensions
 				}
 			}
 		}
-		public static bool TryGetFirst<T>(this IEnumerable<T> array,Func<T,bool> func,out T result)
+		public static bool TryGetFirst<T>(this IEnumerable<T> array,Predicate<T> predicate,out T result)
 		{
 			foreach(var val in array) {
-				if(func(val)) {
+				if(predicate(val)) {
 					result = val;
 
 					return true;
@@ -40,6 +40,34 @@ namespace Dissonance.Engine.Utils.Extensions
 			}
 
 			result = default;
+
+			return false;
+		}
+		public static bool TryFindIndex<T>(this T[] array,Predicate<T> predicate,out int index)
+		{
+			for(int i = 0;i<array.Length;i++) {
+				if(predicate(array[i])) {
+					index = i;
+
+					return true;
+				}
+			}
+
+			index = -1;
+
+			return false;
+		}
+		public static bool TryFindIndex<T>(this IReadOnlyList<T> list,Predicate<T> predicate,out int index)
+		{
+			for(int i = 0;i<list.Count;i++) {
+				if(predicate(list[i])) {
+					index = i;
+
+					return true;
+				}
+			}
+
+			index = -1;
 
 			return false;
 		}
