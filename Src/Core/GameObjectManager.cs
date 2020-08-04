@@ -7,6 +7,8 @@ namespace Dissonance.Engine.Core
 {
 	public class GameObjectManager : EngineModule
 	{
+		private static GameObjectManager Instance => Game.Instance.GetModule<GameObjectManager>();
+
 		internal List<GameObject> gameObjects;
 
 		protected override void Init()
@@ -14,6 +16,7 @@ namespace Dissonance.Engine.Core
 			gameObjects = new List<GameObject>();
 		}
 
+		//Instantiation
 		public T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true) where T : GameObject
 			=> (T)Instantiate(typeof(T),name,position,rotation,scale,init);
 		public GameObject Instantiate(Type type,string name = default,Vector3? position = default,Quaternion? rotation = default,Vector3? scale = null,bool init = true)
@@ -51,6 +54,13 @@ namespace Dissonance.Engine.Core
 			}
 
 			return obj;
+		}
+		
+		public static IEnumerable<GameObject> EnumerateGameObjects()
+		{
+			foreach(var entry in Instance.gameObjects) {
+				yield return entry;
+			}
 		}
 	}
 }
