@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Structures;
+using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Core
 {
@@ -25,9 +26,7 @@ namespace Dissonance.Engine.Core
 				throw new ArgumentNullException(nameof(type));
 			}
 
-			if(!typeof(GameObject).IsAssignableFrom(type)) {
-				throw new ArgumentException($"Type '{type.Name}' does not derive from '{nameof(GameObject)}'.");
-			}
+			AssertionUtils.TypeIsAssignableFrom(typeof(GameObject),type);
 
 			var obj = (GameObject)Activator.CreateInstance(type,true);
 
