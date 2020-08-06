@@ -20,8 +20,8 @@ namespace Dissonance.Engine.Physics
 				Transform = transform;
 			}
 
-			public override void GetWorldTransform(out Matrix matrix) => matrix = (Transform.parent==null ? Transform.matrix : Transform.ToWorldSpace(Transform.matrix));
-			public override void SetWorldTransform(ref Matrix matrix) => Transform.matrix = Transform.parent==null ? matrix : (Matrix)Transform.ToLocalSpace(matrix);
+			public override void GetWorldTransform(out Matrix matrix) => matrix = Transform.Parent==null ? Transform.Matrix : Transform.ToWorldSpace(Transform.Matrix);
+			public override void SetWorldTransform(ref Matrix matrix) => Transform.Matrix = Transform.Parent==null ? matrix : (Matrix)Transform.ToLocalSpace(matrix);
 		}
 
 		//private readonly MotionStateInternal MotionState;

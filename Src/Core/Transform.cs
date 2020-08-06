@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -7,15 +8,49 @@ namespace Dissonance.Engine.Core
 {
 	public class Transform
 	{
-		public Transform parent = null;
+		//This enum won't be needed after the physics engine is made to use the game engine's matrices.
+		[Flags]
+		internal enum UpdateFlags
+		{
+			None = 0,
+			Position = 1,
+			Rotation = 2,
+			Scale = 4,
+			All = Position|Rotation|Scale
+		}
+
+		public readonly IReadOnlyList<Transform> Children;
+
+		private readonly List<Transform> ChildrenInternal;
+
 		public GameObject gameObject;
 
-		internal Matrix4x4 matrix = Matrix4x4.Identity;
-		internal bool updatePhysicsPosition = true;
-		internal bool updatePhysicsRotation = true;
-		internal bool updatePhysicsScale = true;
+		internal UpdateFlags physicsUpdateFlags;
 
-		public Transform Root => parent==null ? this : GetParents().Last();
+		private Matrix4x4 matrix = Matrix4x4.Identity;
+		private Transform parent;
+		private Matrix4x4 worldMatrixCache;
+		private bool worldMatrixNeedsRecalculation;
+
+		public Transform Root => Parent==null ? this : EnumerateParents().Last();
+		public Transform Parent {
+			get => parent;
+			set {
+				if(parent==value) {
+					return;
+				}
+
+				if(parent!=null) {
+					parent.ChildrenInternal.Remove(this);
+				}
+
+				if(value!=null) {
+					value.ChildrenInternal.Add(this);
+				}
+
+				parent = value;
+			}
+		}
 		public Vector3 Forward {
 			get {
 				var m = WorldMatrix;
@@ -50,13 +85,13 @@ namespace Dissonance.Engine.Core
 
 				m.SetTranslation(value);
 
-				if(parent!=null) {
+				if(Parent!=null) {
 					m = ToLocalSpace(m);
 				}
 
 				matrix.SetTranslation(m.ExtractTranslation());
 
-				updatePhysicsPosition = true;
+				OnModified(UpdateFlags.Position);
 			}
 		}
 		public Vector3 LocalPosition {
@@ -64,7 +99,7 @@ namespace Dissonance.Engine.Core
 			set {
 				matrix.SetTranslation(value);
 
-				updatePhysicsPosition = true;
+				OnModified(UpdateFlags.Position);
 			}
 		}
 		public Vector3 LocalScale {
@@ -72,7 +107,7 @@ namespace Dissonance.Engine.Core
 			set {
 				matrix.SetScale(value);
 
-				updatePhysicsScale = true;
+				OnModified(UpdateFlags.Scale);
 			}
 		}
 		public Quaternion Rotation {
@@ -88,7 +123,7 @@ namespace Dissonance.Engine.Core
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				updatePhysicsRotation = true;
+				OnModified(UpdateFlags.Rotation);
 			}
 		}
 		public Quaternion LocalRotation {
@@ -101,7 +136,7 @@ namespace Dissonance.Engine.Core
 				LocalPosition = tempPos;
 				LocalScale = tempScale;
 
-				updatePhysicsRotation = true;
+				OnModified(UpdateFlags.Rotation);
 			}
 		}
 		public Vector3 EulerRot {
@@ -110,12 +145,12 @@ namespace Dissonance.Engine.Core
 				var tempPos = matrix.ExtractTranslation();
 				var tempScale = matrix.ExtractScale();
 
-				matrix = parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
+				matrix = Parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
 
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				updatePhysicsRotation = true;
+				OnModified(UpdateFlags.Rotation);
 			}
 		}
 		public Vector3 LocalEulerRot {
@@ -131,68 +166,99 @@ namespace Dissonance.Engine.Core
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				updatePhysicsRotation = true;
+				OnModified(UpdateFlags.Rotation);
 			}
 		}
 		public Matrix4x4 Matrix {
 			get => matrix;
 			set {
 				matrix = value;
-				updatePhysicsPosition = true;
-				updatePhysicsRotation = true;
-				updatePhysicsScale = true;
+
+				OnModified(UpdateFlags.All);
 			}
 		}
 		public Matrix4x4 WorldMatrix {
-			get => parent==null ? matrix : ToWorldSpace(matrix);
+			get {
+				if(Parent==null) {
+					return matrix;
+				}
+
+				if(worldMatrixNeedsRecalculation) {
+					worldMatrixCache = ToWorldSpace(matrix);
+
+					worldMatrixNeedsRecalculation = false;
+				}
+
+				return worldMatrixCache;
+			}
 			set {
-				matrix = parent==null ? value : ToLocalSpace(value);
-				updatePhysicsPosition = true;
-				updatePhysicsRotation = true;
-				updatePhysicsScale = true;
+				matrix = Parent==null ? value : ToLocalSpace(value);
+				worldMatrixCache = value;
+
+				OnModified(UpdateFlags.All,false);
 			}
 		}
 
 		public Transform(GameObject gameObject = null)
 		{
 			this.gameObject = gameObject;
+
+			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 		}
 
-		public IEnumerable<Transform> GetParents() => parent==null ? null : GetParentsIterator(this);
+		public IEnumerable<Transform> EnumerateParents()
+		{
+			var transform = this;
+
+			while((transform = transform.Parent)!=null) {
+				yield return transform;
+			}
+		}
+		public IEnumerable<Transform> EnumerateChildren()
+		{
+			for(int i = 0;i<ChildrenInternal.Count;i++) {
+				var child = ChildrenInternal[i];
+
+				yield return child;
+
+				foreach(var transform in child.EnumerateChildren()) {
+					yield return transform;
+				}
+			}
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToLocalSpace(Matrix4x4 matrix)
 		{
 			Transform p = this;
 
-			while((p = p.parent)!=null) {
+			while((p = p.Parent)!=null) {
 				matrix *= p.Matrix.Inverted;
 			}
 
 			return matrix;
 		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToWorldSpace(Matrix4x4 matrix)
 		{
 			Transform p = this;
 
-			while((p = p.parent)!=null) {
+			while((p = p.Parent)!=null) {
 				matrix *= p.Matrix;
 			}
 
 			return matrix;
 		}
 
-		private static IEnumerable<Transform> GetParentsIterator(Transform transform)
+		private void OnModified(UpdateFlags physicsUpdateFlags,bool worldMatrixNeedsRecalculation = true)
 		{
-			while(true) {
-				transform = transform.parent;
+			this.physicsUpdateFlags |= physicsUpdateFlags;
+			this.worldMatrixNeedsRecalculation = worldMatrixNeedsRecalculation;
 
-				if(transform==null) {
-					break;
-				}
-
-				yield return transform;
+			foreach(var child in EnumerateChildren()) {
+				child.physicsUpdateFlags |= physicsUpdateFlags;
+				child.worldMatrixNeedsRecalculation |= worldMatrixNeedsRecalculation;
 			}
 		}
 	}
