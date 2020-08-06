@@ -18,43 +18,29 @@ namespace Dissonance.Engine.Core
 		}
 
 		//Instantiation
-		public T Instantiate<T>(string name = default,Vector3 position = default,Quaternion rotation = default,Vector3? scale = null,bool init = true) where T : GameObject
-			=> (T)Instantiate(typeof(T),name,position,rotation,scale,init);
-		public GameObject Instantiate(Type type,string name = default,Vector3? position = default,Quaternion? rotation = default,Vector3? scale = null,bool init = true)
+		public T Instantiate<T>(Action<T> preinitializer = null) where T : GameObject
 		{
-			if(type==null) {
-				throw new ArgumentNullException(nameof(type));
-			}
+			var obj = (T)Activator.CreateInstance(typeof(T),true);
 
-			AssertionUtils.TypeIsAssignableFrom(typeof(GameObject),type);
+			preinitializer?.Invoke(obj);
 
-			var obj = (GameObject)Activator.CreateInstance(type,true);
-
-			obj.PreInit();
-
-			if(name!=default) {
-				obj.Name = name;
-			}
-
-			if(position.HasValue) {
-				obj.transform.Position = position.Value;
-			}
-
-			if(rotation.HasValue) {
-				obj.transform.Rotation = rotation.Value;
-			}
-
-			if(scale.HasValue) {
-				obj.transform.LocalScale = scale.Value;
-			}
-
-			if(init) {
-				obj.Init();
-			}
+			obj.Init();
 
 			return obj;
 		}
-		
+		public GameObject Instantiate(Type type,Action<GameObject> preinitializer = null)
+		{
+			AssertionUtils.TypeIsAssignableFrom(typeof(GameObject),type ?? throw new ArgumentNullException(nameof(type)));
+
+			var obj = (GameObject)Activator.CreateInstance(type,true);
+
+			preinitializer?.Invoke(obj);
+
+			obj.Init();
+
+			return obj;
+		}
+		//Enumeration
 		public static IEnumerable<GameObject> EnumerateGameObjects()
 		{
 			foreach(var entry in Instance.gameObjects) {
