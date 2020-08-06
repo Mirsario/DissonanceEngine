@@ -56,29 +56,29 @@ namespace Dissonance.Engine.Physics
 
 				var transform = rigidbody.gameObject.transform;
 
-				if(transform.updatePhysicsPosition || transform.updatePhysicsScale || transform.updatePhysicsRotation) {
-					Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
+				//TODO: The following code partially updates physics transform if game transforms were updated. This is pretty lame, it's preferable to just have physics rely on the game's transforms instead.
 
-					if(transform.updatePhysicsPosition) {
-						matrix.SetTranslation(transform.Position);
-
-						transform.updatePhysicsPosition = false;
-					}
-
-					if(transform.updatePhysicsScale && transform.updatePhysicsRotation) {
-						matrix.SetRotationAndScale(transform.Rotation,transform.LocalScale);
-						transform.updatePhysicsScale = false;
-						transform.updatePhysicsRotation = false;
-					} else if(transform.updatePhysicsScale) {
-						matrix.SetScale(transform.LocalScale);
-						transform.updatePhysicsScale = false;
-					} else if(transform.updatePhysicsRotation) {
-						matrix.SetRotation(transform.Rotation);
-						transform.updatePhysicsRotation = false;
-					}
-
-					rigidbody.btRigidbody.WorldTransform = matrix;
+				if(transform.physicsUpdateFlags==Transform.UpdateFlags.None) {
+					continue;
 				}
+
+				Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
+
+				if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Position)) {
+					matrix.SetTranslation(transform.Position);
+				}
+
+				if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Scale) && transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Rotation)) {
+					matrix.SetRotationAndScale(transform.Rotation,transform.LocalScale);
+				} else if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Scale)) {
+					matrix.SetScale(transform.LocalScale);
+				} else if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Rotation)) {
+					matrix.SetRotation(transform.Rotation);
+				}
+
+				transform.physicsUpdateFlags = Transform.UpdateFlags.None;
+
+				rigidbody.btRigidbody.WorldTransform = matrix;
 			}
 
 			world.StepSimulation(Time.FixedDeltaTime);

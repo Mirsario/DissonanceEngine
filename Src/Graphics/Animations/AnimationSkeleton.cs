@@ -53,7 +53,7 @@ namespace Dissonance.Engine.Graphics.Animations
 			for(int i = 0;i<bones.Length;i++) {
 				var bone = skeleton.bones[i];
 
-				bone.transform.parent = bone.parent==null ? parentTransform : bone.parent.transform;
+				bone.transform.Parent = bone.parent==null ? parentTransform : bone.parent.transform;
 				bone.transform.Matrix = bone.baseMatrix;
 
 				/*GameObject box = new GameObject();
