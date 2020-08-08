@@ -7,8 +7,7 @@ using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Core
 {
-	//TODO: 
-	public partial class GameObject : ProgrammableEntity, IDisposable
+	partial class GameObject
 	{
 		internal List<Component> components;
 		internal Dictionary<int,List<Component>> componentsByNameHash;

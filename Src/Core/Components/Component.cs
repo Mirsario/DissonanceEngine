@@ -50,7 +50,7 @@ namespace Dissonance.Engine.Core.Components
 		}
 
 		public GameObject GameObject => gameObject;
-		public Transform Transform => gameObject.transform;
+		public Transform Transform => gameObject.Transform;
 
 		protected Component() : base()
 		{

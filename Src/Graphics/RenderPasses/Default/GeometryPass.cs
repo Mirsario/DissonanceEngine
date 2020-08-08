@@ -68,7 +68,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 					}
 
 					//TODO: To be optimized
-					if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.layer) & layerMaskValue)==0) {
+					if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.Layer) & layerMaskValue)==0) {
 						continue;
 					}
 

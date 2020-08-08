@@ -54,7 +54,7 @@ namespace Dissonance.Engine.Physics
 					continue;
 				}
 
-				var transform = rigidbody.gameObject.transform;
+				var transform = rigidbody.gameObject.Transform;
 
 				//TODO: The following code partially updates physics transform if game transforms were updated. This is pretty lame, it's preferable to just have physics rely on the game's transforms instead.
 
