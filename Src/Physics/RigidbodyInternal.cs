@@ -146,7 +146,7 @@ namespace Dissonance.Engine.Physics
 			collisions2D = new List<Collision2D>();
 			collisionShape = new EmptyShape();
 
-			var motionState = new MotionStateInternal(gameObject.transform);
+			var motionState = new MotionStateInternal(gameObject.Transform);
 			var rbInfo = new RigidBodyConstructionInfo(0f,motionState,collisionShape,Vector3.Zero) {
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,

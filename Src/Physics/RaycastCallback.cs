@@ -43,7 +43,7 @@ namespace Dissonance.Engine.Physics
 		{
 			if(proxy.ClientObject is RigidBody bulletBody) {
 				var rbInternal = bulletBody.UserObject as RigidbodyInternal;
-				ulong objLayerMask = Layers.GetLayerMask(rbInternal.gameObject.layer);
+				ulong objLayerMask = Layers.GetLayerMask(rbInternal.gameObject.Layer);
 
 				if(rbInternal!=null) {
 					var resultOverride = customFilter?.Invoke(rbInternal.gameObject);

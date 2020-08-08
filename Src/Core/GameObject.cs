@@ -1,7 +1,6 @@
 using System;
 using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Physics;
-using Dissonance.Engine.Structures;
 
 namespace Dissonance.Engine.Core
 {
@@ -9,23 +8,32 @@ namespace Dissonance.Engine.Core
 	{
 		private static GameObjectManager Manager => Game.Instance.GetModule<GameObjectManager>();
 
-		public byte layer;
-		public string name;
-
 		internal bool initialized;
 		internal RigidbodyInternal rigidbodyInternal;
-		internal Transform transform;
 
-		public Transform Transform => transform;
+		private string name;
+		private byte layer;
+
+		public Transform Transform { get; }
 		public string Name {
 			get => name;
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
+		}
+		public byte Layer {
+			get => layer;
+			set {
+				if(value>=Layers.MaxLayers) {
+					throw new IndexOutOfRangeException($"Layer values must be in [0..{Layers.MaxLayers-1}] range.");
+				}
+
+				layer = value;
+			}
 		}
 
 		protected GameObject() : base()
 		{
 			Name = GetType().Name;
-			transform = new Transform(this);
+			Transform = new Transform(this);
 
 			ComponentPreInit();
 		}
