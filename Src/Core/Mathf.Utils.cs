@@ -5,8 +5,8 @@ namespace Dissonance.Engine.Core
 	partial class Mathf
 	{
 		[MethodImpl(Inline)] public static int Repeat(int value,int length) => value >= 0 ? value%length : (value%length)+length;
-		[MethodImpl(Inline)] public static float Repeat(float t,float length) => t-Floor(t/length)*length;
-		[MethodImpl(Inline)] public static double Repeat(double t,double length) => t-Floor(t/length)*length;
+		[MethodImpl(Inline)] public static float Repeat(float value,float length) => value-Floor(value/length)*length;
+		[MethodImpl(Inline)] public static double Repeat(double value,double length) => value-Floor(value/length)*length;
 
 		[MethodImpl(Inline)] public static float SnapToGrid(float val,float step) => Ceil(val/step)*step;
 		[MethodImpl(Inline)] public static double SnapToGrid(double val,double step) => Ceil(val/step)*step;
