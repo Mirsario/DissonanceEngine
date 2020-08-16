@@ -10,17 +10,34 @@ namespace Dissonance.Engine.Core.Components
 {
 	public class ComponentManager : EngineModule
 	{
+		internal class ComponentInstanceLists
+		{
+			public List<Component> all;
+			public List<Component> enabled;
+			public List<Component> disabled;
+			public IReadOnlyList<Component> allReadOnly;
+			public IReadOnlyList<Component> enabledReadOnly;
+			public IReadOnlyList<Component> disabledReadOnly;
+
+			public ComponentInstanceLists()
+			{
+				allReadOnly = (all = new List<Component>()).AsReadOnly();
+				enabledReadOnly = (enabled = new List<Component>()).AsReadOnly();
+				disabledReadOnly = (disabled = new List<Component>()).AsReadOnly();
+			}
+		}
+
 		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
 
-		private Dictionary<Type,List<Component>> typeInstances = new Dictionary<Type,List<Component>>();
-		private Dictionary<Type,List<Component>> exactTypeInstances = new Dictionary<Type,List<Component>>();
+		private Dictionary<Type,ComponentInstanceLists> typeInstances = new Dictionary<Type,ComponentInstanceLists>();
+		private Dictionary<Type,ComponentInstanceLists> exactTypeInstances = new Dictionary<Type,ComponentInstanceLists>();
 		private Dictionary<Type,ComponentParameters> typeParameters = new Dictionary<Type,ComponentParameters>();
 
 		protected override void Init()
 		{
 			typeParameters = new Dictionary<Type,ComponentParameters>();
-			typeInstances = new Dictionary<Type,List<Component>>();
-			exactTypeInstances = new Dictionary<Type,List<Component>>();
+			typeInstances = new Dictionary<Type,ComponentInstanceLists>();
+			exactTypeInstances = new Dictionary<Type,ComponentInstanceLists>();
 
 			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
 				if(!typeParameters.TryGetValue(type,out var parameters)) {
@@ -35,15 +52,16 @@ namespace Dissonance.Engine.Core.Components
 			}
 		}
 
-		public static ComponentParameters GetParameters(Type type) => Instance.typeParameters[type];
+		public static ComponentParameters GetParameters(Type type)
+			=> Instance.typeParameters[type];
 		//Count
-		public static int CountComponents(Type type,bool exactType = false)
-			=> (exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var list) ? list.Count : 0;
-		public static int CountComponents<T>(bool exactType = false)
-			=> CountComponents(typeof(T),exactType);
+		public static int CountComponents<T>(bool? enabled = true,bool exactType = false)
+			=> CountComponents(typeof(T),exactType,enabled);
+		public static int CountComponents(Type type,bool exactType = false,bool? enabled = true)
+			=> GetComponentsList(type,exactType,enabled)?.Count ?? 0;
 		//Enumerate
-		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false)
-			=> (exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var list) ? list : Enumerable.Empty<Component>();
+		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false,bool? enabled = true)
+			=> GetComponentsList(type,exactType,enabled) ?? Enumerable.Empty<Component>();
 		public static IEnumerable<T> EnumerateComponents<T>(bool exactType = false) where T : Component
 		{
 			foreach(var component in EnumerateComponents(typeof(T),exactType)) {
@@ -51,45 +69,36 @@ namespace Dissonance.Engine.Core.Components
 			}
 		}
 
-		internal static void RegisterInstance(Type type,Component component)
+		internal static void ModifyInstanceLists(Type type,Action<ComponentInstanceLists> action)
 		{
-			void AddToList(Type key,Dictionary<Type,List<Component>> dictionary)
+			static ComponentInstanceLists GetLists(Type key,Dictionary<Type,ComponentInstanceLists> dictionary)
 			{
-				if(!dictionary.TryGetValue(key,out var list)) {
-					dictionary[key] = list = new List<Component>();
+				if(!dictionary.TryGetValue(key,out var lists)) {
+					dictionary[key] = lists = new ComponentInstanceLists();
 				}
 
-				list.Add(component);
+				return lists;
 			}
 
-			AddToList(type,Instance.exactTypeInstances);
+			action(GetLists(type,Instance.exactTypeInstances));
 
-			//TODO: This could've been made faster.
+			//TODO: This enumeration could've been made faster.
 			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type,true,typeof(Component))) {
-				AddToList(baseType,Instance.typeInstances);
+				action(GetLists(baseType,Instance.typeInstances));
 			}
 		}
-		internal static void UnregisterInstance(Type type,Component component)
+
+		private static IReadOnlyList<Component> GetComponentsList(Type type,bool exactType = false,bool? enabled = true)
 		{
-			void RemoveFromList(Type key,Dictionary<Type,List<Component>> dictionary)
-			{
-				if(!dictionary.TryGetValue(key,out var list)) {
-					return;
-				}
-
-				list.Remove(component);
-
-				if(list.Count==0) {
-					dictionary.Remove(type);
-				}
+			if(!(exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var lists)) {
+				return null;
 			}
 
-			RemoveFromList(type,Instance.typeInstances);
-
-			//Same as above.
-			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type,true,typeof(Component))) {
-				RemoveFromList(baseType,Instance.typeInstances);
-			}
+			return enabled switch {
+				true => lists.enabledReadOnly,
+				false => lists.disabledReadOnly,
+				_ => lists.allReadOnly
+			};
 		}
 	}
 }

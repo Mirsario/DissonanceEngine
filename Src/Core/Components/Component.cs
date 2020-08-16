@@ -26,20 +26,32 @@ namespace Dissonance.Engine.Core.Components
 					var type = GetType();
 					var parameters = ComponentManager.GetParameters(type);
 
-					if(!parameters.allowOnlyOneInWorld || !ComponentManager.EnumerateComponents(type).Any(q => q.enabled)) {
-						if(!beenEnabledBefore) {
-							OnInit();
-
-							beenEnabledBefore = true;
-						}
-
-						OnEnable();
-
-						ProgrammableEntityManager.SubscribeEntity(this);
-
-						enabled = true;
+					if(parameters.allowOnlyOneInWorld && ComponentManager.CountComponents(type)>=1) {
+						throw new InvalidOperationException($"Attempted to enable a second instance of component '{GetType().Name}', but only 1 instance is allowed to be enabled at the same time.");
 					}
+
+					if(!beenEnabledBefore) {
+						OnInit();
+
+						beenEnabledBefore = true;
+					} else {
+						ComponentManager.ModifyInstanceLists(GetType(),lists => lists.disabled.Remove(this)); //Remove from the list of disabled components.
+					}
+
+					ComponentManager.ModifyInstanceLists(GetType(),lists => lists.enabled.Add(this)); //Add to the list of enabled components.
+
+					OnEnable();
+
+					ProgrammableEntityManager.SubscribeEntity(this);
+
+					enabled = true;
 				} else {
+					//Remove from the list of enabled components, and add to the list of disabled ones.
+					ComponentManager.ModifyInstanceLists(GetType(),lists => {
+						lists.enabled.Remove(this);
+						lists.disabled.Add(this);
+					});
+
 					OnDisable();
 
 					ProgrammableEntityManager.UnsubscribeEntity(this);
@@ -59,7 +71,7 @@ namespace Dissonance.Engine.Core.Components
 			Name = type.Name;
 			NameHash = Name.GetHashCode();
 
-			ComponentManager.RegisterInstance(type,this);
+			ComponentManager.ModifyInstanceLists(GetType(),lists => lists.all.Add(this));
 		}
 
 		protected virtual void OnPreInit() { }
@@ -74,7 +86,15 @@ namespace Dissonance.Engine.Core.Components
 
 			OnDispose();
 
-			ComponentManager.UnregisterInstance(GetType(),this);
+			ComponentManager.ModifyInstanceLists(GetType(),lists => {
+				lists.all.Remove(this);
+
+				if(enabled) {
+					lists.enabled.Remove(this);
+				} else {
+					lists.disabled.Remove(this);
+				}
+			});
 
 			var dict = gameObject.componentsByNameHash;
 
