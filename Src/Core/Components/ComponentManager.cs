@@ -52,12 +52,16 @@ namespace Dissonance.Engine.Core.Components
 			}
 		}
 
-		public static ComponentParameters GetParameters(Type type) => Instance.typeParameters[type];
+		public static ComponentParameters GetParameters(Type type)
+			=> Instance.typeParameters[type];
 		//Count
-		public static int CountComponents<T>(bool? enabled = true,bool exactType = false) => CountComponents(typeof(T),exactType,enabled);
-		public static int CountComponents(Type type,bool exactType = false,bool? enabled = true) => GetComponentsList(type,exactType,enabled)?.Count ?? 0;
+		public static int CountComponents<T>(bool? enabled = true,bool exactType = false)
+			=> CountComponents(typeof(T),exactType,enabled);
+		public static int CountComponents(Type type,bool exactType = false,bool? enabled = true)
+			=> GetComponentsList(type,exactType,enabled)?.Count ?? 0;
 		//Enumerate
-		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false,bool? enabled = true) => GetComponentsList(type,exactType,enabled) ?? Enumerable.Empty<Component>();
+		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false,bool? enabled = true)
+			=> GetComponentsList(type,exactType,enabled) ?? Enumerable.Empty<Component>();
 		public static IEnumerable<T> EnumerateComponents<T>(bool exactType = false) where T : Component
 		{
 			foreach(var component in EnumerateComponents(typeof(T),exactType)) {
@@ -67,7 +71,7 @@ namespace Dissonance.Engine.Core.Components
 
 		internal static void ModifyInstanceLists(Type type,Action<ComponentInstanceLists> action)
 		{
-			ComponentInstanceLists GetLists(Type key,Dictionary<Type,ComponentInstanceLists> dictionary)
+			static ComponentInstanceLists GetLists(Type key,Dictionary<Type,ComponentInstanceLists> dictionary)
 			{
 				if(!dictionary.TryGetValue(key,out var lists)) {
 					dictionary[key] = lists = new ComponentInstanceLists();
