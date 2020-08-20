@@ -218,29 +218,23 @@ namespace Dissonance.Engine.Core
 
 			updateStopwatch.Start();
 
-			static TimeSpan FrequencyToTimeSpan(double frequency) => new TimeSpan((long)(TimeSpan.TicksPerSecond*(1d/frequency)));
-
 			var windowing = GetModule<Windowing>(false);
-			TimeSpan nextUpdateTime = default;
+			int numFixedUpdates = 0;
 
 			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle)==0)) {
-				if(!NoWindow) {
-					GLFW.PollEvents();
-				}
+				while(numFixedUpdates<(int)Math.Floor(updateStopwatch.Elapsed.TotalSeconds*Time.TargetUpdateFrequency)) {
+					if(!NoWindow) {
+						GLFW.PollEvents();
+					}
 
-				FixedUpdateInternal();
+					FixedUpdateInternal();
+
+					numFixedUpdates++;
+				}
 
 				if(!NoWindow) {
 					RenderUpdateInternal();
 				}
-
-				TimeSpan sleepTimeSpan = nextUpdateTime-updateStopwatch.Elapsed;
-
-				if(sleepTimeSpan>TimeSpan.Zero) {
-					Thread.Sleep(sleepTimeSpan);
-				}
-
-				nextUpdateTime = updateStopwatch.Elapsed+FrequencyToTimeSpan(Time.TargetUpdateFrequency);
 			}
 		}
 
