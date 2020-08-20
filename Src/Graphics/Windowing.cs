@@ -60,7 +60,7 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				GLFW.MakeContextCurrent(WindowHandle);
-				GLFW.SwapInterval(0);
+				GLFW.SwapInterval(1);
 			}
 
 			Debug.Log("Initialized GLFW.");
