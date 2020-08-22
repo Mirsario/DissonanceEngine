@@ -15,6 +15,6 @@
 	},
 	"Composite": {
 		"vertexShader": "Shaders/postprocess.vert",
-		"fragmentShader": "Shaders/composite.frag",
+		"fragmentShader": "Shaders/composite.frag"
 	}
 }
