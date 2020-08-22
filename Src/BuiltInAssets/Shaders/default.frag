@@ -24,10 +24,10 @@ uniform sampler2D mainTex;
 #endif
 
 in vec2 uv;
-#if VERTEXCOLOR
-in vec4 col;
-#endif
 in vec3 worldPos;
+#if VERTEXCOLOR
+	in vec4 col;
+#endif
 #ifdef NORMALMAP
 	in mat3 TBN;
 #else
@@ -42,6 +42,8 @@ out float oSpecular;
 
 void main (void)  
 {
+	//Color
+	
 	oDiffuse = texture(mainTex,uv);
 	
 	#ifdef ALPHATEST
@@ -57,12 +59,16 @@ void main (void)
 	#ifdef COLOR
 		oDiffuse *= color;
 	#endif
+
+	//Normals
 	
 	#ifdef NORMALMAP
 		oNormal = normalize(TBN*(texture(normalMap,uv).rgb*2f-1f))*0.5f+0.5f;
 	#else
 		oNormal = N;
 	#endif
+
+	//Emission
 	
 	#ifdef EMISSIONMAP
 		oEmission = texture(emissionMap,uv);
@@ -77,6 +83,8 @@ void main (void)
 			oEmission = vec4(0f,0f,0f,0f);
 		#endif
 	#endif
+
+	//Specular
 	
 	#ifdef SPECULARMAP
 		oSpecular = texture(specularMap,uv).r;
@@ -91,6 +99,8 @@ void main (void)
 			oSpecular = 0f;
 		#endif
 	#endif
+
+	//Position
 	
 	oPosition = worldPos;
 }

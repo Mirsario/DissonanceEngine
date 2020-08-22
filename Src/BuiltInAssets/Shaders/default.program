@@ -1,186 +1,186 @@
 {
 	//Diffuse
-	
-	"Diffuse": { //Diffuse
+
+	"Diffuse": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
 	},
 	"DiffuseColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["COLOR"],
+		"shaderDefines": [ "COLOR" ],
 	},
 	"DiffuseBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["NORMALMAP"],
+		"shaderDefines": [ "NORMALMAP" ],
 	},
 	"DiffuseBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["NORMALMAP","COLOR"],
+		"shaderDefines": [ "NORMALMAP", "COLOR" ],
 	},
-	
+
 	//Specular
-	
+
 	"Specular": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULAR"],
+		"shaderDefines": [ "SPECULAR" ],
 	},
 	"SpecularColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULAR","COLOR"],
+		"shaderDefines": [ "SPECULAR", "COLOR" ],
 	},
 	"SpecularBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULAR","NORMALMAP"],
+		"shaderDefines": [ "SPECULAR", "NORMALMAP" ],
 	},
 	"SpecularBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULAR","NORMALMAP","COLOR"],
+		"shaderDefines": [ "SPECULAR", "NORMALMAP", "COLOR" ],
 	},
-	
+
 	//Specular Mapped
-	
+
 	"SpecularMapped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULARMAP"],
+		"shaderDefines": [ "SPECULARMAP" ],
 	},
 	"SpecularMappedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULARMAP","COLOR"],
+		"shaderDefines": [ "SPECULARMAP", "COLOR" ],
 	},
 	"SpecularMappedBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULARMAP","NORMALMAP"],
+		"shaderDefines": [ "SPECULARMAP", "NORMALMAP" ],
 	},
 	"SpecularMappedBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["SPECULARMAP","NORMALMAP","COLOR"],
+		"shaderDefines": [ "SPECULARMAP", "NORMALMAP", "COLOR" ],
 	},
-	
+
 	//Emissive
-	
+
 	"Emissive": { //Diffuse
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION"],
+		"shaderDefines": [ "EMISSION" ],
 	},
 	"EmissiveColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","COLOR"],
+		"shaderDefines": [ "EMISSION", "COLOR" ],
 	},
 	"EmissiveBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","NORMALMAP"],
+		"shaderDefines": [ "EMISSION", "NORMALMAP" ],
 	},
 	"EmissiveBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","NORMALMAP","COLOR"],
+		"shaderDefines": [ "EMISSION", "NORMALMAP", "COLOR" ],
 	},
 	"EmissiveSpecular": { //Specular
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","SPECULAR"],
+		"shaderDefines": [ "EMISSION", "SPECULAR" ],
 	},
 	"EmissiveSpecularColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","SPECULAR","COLOR"],
+		"shaderDefines": [ "EMISSION", "SPECULAR", "COLOR" ],
 	},
 	"EmissiveSpecularBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","SPECULAR","NORMALMAP"],
+		"shaderDefines": [ "EMISSION", "SPECULAR", "NORMALMAP" ],
 	},
 	"EmissiveSpecularBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","SPECULAR","NORMALMAP","COLOR"],
+		"shaderDefines": [ "EMISSION", "SPECULAR", "NORMALMAP", "COLOR" ],
 	},
-	
+
 	//Emissive Mapped
-	
+
 	"EmissiveMapped": { //Diffuse
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP"],
+		"shaderDefines": [ "EMISSIONMAP" ],
 	},
 	"EmissiveMappedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","COLOR"],
+		"shaderDefines": [ "EMISSIONMAP", "COLOR" ],
 	},
 	"EmissiveMappedBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","NORMALMAP"],
+		"shaderDefines": [ "EMISSIONMAP", "NORMALMAP" ],
 	},
 	"EmissiveMappedBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","NORMALMAP","COLOR"],
+		"shaderDefines": [ "EMISSIONMAP", "NORMALMAP", "COLOR" ],
 	},
 	"EmissiveMappedSpecular": { //Specular
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","SPECULAR"],
+		"shaderDefines": [ "EMISSIONMAP", "SPECULAR" ],
 	},
 	"EmissiveMappedSpecularColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSION","SPECULAR","COLOR"],
+		"shaderDefines": [ "EMISSION", "SPECULAR", "COLOR" ],
 	},
 	"EmissiveMappedSpecularBumped": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","SPECULAR","NORMALMAP"],
+		"shaderDefines": [ "EMISSIONMAP", "SPECULAR", "NORMALMAP" ],
 	},
 	"EmissiveMappedSpecularBumpedColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["EMISSIONMAP","SPECULAR","NORMALMAP","COLOR"],
+		"shaderDefines": [ "EMISSIONMAP", "SPECULAR", "NORMALMAP", "COLOR" ],
 	},
-	
+
 	//Transparent
-	//...
+
 	"Transparent/Diffuse": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["ALPHA"],
+		"shaderDefines": [ "ALPHA" ],
 		"renderType": "Transparent",
 		"queue": 1000,
 		"blendFactorSrc": "SrcAlpha",
 		"blendFactorDst": "OneMinusSrcAlpha",
 	},
-	////////////////////////////////
-	//TRANSPARENT/CUTOUT//
-	////////////////////////////////
+	
+	//Transparent Cutout
+
 	"Transparent/Cutout/Diffuse": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["ALPHATEST"],
+		"shaderDefines": [ "ALPHATEST" ],
 	},
 	"Transparent/Cutout/DiffuseDualSided": { //Weird name
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["ALPHATEST"],
+		"shaderDefines": [ "ALPHATEST" ],
 		"cullMode": "Off"
 	},
 	"Transparent/Cutout/DiffuseColor": {
 		"vertexShader": "Shaders/default.vert",
 		"fragmentShader": "Shaders/default.frag",
-		"shaderDefines": ["ALPHATEST","COLOR"],
+		"shaderDefines": [ "ALPHATEST", "COLOR" ],
 	},
 }
