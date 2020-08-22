@@ -121,9 +121,6 @@
   <data name="BulletSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\References\BulletSharp.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="DefaultResources" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\DefaultResources.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="Ionic.Zip" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\References\Ionic.Zip.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

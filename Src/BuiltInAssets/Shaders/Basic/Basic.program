@@ -1,0 +1,27 @@
+{
+	"BasicColor": {
+		"vertexShader": "Shaders/Basic/Basic.vert",
+		"fragmentShader": "Shaders/Basic/Basic.frag",
+		"shaderDefines": ["COLOR"],
+	},
+	"BasicVertexColor": {
+		"vertexShader": "Shaders/Basic/Basic.vert",
+		"fragmentShader": "Shaders/Basic/Basic.frag",
+		"shaderDefines": ["VERTEXCOLOR"],
+	},
+	"BasicColorVertexColor": {
+		"vertexShader": "Shaders/Basic/Basic.vert",
+		"fragmentShader": "Shaders/Basic/Basic.frag",
+		"shaderDefines": ["COLOR","VERTEXCOLOR"],
+	},
+	"BasicTexture": {
+		"vertexShader": "Shaders/Basic/Basic.vert",
+		"fragmentShader": "Shaders/Basic/Basic.frag",
+		"shaderDefines": ["TEXTURE"],
+	},
+	"BasicTextureColor": {
+		"vertexShader": "Shaders/Basic/Basic.vert",
+		"fragmentShader": "Shaders/Basic/Basic.frag",
+		"shaderDefines": ["TEXTURE","COLOR"],
+	}
+}

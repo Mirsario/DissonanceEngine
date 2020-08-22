@@ -19,7 +19,9 @@
 	<ItemGroup>
 		<Compile Remove="References\**" />
 		<EmbeddedResource Remove="References\**" />
+		<EmbeddedResource Include="BuiltInAssets\**" />
 		<None Remove="References\**" />
+		<None Remove="BuiltInAssets\**" />
 	</ItemGroup>
 	
 	<ItemGroup>
