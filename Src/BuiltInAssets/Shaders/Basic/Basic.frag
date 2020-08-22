@@ -18,8 +18,6 @@ out vec4 oDiffuse;
 
 void main (void)  
 {
-	//Color
-	
 	#ifdef TEXTURE
 		oDiffuse = texture(mainTex,vUV);
 	#else

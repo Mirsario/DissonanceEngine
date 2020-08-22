@@ -1,7 +1,7 @@
 #version 330
 
 #ifndef DIRECTIONAL
-uniform mat4 worldViewProj;
+	uniform mat4 worldViewProj;
 #endif
 
 in vec3 vertex;
