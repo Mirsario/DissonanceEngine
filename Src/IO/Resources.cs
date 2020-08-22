@@ -143,18 +143,18 @@ namespace Dissonance.Engine.IO
 			importingBuiltInAssets = true;
 
 			//Unzip
-			using(var stream = new MemoryStream(Properties.Resources.DefaultResources)) {
-				using var zipFile = ZipFile.Read(stream);
+			foreach(string filePath in AssemblyCache.EngineAssembly.GetManifestResourceNames()) {
+				using var entryStream = AssemblyCache.EngineAssembly.GetManifestResourceStream(filePath);
 
-				foreach(var zipEntry in zipFile) {
-					string filePath = zipEntry.FileName;
+				byte[] bytes = new byte[entryStream.Length];
 
-					using var entryStream = new MemoryStream();
+				entryStream.Read(bytes,0,bytes.Length);
 
-					zipEntry.Extract(entryStream);
+				string usedPath = filePath.Replace("Dissonance.Engine.","");
 
-					builtInAssets[BuiltInAssetsFolder+filePath] = entryStream.ToArray();
-				}
+				usedPath = Path.GetFileNameWithoutExtension(usedPath).Replace('.','/')+Path.GetExtension(usedPath);
+
+				builtInAssets[usedPath] = bytes;
 			}
 
 			//Autoload
