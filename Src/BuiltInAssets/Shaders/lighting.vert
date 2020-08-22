@@ -10,9 +10,9 @@ void main(void)
 {
 	vec4 pos = vec4(vertex,1.0);
 	
-	#ifdef DIRECTIONAL
 	gl_Position = pos;
-	#else
-	gl_Position = worldViewProj*pos;
+
+	#ifndef DIRECTIONAL
+		gl_Position = worldViewProj*gl_Position;
 	#endif
 }

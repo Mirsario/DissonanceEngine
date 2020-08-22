@@ -9,6 +9,5 @@ out vec4 oColor;
 
 void main()  
 {
-	oColor = texture(mainTex,iUv0);
-	oColor *= color;
+	oColor = texture(mainTex,iUv0)*color;
 }
