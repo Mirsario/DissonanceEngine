@@ -1,27 +1,28 @@
 #version 330
 
+in vec4 vertex;
 #ifdef TEXTURE
-in vec2 uv0;
+	in vec2 uv0;
 #endif
 #ifdef VERTEXCOLOR
-in vec4 color;
+	in vec4 color;
 #endif
-in vec4 vertex;
 
 #ifdef TEXTURE
-out vec2 vUV;
+	out vec2 vUV;
 #endif
 #ifdef VERTEXCOLOR
-out vec4 vColor;
+	out vec4 vColor;
 #endif
 
 void main(void)
 {
 	#ifdef TEXTURE
-	vUV = uv0;
+		vUV = uv0;
 	#endif
+
 	#ifdef VERTEXCOLOR
-	vColor = color;
+		vColor = color;
 	#endif
 	
 	gl_Position = vertex;
