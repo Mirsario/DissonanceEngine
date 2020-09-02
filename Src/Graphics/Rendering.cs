@@ -67,6 +67,12 @@ namespace Dissonance.Engine.Graphics
 		{
 			windowing = Game.GetModule<Windowing>();
 			renderingPipelineType = typeof(DeferredRendering);
+
+			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
+				PrepareOpenGL();
+			} else if(GLFW.GetCurrentContext()==IntPtr.Zero) {
+				throw new InvalidOperationException("No GLFW/OpenGL context has been set for the game's thread.");
+			}
 		}
 		protected override void Init()
 		{
@@ -190,11 +196,21 @@ namespace Dissonance.Engine.Graphics
 		{
 			renderingPipelineType = typeof(T);
 
-			if(RenderingPipeline!=null && Game.Instance?.NoWindow==false) {
+			if(RenderingPipeline!=null && Game.Instance?.NoGraphics==false) {
 				InstantiateRenderingPipeline();
 			}
 		}
 
+		private static void PrepareOpenGL()
+		{
+			Debug.Log("Preparing OpenGL...");
+
+			GL.Load(OpenGLVersion);
+
+			CheckGLErrors("Post GL.Load()");
+
+			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
+		}
 		private static void InstantiateRenderingPipeline()
 		{
 			RenderingPipeline?.Dispose();

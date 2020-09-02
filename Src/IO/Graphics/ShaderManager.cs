@@ -1,6 +1,5 @@
 using Dissonance.Engine.Core;
 using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Utils.Extensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,7 @@ namespace Dissonance.Engine.IO.Graphics
 	public partial class ShaderManager : AssetManager<Shader[]>
 	{
 		public override string[] Extensions => new[] { ".program" };
-		public override bool Autoload(string file) => !Game.Instance.NoWindow;
+		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
 
 		public override Shader[] Import(Stream stream,string filePath)
 		{
