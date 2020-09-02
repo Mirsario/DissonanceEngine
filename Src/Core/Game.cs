@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -27,7 +28,7 @@ namespace Dissonance.Engine.Core
 		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;
 		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;
 
-		private static readonly ConcurrentQueue<Game> Instances = new ConcurrentQueue<Game>();
+		private static readonly List<Game> InstancesList;
 
 		private static volatile Game globalInstance;
 		private static volatile bool multipleInstances;
@@ -47,18 +48,25 @@ namespace Dissonance.Engine.Core
 			}
 		}
 
+		public static IReadOnlyList<Game> Instances;
+
 		internal bool shouldQuit;
 		internal bool preInitDone;
 		internal bool fixedUpdate;
 		internal string assetsPath;
 
 		public string Name { get; set; } = "UntitledGame";
-		public string DisplayName { get; set; } = "Untitled Game"; 
+		public string DisplayName { get; set; } = "Untitled Game";
 		public GameFlags Flags { get; private set; }
 
 		internal bool NoWindow { get; private set; }
 		internal bool NoGraphics { get; private set; }
 		internal bool NoAudio { get; private set; }
+
+		static Game()
+		{
+			Instances = (InstancesList = new List<Game>()).AsReadOnly();
+		}
 
 		public virtual void PreInit() { }
 		public virtual void Start() { }
@@ -201,11 +209,13 @@ namespace Dissonance.Engine.Core
 				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
 			}
 
-			Instances.Enqueue(this);
+			lock(InstancesList) {
+				InstancesList.Add(this);
 
-			globalInstance ??= this;
-			threadStaticInstance = this;
-			multipleInstances = Instances.Count>1;
+				globalInstance ??= this;
+				threadStaticInstance = this;
+				multipleInstances = InstancesList.Count>1;
+			}
 		}
 		private void UpdateLoop()
 		{
