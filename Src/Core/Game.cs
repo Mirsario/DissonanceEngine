@@ -29,10 +29,6 @@ namespace Dissonance.Engine.Core
 
 		private static readonly ConcurrentQueue<Game> Instances = new ConcurrentQueue<Game>();
 
-		public static string name = "UntitledGame";
-		public static string displayName = "Untitled Game";
-		public static string assetsPath;
-
 		private static volatile Game globalInstance;
 		private static volatile bool multipleInstances;
 		[ThreadStatic]
@@ -54,7 +50,10 @@ namespace Dissonance.Engine.Core
 		internal bool shouldQuit;
 		internal bool preInitDone;
 		internal bool fixedUpdate;
+		internal string assetsPath;
 
+		public string Name { get; set; } = "UntitledGame";
+		public string DisplayName { get; set; } = "Untitled Game"; 
 		public GameFlags Flags { get; private set; }
 		public bool NoWindow { get; private set; }
 		public bool NoAudio { get; private set; }
