@@ -65,13 +65,13 @@ namespace Dissonance.Engine.Core
 		public virtual void OnGUI() { }
 		public virtual void OnDispose() { }
 
-		public void Run(GameFlags flags = GameFlags.Default,string[] args = null)
+		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
 		{
 			RegisterInstance();
 
 			Flags = flags;
-			NoWindow = !Flags.HasFlag(GameFlags.Graphics);
-			NoAudio = !Flags.HasFlag(GameFlags.Audio);
+			NoWindow = Flags.HasFlag(GameFlags.NoGraphics);
+			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
 			DllResolver.Init();
 			AssemblyCache.Init();

@@ -12,7 +12,7 @@ using Dissonance.Engine.Core;
 
 namespace Dissonance.Engine.Graphics.UserInterface
 {
-	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Resources),typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
