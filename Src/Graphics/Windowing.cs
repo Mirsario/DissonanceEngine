@@ -3,33 +3,19 @@ using Dissonance.Engine.Core;
 using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Framework.Graphics;
-using Dissonance.Framework.Imaging;
 using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
 	public sealed class Windowing : EngineModule
 	{
 		private static readonly object GlfwLock = new object();
 
 		public IntPtr WindowHandle { get; private set; }
+		public bool OwnsWindow { get; private set; }
 
 		protected override void PreInit()
-		{
-			PrepareGLFW();
-			PrepareGL();
-
-			IL.Init();
-		}
-		protected override void OnDispose()
-		{
-			if(WindowHandle!=IntPtr.Zero) {
-				GLFW.SetWindowShouldClose(WindowHandle,1);
-			}
-		}
-
-		private void PrepareGLFW()
 		{
 			Debug.Log("Preparing GLFW...");
 
@@ -65,15 +51,12 @@ namespace Dissonance.Engine.Graphics
 
 			Debug.Log("Initialized GLFW.");
 		}
-		private void PrepareGL()
+		protected override void OnDispose()
 		{
-			Debug.Log("Preparing OpenGL...");
-
-			GL.Load(Rendering.OpenGLVersion);
-
-			Rendering.CheckGLErrors("Post GL.Load()");
-
-			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
+			if(WindowHandle!=IntPtr.Zero) {
+				GLFW.DestroyWindow(WindowHandle);
+				GLFW.Terminate();
+			}
 		}
 	}
 }

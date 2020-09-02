@@ -55,8 +55,10 @@ namespace Dissonance.Engine.Core
 		public string Name { get; set; } = "UntitledGame";
 		public string DisplayName { get; set; } = "Untitled Game"; 
 		public GameFlags Flags { get; private set; }
-		public bool NoWindow { get; private set; }
-		public bool NoAudio { get; private set; }
+
+		internal bool NoWindow { get; private set; }
+		internal bool NoGraphics { get; private set; }
+		internal bool NoAudio { get; private set; }
 
 		public virtual void PreInit() { }
 		public virtual void Start() { }
@@ -70,7 +72,8 @@ namespace Dissonance.Engine.Core
 			RegisterInstance();
 
 			Flags = flags;
-			NoWindow = Flags.HasFlag(GameFlags.NoGraphics);
+			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
+			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
 			DllResolver.Init();
@@ -106,14 +109,7 @@ namespace Dissonance.Engine.Core
 			preInitDone = true;
 
 			Init();
-
 			UpdateLoop();
-
-			if(!NoWindow && TryGetModule<Windowing>(out var windowing)) {
-				GLFW.DestroyWindow(windowing.WindowHandle);
-				GLFW.Terminate();
-			}
-
 			Dispose();
 		}
 		public void Dispose()
@@ -231,7 +227,7 @@ namespace Dissonance.Engine.Core
 					numFixedUpdates++;
 				}
 
-				if(!NoWindow) {
+				if(!NoGraphics) {
 					RenderUpdateInternal();
 				}
 			}

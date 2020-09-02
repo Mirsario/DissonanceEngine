@@ -10,6 +10,7 @@ using Dissonance.Engine.Utils.Internal;
 using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Core;
+using Dissonance.Framework.Imaging;
 
 namespace Dissonance.Engine.IO
 {
@@ -35,6 +36,11 @@ namespace Dissonance.Engine.IO
 
 		protected override void Init()
 		{
+			//Is there a better place for this?
+			if(!Game.Flags.HasFlag(GameFlags.NoGraphics)) {
+				PrepareDevIL();
+			}
+
 			assetManagers = new Dictionary<string,List<AssetManager>>();
 			nameToPath = new Dictionary<string,string>(InternalUtils.strComparerInvariantIgnoreCase);
 			cacheByPath = new Dictionary<Type,Dictionary<string,object>>();
@@ -47,6 +53,7 @@ namespace Dissonance.Engine.IO
 			AutoloadResources();
 		}
 
+		private void PrepareDevIL() => IL.Init();
 		private void LoadManagers()
 		{
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
