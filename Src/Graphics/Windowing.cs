@@ -8,7 +8,7 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Windowing : EngineModule
 	{
 		private static readonly object GlfwLock = new object();

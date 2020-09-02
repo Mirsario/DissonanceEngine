@@ -7,7 +7,7 @@ using Dissonance.Framework.Windowing;
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(typeof(Windowing))]
-	[Autoload(RequiredGameFlags = GameFlags.Graphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
 		public static bool lockCursor;
