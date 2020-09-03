@@ -13,7 +13,6 @@ namespace Dissonance.Engine.Graphics
 		private static readonly object GlfwLock = new object();
 
 		public IntPtr WindowHandle { get; private set; }
-		public bool OwnsWindow { get; private set; }
 
 		protected override void PreInit()
 		{
