@@ -47,7 +47,11 @@ namespace Dissonance.Engine.Core
 				return;
 			}
 
-			Manager.gameObjects.Add(this);
+			var manager = Manager;
+
+			lock(manager.gameObjects) {
+				manager.gameObjects.Add(this);
+			}
 
 			ProgrammableEntityManager.SubscribeEntity(this);
 
@@ -62,7 +66,11 @@ namespace Dissonance.Engine.Core
 			OnDispose();
 			ComponentDispose();
 
-			Manager.gameObjects.Remove(this);
+			var manager = Manager;
+
+			lock(manager.gameObjects) {
+				manager.gameObjects.Remove(this);
+			}
 		}
 
 		public static T Instantiate<T>(Action<T> preinitializer = null) where T : GameObject
