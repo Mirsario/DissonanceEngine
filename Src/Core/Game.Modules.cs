@@ -33,7 +33,7 @@ namespace Dissonance.Engine.Core
 		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
-			if(!modulesByType.TryGetValue(typeof(T),out var list)) {
+			if(modulesByType==null || !modulesByType.TryGetValue(typeof(T),out var list)) {
 				result = default;
 
 				return false;

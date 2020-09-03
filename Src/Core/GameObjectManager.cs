@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Core
 {
 	public class GameObjectManager : EngineModule
 	{
-		private static GameObjectManager Instance => Game.Instance.GetModule<GameObjectManager>();
+		public static GameObjectManager Instance => Game.Instance.GetModule<GameObjectManager>();
 
 		internal List<GameObject> gameObjects;
 
@@ -41,10 +41,16 @@ namespace Dissonance.Engine.Core
 			return obj;
 		}
 		//Enumeration
-		public static IEnumerable<GameObject> EnumerateGameObjects()
+		public IEnumerable<GameObject> EnumerateGameObjects()
 		{
-			foreach(var entry in Instance.gameObjects) {
-				yield return entry;
+			if(gameObjects==null) {
+				yield break;
+			}
+
+			lock(gameObjects) {
+				foreach(var entry in gameObjects) {
+					yield return entry;
+				}
 			}
 		}
 	}
