@@ -22,7 +22,8 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Windowing),typeof(Screen),typeof(Resources))]
+	[ModuleDependency(true,typeof(Windowing))]
+	[ModuleDependency(typeof(Screen),typeof(Resources))]
 	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new Version(3,2);
@@ -65,7 +66,8 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void PreInit()
 		{
-			windowing = Game.GetModule<Windowing>();
+			Game.TryGetModule(out windowing);
+
 			renderingPipelineType = typeof(DeferredRendering);
 
 			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
