@@ -6,7 +6,7 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	[ModuleDependency(typeof(Windowing))]
+	[ModuleDependency(true,typeof(Windowing))]
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
@@ -61,7 +61,7 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void PreInit()
 		{
-			windowing = Game.GetModule<Windowing>();
+			windowing = Game.GetModule<Windowing>(false);
 		}
 		protected override void OnDispose()
 		{
@@ -70,6 +70,10 @@ namespace Dissonance.Engine.Graphics
 
 		private void UpdateValues()
 		{
+			if(windowing==null) {
+				return;
+			}
+
 			var windowHandle = windowing.WindowHandle;
 
 			//Framebuffer

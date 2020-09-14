@@ -7,7 +7,7 @@ using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
-	[ModuleDependency(typeof(Windowing))]
+	[ModuleDependency(true,typeof(Windowing))]
 	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
 	public sealed class AudioEngine : EngineModule
 	{
