@@ -22,8 +22,7 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(true,typeof(Windowing))]
-	[ModuleDependency(typeof(Screen),typeof(Resources))]
+	[ModuleDependency(typeof(Windowing),typeof(Screen),typeof(Resources))]
 	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new Version(3,2);
@@ -45,6 +44,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
+		public static Framebuffer DefaultFramebuffer { get; set; }
 		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
@@ -72,8 +72,6 @@ namespace Dissonance.Engine.Graphics
 
 			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
 				PrepareOpenGL();
-			} else if(GLFW.GetCurrentContext()==IntPtr.Zero) {
-				throw new InvalidOperationException("No GLFW/OpenGL context has been set for the game's thread.");
 			}
 		}
 		protected override void Init()
@@ -150,7 +148,7 @@ namespace Dissonance.Engine.Graphics
 
 					framebuffer?.PrepareAttachments();
 
-					Framebuffer.Bind(framebuffer);
+					Framebuffer.BindWithDrawBuffers(framebuffer);
 
 					GL.ClearColor(clearColor.x,clearColor.y,clearColor.z,clearColor.w);
 					//GL.StencilMask(~0);
@@ -183,7 +181,9 @@ namespace Dissonance.Engine.Graphics
 				BlitFramebuffers();
 			}
 
-			GLFW.SwapBuffers(windowing.WindowHandle);
+			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
+				GLFW.SwapBuffers(windowing.WindowHandle);
+			}
 
 			CheckGLErrors("After swapping buffers");
 		}

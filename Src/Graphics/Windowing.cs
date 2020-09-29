@@ -7,16 +7,33 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Windowing : EngineModule
 	{
 		private static readonly object GlfwLock = new object();
 
 		public IntPtr WindowHandle { get; private set; }
+		public bool OwnsWindow { get; private set; }
 
 		protected override void PreInit()
 		{
-			Debug.Log("Preparing GLFW...");
+			OwnsWindow = !Game.Flags.HasFlag(GameFlags.NoWindow);
+
+			if(!OwnsWindow) {
+				lock(GlfwLock) {
+					WindowHandle = GLFW.GetCurrentContext();
+
+					if(WindowHandle==IntPtr.Zero) {
+						throw new InvalidOperationException("No GLFW/OpenGL context has been set for the game's thread.");
+					}
+				}
+
+				Debug.Log("Found existing window.");
+
+				return;
+			}
+
+			Debug.Log("Creating window...");
 
 			lock(GlfwLock) {
 				GLFW.SetErrorCallback((GLFWError code,string description) => Debug.Log(code switch
@@ -48,7 +65,7 @@ namespace Dissonance.Engine.Graphics
 				GLFW.SwapInterval(1);
 			}
 
-			Debug.Log("Initialized GLFW.");
+			Debug.Log("Window created.");
 		}
 		protected override void OnDispose()
 		{
