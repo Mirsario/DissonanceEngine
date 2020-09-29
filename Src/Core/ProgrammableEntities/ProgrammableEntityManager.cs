@@ -12,22 +12,22 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 		private static ProgrammableEntityManager Instance => Game.Instance.GetModule<ProgrammableEntityManager>();
 
 		internal List<Action>[] hooks;
-		internal Dictionary<string,int> hookNameToId;
-		internal ConcurrentDictionary<Type,MethodInfo[]> hookMethodsCache;
+		internal Dictionary<string, int> hookNameToId;
+		internal ConcurrentDictionary<Type, MethodInfo[]> hookMethodsCache;
 
 		protected override void Init()
 		{
-			hookMethodsCache ??= new ConcurrentDictionary<Type,MethodInfo[]>();
+			hookMethodsCache ??= new ConcurrentDictionary<Type, MethodInfo[]>();
 
-			if(hookNameToId==null) {
-				hookNameToId ??= new Dictionary<string,int>();
+			if(hookNameToId == null) {
+				hookNameToId ??= new Dictionary<string, int>();
 
 				Type type = typeof(ProgrammableEntity);
-				var methods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+				var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
 				int id = 0;
 
-				for(int i = 0;i<methods.Length;i++) {
+				for(int i = 0; i < methods.Length; i++) {
 					var method = methods[i];
 
 					if(method.IsVirtual) {
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 
 			hooks = new List<Action>[hookNameToId.Count];
 
-			for(int i = 0;i<hooks.Length;i++) {
+			for(int i = 0; i < hooks.Length; i++) {
 				hooks[i] = new List<Action>();
 			}
 		}
@@ -50,11 +50,11 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 			var type = entity.GetType();
 			var methods = GetHookMethodsByType(type);
 
-			for(int i = 0;i<methods.Length;i++) {
+			for(int i = 0; i < methods.Length; i++) {
 				var methodInfo = methods[i];
 
-				if(methodInfo!=null) {
-					instance.hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action),entity));
+				if(methodInfo != null) {
+					instance.hooks[i].Add((Action)methodInfo.CreateDelegate(typeof(Action), entity));
 				}
 			}
 		}
@@ -65,17 +65,17 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 			var type = entity.GetType();
 			var methods = GetHookMethodsByType(type);
 
-			for(int i = 0;i<methods.Length;i++) {
+			for(int i = 0; i < methods.Length; i++) {
 				var methodInfo = methods[i];
 
-				if(methodInfo==null) {
+				if(methodInfo == null) {
 					continue;
 				}
 
 				var arr = instance.hooks[i];
 
-				for(int j = 0;j<arr.Count;j++) {
-					if(arr[j].Target==entity) {
+				for(int j = 0; j < arr.Count; j++) {
+					if(arr[j].Target == entity) {
 						arr.RemoveAt(j--);
 					}
 				}
@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 		{
 			var list = Instance.hooks[id];
 
-			for(int i = 0;i<list.Count;i++) {
+			for(int i = 0; i < list.Count; i++) {
 				list[i]();
 			}
 		}
@@ -95,18 +95,18 @@ namespace Dissonance.Engine.Core.ProgrammableEntities
 		{
 			var instance = Instance;
 
-			if(!instance.hookMethodsCache.TryGetValue(type,out var methods)) {
+			if(!instance.hookMethodsCache.TryGetValue(type, out var methods)) {
 				methods = new MethodInfo[instance.hooks.Length];
 
 				foreach(var pair in instance.hookNameToId) {
 					string methodName = pair.Key;
-					var method = type.GetMethod(methodName,BindingFlags.Public|BindingFlags.Instance);
+					var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
 
-					if(method==null) {
-						throw new ArgumentException($"Method '{methodName}' does not exist in type '{type.Name}'.",nameof(methodName));
+					if(method == null) {
+						throw new ArgumentException($"Method '{methodName}' does not exist in type '{type.Name}'.", nameof(methodName));
 					}
 
-					if(method.DeclaringType!=typeof(ProgrammableEntity)) {
+					if(method.DeclaringType != typeof(ProgrammableEntity)) {
 						methods[pair.Value] = method;
 					}
 				}

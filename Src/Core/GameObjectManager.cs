@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Core
 		//Instantiation
 		public T Instantiate<T>(Action<T> preinitializer = null) where T : GameObject
 		{
-			var obj = (T)Activator.CreateInstance(typeof(T),true);
+			var obj = (T)Activator.CreateInstance(typeof(T), true);
 
 			preinitializer?.Invoke(obj);
 
@@ -28,11 +28,11 @@ namespace Dissonance.Engine.Core
 
 			return obj;
 		}
-		public GameObject Instantiate(Type type,Action<GameObject> preinitializer = null)
+		public GameObject Instantiate(Type type, Action<GameObject> preinitializer = null)
 		{
-			AssertionUtils.TypeIsAssignableFrom(typeof(GameObject),type ?? throw new ArgumentNullException(nameof(type)));
+			AssertionUtils.TypeIsAssignableFrom(typeof(GameObject), type ?? throw new ArgumentNullException(nameof(type)));
 
-			var obj = (GameObject)Activator.CreateInstance(type,true);
+			var obj = (GameObject)Activator.CreateInstance(type, true);
 
 			preinitializer?.Invoke(obj);
 
@@ -43,7 +43,7 @@ namespace Dissonance.Engine.Core
 		//Enumeration
 		public IEnumerable<GameObject> EnumerateGameObjects()
 		{
-			if(gameObjects==null) {
+			if(gameObjects == null) {
 				yield break;
 			}
 

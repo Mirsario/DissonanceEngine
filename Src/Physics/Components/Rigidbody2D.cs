@@ -17,17 +17,17 @@ namespace Dissonance.Engine.Physics
 		}
 		public float AngularVelocity {
 			get => gameObject.rigidbodyInternal.AngularVelocity.x;
-			set => gameObject.rigidbodyInternal.AngularVelocity = new Vector3(gameObject.rigidbodyInternal.AngularVelocity.x,0f,0f);
+			set => gameObject.rigidbodyInternal.AngularVelocity = new Vector3(gameObject.rigidbodyInternal.AngularVelocity.x, 0f, 0f);
 		}
 
 		protected override void OnEnable()
 		{
 			base.OnEnable();
 
-			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new BulletSharp.Math.Vector3(1f,1f,0f);
+			gameObject.rigidbodyInternal.btRigidbody.LinearFactor = new BulletSharp.Math.Vector3(1f, 1f, 0f);
 		}
 
-		public void ApplyForce(Vector2 force,Vector2 relativePos)
+		public void ApplyForce(Vector2 force, Vector2 relativePos)
 		{
 			var btRigidbody = gameObject.rigidbodyInternal.btRigidbody;
 
@@ -35,7 +35,7 @@ namespace Dissonance.Engine.Physics
 				btRigidbody.Activate();
 			}
 
-			btRigidbody.ApplyForce(new BulletSharp.Math.Vector3(force.x,force.y,0f),new BulletSharp.Math.Vector3(relativePos.x,relativePos.y,0f));
+			btRigidbody.ApplyForce(new BulletSharp.Math.Vector3(force.x, force.y, 0f), new BulletSharp.Math.Vector3(relativePos.x, relativePos.y, 0f));
 		}
 	}
 }

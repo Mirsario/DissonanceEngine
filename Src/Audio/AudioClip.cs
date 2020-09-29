@@ -22,16 +22,16 @@ namespace Dissonance.Engine.Audio
 
 		public override void Dispose()
 		{
-			if(bufferId>0) {
+			if(bufferId > 0) {
 				AL.DeleteBuffer(bufferId);
 
 				bufferId = 0;
 			}
 		}
 
-		public unsafe void SetData<T>(T[] data,int channelsNum,int bytesPerSample,int sampleRate) where T : unmanaged
+		public unsafe void SetData<T>(T[] data, int channelsNum, int bytesPerSample, int sampleRate) where T : unmanaged
 		{
-			if(data==null) {
+			if(data == null) {
 				throw new ArgumentNullException(nameof(data));
 			}
 
@@ -39,22 +39,22 @@ namespace Dissonance.Engine.Audio
 			this.bytesPerSample = bytesPerSample;
 			this.sampleRate = sampleRate;
 
-			LengthInSeconds = data.Length/(float)sampleRate/channelsNum;
+			LengthInSeconds = data.Length / (float)sampleRate / channelsNum;
 
-			var format = GetSoundFormat(channelsNum,bytesPerSample);
+			var format = GetSoundFormat(channelsNum, bytesPerSample);
 
 			fixed(T* ptr = data) {
-				AL.BufferData(bufferId,format,(IntPtr)ptr,data.Length*Marshal.SizeOf<T>(),sampleRate);
+				AL.BufferData(bufferId, format, (IntPtr)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
 			}
 
 			AudioEngine.CheckALErrors();
 		}
 
-		public static BufferFormat GetSoundFormat(int channels,int bitsPerSample) => bitsPerSample switch
+		public static BufferFormat GetSoundFormat(int channels, int bitsPerSample) => bitsPerSample switch
 		{
-			1 => channels==1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
-			2 => channels==1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
-			4 => channels==1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,
+			1 => channels == 1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
+			2 => channels == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
+			4 => channels == 1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,
 			_ => throw new NotSupportedException("The specified sound format is not supported."),
 		};
 	}

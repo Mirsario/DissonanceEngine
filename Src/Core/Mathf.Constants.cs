@@ -13,8 +13,8 @@ namespace Dissonance.Engine.Core
 		public const float PI = 3.14159265358979323846264f;
 		public const float HalfPI = 1.570796326794896619231f;
 		public const float QuarterPI = 0.7853981633974483096157f;
-		public const float Deg2Rad = PI/180f;
-		public const float Rad2Deg = 180f/PI;
+		public const float Deg2Rad = PI / 180f;
+		public const float Rad2Deg = 180f / PI;
 
 		private const MethodImplOptions Inline = MethodImplOptions.AggressiveInlining;
 	}

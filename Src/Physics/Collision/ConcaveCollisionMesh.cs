@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Physics
 
 			var vertices = mesh.Vertices;
 
-			while(i<mesh.Indices.Length) {
+			while(i < mesh.Indices.Length) {
 				triMesh.AddTriangle(
 					vertices[mesh.Indices[i++]],
 					vertices[mesh.Indices[i++]],
@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Physics
 				);
 			}
 
-			collShape = new BvhTriangleMeshShape(triMesh,true);
+			collShape = new BvhTriangleMeshShape(triMesh, true);
 		}
 
 		public static explicit operator ConcaveCollisionMesh(Mesh mesh)

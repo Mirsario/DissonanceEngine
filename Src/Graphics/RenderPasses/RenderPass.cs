@@ -14,20 +14,20 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 {
 	public abstract class RenderPass : IDisposable
 	{
-		internal static Dictionary<string,Type> fullNameToType;
-		internal static Dictionary<string,RenderPassInfoAttribute> fullNameToInfo;
+		internal static Dictionary<string, Type> fullNameToType;
+		internal static Dictionary<string, RenderPassInfoAttribute> fullNameToInfo;
 
 		public string name;
 		public bool enabled = true;
 		public Renderbuffer[] renderbuffers;
 		public Shader passShader; //Remove this field?
 
-		protected Func<Camera,RectInt> viewportFunc;
+		protected Func<Camera, RectInt> viewportFunc;
 		protected Framebuffer framebuffer;
 		protected Shader[] shaders;
 		protected RenderTexture[] passedTextures;
 
-		public Func<Camera,RectInt> ViewportFunc {
+		public Func<Camera, RectInt> ViewportFunc {
 			get => viewportFunc;
 			set => viewportFunc = value;
 		}
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 		public Shader[] Shaders {
 			get => shaders;
 			set {
-				if(value==null || value.Length==0) {
+				if(value == null || value.Length == 0) {
 					shaders = null;
 					passShader = null;
 					return;
@@ -47,29 +47,29 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 				int length = value.Length;
 				shaders = new Shader[length];
 
-				Array.Copy(value,shaders,length);
+				Array.Copy(value, shaders, length);
 
-				passShader = length==0 ? null : value[0]; //Temp?
+				passShader = length == 0 ? null : value[0]; //Temp?
 			}
 		}
 		public Shader Shader {
 			get => shaders?[0];
-			set => Shaders = value!=null ? new[] { value } : null;
+			set => Shaders = value != null ? new[] { value } : null;
 		}
 		public RenderTexture[] PassedTextures {
 			get => passedTextures;
 			set {
-				if(value==null || value.Length==0) {
+				if(value == null || value.Length == 0) {
 					passedTextures = null;
 					return;
 				}
 
 				int length = value.Length;
-				if(passedTextures==null || passedTextures.Length!=length) {
+				if(passedTextures == null || passedTextures.Length != length) {
 					passedTextures = new RenderTexture[length];
 				}
 
-				Array.Copy(value,passedTextures,length);
+				Array.Copy(value, passedTextures, length);
 			}
 		}
 
@@ -81,9 +81,9 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 		public virtual void Dispose() { }
 
 		protected virtual RectInt GetViewport(Camera camera)
-			=> viewportFunc?.Invoke(camera) ?? camera?.ViewPixel ?? (framebuffer!=null ? new RectInt(0,0,framebuffer.maxTextureWidth,framebuffer.maxTextureHeight) : new RectInt(0,0,Screen.Width,Screen.Height));
+			=> viewportFunc?.Invoke(camera) ?? camera?.ViewPixel ?? (framebuffer != null ? new RectInt(0, 0, framebuffer.maxTextureWidth, framebuffer.maxTextureHeight) : new RectInt(0, 0, Screen.Width, Screen.Height));
 
-		public static T Create<T>(string name,Action<T> initializer = null) where T : RenderPass, new()
+		public static T Create<T>(string name, Action<T> initializer = null) where T : RenderPass, new()
 		{
 			var pass = new T {
 				name = name
@@ -95,7 +95,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 
 			return pass;
 		}
-		public static RenderPass Create(Type type,string name,Action<RenderPass> initializer = null)
+		public static RenderPass Create(Type type, string name, Action<RenderPass> initializer = null)
 		{
 			//TODO: This is not ideal, because it's skipping setting of default values.
 			var pass = (RenderPass)FormatterServices.GetUninitializedObject(type);
@@ -110,8 +110,8 @@ namespace Dissonance.Engine.Graphics.RenderPasses
 
 		internal static void Init()
 		{
-			fullNameToType = new Dictionary<string,Type>();
-			fullNameToInfo = new Dictionary<string,RenderPassInfoAttribute>();
+			fullNameToType = new Dictionary<string, Type>();
+			fullNameToInfo = new Dictionary<string, RenderPassInfoAttribute>();
 
 			foreach(var type in AssemblyCache.EngineTypes) {
 				if(!type.IsAbstract && typeof(RenderPass).IsAssignableFrom(type)) {

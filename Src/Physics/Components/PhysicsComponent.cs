@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Physics
 		}
 		protected override void OnDispose()
 		{
-			if(gameObject.CountComponents<PhysicsComponent>()==0) {
+			if(gameObject.CountComponents<PhysicsComponent>() == 0) {
 				gameObject.rigidbodyInternal.Dispose();
 			}
 		}

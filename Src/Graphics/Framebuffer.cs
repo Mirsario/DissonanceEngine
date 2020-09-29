@@ -15,11 +15,11 @@ namespace Dissonance.Engine.Graphics
 		public static Framebuffer DefaultFramebuffer { get; set; }
 
 		public static Framebuffer ActiveBuffer => activeBuffer;
-		
+
 		public readonly string Name;
 		public readonly uint Id;
 
-		private readonly Dictionary<RenderTexture,FramebufferAttachment> textureToAttachment;
+		private readonly Dictionary<RenderTexture, FramebufferAttachment> textureToAttachment;
 
 		public List<RenderTexture> renderTextures;
 		public Renderbuffer[] renderbuffers;
@@ -37,10 +37,10 @@ namespace Dissonance.Engine.Graphics
 
 			renderTextures = new List<RenderTexture>();
 
-			textureToAttachment = new Dictionary<RenderTexture,FramebufferAttachment>();
+			textureToAttachment = new Dictionary<RenderTexture, FramebufferAttachment>();
 		}
 
-		public void AttachRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
+		public void AttachRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
 		{
 			Rendering.CheckGLErrors($"At the start of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 
@@ -48,20 +48,20 @@ namespace Dissonance.Engine.Graphics
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 
-			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer,attachment,TextureTarget.Texture2D,texture.Id,0);
-			
+			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture.Id, 0);
+
 			renderTextures.Add(texture);
 
 			textureToAttachment[texture] = attachment;
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
-				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
+			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 
-			maxTextureWidth = Math.Max(maxTextureWidth,texture.Width);
-			maxTextureHeight = Math.Max(maxTextureHeight,texture.Height);
+			maxTextureWidth = Math.Max(maxTextureWidth, texture.Width);
+			maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
 
 			Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 		}
@@ -72,45 +72,45 @@ namespace Dissonance.Engine.Graphics
 				AttachRenderTexture(texture);
 			}
 		}
-		public void AttachRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
+		public void AttachRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
 		{
 			Bind(this);
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 
-			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,attachment,RenderbufferTarget.Renderbuffer,Id);
+			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, attachment, RenderbufferTarget.Renderbuffer, Id);
 
 			Rendering.CheckFramebufferStatus();
 
-			ArrayUtils.Add(ref renderbuffers,renderbuffer);
+			ArrayUtils.Add(ref renderbuffers, renderbuffer);
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
-				ArrayUtils.Add(ref drawBuffers,drawBuffersEnum);
+			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 		}
 
 		public void DetachRenderTexture(RenderTexture texture)
 		{
-			if(!textureToAttachment.TryGetValue(texture,out var attachment)) {
+			if(!textureToAttachment.TryGetValue(texture, out var attachment)) {
 				return;
 			}
 
 			Bind(this);
 
-			GL.FramebufferTexture(FramebufferTarget.Framebuffer,attachment,0,0);
+			GL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, 0, 0);
 
 			renderTextures.Remove(texture);
 			textureToAttachment.Remove(texture);
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum),drawBuffersEnum)) {
-				int index = Array.IndexOf(drawBuffers,drawBuffersEnum);
+			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+				int index = Array.IndexOf(drawBuffers, drawBuffersEnum);
 
-				if(index>=0) {
-					ArrayUtils.Remove(ref drawBuffers,index);
+				if(index >= 0) {
+					ArrayUtils.Remove(ref drawBuffers, index);
 				}
 			}
 
@@ -121,29 +121,29 @@ namespace Dissonance.Engine.Graphics
 
 		public void PrepareAttachments()
 		{
-			if(renderTextures!=null) {
-				for(int i = 0;i<renderTextures.Count;i++) {
+			if(renderTextures != null) {
+				for(int i = 0; i < renderTextures.Count; i++) {
 					renderTextures[i].UpdateSize();
 				}
 			}
 		}
 
-		public Framebuffer WithRenderTexture(RenderTexture texture,FramebufferAttachment? attachmentType = null)
+		public Framebuffer WithRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
 		{
-			AttachRenderTexture(texture,attachmentType);
+			AttachRenderTexture(texture, attachmentType);
 
 			return this;
 		}
 		public Framebuffer WithRenderTextures(params RenderTexture[] textures)
 		{
 			AttachRenderTextures(textures);
-			
+
 			return this;
 		}
-		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer,FramebufferAttachment? attachmentType = null)
+		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
 		{
-			AttachRenderbuffer(renderbuffer,attachmentType);
-			
+			AttachRenderbuffer(renderbuffer, attachmentType);
+
 			return this;
 		}
 
@@ -156,7 +156,7 @@ namespace Dissonance.Engine.Graphics
 			drawBuffers = null;
 		}
 
-		public static Framebuffer Create(string name,Action<Framebuffer> initializer = null)
+		public static Framebuffer Create(string name, Action<Framebuffer> initializer = null)
 		{
 			var fb = new Framebuffer(name);
 
@@ -164,22 +164,22 @@ namespace Dissonance.Engine.Graphics
 
 			return fb;
 		}
-		public static void Bind(Framebuffer fb,FramebufferTarget target = FramebufferTarget.Framebuffer)
+		public static void Bind(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
 			fb ??= DefaultFramebuffer;
 
-			GL.BindFramebuffer(target,fb?.Id ?? 0);
+			GL.BindFramebuffer(target, fb?.Id ?? 0);
 
-			if(target==FramebufferTarget.Framebuffer) {
+			if(target == FramebufferTarget.Framebuffer) {
 				activeBuffer = fb;
 			}
 		}
-		public static void BindWithDrawBuffers(Framebuffer fb,FramebufferTarget target = FramebufferTarget.Framebuffer)
+		public static void BindWithDrawBuffers(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
-			Bind(fb,target);
+			Bind(fb, target);
 
-			if(fb!=null) {
-				GL.DrawBuffers(fb.drawBuffers.Length,fb.drawBuffers);
+			if(fb != null) {
+				GL.DrawBuffers(fb.drawBuffers.Length, fb.drawBuffers);
 			}
 		}
 	}

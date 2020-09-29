@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Core
 				var references = assembly.GetReferencedAssemblies();
 
 				foreach(var reference in references) {
-					if(!loadedAssemblies.Any(a => a.GetName()==reference)) {
+					if(!loadedAssemblies.Any(a => a.GetName() == reference)) {
 						try {
 							Assembly.Load(reference);
 						}
@@ -39,7 +39,7 @@ namespace Dissonance.Engine.Core
 				.Where(a => !a.IsDynamic && !a.GetName().Name.StartsWith("System.") && !EngineReferences.Any(r => r.Name.Equals(a.GetName().Name))).ToList();
 
 			assemblies.Remove(EngineAssembly);
-			assemblies.Insert(0,EngineAssembly);
+			assemblies.Insert(0, EngineAssembly);
 
 			AllAssemblies = assemblies.ToArray();
 			AllTypes = AllAssemblies.SelectMany(a => a.GetTypes()).ToArray();

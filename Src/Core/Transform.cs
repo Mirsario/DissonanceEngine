@@ -16,7 +16,7 @@ namespace Dissonance.Engine.Core
 			Position = 1,
 			Rotation = 2,
 			Scale = 4,
-			All = Position|Rotation|Scale
+			All = Position | Rotation | Scale
 		}
 
 		public readonly IReadOnlyList<Transform> Children;
@@ -32,19 +32,19 @@ namespace Dissonance.Engine.Core
 		private Matrix4x4 worldMatrixCache;
 		private bool worldMatrixNeedsRecalculation;
 
-		public Transform Root => Parent==null ? this : EnumerateParents().Last();
+		public Transform Root => Parent == null ? this : EnumerateParents().Last();
 		public Transform Parent {
 			get => parent;
 			set {
-				if(parent==value) {
+				if(parent == value) {
 					return;
 				}
 
-				if(parent!=null) {
+				if(parent != null) {
 					parent.ChildrenInternal.Remove(this);
 				}
 
-				if(value!=null) {
+				if(value != null) {
 					value.ChildrenInternal.Add(this);
 				}
 
@@ -57,7 +57,7 @@ namespace Dissonance.Engine.Core
 
 				m.ClearScale();
 
-				return new Vector3(m.m20,m.m21,m.m22).Normalized;
+				return new Vector3(m.m20, m.m21, m.m22).Normalized;
 			}
 		}
 		public Vector3 Right {
@@ -66,7 +66,7 @@ namespace Dissonance.Engine.Core
 
 				m.ClearScale();
 
-				return new Vector3(m.m00,m.m01,m.m02).Normalized;
+				return new Vector3(m.m00, m.m01, m.m02).Normalized;
 			}
 		}
 		public Vector3 Up {
@@ -75,7 +75,7 @@ namespace Dissonance.Engine.Core
 
 				m.ClearScale();
 
-				return new Vector3(m.m10,m.m11,m.m12).Normalized;
+				return new Vector3(m.m10, m.m11, m.m12).Normalized;
 			}
 		}
 		public Vector3 Position {
@@ -85,7 +85,7 @@ namespace Dissonance.Engine.Core
 
 				m.SetTranslation(value);
 
-				if(Parent!=null) {
+				if(Parent != null) {
 					m = ToLocalSpace(m);
 				}
 
@@ -145,7 +145,7 @@ namespace Dissonance.Engine.Core
 				var tempPos = matrix.ExtractTranslation();
 				var tempScale = matrix.ExtractScale();
 
-				matrix = Parent==null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
+				matrix = Parent == null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
 
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
@@ -179,7 +179,7 @@ namespace Dissonance.Engine.Core
 		}
 		public Matrix4x4 WorldMatrix {
 			get {
-				if(Parent==null) {
+				if(Parent == null) {
 					return matrix;
 				}
 
@@ -192,10 +192,10 @@ namespace Dissonance.Engine.Core
 				return worldMatrixCache;
 			}
 			set {
-				matrix = Parent==null ? value : ToLocalSpace(value);
+				matrix = Parent == null ? value : ToLocalSpace(value);
 				worldMatrixCache = value;
 
-				OnModified(UpdateFlags.All,false);
+				OnModified(UpdateFlags.All, false);
 			}
 		}
 
@@ -210,13 +210,13 @@ namespace Dissonance.Engine.Core
 		{
 			var transform = this;
 
-			while((transform = transform.Parent)!=null) {
+			while((transform = transform.Parent) != null) {
 				yield return transform;
 			}
 		}
 		public IEnumerable<Transform> EnumerateChildren()
 		{
-			for(int i = 0;i<ChildrenInternal.Count;i++) {
+			for(int i = 0; i < ChildrenInternal.Count; i++) {
 				var child = ChildrenInternal[i];
 
 				yield return child;
@@ -232,7 +232,7 @@ namespace Dissonance.Engine.Core
 		{
 			Transform p = this;
 
-			while((p = p.Parent)!=null) {
+			while((p = p.Parent) != null) {
 				matrix *= p.Matrix.Inverted;
 			}
 
@@ -244,14 +244,14 @@ namespace Dissonance.Engine.Core
 		{
 			Transform p = this;
 
-			while((p = p.Parent)!=null) {
+			while((p = p.Parent) != null) {
 				matrix *= p.Matrix;
 			}
 
 			return matrix;
 		}
 
-		private void OnModified(UpdateFlags physicsUpdateFlags,bool worldMatrixNeedsRecalculation = true)
+		private void OnModified(UpdateFlags physicsUpdateFlags, bool worldMatrixNeedsRecalculation = true)
 		{
 			this.physicsUpdateFlags |= physicsUpdateFlags;
 			this.worldMatrixNeedsRecalculation = worldMatrixNeedsRecalculation;

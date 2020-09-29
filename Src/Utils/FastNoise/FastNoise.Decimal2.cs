@@ -9,9 +9,9 @@ namespace Dissonance.Engine.Utils
 	{
 		private struct Decimal2
 		{
-			public readonly DECIMAL x,y;
+			public readonly DECIMAL x, y;
 
-			public Decimal2(DECIMAL x,DECIMAL y)
+			public Decimal2(DECIMAL x, DECIMAL y)
 			{
 				this.x = x;
 				this.y = y;

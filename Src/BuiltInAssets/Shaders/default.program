@@ -164,7 +164,7 @@
 		"blendFactorSrc": "SrcAlpha",
 		"blendFactorDst": "OneMinusSrcAlpha"
 	},
-	
+
 	//Transparent Cutout
 
 	"Transparent/Cutout/Diffuse": {

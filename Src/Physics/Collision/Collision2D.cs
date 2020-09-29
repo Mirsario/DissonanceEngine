@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Physics
 		public readonly Collider Collider;
 		public readonly ContactPoint2D[] Contacts;
 
-		public Collision2D(GameObject gameObject,Rigidbody2D rigidbody,Collider collider,ContactPoint2D[] contacts)
+		public Collision2D(GameObject gameObject, Rigidbody2D rigidbody, Collider collider, ContactPoint2D[] contacts)
 		{
 			GameObject = gameObject;
 			Rigidbody = rigidbody;

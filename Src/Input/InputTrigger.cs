@@ -37,30 +37,30 @@ namespace Dissonance.Engine.Input
 		public float Value {
 			get => CurrentInput.analogInput;
 			internal set {
-				CurrentInput.analogInput = Mathf.Clamp(value,minValue,maxValue);
-				CurrentInput.isPressed = value!=0f;
+				CurrentInput.analogInput = Mathf.Clamp(value, minValue, maxValue);
+				CurrentInput.isPressed = value != 0f;
 			}
 		}
 		public InputBinding[] Bindings {
 			set {
-				if(value==null) {
+				if(value == null) {
 					throw new ArgumentNullException();
 				}
 
 				bindingCount = value.Length;
 				bindings = new InputBinding[bindingCount];
 
-				for(int i = 0;i<bindingCount;i++) {
+				for(int i = 0; i < bindingCount; i++) {
 					bindings[i] = value[i];
 				}
 			}
 		}
 
-		internal ref SummInput CurrentInput => ref (Game.Instance?.preInitDone!=false ? ref fixedInput : ref renderInput);
+		internal ref SummInput CurrentInput => ref (Game.Instance?.preInitDone != false ? ref fixedInput : ref renderInput);
 
 		internal InputTrigger() { }
 
-		internal virtual void Init(int id,string name,InputBinding[] bindings,float minValue,float maxValue)
+		internal virtual void Init(int id, string name, InputBinding[] bindings, float minValue, float maxValue)
 		{
 			Id = id;
 

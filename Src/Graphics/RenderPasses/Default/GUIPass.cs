@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 			Shader.SetShader(Rendering.GUIShader);
 
 			GL.Enable(EnableCap.Blend);
-			Rendering.SetBlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
+			Rendering.SetBlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 			GUI.canDraw = true;
 
 			Game.Instance?.OnGUI();

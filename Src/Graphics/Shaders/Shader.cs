@@ -17,7 +17,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
 	public partial class Shader : Asset
 	{
-		internal static Dictionary<string,Shader> shadersByName = new Dictionary<string,Shader>(StringComparer.OrdinalIgnoreCase);
+		internal static Dictionary<string, Shader> shadersByName = new Dictionary<string, Shader>(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new List<Shader>();
 
 		private static Shader errorShader;
@@ -33,7 +33,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 		public CullMode cullMode = CullMode.Front;
 		public PolygonMode polygonMode = PolygonMode.Fill;
 
-		internal Dictionary<string,ShaderUniform> uniforms;
+		internal Dictionary<string, ShaderUniform> uniforms;
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
 		internal List<Material> materialAttachments = new List<Material>();
@@ -53,12 +53,12 @@ namespace Dissonance.Engine.Graphics.Shaders
 			Name = name;
 			Id = GL.CreateProgram();
 
-			if(Name!=null) {
+			if(Name != null) {
 				namePtr = Marshal.StringToHGlobalAnsi(Name);
 
 				//TODO: Add a way to check if a function is implemented. Maybe make internal delegates accessible with properrties?
 				try {
-					GL.ObjectLabel(GLConstants.PROGRAM,Id,Name.Length,namePtr);
+					GL.ObjectLabel(GLConstants.PROGRAM, Id, Name.Length, namePtr);
 				}
 				catch { }
 			}
@@ -68,7 +68,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 		{
 			base.Dispose();
 
-			if(Id>0) {
+			if(Id > 0) {
 				GL.DeleteProgram(Id);
 
 				Id = 0;
@@ -82,7 +82,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 			FragmentShader = null;
 			GeometryShader = null;
 
-			if(namePtr!=IntPtr.Zero) {
+			if(namePtr != IntPtr.Zero) {
 				Marshal.FreeHGlobal(namePtr);
 
 				namePtr = IntPtr.Zero;
@@ -93,10 +93,10 @@ namespace Dissonance.Engine.Graphics.Shaders
 		public override string ToString() => Name;
 
 		public int GetUniformLocation(string uniformName)
-			=> uniforms.TryGetValue(uniformName,out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
-		public bool TryGetUniformLocation(string uniformName,out int location)
+			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
+		public bool TryGetUniformLocation(string uniformName, out int location)
 		{
-			if(uniforms.TryGetValue(uniformName,out var uniform)) {
+			if(uniforms.TryGetValue(uniformName, out var uniform)) {
 				location = uniform.location;
 
 				return true;
@@ -113,51 +113,51 @@ namespace Dissonance.Engine.Graphics.Shaders
 		internal void SetupCommonUniforms()
 		{
 			if(hasDefaultUniform[DSU.ScreenWidth]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth],Screen.Width);
+				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth], Screen.Width);
 			}
 
 			if(hasDefaultUniform[DSU.ScreenHeight]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight],Screen.Height);
+				GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight], Screen.Height);
 			}
 
 			if(hasDefaultUniform[DSU.ScreenResolution]) {
-				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution],Screen.Width,(float)Screen.Height);
+				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution], Screen.Width, (float)Screen.Height);
 			}
 
 			if(hasDefaultUniform[DSU.Time]) {
-				GL.Uniform1(defaultUniformIndex[DSU.Time],Time.RenderGameTime);
+				GL.Uniform1(defaultUniformIndex[DSU.Time], Time.RenderGameTime);
 			}
 
 			if(hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor],Rendering.ambientColor.x,Rendering.ambientColor.y,Rendering.ambientColor.z);
+				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.ambientColor.x, Rendering.ambientColor.y, Rendering.ambientColor.z);
 			}
 		}
-		internal void SetupCameraUniforms(Camera camera,Vector3 cameraPos)
+		internal void SetupCameraUniforms(Camera camera, Vector3 cameraPos)
 		{
 			if(hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip],camera.nearClip);
+				GL.Uniform1(defaultUniformIndex[DSU.NearClip], camera.nearClip);
 			}
 
 			if(hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip],camera.farClip);
+				GL.Uniform1(defaultUniformIndex[DSU.FarClip], camera.farClip);
 			}
 
 			if(hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition],cameraPos.x,cameraPos.y,cameraPos.z);
+				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.x, cameraPos.y, cameraPos.z);
 			}
 
 			if(hasDefaultUniform[DSU.CameraDirection]) {
 				var forward = camera.Transform.Forward;
 
-				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection],forward.x,forward.y,forward.z);
+				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
-		internal void SetupMatrixUniformsCached(Transform transform,bool[] uniformComputed,
-			ref Matrix4x4 world,ref Matrix4x4 worldInverse,
-			ref Matrix4x4 worldView,ref Matrix4x4 worldViewInverse,
-			ref Matrix4x4 worldViewProj,ref Matrix4x4 worldViewProjInverse,
-			ref Matrix4x4 view,ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj,ref Matrix4x4 projInverse
+		internal void SetupMatrixUniformsCached(Transform transform, bool[] uniformComputed,
+			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
+			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
+			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
+			ref Matrix4x4 view, ref Matrix4x4 viewInverse,
+			ref Matrix4x4 proj, ref Matrix4x4 projInverse
 		)
 		{
 			//Heavily optimized shitcode below, forgive me future me
@@ -175,7 +175,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 
 				if(hasDefaultUniform[DSU.World]) {
 					//Assign
-					UniformMatrix4(defaultUniformIndex[DSU.World],ref world);
+					UniformMatrix4(defaultUniformIndex[DSU.World], ref world);
 				}
 
 				if(hasDefaultUniform[DSU.WorldInverse]) {
@@ -185,7 +185,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 						uniformComputed[DSU.WorldInverse] = true;
 					}
 
-					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse],ref worldInverse);
+					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], ref worldInverse);
 				}
 
 				#region WorldView
@@ -193,13 +193,13 @@ namespace Dissonance.Engine.Graphics.Shaders
 				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 					//Check
 					if(!uniformComputed[DSU.WorldView]) {
-						worldView = world*view;
+						worldView = world * view;
 						uniformComputed[DSU.WorldView] = true;
 					}
 
 					if(hasDefaultUniform[DSU.WorldView]) {
 						//Assign
-						UniformMatrix4(defaultUniformIndex[DSU.WorldView],ref worldView);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldView], ref worldView);
 					}
 
 					if(hasDefaultUniform[DSU.WorldViewInverse]) {
@@ -209,7 +209,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 							uniformComputed[DSU.WorldViewInverse] = true;
 						}
 
-						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse],ref worldViewInverse);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], ref worldViewInverse);
 					}
 
 					#region WorldViewProj
@@ -217,13 +217,13 @@ namespace Dissonance.Engine.Graphics.Shaders
 					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
 						//Check
 						if(!uniformComputed[DSU.WorldViewProj]) {
-							worldViewProj = worldView*proj;
+							worldViewProj = worldView * proj;
 							uniformComputed[DSU.WorldViewProj] = true;
 						}
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
 							//Assign
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj],ref worldViewProj);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], ref worldViewProj);
 						}
 
 						if(hasDefaultUniform[DSU.WorldViewProjInverse]) {
@@ -233,7 +233,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 								uniformComputed[DSU.WorldViewProjInverse] = true;
 							}
 
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse],ref worldViewProjInverse);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
 						}
 					}
 
@@ -248,11 +248,11 @@ namespace Dissonance.Engine.Graphics.Shaders
 			#region View
 
 			if(hasDefaultUniform[DSU.View]) {
-				UniformMatrix4(defaultUniformIndex[DSU.View],ref view);
+				UniformMatrix4(defaultUniformIndex[DSU.View], ref view);
 			}
 
 			if(hasDefaultUniform[DSU.ViewInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse],ref viewInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], ref viewInverse);
 			}
 
 			#endregion
@@ -260,21 +260,21 @@ namespace Dissonance.Engine.Graphics.Shaders
 			#region Proj
 
 			if(hasDefaultUniform[DSU.Proj]) {
-				UniformMatrix4(defaultUniformIndex[DSU.Proj],ref proj);
+				UniformMatrix4(defaultUniformIndex[DSU.Proj], ref proj);
 			}
 
 			if(hasDefaultUniform[DSU.ProjInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],ref projInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], ref projInverse);
 			}
 
 			#endregion
 		}
 		internal void SetupMatrixUniforms(Transform transform,
-			ref Matrix4x4 world,ref Matrix4x4 worldInverse,
-			ref Matrix4x4 worldView,ref Matrix4x4 worldViewInverse,
-			ref Matrix4x4 worldViewProj,ref Matrix4x4 worldViewProjInverse,
-			ref Matrix4x4 view,ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj,ref Matrix4x4 projInverse,
+			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
+			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
+			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
+			ref Matrix4x4 view, ref Matrix4x4 viewInverse,
+			ref Matrix4x4 proj, ref Matrix4x4 projInverse,
 			bool dontCalculateWorld = false
 		)
 		{
@@ -286,41 +286,41 @@ namespace Dissonance.Engine.Graphics.Shaders
 				}
 
 				if(hasDefaultUniform[DSU.World]) {
-					UniformMatrix4(defaultUniformIndex[DSU.World],ref world);
+					UniformMatrix4(defaultUniformIndex[DSU.World], ref world);
 				}
 				if(hasDefaultUniform[DSU.WorldInverse]) {
 					worldInverse = world.Inverted;
-					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse],ref worldInverse);
+					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], ref worldInverse);
 				}
 
 				#region WorldView
 
 				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-					worldView = world*view;
+					worldView = world * view;
 
 					if(hasDefaultUniform[DSU.WorldView]) {
-						UniformMatrix4(defaultUniformIndex[DSU.WorldView],ref worldView);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldView], ref worldView);
 					}
 
 					if(hasDefaultUniform[DSU.WorldViewInverse]) {
 						worldViewInverse = worldView.Inverted;
 
-						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse],ref worldViewInverse);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], ref worldViewInverse);
 					}
 
 					#region WorldViewProj
 
 					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-						worldViewProj = worldView*proj;
+						worldViewProj = worldView * proj;
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj],ref worldViewProj);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], ref worldViewProj);
 						}
 
 						if(hasDefaultUniform[DSU.WorldViewProjInverse]) {
 							worldViewProjInverse = worldViewProj.Inverted;
 
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse],ref worldViewProjInverse);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
 						}
 					}
 
@@ -335,11 +335,11 @@ namespace Dissonance.Engine.Graphics.Shaders
 			#region View
 
 			if(hasDefaultUniform[DSU.View]) {
-				UniformMatrix4(defaultUniformIndex[DSU.View],ref view);
+				UniformMatrix4(defaultUniformIndex[DSU.View], ref view);
 			}
 
 			if(hasDefaultUniform[DSU.ViewInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse],ref viewInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], ref viewInverse);
 			}
 
 			#endregion
@@ -347,11 +347,11 @@ namespace Dissonance.Engine.Graphics.Shaders
 			#region Proj
 
 			if(hasDefaultUniform[DSU.Proj]) {
-				UniformMatrix4(defaultUniformIndex[DSU.Proj],ref proj);
+				UniformMatrix4(defaultUniformIndex[DSU.Proj], ref proj);
 			}
 
 			if(hasDefaultUniform[DSU.ProjInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse],ref projInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], ref projInverse);
 			}
 
 			#endregion
@@ -359,7 +359,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 
 		private void Init()
 		{
-			if(shadersByName.TryGetValue(Name,out var oldShader) && oldShader!=null) {
+			if(shadersByName.TryGetValue(Name, out var oldShader) && oldShader != null) {
 				oldShader.Dispose();
 				shaders.Remove(oldShader);
 			}
@@ -369,25 +369,25 @@ namespace Dissonance.Engine.Graphics.Shaders
 			shaders.Add(this);
 
 			//Set uniform locations
-			uniforms = new Dictionary<string,ShaderUniform>();
+			uniforms = new Dictionary<string, ShaderUniform>();
 
 			Rendering.CheckGLErrors($"Start of {nameof(Shader)}.{nameof(Init)}()");
 
-			GL.GetProgram(Id,GetProgramParameter.ActiveUniforms,out int uniformCount);
+			GL.GetProgram(Id, GetProgramParameter.ActiveUniforms, out int uniformCount);
 
 			const int MaxUniformNameLength = 32;
 
-			for(int i = 0;i<uniformCount;i++) {
-				GL.GetActiveUniform(Id,(uint)i,MaxUniformNameLength,out int length,out int size,out ActiveUniformType uniformType,out string uniformName);
+			for(int i = 0; i < uniformCount; i++) {
+				GL.GetActiveUniform(Id, (uint)i, MaxUniformNameLength, out int length, out int size, out ActiveUniformType uniformType, out string uniformName);
 
-				int location = GL.GetUniformLocation(Id,uniformName); //Uniform location != uniform index, and that's pretty ridiculous and painful.
+				int location = GL.GetUniformLocation(Id, uniformName); //Uniform location != uniform index, and that's pretty ridiculous and painful.
 
-				uniforms.Add(uniformName,new ShaderUniform(uniformName,uniformType,location));
+				uniforms.Add(uniformName, new ShaderUniform(uniformName, uniformType, location));
 
 				//Optimization for engine's uniforms
-				int indexOf = Array.IndexOf(DSU.names,uniformName);
+				int indexOf = Array.IndexOf(DSU.names, uniformName);
 
-				if(indexOf>=0) {
+				if(indexOf >= 0) {
 					hasDefaultUniform[indexOf] = true;
 					defaultUniformIndex[indexOf] = location;
 				}
@@ -398,28 +398,28 @@ namespace Dissonance.Engine.Graphics.Shaders
 
 		public static void SetShader(Shader shader)
 		{
-			if(shader==ActiveShader) {
+			if(shader == ActiveShader) {
 				return;
 			}
 
-			if(shader!=null) {
+			if(shader != null) {
 				GL.UseProgram(shader.Id);
 				ActiveShader = shader;
 
 				Rendering.SetStencilMask(shader.stencilMask);
-				Rendering.SetBlendFunc(shader.blendFactorSrc,shader.blendFactorDst);
+				Rendering.SetBlendFunc(shader.blendFactorSrc, shader.blendFactorDst);
 			} else {
 				GL.UseProgram(0);
 				ActiveShader = null;
 			}
 		}
-		public static Shader FromCode(string name,string vertexCode,string fragmentCode = "",string geometryCode = "",string[] defines = null)
+		public static Shader FromCode(string name, string vertexCode, string fragmentCode = "", string geometryCode = "", string[] defines = null)
 		{
-			if(defines!=null && defines.Length==0) {
+			if(defines != null && defines.Length == 0) {
 				defines = null;
 			}
 
-			if(defines!=null) {
+			if(defines != null) {
 				string defString = "";
 
 				void PrepareCode(ref string code)
@@ -428,15 +428,15 @@ namespace Dissonance.Engine.Graphics.Shaders
 						return;
 					}
 
-					int index = code.IndexOf("version",StringComparison.Ordinal);
+					int index = code.IndexOf("version", StringComparison.Ordinal);
 
-					if(index>=0) {
-						index = code.IndexOf("\n",index,StringComparison.Ordinal)+1;
-						code = code.Insert(index,defString);
+					if(index >= 0) {
+						index = code.IndexOf("\n", index, StringComparison.Ordinal) + 1;
+						code = code.Insert(index, defString);
 					}
 				}
 
-				for(int i = 0;i<defines.Length;i++) {
+				for(int i = 0; i < defines.Length; i++) {
 					defString += $"#define {defines[i]}\r\n";
 				}
 
@@ -449,29 +449,29 @@ namespace Dissonance.Engine.Graphics.Shaders
 				defines = defines
 			};
 
-			static void TryCompileShader(Shader shader,ShaderType shaderType,string code,Action<Shader,SubShader> setter)
+			static void TryCompileShader(Shader shader, ShaderType shaderType, string code, Action<Shader, SubShader> setter)
 			{
 				if(!string.IsNullOrEmpty(code)) {
 					var subShader = new SubShader(shaderType);
 
 					if(subShader.CompileShader(code)) {
-						setter(shader,subShader);
+						setter(shader, subShader);
 
-						GL.AttachShader(shader.Id,subShader.Id);
+						GL.AttachShader(shader.Id, subShader.Id);
 					} else {
 						subShader.Dispose();
 					}
 				}
 			}
 
-			TryCompileShader(shader,ShaderType.VertexShader,vertexCode,(shader,subShader) => shader.VertexShader = subShader);
-			TryCompileShader(shader,ShaderType.FragmentShader,fragmentCode,(shader,subShader) => shader.FragmentShader = subShader);
-			TryCompileShader(shader,ShaderType.GeometryShader,geometryCode,(shader,subShader) => shader.GeometryShader = subShader);
+			TryCompileShader(shader, ShaderType.VertexShader, vertexCode, (shader, subShader) => shader.VertexShader = subShader);
+			TryCompileShader(shader, ShaderType.FragmentShader, fragmentCode, (shader, subShader) => shader.FragmentShader = subShader);
+			TryCompileShader(shader, ShaderType.GeometryShader, geometryCode, (shader, subShader) => shader.GeometryShader = subShader);
 
-			for(int i = 0;i<CustomVertexAttribute.Count;i++) {
+			for(int i = 0; i < CustomVertexAttribute.Count; i++) {
 				var attribute = CustomVertexAttribute.GetInstance(i);
 
-				GL.BindAttribLocation(shader.Id,(uint)i,attribute.NameId);
+				GL.BindAttribLocation(shader.Id, (uint)i, attribute.NameId);
 			}
 
 			GL.LinkProgram(shader.Id);
@@ -481,10 +481,10 @@ namespace Dissonance.Engine.Graphics.Shaders
 			return shader;
 		}
 
-		internal static unsafe void UniformMatrix4(int location,ref Matrix4x4 matrix,bool transpose = false)
+		internal static unsafe void UniformMatrix4(int location, ref Matrix4x4 matrix, bool transpose = false)
 		{
 			fixed(float* matrix_ptr = &matrix.m00) {
-				GL.UniformMatrix4(location,1,transpose,matrix_ptr);
+				GL.UniformMatrix4(location, 1, transpose, matrix_ptr);
 			}
 		}
 	}

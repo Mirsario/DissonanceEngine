@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Physics
 
 			var vertices = mesh.Vertices;
 
-			while(i<mesh.Indices.Length) {
+			while(i < mesh.Indices.Length) {
 				triMesh.AddTriangle(
 					vertices[mesh.Indices[i++]],
 					vertices[mesh.Indices[i++]],

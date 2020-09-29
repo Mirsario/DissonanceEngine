@@ -7,12 +7,12 @@ namespace Dissonance.Engine.Graphics
 {
 	partial class Rendering
 	{
-		private static readonly Regex RegexGLVersion = new Regex(@".*?([\d.]+).*",RegexOptions.Compiled);
-		
+		private static readonly Regex RegexGLVersion = new Regex(@".*?([\d.]+).*", RegexOptions.Compiled);
+
 		public static Version GetOpenGLVersion()
 		{
 			string versionStr = GL.GetString(StringName.Version);
-			
+
 			var match = RegexGLVersion.Match(versionStr);
 
 			if(!match.Success) {
@@ -21,10 +21,10 @@ namespace Dissonance.Engine.Graphics
 
 			return new Version(match.Groups[1].Value);
 		}
-		
+
 		[Obsolete("This call of CheckGLErrors was meant to be temporary.")]
-		public static bool CheckGLErrorsTemp(string context = null,bool throwException = true) => CheckGLErrors(context,throwException);
-		public static bool CheckGLErrors(string context = null,bool throwException = true)
+		public static bool CheckGLErrorsTemp(string context = null, bool throwException = true) => CheckGLErrors(context, throwException);
+		public static bool CheckGLErrors(string context = null, bool throwException = true)
 		{
 			GraphicsError error = GL.GetError();
 
@@ -37,7 +37,7 @@ namespace Dissonance.Engine.Graphics
 					if(throwException) {
 						throw new GraphicsException(message);
 					} else {
-						Debug.Log(message,stackframeOffset:2);
+						Debug.Log(message, stackframeOffset: 2);
 					}
 
 					return true;
@@ -71,7 +71,7 @@ namespace Dissonance.Engine.Graphics
 				case FramebufferStatus.FramebufferIncompleteMultisample:
 					throw new Exception("All images must have the same number of multisample samples.");
 
-				case FramebufferStatus.FramebufferIncompleteLayerTargets :
+				case FramebufferStatus.FramebufferIncompleteLayerTargets:
 					throw new Exception("If a layered image is attached to one attachment, then all attachments must be layered attachments. The attached layers do not have to have the same number of layers, nor do the layers have to come from the same kind of texture.");
 
 				case FramebufferStatus.FramebufferUnsupported:
@@ -84,17 +84,17 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void SetStencilMask(uint stencilMask)
 		{
-			if(stencilMask!=currentStencilMask) {
+			if(stencilMask != currentStencilMask) {
 				GL.StencilMask(currentStencilMask = stencilMask);
 			}
 		}
-		internal static void SetBlendFunc(BlendingFactor blendFactorSrc,BlendingFactor blendFactorDst)
+		internal static void SetBlendFunc(BlendingFactor blendFactorSrc, BlendingFactor blendFactorDst)
 		{
-			if(blendFactorSrc!=currentBlendFactorSrc || blendFactorDst!=currentBlendFactorDst) {
+			if(blendFactorSrc != currentBlendFactorSrc || blendFactorDst != currentBlendFactorDst) {
 				currentBlendFactorSrc = blendFactorSrc;
 				currentBlendFactorDst = blendFactorDst;
 
-				GL.BlendFunc(blendFactorSrc,blendFactorDst);
+				GL.BlendFunc(blendFactorSrc, blendFactorDst);
 			}
 		}
 	}

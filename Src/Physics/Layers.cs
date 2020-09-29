@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed class Layers : EngineModule
 	{
-		public const int MaxLayers = sizeof(ulong)*8;
+		public const int MaxLayers = sizeof(ulong) * 8;
 
 		internal static Layers Instance => Game.Instance.GetModule<Layers>();
 
@@ -25,18 +25,18 @@ namespace Dissonance.Engine.Physics
 		public static void AddLayers<T>() where T : Enum => AddLayers(Enum.GetNames(typeof(T)));
 		public static void AddLayers(params string[] layerNames)
 		{
-			if(Game.Instance?.preInitDone!=false) {
+			if(Game.Instance?.preInitDone != false) {
 				throw new Exception("Cannot add layers after Game.PreInit() call has finished.");
 			}
 
 			var instance = Instance;
-			int newLength = instance.layerCount+layerNames.Length;
+			int newLength = instance.layerCount + layerNames.Length;
 
-			if(newLength>=64) {
+			if(newLength >= 64) {
 				throw new Exception("Cannot add more than 64 layers.");
 			}
 
-			for(int i = 0,j = instance.layerCount;i<layerNames.Length;i++,j++) {
+			for(int i = 0, j = instance.layerCount; i < layerNames.Length; i++, j++) {
 				instance.indexToMask[j] = (ulong)1 << j;
 				instance.indexToName[j] = layerNames[i];
 			}
@@ -48,7 +48,7 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			if(index<0 || index>=instance.layerCount) {
+			if(index < 0 || index >= instance.layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
@@ -58,8 +58,8 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			for(int i = 0;i<instance.layerCount;i++) {
-				if(instance.indexToName[i]==name) {
+			for(int i = 0; i < instance.layerCount; i++) {
+				if(instance.indexToName[i] == name) {
 					return instance.indexToMask[i];
 				}
 			}
@@ -71,7 +71,7 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			if(index<0 || index>=instance.layerCount) {
+			if(index < 0 || index >= instance.layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
@@ -81,8 +81,8 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			for(int i = 0;i<instance.layerCount;i++) {
-				if(instance.indexToMask[i]==flag) {
+			for(int i = 0; i < instance.layerCount; i++) {
+				if(instance.indexToMask[i] == flag) {
 					return instance.indexToName[i];
 				}
 			}
@@ -94,8 +94,8 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			for(int i = 0;i<instance.layerCount;i++) {
-				if(instance.indexToName[i]==name) {
+			for(int i = 0; i < instance.layerCount; i++) {
+				if(instance.indexToName[i] == name) {
 					return (byte)i;
 				}
 			}
@@ -106,8 +106,8 @@ namespace Dissonance.Engine.Physics
 		{
 			var instance = Instance;
 
-			for(int i = 0;i<instance.layerCount;i++) {
-				if(instance.indexToMask[i]==flag) {
+			for(int i = 0; i < instance.layerCount; i++) {
+				if(instance.indexToMask[i] == flag) {
 					return (byte)i;
 				}
 			}

@@ -10,12 +10,12 @@ namespace Dissonance.Engine.Core
 	partial class GameObject
 	{
 		internal List<Component> components;
-		internal Dictionary<int,List<Component>> componentsByNameHash;
+		internal Dictionary<int, List<Component>> componentsByNameHash;
 
 		//AddComponent
 		public T AddComponent<T>(Action<T> initializer) where T : Component
-			=> AddComponent(true,initializer);
-		public T AddComponent<T>(bool enable,Action<T> initializer) where T : Component
+			=> AddComponent(true, initializer);
+		public T AddComponent<T>(bool enable, Action<T> initializer) where T : Component
 		{
 			T component = AddComponent<T>(false);
 
@@ -28,23 +28,23 @@ namespace Dissonance.Engine.Core
 			return component;
 		}
 		public T AddComponent<T>(bool enable = true) where T : Component
-			=> (T)AddComponentInternal(typeof(T),enable);
-		public Component AddComponent(Type type,bool enable = true)
+			=> (T)AddComponentInternal(typeof(T), enable);
+		public Component AddComponent(Type type, bool enable = true)
 		{
-			AssertionUtils.TypeIsAssignableFrom(typeof(Component),type);
+			AssertionUtils.TypeIsAssignableFrom(typeof(Component), type);
 
-			return AddComponentInternal(type,enable);
+			return AddComponentInternal(type, enable);
 		}
 		//GetComponent(s)
 		public T GetComponent<T>(bool noSubclasses = false) where T : Component
 		{
 			var type = typeof(T);
 
-			for(int i = 0;i<components.Count;i++) {
+			for(int i = 0; i < components.Count; i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
+				if(thisType == type || !noSubclasses && thisType.IsSubclassOf(type)) {
 					return (T)component;
 				}
 			}
@@ -56,11 +56,11 @@ namespace Dissonance.Engine.Core
 			var list = new List<T>();
 			var type = typeof(T);
 
-			for(int i = 0;i<components.Count;i++) {
+			for(int i = 0; i < components.Count; i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType==type || !noSubclasses && thisType.IsSubclassOf(type)) {
+				if(thisType == type || !noSubclasses && thisType.IsSubclassOf(type)) {
 					list.Add((T)component);
 				}
 			}
@@ -73,34 +73,34 @@ namespace Dissonance.Engine.Core
 			int count = 0;
 			var type = typeof(T);
 
-			for(int i = 0;i<components.Count;i++) {
+			for(int i = 0; i < components.Count; i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType==type || !exactType && thisType.IsSubclassOf(type)) {
+				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
 					count++;
 				}
 			}
 
 			return count;
 		}
-		public int CountComponents(Type type,bool exactType = false)
+		public int CountComponents(Type type, bool exactType = false)
 		{
-			AssertionUtils.TypeIsAssignableFrom(typeof(Component),type);
+			AssertionUtils.TypeIsAssignableFrom(typeof(Component), type);
 
-			return CountComponentsInternal(type,exactType);
+			return CountComponentsInternal(type, exactType);
 		}
 
 		//Init/Dispose fields.
 		private void ComponentPreInit()
 		{
 			components = new List<Component>();
-			componentsByNameHash = new Dictionary<int,List<Component>>();
+			componentsByNameHash = new Dictionary<int, List<Component>>();
 		}
 		private void ComponentDispose()
 		{
-			if(components!=null) {
-				for(int i = 0;i<components.Count;i++) {
+			if(components != null) {
+				for(int i = 0; i < components.Count; i++) {
 					components[i].Dispose();
 				}
 
@@ -109,18 +109,18 @@ namespace Dissonance.Engine.Core
 				components = null;
 			}
 
-			if(componentsByNameHash!=null) {
+			if(componentsByNameHash != null) {
 				componentsByNameHash.Clear();
 
 				componentsByNameHash = null;
 			}
 		}
 		//Etc
-		private Component AddComponentInternal(Type type,bool enable = true)
+		private Component AddComponentInternal(Type type, bool enable = true)
 		{
 			var parameters = ComponentManager.GetParameters(type);
 
-			if(parameters.allowOnlyOnePerObject && CountComponents(type)>=1) {
+			if(parameters.allowOnlyOnePerObject && CountComponents(type) >= 1) {
 				throw new Exception($"Cannot add more than 1 component of type '{type.Name}' to a single {nameof(GameObject)}.");
 			}
 
@@ -135,7 +135,7 @@ namespace Dissonance.Engine.Core
 
 			int key = newComponent.NameHash;
 
-			if(!componentsByNameHash.TryGetValue(key,out var componentList)) {
+			if(!componentsByNameHash.TryGetValue(key, out var componentList)) {
 				componentsByNameHash[key] = componentList = new List<Component>();
 			}
 
@@ -152,15 +152,15 @@ namespace Dissonance.Engine.Core
 
 			return newComponent;
 		}
-		private int CountComponentsInternal(Type type,bool exactType = false)
+		private int CountComponentsInternal(Type type, bool exactType = false)
 		{
 			int count = 0;
 
-			for(int i = 0;i<components.Count;i++) {
+			for(int i = 0; i < components.Count; i++) {
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType==type || !exactType && thisType.IsSubclassOf(type)) {
+				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
 					count++;
 				}
 			}

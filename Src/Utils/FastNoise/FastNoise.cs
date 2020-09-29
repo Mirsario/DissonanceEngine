@@ -46,40 +46,40 @@ namespace Dissonance.Engine.Utils
 			CalculateFractalBounding();
 		}
 
-		public DECIMAL GetNoise(DECIMAL x,DECIMAL y)
+		public DECIMAL GetNoise(DECIMAL x, DECIMAL y)
 		{
 			x *= Frequency;
 			y *= Frequency;
 
 			switch(NoiseType) {
 				case NoiseTypes.Value:
-					return SingleValue(Seed,x,y);
+					return SingleValue(Seed, x, y);
 				case NoiseTypes.ValueFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleValueFractalFBM(x,y),
-						FractalTypes.Billow => SingleValueFractalBillow(x,y),
-						FractalTypes.RigidMulti => SingleValueFractalRigidMulti(x,y),
+						FractalTypes.FBM => SingleValueFractalFBM(x, y),
+						FractalTypes.Billow => SingleValueFractalBillow(x, y),
+						FractalTypes.RigidMulti => SingleValueFractalRigidMulti(x, y),
 						_ => 0,
 					};
 				case NoiseTypes.Perlin:
-					return SinglePerlin(Seed,x,y);
+					return SinglePerlin(Seed, x, y);
 				case NoiseTypes.PerlinFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SinglePerlinFractalFBM(x,y),
-						FractalTypes.Billow => SinglePerlinFractalBillow(x,y),
-						FractalTypes.RigidMulti => SinglePerlinFractalRigidMulti(x,y),
+						FractalTypes.FBM => SinglePerlinFractalFBM(x, y),
+						FractalTypes.Billow => SinglePerlinFractalBillow(x, y),
+						FractalTypes.RigidMulti => SinglePerlinFractalRigidMulti(x, y),
 						_ => 0,
 					};
 				case NoiseTypes.Simplex:
-					return SingleSimplex(Seed,x,y);
+					return SingleSimplex(Seed, x, y);
 				case NoiseTypes.SimplexFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleSimplexFractalFBM(x,y),
-						FractalTypes.Billow => SingleSimplexFractalBillow(x,y),
-						FractalTypes.RigidMulti => SingleSimplexFractalRigidMulti(x,y),
+						FractalTypes.FBM => SingleSimplexFractalFBM(x, y),
+						FractalTypes.Billow => SingleSimplexFractalBillow(x, y),
+						FractalTypes.RigidMulti => SingleSimplexFractalRigidMulti(x, y),
 						_ => 0,
 					};
 				case NoiseTypes.Cellular:
@@ -87,27 +87,27 @@ namespace Dissonance.Engine.Utils
 						case CellularReturnTypes.CellValue:
 						case CellularReturnTypes.NoiseLookup:
 						case CellularReturnTypes.Distance:
-							return SingleCellular(x,y);
+							return SingleCellular(x, y);
 						default:
-							return SingleCellular2Edge(x,y);
+							return SingleCellular2Edge(x, y);
 					}
 				case NoiseTypes.WhiteNoise:
-					return GetWhiteNoise(x,y);
+					return GetWhiteNoise(x, y);
 				case NoiseTypes.Cubic:
-					return SingleCubic(Seed,x,y);
+					return SingleCubic(Seed, x, y);
 				case NoiseTypes.CubicFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleCubicFractalFBM(x,y),
-						FractalTypes.Billow => SingleCubicFractalBillow(x,y),
-						FractalTypes.RigidMulti => SingleCubicFractalRigidMulti(x,y),
+						FractalTypes.FBM => SingleCubicFractalFBM(x, y),
+						FractalTypes.Billow => SingleCubicFractalBillow(x, y),
+						FractalTypes.RigidMulti => SingleCubicFractalRigidMulti(x, y),
 						_ => 0,
 					};
 				default:
 					return 0;
 			}
 		}
-		public DECIMAL GetNoise(DECIMAL x,DECIMAL y,DECIMAL z)
+		public DECIMAL GetNoise(DECIMAL x, DECIMAL y, DECIMAL z)
 		{
 			x *= Frequency;
 			y *= Frequency;
@@ -115,33 +115,33 @@ namespace Dissonance.Engine.Utils
 
 			switch(NoiseType) {
 				case NoiseTypes.Value:
-					return SingleValue(Seed,x,y,z);
+					return SingleValue(Seed, x, y, z);
 				case NoiseTypes.ValueFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleValueFractalFBM(x,y,z),
-						FractalTypes.Billow => SingleValueFractalBillow(x,y,z),
-						FractalTypes.RigidMulti => SingleValueFractalRigidMulti(x,y,z),
+						FractalTypes.FBM => SingleValueFractalFBM(x, y, z),
+						FractalTypes.Billow => SingleValueFractalBillow(x, y, z),
+						FractalTypes.RigidMulti => SingleValueFractalRigidMulti(x, y, z),
 						_ => 0,
 					};
 				case NoiseTypes.Perlin:
-					return SinglePerlin(Seed,x,y,z);
+					return SinglePerlin(Seed, x, y, z);
 				case NoiseTypes.PerlinFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SinglePerlinFractalFBM(x,y,z),
-						FractalTypes.Billow => SinglePerlinFractalBillow(x,y,z),
-						FractalTypes.RigidMulti => SinglePerlinFractalRigidMulti(x,y,z),
+						FractalTypes.FBM => SinglePerlinFractalFBM(x, y, z),
+						FractalTypes.Billow => SinglePerlinFractalBillow(x, y, z),
+						FractalTypes.RigidMulti => SinglePerlinFractalRigidMulti(x, y, z),
 						_ => 0,
 					};
 				case NoiseTypes.Simplex:
-					return SingleSimplex(Seed,x,y,z);
+					return SingleSimplex(Seed, x, y, z);
 				case NoiseTypes.SimplexFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleSimplexFractalFBM(x,y,z),
-						FractalTypes.Billow => SingleSimplexFractalBillow(x,y,z),
-						FractalTypes.RigidMulti => SingleSimplexFractalRigidMulti(x,y,z),
+						FractalTypes.FBM => SingleSimplexFractalFBM(x, y, z),
+						FractalTypes.Billow => SingleSimplexFractalBillow(x, y, z),
+						FractalTypes.RigidMulti => SingleSimplexFractalRigidMulti(x, y, z),
 						_ => 0,
 					};
 				case NoiseTypes.Cellular:
@@ -149,20 +149,20 @@ namespace Dissonance.Engine.Utils
 						case CellularReturnTypes.CellValue:
 						case CellularReturnTypes.NoiseLookup:
 						case CellularReturnTypes.Distance:
-							return SingleCellular(x,y,z);
+							return SingleCellular(x, y, z);
 						default:
-							return SingleCellular2Edge(x,y,z);
+							return SingleCellular2Edge(x, y, z);
 					}
 				case NoiseTypes.WhiteNoise:
-					return GetWhiteNoise(x,y,z);
+					return GetWhiteNoise(x, y, z);
 				case NoiseTypes.Cubic:
-					return SingleCubic(Seed,x,y,z);
+					return SingleCubic(Seed, x, y, z);
 				case NoiseTypes.CubicFractal:
 					return FractalType switch
 					{
-						FractalTypes.FBM => SingleCubicFractalFBM(x,y,z),
-						FractalTypes.Billow => SingleCubicFractalBillow(x,y,z),
-						FractalTypes.RigidMulti => SingleCubicFractalRigidMulti(x,y,z),
+						FractalTypes.FBM => SingleCubicFractalFBM(x, y, z),
+						FractalTypes.Billow => SingleCubicFractalBillow(x, y, z),
+						FractalTypes.RigidMulti => SingleCubicFractalRigidMulti(x, y, z),
 						_ => 0,
 					};
 				default:
@@ -175,25 +175,26 @@ namespace Dissonance.Engine.Utils
 			DECIMAL amp = gain;
 			DECIMAL ampFractal = 1;
 
-			for(int i = 1;i < octaves;i++) {
+			for(int i = 1; i < octaves; i++) {
 				ampFractal += amp;
 				amp *= gain;
 			}
 
-			fractalBounding = 1/ampFractal;
+			fractalBounding = 1 / ampFractal;
 		}
 
-		[MethodImpl(Inline)] private static int FastFloor(DECIMAL f) => (f>=0 ? (int)f : (int)f-1);
-		[MethodImpl(Inline)] private static int FastRound(DECIMAL f) => (f>=0) ? (int)(f+(DECIMAL)0.5) : (int)(f-(DECIMAL)0.5);
-		[MethodImpl(Inline)] private static DECIMAL Lerp(DECIMAL a,DECIMAL b,DECIMAL t) => a+t*(b-a);
-		[MethodImpl(Inline)] private static DECIMAL InterpHermiteFunc(DECIMAL t) => t*t*(3-2*t);
-		[MethodImpl(Inline)] private static DECIMAL InterpQuinticFunc(DECIMAL t) => t*t*t*(t*(t*6-15)+10);
-		[MethodImpl(Inline)] private static DECIMAL CubicLerp(DECIMAL a,DECIMAL b,DECIMAL c,DECIMAL d,DECIMAL t)
+		[MethodImpl(Inline)] private static int FastFloor(DECIMAL f) => (f >= 0 ? (int)f : (int)f - 1);
+		[MethodImpl(Inline)] private static int FastRound(DECIMAL f) => (f >= 0) ? (int)(f + (DECIMAL)0.5) : (int)(f - (DECIMAL)0.5);
+		[MethodImpl(Inline)] private static DECIMAL Lerp(DECIMAL a, DECIMAL b, DECIMAL t) => a + t * (b - a);
+		[MethodImpl(Inline)] private static DECIMAL InterpHermiteFunc(DECIMAL t) => t * t * (3 - 2 * t);
+		[MethodImpl(Inline)] private static DECIMAL InterpQuinticFunc(DECIMAL t) => t * t * t * (t * (t * 6 - 15) + 10);
+		[MethodImpl(Inline)]
+		private static DECIMAL CubicLerp(DECIMAL a, DECIMAL b, DECIMAL c, DECIMAL d, DECIMAL t)
 		{
-			DECIMAL p = (d-c)-(a-b);
-			DECIMAL tt = t*t;
+			DECIMAL p = (d - c) - (a - b);
+			DECIMAL tt = t * t;
 
-			return tt*t*p+tt*((a-b)-p)+t*(c-a)+b;
+			return tt * t * p + tt * ((a - b) - p) + t * (c - a) + b;
 		}
 	}
 }

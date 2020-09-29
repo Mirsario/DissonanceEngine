@@ -16,7 +16,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 Offset {
 			get => offset;
 			set {
-				if(offset!=value) {
+				if(offset != value) {
 					offset = value;
 
 					TryUpdateCollider();
@@ -26,7 +26,7 @@ namespace Dissonance.Engine.Physics
 
 		internal virtual void UpdateCollider()
 		{
-			if(collShape!=null) {
+			if(collShape != null) {
 				collShape.UserObject = this;
 			}
 

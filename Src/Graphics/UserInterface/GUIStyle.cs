@@ -19,7 +19,7 @@ namespace Dissonance.Engine.Graphics.UserInterface
 			texNormal = GUI.texDefault;
 			texHover = GUI.texDefaultHover;
 			texActive = GUI.texDefaultActive;
-			border = new RectOffset(6f,6f,6f,6f);
+			border = new RectOffset(6f, 6f, 6f, 6f);
 			textAlignment = TextAlignment.UpperLeft;
 		}
 	}

@@ -6,7 +6,7 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {
-	[ModuleDependency(true,typeof(Windowing))]
+	[ModuleDependency(true, typeof(Windowing))]
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static CursorState CursorState {
 			get => cursorState;
-			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>().WindowHandle,InputMode.Cursor,(int)(cursorState = value));
+			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>().WindowHandle, InputMode.Cursor, (int)(cursorState = value));
 		}
 
 		private Windowing windowing;
@@ -70,35 +70,35 @@ namespace Dissonance.Engine.Graphics
 
 		private void UpdateValues()
 		{
-			if(windowing==null) {
+			if(windowing == null) {
 				return;
 			}
 
 			var windowHandle = windowing.WindowHandle;
 
 			//Framebuffer
-			GLFW.GetFramebufferSize(windowHandle,out int framebufferWidth,out int framebufferHeight);
+			GLFW.GetFramebufferSize(windowHandle, out int framebufferWidth, out int framebufferHeight);
 
 			Width = framebufferWidth;
 			Height = framebufferHeight;
 
-			Size = new Vector2Int(framebufferWidth,framebufferHeight);
-			Center = new Vector2(framebufferWidth*0.5f,framebufferHeight*0.5f);
-			Rectangle = new RectInt(0,0,framebufferWidth,framebufferHeight);
+			Size = new Vector2Int(framebufferWidth, framebufferHeight);
+			Center = new Vector2(framebufferWidth * 0.5f, framebufferHeight * 0.5f);
+			Rectangle = new RectInt(0, 0, framebufferWidth, framebufferHeight);
 
 			//Window
-			GLFW.GetWindowPos(windowHandle,out int windowX,out int windowY);
-			GLFW.GetWindowSize(windowHandle,out int windowWidth,out int windowHeight);
+			GLFW.GetWindowPos(windowHandle, out int windowX, out int windowY);
+			GLFW.GetWindowSize(windowHandle, out int windowWidth, out int windowHeight);
 
 			WindowX = windowX;
 			WindowY = windowY;
 			WindowWidth = windowWidth;
 			WindowHeight = windowHeight;
 
-			WindowSize = new Vector2Int(windowWidth,windowHeight);
-			WindowLocation = new Vector2Int(windowX,windowY);
+			WindowSize = new Vector2Int(windowWidth, windowHeight);
+			WindowLocation = new Vector2Int(windowX, windowY);
 
-			WindowCenter = new Vector2(windowX+windowWidth*0.5f,windowY+windowHeight*0.5f);
+			WindowCenter = new Vector2(windowX + windowWidth * 0.5f, windowY + windowHeight * 0.5f);
 		}
 	}
 }

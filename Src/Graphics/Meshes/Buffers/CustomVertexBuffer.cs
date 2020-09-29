@@ -24,7 +24,7 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 		public static IReadOnlyList<IReadOnlyList<int>> AttributeAttachmentsById { get; internal set; }
 		public static int Count { get; private set; }
 
-		private static Dictionary<Type,int> idByType;
+		private static Dictionary<Type, int> idByType;
 
 		public readonly int TypeId;
 
@@ -36,19 +36,19 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 		public static int GetId<T>() where T : CustomVertexBuffer => IDs<T>.id;
 		public static int GetId(Type type) => idByType[type];
 		public static Type GetType(int id) => TypeById[id];
-		public static CustomVertexBuffer CreateInstance(int id) => (CustomVertexBuffer)Activator.CreateInstance(GetType(id),true);
+		public static CustomVertexBuffer CreateInstance(int id) => (CustomVertexBuffer)Activator.CreateInstance(GetType(id), true);
 
 		internal static void Initialize()
 		{
-			idByType = new Dictionary<Type,int>();
+			idByType = new Dictionary<Type, int>();
 
 			var typeList = new List<Type>();
 
 			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexBuffer).IsAssignableFrom(t))) {
 				typeof(IDs<>)
 					.MakeGenericType(type)
-					.GetField(nameof(IDs<CustomVertexBuffer>.id),BindingFlags.Public|BindingFlags.Static)
-					.SetValue(null,typeList.Count);
+					.GetField(nameof(IDs<CustomVertexBuffer>.id), BindingFlags.Public | BindingFlags.Static)
+					.SetValue(null, typeList.Count);
 
 				idByType[type] = typeList.Count;
 
@@ -68,8 +68,8 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 		{
 			var attributes = AttributeAttachmentsById[TypeId];
 
-			if(data==null) {
-				if(BufferId!=0) {
+			if(data == null) {
+				if(BufferId != 0) {
 					GL.DeleteBuffer(BufferId);
 
 					BufferId = 0;
@@ -82,36 +82,36 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 				return;
 			}
 
-			if(BufferId==0) {
+			if(BufferId == 0) {
 				BufferId = GL.GenBuffer();
 			}
 
 			int tSize = Marshal.SizeOf<T>();
 
-			GL.BindBuffer(Target,BufferId);
+			GL.BindBuffer(Target, BufferId);
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(Target,(int)(DataLength*tSize),data,mesh.bufferUsage);
+			GL.BufferData(Target, (int)(DataLength * tSize), data, mesh.bufferUsage);
 
 			foreach(uint attributeId in attributes) {
 				GL.EnableVertexAttribArray(attributeId);
 
 				var attribute = CustomVertexAttribute.GetInstance((int)attributeId);
 
-				GL.VertexAttribPointer(attributeId,attribute.Size,attribute.PointerType,attribute.IsNormalized,attribute.Stride,(IntPtr)attribute.Offset);
+				GL.VertexAttribPointer(attributeId, attribute.Size, attribute.PointerType, attribute.IsNormalized, attribute.Stride, (IntPtr)attribute.Offset);
 			}
 		}
 		public override void Dispose()
 		{
-			if(BufferId!=0) {
+			if(BufferId != 0) {
 				GL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}
 		}
-		public override void SetData(byte[] data) => SetDataHelper(ref this.data,data);
+		public override void SetData(byte[] data) => SetDataHelper(ref this.data, data);
 
-		public void SetData<TProvidedData>(byte[] byteData,Func<TProvidedData,T> cast) where TProvidedData : unmanaged => SetDataHelper(ref data,byteData,cast);
+		public void SetData<TProvidedData>(byte[] byteData, Func<TProvidedData, T> cast) where TProvidedData : unmanaged => SetDataHelper(ref data, byteData, cast);
 	}
 }

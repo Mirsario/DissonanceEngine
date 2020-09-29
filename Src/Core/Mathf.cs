@@ -31,17 +31,17 @@ namespace Dissonance.Engine.Core
 		[MethodImpl(Inline)] public static float Atan(float v) => (float)Math.Atan(v);
 		[MethodImpl(Inline)] public static double Atan(double d) => Math.Atan(d);
 
-		[MethodImpl(Inline)] public static float Atan2(float y,float x) => (float)Math.Atan2(y,x);
-		[MethodImpl(Inline)] public static double Atan2(double y,double x) => Math.Atan2(y,x);
+		[MethodImpl(Inline)] public static float Atan2(float y, float x) => (float)Math.Atan2(y, x);
+		[MethodImpl(Inline)] public static double Atan2(double y, double x) => Math.Atan2(y, x);
 
 		[MethodImpl(Inline)] public static float Sqrt(float f) => (float)Math.Sqrt(f);
 		[MethodImpl(Inline)] public static double Sqrt(double d) => Math.Sqrt(d);
 
-		[MethodImpl(Inline)] public static float SqrtReciprocal(float f) => 1f/Sqrt(f);
-		[MethodImpl(Inline)] public static double SqrtReciprocal(double d) => 1d/Sqrt(d);
+		[MethodImpl(Inline)] public static float SqrtReciprocal(float f) => 1f / Sqrt(f);
+		[MethodImpl(Inline)] public static double SqrtReciprocal(double d) => 1d / Sqrt(d);
 
-		[MethodImpl(Inline)] public static float Pow(float f,float p) => (float)Math.Pow(f,p);
-		[MethodImpl(Inline)] public static double Pow(double d,double p) => Math.Pow(d,p);
+		[MethodImpl(Inline)] public static float Pow(float f, float p) => (float)Math.Pow(f, p);
+		[MethodImpl(Inline)] public static double Pow(double d, double p) => Math.Pow(d, p);
 
 		[MethodImpl(Inline)] public static float Exp(float power) => (float)Math.Exp(power);
 		[MethodImpl(Inline)] public static double Exp(double power) => Math.Exp(power);
@@ -49,13 +49,13 @@ namespace Dissonance.Engine.Core
 		[MethodImpl(Inline)] public static float Log(float f) => (float)Math.Log(f);
 		[MethodImpl(Inline)] public static double Log(double d) => Math.Log(d);
 
-		[MethodImpl(Inline)] public static float Log(float f,float p) => (float)Math.Log(f,p);
-		[MethodImpl(Inline)] public static double Log(double d,double p) => Math.Log(d,p);
+		[MethodImpl(Inline)] public static float Log(float f, float p) => (float)Math.Log(f, p);
+		[MethodImpl(Inline)] public static double Log(double d, double p) => Math.Log(d, p);
 
 		[MethodImpl(Inline)] public static float Log10(float f) => (float)Math.Log10(f);
 		[MethodImpl(Inline)] public static double Log10(double d) => Math.Log10(d);
 
-		[MethodImpl(Inline)] public static float Dot(float aX,float aY,float bX,float bY) => aX*bX+aY*bY;
-		[MethodImpl(Inline)] public static double Dot(double aX,double aY,double bX,double bY) => aX*bX+aY*bY;
+		[MethodImpl(Inline)] public static float Dot(float aX, float aY, float bX, float bY) => aX * bX + aY * bY;
+		[MethodImpl(Inline)] public static double Dot(double aX, double aY, double bX, double bY) => aX * bX + aY * bY;
 	}
 }

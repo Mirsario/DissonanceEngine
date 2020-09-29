@@ -6,15 +6,15 @@ namespace Dissonance.Engine.IO.Other
 	{
 		public override string[] Extensions => new[] { ".bytes" };
 
-		public override byte[] Import(Stream stream,string filePath)
+		public override byte[] Import(Stream stream, string filePath)
 		{
 			var bytes = new byte[stream.Length];
-			stream.Read(bytes,0,bytes.Length);
+			stream.Read(bytes, 0, bytes.Length);
 			return bytes;
 		}
-		public override void Export(byte[] bytes,Stream stream)
+		public override void Export(byte[] bytes, Stream stream)
 		{
-			stream.Write(bytes,0,bytes.Length);
+			stream.Write(bytes, 0, bytes.Length);
 		}
 	}
 }

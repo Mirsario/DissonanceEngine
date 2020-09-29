@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace Dissonance.Engine.Core.Modules
 {
-	[AttributeUsage(AttributeTargets.Class,AllowMultiple = true,Inherited = true)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public class ModuleDependencyAttribute : Attribute
 	{
 		public readonly ModuleDependency[] Dependencies;
 
-		public ModuleDependencyAttribute(params Type[] dependencies) : this(false,dependencies) {}
-		public ModuleDependencyAttribute(bool optional,params Type[] dependencies)
+		public ModuleDependencyAttribute(params Type[] dependencies) : this(false, dependencies) { }
+		public ModuleDependencyAttribute(bool optional, params Type[] dependencies)
 		{
 			foreach(var type in dependencies) {
 				if(type.IsAbstract) {
@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Core.Modules
 			}
 
 			Dependencies = dependencies
-				.Select(type => new ModuleDependency(type,optional))
+				.Select(type => new ModuleDependency(type, optional))
 				.ToArray();
 		}
 	}

@@ -15,9 +15,9 @@ namespace Dissonance.Engine.Graphics.Meshes
 		public static Mesh Sphere { get; private set; }
 		public static Mesh IcoSphere { get; private set; }
 
-		public static Mesh GenerateQuad(float size = 1f,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool flipUVHorizontally = false,bool flipUVVertically = false,bool apply = true)
+		public static Mesh GenerateQuad(float size = 1f, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool flipUVHorizontally = false, bool flipUVVertically = false, bool apply = true)
 		{
-			float half = size*0.5f;
+			float half = size * 0.5f;
 
 			var newMesh = new Mesh {
 				//Vertices
@@ -53,16 +53,16 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			return newMesh;
 		}
-		public static Mesh GeneratePlane(Vector2Int resolution,Vector2 size,bool centered,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool apply = true,Vector2? uvSize = null)
+		public static Mesh GeneratePlane(Vector2Int resolution, Vector2 size, bool centered, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true, Vector2? uvSize = null)
 		{
-			Vector2 offset = centered ? -size*0.5f : Vector2.Zero;
-			Vector2Int realResolution = resolution+Vector2Int.One;
-			Vector2 stepSize = size/realResolution;
-			Vector2 to01 = Vector2.One/realResolution;
+			Vector2 offset = centered ? -size * 0.5f : Vector2.Zero;
+			Vector2Int realResolution = resolution + Vector2Int.One;
+			Vector2 stepSize = size / realResolution;
+			Vector2 to01 = Vector2.One / realResolution;
 			Vector2 realUvSize = uvSize ?? Vector2.One;
 
-			int vertexCount = realResolution.x*realResolution.y;
-			int triIndexCount = resolution.x*resolution.y*6;
+			int vertexCount = realResolution.x * realResolution.y;
+			int triIndexCount = resolution.x * resolution.y * 6;
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[vertexCount],
@@ -70,29 +70,29 @@ namespace Dissonance.Engine.Graphics.Meshes
 				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
-			var vertexMap = new uint[realResolution.x,realResolution.y];
+			var vertexMap = new uint[realResolution.x, realResolution.y];
 
 			uint vertex = 0;
 			uint triangle = 0;
 
-			for(int y = 0;y<realResolution.y;y++) {
-				for(int x = 0;x<realResolution.x;x++) {
-					newMesh.Vertices[vertex] = new Vector3(x*stepSize.x+offset.x,0f,y*stepSize.y+offset.y);
+			for(int y = 0; y < realResolution.y; y++) {
+				for(int x = 0; x < realResolution.x; x++) {
+					newMesh.Vertices[vertex] = new Vector3(x * stepSize.x + offset.x, 0f, y * stepSize.y + offset.y);
 
 					if(addUVs) {
-						newMesh.Uv0[vertex] = new Vector2(x,y)*to01*realUvSize;
+						newMesh.Uv0[vertex] = new Vector2(x, y) * to01 * realUvSize;
 					}
 
-					vertexMap[x,y] = vertex++;
+					vertexMap[x, y] = vertex++;
 				}
 			}
 
-			for(int y = 0;y<resolution.y;y++) {
-				for(int x = 0;x<resolution.x;x++) {
-					uint topLeft = vertexMap[x,y];
-					uint topRight = vertexMap[x+1,y];
-					uint bottomLeft = vertexMap[x,y+1];
-					uint bottomRight = vertexMap[x+1,y+1];
+			for(int y = 0; y < resolution.y; y++) {
+				for(int x = 0; x < resolution.x; x++) {
+					uint topLeft = vertexMap[x, y];
+					uint topRight = vertexMap[x + 1, y];
+					uint bottomLeft = vertexMap[x, y + 1];
+					uint bottomRight = vertexMap[x + 1, y + 1];
 
 					newMesh.Indices[triangle++] = bottomLeft;
 					newMesh.Indices[triangle++] = topRight;
@@ -117,10 +117,10 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			return newMesh;
 		}
-		public static Mesh GenerateCube(float cubeSize = 1f,bool inverted = false,bool addUVs = true,bool addNormals = true,bool addTangents = true,bool apply = true)
+		public static Mesh GenerateCube(float cubeSize = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
-			Vector3 size = Vector3.One*cubeSize;
-			Vector3 offset = -size*0.5f;
+			Vector3 size = Vector3.One * cubeSize;
+			Vector3 offset = -size * 0.5f;
 
 			var newMesh = new Mesh {
 				//Vertices
@@ -197,19 +197,19 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			return newMesh;
 		}
-		public static Mesh GenerateSphere(int xRes = 16,int yRes = 16,float radius = 1f,bool inverted = false,bool addUVs = true,bool addNormals = true,bool apply = true)
+		public static Mesh GenerateSphere(int xRes = 16, int yRes = 16, float radius = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool apply = true)
 		{
 			//TODO: There's plenty of unneeded vertex repeating, which is only needed on UV seams.
 
-			float xResMultiplier = 1f/xRes;
-			float yResMultiplier = 1f/yRes;
-			float xOffset = Mathf.TwoPI*xResMultiplier;
-			float yOffset = Mathf.PI*yResMultiplier;
-			int verticeAmount = xRes*yRes*4;
+			float xResMultiplier = 1f / xRes;
+			float yResMultiplier = 1f / yRes;
+			float xOffset = Mathf.TwoPI * xResMultiplier;
+			float yOffset = Mathf.PI * yResMultiplier;
+			int verticeAmount = xRes * yRes * 4;
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[verticeAmount],
-				Indices = new uint[xRes*yRes*6]
+				Indices = new uint[xRes * yRes * 6]
 			};
 
 			if(addNormals) {
@@ -220,40 +220,40 @@ namespace Dissonance.Engine.Graphics.Meshes
 				newMesh.Uv0 = new Vector2[verticeAmount];
 			}
 
-			void SphereVertex(int x,int y,uint index)
+			void SphereVertex(int x, int y, uint index)
 			{
-				float hAngle = x*xOffset;
-				float vAngle = y*yOffset;
+				float hAngle = x * xOffset;
+				float vAngle = y * yOffset;
 
-				var normal = new Vector3(Mathf.Sin(hAngle)*Mathf.Sin(vAngle),Mathf.Cos(vAngle),Mathf.Cos(hAngle)*Mathf.Sin(vAngle));
+				var normal = new Vector3(Mathf.Sin(hAngle) * Mathf.Sin(vAngle), Mathf.Cos(vAngle), Mathf.Cos(hAngle) * Mathf.Sin(vAngle));
 
-				newMesh.Vertices[index] = normal*radius;
+				newMesh.Vertices[index] = normal * radius;
 
 				if(addNormals) {
 					newMesh.Normals[index] = normal;
 				}
 
 				if(addUVs) {
-					newMesh.Uv0[index] = new Vector2(x*xResMultiplier,y*yResMultiplier);
+					newMesh.Uv0[index] = new Vector2(x * xResMultiplier, y * yResMultiplier);
 				}
 			}
 
 			uint vertexIndex = 0;
 			uint triangleIndex = 0;
 
-			for(int y = 0;y<yRes;y++) {
-				for(int x = 0;x<xRes;x++) {
-					SphereVertex(x,y,vertexIndex);
-					SphereVertex(x,y+1,vertexIndex+1);
-					SphereVertex(x+1,y,vertexIndex+2);
-					SphereVertex(x+1,y+1,vertexIndex+3);
+			for(int y = 0; y < yRes; y++) {
+				for(int x = 0; x < xRes; x++) {
+					SphereVertex(x, y, vertexIndex);
+					SphereVertex(x, y + 1, vertexIndex + 1);
+					SphereVertex(x + 1, y, vertexIndex + 2);
+					SphereVertex(x + 1, y + 1, vertexIndex + 3);
 
 					newMesh.Indices[triangleIndex++] = vertexIndex;
-					newMesh.Indices[triangleIndex++] = vertexIndex+1;
-					newMesh.Indices[triangleIndex++] = vertexIndex+3;
-					newMesh.Indices[triangleIndex++] = vertexIndex+2;
+					newMesh.Indices[triangleIndex++] = vertexIndex + 1;
+					newMesh.Indices[triangleIndex++] = vertexIndex + 3;
+					newMesh.Indices[triangleIndex++] = vertexIndex + 2;
 					newMesh.Indices[triangleIndex++] = vertexIndex;
-					newMesh.Indices[triangleIndex++] = vertexIndex+3;
+					newMesh.Indices[triangleIndex++] = vertexIndex + 3;
 
 					vertexIndex += 4;
 				}
@@ -265,15 +265,15 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			return newMesh;
 		}
-		public static Mesh GenerateIcoSphere(float size = 1f,bool inverted = false,bool addNormals = true,bool addTangents = true,bool apply = true)
+		public static Mesh GenerateIcoSphere(float size = 1f, bool inverted = false, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
 			//TODO: Reimplement with an algorithm that accepts a resolution integer
 			//TODO: Add UVs and make tangents work
 			const float N = 0f;
 			//float X = 0.525731112119133606f;
 			//float Z = 0.850650808352039932f;
-			float X = 0.61803398874989484830630790701031f*size;
-			float Z = 1f*size;
+			float X = 0.61803398874989484830630790701031f * size;
+			float Z = 1f * size;
 
 			var newMesh = new Mesh {
 				//Vertices
@@ -321,7 +321,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 			Quad = GenerateQuad();
 			QuadXFlipped = GenerateQuad(flipUVHorizontally: true);
 			QuadYFlipped = GenerateQuad(flipUVVertically: true);
-			QuadXYFlipped = GenerateQuad(flipUVHorizontally: true,flipUVVertically: true);
+			QuadXYFlipped = GenerateQuad(flipUVHorizontally: true, flipUVVertically: true);
 			ScreenQuad = GenerateQuad(2f);
 			Cube = GenerateCube();
 			InvertedCube = GenerateCube(inverted: true);

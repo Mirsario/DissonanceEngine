@@ -28,9 +28,9 @@ namespace Dissonance.Engine.IO.Graphics
 			public BlendingFactor blendFactorSrc = BlendingFactor.One;
 			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
 			//Uniforms
-			public Dictionary<string,float> floats;
-			public Dictionary<string,float[]> vectors;
-			public Dictionary<string,string> textures;
+			public Dictionary<string, float> floats;
+			public Dictionary<string, float[]> vectors;
+			public Dictionary<string, string> textures;
 		}
 	}
 }

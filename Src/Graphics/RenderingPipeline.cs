@@ -18,19 +18,19 @@ namespace Dissonance.Engine.Graphics
 			set => renderPasses = value ?? new RenderPass[0];
 		}
 
-		public abstract void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses); 
-		
-		public virtual void PreRender() {}
-		public virtual void PostRender() {}
+		public abstract void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses);
+
+		public virtual void PreRender() { }
+		public virtual void PostRender() { }
 		public virtual void Dispose()
 		{
-			if(framebuffers!=null) {
-				for(int i = 0;i<framebuffers.Length;i++) {
+			if(framebuffers != null) {
+				for(int i = 0; i < framebuffers.Length; i++) {
 					framebuffers[i].Dispose();
 				}
 			}
 
-			for(int i = 0;i<renderPasses.Length;i++) {
+			for(int i = 0; i < renderPasses.Length; i++) {
 				renderPasses[i].Dispose();
 			}
 		}
@@ -42,11 +42,11 @@ namespace Dissonance.Engine.Graphics
 			var framebuffersList = new List<Framebuffer>();
 			var renderPassesList = new List<RenderPass>();
 
-			Setup(framebuffersList,renderPassesList);
+			Setup(framebuffersList, renderPassesList);
 
 			Rendering.CheckGLErrors($"Setting up rendering pipeline {GetType().Name}");
 
-			if(framebuffersList!=null) {
+			if(framebuffersList != null) {
 				foreach(var framebuffer in framebuffersList) {
 					Framebuffer.Bind(framebuffer);
 					Rendering.CheckFramebufferStatus();

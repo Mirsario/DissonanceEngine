@@ -13,23 +13,23 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 {
 	public class DeferredRendering : RenderingPipeline
 	{
-		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
+		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			Debug.Log($"Setting up '{GetType().Name}' rendering pipeline.");
 
-			Framebuffer mainFramebuffer,lightingFramebuffer;
+			Framebuffer mainFramebuffer, lightingFramebuffer;
 
 			static Vector2Int ScreenSize() => Screen.Size;
 
-			var colorBuffer = new RenderTexture("colorBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
-			var normalBuffer = new RenderTexture("normalBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
-			var positionBuffer = new RenderTexture("positionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
-			var emissionBuffer = new RenderTexture("emissionBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
-			var specularBuffer = new RenderTexture("specularBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.R32f);
+			var colorBuffer = new RenderTexture("colorBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGBA32f);
+			var normalBuffer = new RenderTexture("normalBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGBA32f);
+			var positionBuffer = new RenderTexture("positionBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGBA32f);
+			var emissionBuffer = new RenderTexture("emissionBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGBA32f);
+			var specularBuffer = new RenderTexture("specularBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.R32f);
 
-			var depthBuffer = new RenderTexture("depthBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.Depth32);
+			var depthBuffer = new RenderTexture("depthBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.Depth32);
 
-			var lightingBuffer = new RenderTexture("lightingBuffer",ScreenSize,useMipmaps:false,textureFormat:TextureFormat.RGBA32f);
+			var lightingBuffer = new RenderTexture("lightingBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGBA32f);
 
 			//Framebuffers
 			framebuffers.AddRange(new[] {
