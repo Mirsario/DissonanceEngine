@@ -11,6 +11,7 @@ namespace Dissonance.Engine.Graphics
 			//TODO: Add a way to avoid trycatches like this.
 			try {
 				GL.Enable(EnableCap.DebugOutput);
+				GL.Enable(EnableCap.DebugOutputSynchronous);
 
 				CheckGLErrors("After attempting to enable debugging.");
 
@@ -54,6 +55,8 @@ namespace Dissonance.Engine.Graphics
 				};
 
 				GL.DebugMessageCallback(debugCallback,IntPtr.Zero);
+
+				Debug.Log("Activated OpenGL Debugging.");
 			}
 			catch {
 				Debug.Log("Couldn't enable GL debugging.");

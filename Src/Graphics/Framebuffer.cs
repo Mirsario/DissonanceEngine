@@ -12,6 +12,8 @@ namespace Dissonance.Engine.Graphics
 	{
 		internal static Framebuffer activeBuffer;
 
+		public static Framebuffer DefaultFramebuffer { get; set; }
+
 		public static Framebuffer ActiveBuffer => activeBuffer;
 		
 		public readonly string Name;
@@ -164,6 +166,8 @@ namespace Dissonance.Engine.Graphics
 		}
 		public static void Bind(Framebuffer fb,FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
+			fb ??= DefaultFramebuffer;
+
 			GL.BindFramebuffer(target,fb?.Id ?? 0);
 
 			if(target==FramebufferTarget.Framebuffer) {

@@ -55,6 +55,9 @@ namespace Dissonance.Engine.Core
 		internal bool fixedUpdate;
 		internal string assetsPath;
 
+		private Stopwatch updateStopwatch;
+		private ulong numFixedUpdates;
+
 		public string Name { get; set; } = "UntitledGame";
 		public string DisplayName { get; set; } = "Untitled Game";
 		public GameFlags Flags { get; private set; }
@@ -117,8 +120,11 @@ namespace Dissonance.Engine.Core
 			preInitDone = true;
 
 			Init();
-			UpdateLoop();
-			Dispose();
+
+			if(!Flags.HasFlag(GameFlags.ManualUpdate)) {
+				UpdateLoop();
+				Dispose();
+			}
 		}
 		public void Dispose()
 		{
@@ -136,6 +142,28 @@ namespace Dissonance.Engine.Core
 
 			if(globalInstance==this) {
 				globalInstance = null;
+			}
+		}
+		public void Update()
+		{
+			if(updateStopwatch==null) {
+				updateStopwatch = new Stopwatch();
+
+				updateStopwatch.Start();
+			}
+
+			while(numFixedUpdates<(ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds*Time.TargetUpdateFrequency)) {
+				if(!NoWindow) {
+					GLFW.PollEvents();
+				}
+
+				FixedUpdateInternal();
+
+				numFixedUpdates++;
+			}
+
+			if(!NoGraphics) {
+				RenderUpdateInternal();
 			}
 		}
 		public void AssociateWithCurrentThread() => threadStaticInstance = this;
@@ -219,27 +247,10 @@ namespace Dissonance.Engine.Core
 		}
 		private void UpdateLoop()
 		{
-			Stopwatch updateStopwatch = new Stopwatch();
-
-			updateStopwatch.Start();
-
 			var windowing = GetModule<Windowing>(false);
-			int numFixedUpdates = 0;
 
 			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle)==0)) {
-				while(numFixedUpdates<(int)Math.Floor(updateStopwatch.Elapsed.TotalSeconds*Time.TargetUpdateFrequency)) {
-					if(!NoWindow) {
-						GLFW.PollEvents();
-					}
-
-					FixedUpdateInternal();
-
-					numFixedUpdates++;
-				}
-
-				if(!NoGraphics) {
-					RenderUpdateInternal();
-				}
+				Update();
 			}
 		}
 
