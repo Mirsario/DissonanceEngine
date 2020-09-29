@@ -22,8 +22,8 @@ namespace Dissonance.Engine.Core
 		public byte Layer {
 			get => layer;
 			set {
-				if(value>=Layers.MaxLayers) {
-					throw new IndexOutOfRangeException($"Layer values must be in [0..{Layers.MaxLayers-1}] range.");
+				if(value >= Layers.MaxLayers) {
+					throw new IndexOutOfRangeException($"Layer values must be in [0..{Layers.MaxLayers - 1}] range.");
 				}
 
 				layer = value;
@@ -75,7 +75,7 @@ namespace Dissonance.Engine.Core
 
 		public static T Instantiate<T>(Action<T> preinitializer = null) where T : GameObject
 			=> Manager.Instantiate(preinitializer);
-		public static GameObject Instantiate(Type type,Action<GameObject> preinitializer = null)
-			=> Manager.Instantiate(type,preinitializer);
+		public static GameObject Instantiate(Type type, Action<GameObject> preinitializer = null)
+			=> Manager.Instantiate(type, preinitializer);
 	}
 }

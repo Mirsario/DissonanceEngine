@@ -18,9 +18,9 @@ namespace Dissonance.Engine.IO.Graphics
 		[JsonObject]
 		private class JSON_Material
 		{
-			public Dictionary<string,float> floats;
-			public Dictionary<string,float[]> vectors;
-			public Dictionary<string,string> textures;
+			public Dictionary<string, float> floats;
+			public Dictionary<string, float[]> vectors;
+			public Dictionary<string, string> textures;
 
 			[JsonProperty(Required = Required.Always)]
 			public string name;
@@ -32,7 +32,7 @@ namespace Dissonance.Engine.IO.Graphics
 		public override string[] Extensions => new[] { ".material" };
 		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
 
-		public override Material Import(Stream stream,string filePath)
+		public override Material Import(Stream stream, string filePath)
 		{
 			string jsonText;
 
@@ -42,40 +42,40 @@ namespace Dissonance.Engine.IO.Graphics
 
 			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
 
-			jsonMat.name = FilterText(jsonMat.name,filePath);
-			jsonMat.shader = FilterText(jsonMat.shader,filePath);
+			jsonMat.name = FilterText(jsonMat.name, filePath);
+			jsonMat.shader = FilterText(jsonMat.shader, filePath);
 
 			var shader = Resources.Find<Shader>(jsonMat.shader);
 
-			if(shader==null) {
+			if(shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
 			}
 
-			var material = new Material(jsonMat.name,shader);
+			var material = new Material(jsonMat.name, shader);
 
-			if(jsonMat.textures!=null) {
+			if(jsonMat.textures != null) {
 				foreach(var pair in jsonMat.textures) {
-					material.SetTexture(FilterText(pair.Key,filePath),Resources.Import<Texture>(FilterText(pair.Value,filePath)));
+					material.SetTexture(FilterText(pair.Key, filePath), Resources.Import<Texture>(FilterText(pair.Value, filePath)));
 				}
 			}
 
-			if(jsonMat.floats!=null) {
+			if(jsonMat.floats != null) {
 				foreach(var pair in jsonMat.floats) {
-					material.SetFloat(FilterText(pair.Key,filePath),pair.Value);
+					material.SetFloat(FilterText(pair.Key, filePath), pair.Value);
 				}
 			}
 
-			if(jsonMat.vectors!=null) {
+			if(jsonMat.vectors != null) {
 				foreach(var pair in jsonMat.vectors) {
-					material.SetVector(FilterText(pair.Key,filePath),pair.Value);
+					material.SetVector(FilterText(pair.Key, filePath), pair.Value);
 				}
 			}
 
 			return material;
 		}
-		private static string FilterText(string str,string file) => str.ReplaceCaseInsensitive(
-			("$FILE$",Path.GetFileName(file)),
-			("$FILENAME$",Path.GetFileNameWithoutExtension(file))
+		private static string FilterText(string str, string file) => str.ReplaceCaseInsensitive(
+			("$FILE$", Path.GetFileName(file)),
+			("$FILENAME$", Path.GetFileNameWithoutExtension(file))
 		);
 	}
 }

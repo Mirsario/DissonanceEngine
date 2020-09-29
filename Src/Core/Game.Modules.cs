@@ -13,14 +13,14 @@ namespace Dissonance.Engine.Core
 	{
 		private bool modulesReady;
 		private List<EngineModule> modules;
-		private Dictionary<Type,List<EngineModule>> modulesByType;
+		private Dictionary<Type, List<EngineModule>> modulesByType;
 		private EngineModuleHooks moduleHooks;
 
 		public void AddModule(EngineModule module)
 		{
 			var type = module.GetType();
 
-			if(!modulesByType.TryGetValue(type,out var list)) {
+			if(!modulesByType.TryGetValue(type, out var list)) {
 				modulesByType[type] = list = new List<EngineModule>();
 			}
 
@@ -33,7 +33,7 @@ namespace Dissonance.Engine.Core
 		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
-			if(modulesByType==null || !modulesByType.TryGetValue(typeof(T),out var list)) {
+			if(modulesByType == null || !modulesByType.TryGetValue(typeof(T), out var list)) {
 				result = default;
 
 				return false;
@@ -60,7 +60,7 @@ namespace Dissonance.Engine.Core
 		{
 			moduleHooks = new EngineModuleHooks();
 			modules = new List<EngineModule>();
-			modulesByType = new Dictionary<Type,List<EngineModule>>();
+			modulesByType = new Dictionary<Type, List<EngineModule>>();
 
 			lock(AssemblyCache.AllTypes) {
 				foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
@@ -96,27 +96,27 @@ namespace Dissonance.Engine.Core
 		{
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
 				=> module.Dependencies?.Select(dependency => {
-					var result = modules.FirstOrDefault(m => m.GetType()==dependency.type);
+					var result = modules.FirstOrDefault(m => m.GetType() == dependency.type);
 
-					if(result==null && !dependency.optional) {
+					if(result == null && !dependency.optional) {
 						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{module.GetType().Name}'.");
 					}
 
 					return result;
 				});
 
-			modules = modules.DependencySort(GetDirectDependencies,true).ToList();
+			modules = modules.DependencySort(GetDirectDependencies, true).ToList();
 
-			for(int i = 0;i<modules.Count;i++) {
+			for(int i = 0; i < modules.Count; i++) {
 				modules[i].DependencyIndex = i;
 			}
 		}
 		private void RebuildModuleHooks()
 		{
-			static int CustomSorting((EngineModule module,Delegate method,int position) tupleA,(EngineModule module,Delegate method,int position) tupleB)
-				=> tupleA.module.DependencyIndex<tupleB.module.DependencyIndex && tupleA.position<tupleB.position ? -1 : 1;
+			static int CustomSorting((EngineModule module, Delegate method, int position) tupleA, (EngineModule module, Delegate method, int position) tupleB)
+				=> tupleA.module.DependencyIndex < tupleB.module.DependencyIndex && tupleA.position < tupleB.position ? -1 : 1;
 
-			HookUtils.BuildHooksFromVirtualMethods(modules,moduleHooks,customSorting: CustomSorting);
+			HookUtils.BuildHooksFromVirtualMethods(modules, moduleHooks, customSorting: CustomSorting);
 		}
 	}
 }

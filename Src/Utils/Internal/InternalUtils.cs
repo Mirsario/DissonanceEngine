@@ -8,10 +8,10 @@ namespace Dissonance.Engine.Utils.Internal
 	{
 		public static StringComparer strComparerInvariantIgnoreCase = StringComparer.InvariantCultureIgnoreCase;
 
-		public static int GenContentId<T>(T instance,List<T> byIdList) where T : class
+		public static int GenContentId<T>(T instance, List<T> byIdList) where T : class
 		{
-			for(int i = 0;i<byIdList.Count;i++) {
-				if(byIdList[i]==null) {
+			for(int i = 0; i < byIdList.Count; i++) {
+				if(byIdList[i] == null) {
 					byIdList[i] = instance;
 
 					return i;
@@ -20,9 +20,9 @@ namespace Dissonance.Engine.Utils.Internal
 
 			byIdList.Add(instance);
 
-			return byIdList.Count-1;
+			return byIdList.Count - 1;
 		}
-		public static bool ObjectOrCollectionCall<T>(object obj,Action<T> call,bool throwError = true) where T : class
+		public static bool ObjectOrCollectionCall<T>(object obj, Action<T> call, bool throwError = true) where T : class
 		{
 			if(obj is T objT) {
 				call(objT);
@@ -39,7 +39,7 @@ namespace Dissonance.Engine.Utils.Internal
 
 			bool result = false;
 			foreach(var val in objCollection) {
-				result |= ObjectOrCollectionCall(val,call);
+				result |= ObjectOrCollectionCall(val, call);
 			}
 
 			return result;

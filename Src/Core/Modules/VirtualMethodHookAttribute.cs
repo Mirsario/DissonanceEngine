@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Core.Modules
 		public readonly bool IsProperty;
 		public readonly bool IsStatic;
 
-		public VirtualMethodHookAttribute(Type hookHolder,string hookName,bool isStatic,bool isProperty)
+		public VirtualMethodHookAttribute(Type hookHolder, string hookName, bool isStatic, bool isProperty)
 		{
 			HookHolder = hookHolder ?? throw new ArgumentNullException(nameof(hookHolder));
 			HookName = hookName ?? throw new ArgumentNullException(nameof(hookName));

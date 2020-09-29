@@ -13,8 +13,8 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 
 		public override void Apply()
 		{
-			if(data==null) {
-				if(BufferId!=0) {
+			if(data == null) {
+				if(BufferId != 0) {
 					GL.DeleteBuffer(BufferId);
 
 					BufferId = 0;
@@ -23,26 +23,26 @@ namespace Dissonance.Engine.Graphics.Meshes.Buffers
 				return;
 			}
 
-			if(BufferId==0) {
+			if(BufferId == 0) {
 				BufferId = GL.GenBuffer();
 			}
 
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer,BufferId);
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer, BufferId);
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(BufferTarget.ElementArrayBuffer,(int)(DataLength*sizeof(int)),data,mesh.bufferUsage);
+			GL.BufferData(BufferTarget.ElementArrayBuffer, (int)(DataLength * sizeof(int)), data, mesh.bufferUsage);
 		}
 		public override void Dispose()
 		{
-			if(BufferId!=0) {
+			if(BufferId != 0) {
 				GL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}
 		}
-		public override void SetData(byte[] byteData) => SetDataHelper(ref data,byteData);
+		public override void SetData(byte[] byteData) => SetDataHelper(ref data, byteData);
 
-		public void SetData<TProvidedData>(byte[] byteData,Func<TProvidedData,uint> cast) where TProvidedData : unmanaged => SetDataHelper(ref data,byteData,cast);
+		public void SetData<TProvidedData>(byte[] byteData, Func<TProvidedData, uint> cast) where TProvidedData : unmanaged => SetDataHelper(ref data, byteData, cast);
 	}
 }

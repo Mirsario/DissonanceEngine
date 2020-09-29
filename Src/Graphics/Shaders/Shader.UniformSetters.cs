@@ -7,20 +7,20 @@ namespace Dissonance.Engine.Graphics.Shaders
 	{
 		//TODO: Finish this
 
-		public void SetFloat(string uniformName,float value)
+		public void SetFloat(string uniformName, float value)
 		{
 			SetShader(this);
 
-			if(uniforms.TryGetValue(uniformName,out var uniform)) {
-				GL.Uniform1(uniform.location,value);
+			if(uniforms.TryGetValue(uniformName, out var uniform)) {
+				GL.Uniform1(uniform.location, value);
 			}
 		}
-		public void SetVector2(string uniformName,Vector2 value)
+		public void SetVector2(string uniformName, Vector2 value)
 		{
 			SetShader(this);
 
-			if(uniforms.TryGetValue(uniformName,out var uniform)) {
-				GL.Uniform2(uniform.location,value.x,value.y);
+			if(uniforms.TryGetValue(uniformName, out var uniform)) {
+				GL.Uniform2(uniform.location, value.x, value.y);
 			}
 		}
 	}

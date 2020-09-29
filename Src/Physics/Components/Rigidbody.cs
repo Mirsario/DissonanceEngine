@@ -19,13 +19,13 @@ namespace Dissonance.Engine.Physics
 			set => gameObject.rigidbodyInternal.AngularFactor = value;
 		}
 
-		public void ApplyForce(Vector3 force,Vector3 relativePos)
+		public void ApplyForce(Vector3 force, Vector3 relativePos)
 		{
 			if(!gameObject.rigidbodyInternal.btRigidbody.IsActive) {
 				gameObject.rigidbodyInternal.btRigidbody.Activate();
 			}
 
-			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force,relativePos);
+			gameObject.rigidbodyInternal.btRigidbody.ApplyForce(force, relativePos);
 		}
 	}
 }

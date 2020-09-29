@@ -7,7 +7,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics.RenderPasses.Default
 {
-	[RenderPassInfo(AcceptedShaderNames = new[] { "point","directional","spot" })]
+	[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
 	public class DeferredLightingPass : RenderPass
 	{
 		//public override string[] AcceptedShaderNames => Enum.GetNames(typeof(LightType)).Select(q => q.ToLower()).ToArray();
@@ -41,82 +41,82 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewRect = camera.ViewPixel;
-				GL.Viewport(viewRect.x,viewRect.y,viewRect.width,viewRect.height);
+				GL.Viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
 
 				var cameraPos = camera.Transform.Position;
 
-				for(int i = 0;i<shaders.Length;i++) {
+				for(int i = 0; i < shaders.Length; i++) {
 					var activeShader = shaders[i];
 
-					if(activeShader==null) {
+					if(activeShader == null) {
 						continue;
 					}
 
 					Shader.SetShader(activeShader);
 
 					activeShader.SetupCommonUniforms();
-					activeShader.SetupCameraUniforms(camera,cameraPos);
+					activeShader.SetupCameraUniforms(camera, cameraPos);
 
 					var lightType = (Light.Type)i;
 
 					//TODO: Update & optimize this
-					for(int j = 0;j<passedTextures.Length;j++) {
+					for(int j = 0; j < passedTextures.Length; j++) {
 						var tex = passedTextures[j];
-						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0+j));
-						GL.BindTexture(TextureTarget.Texture2D,tex.Id);
+						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
+						GL.BindTexture(TextureTarget.Texture2D, tex.Id);
 
-						if(activeShader.TryGetUniformLocation(tex.name,out int location)) {
-							GL.Uniform1(location,j);
+						if(activeShader.TryGetUniformLocation(tex.name, out int location)) {
+							GL.Uniform1(location, j);
 						}
 					}
 
 					//TODO: Update & optimize this
-					activeShader.TryGetUniformLocation("lightRange",out int uniformLightRange);
-					activeShader.TryGetUniformLocation("lightPosition",out int uniformLightPosition);
-					activeShader.TryGetUniformLocation("lightDirection",out int uniformLightDirection);
-					activeShader.TryGetUniformLocation("lightIntensity",out int uniformLightIntensity);
-					activeShader.TryGetUniformLocation("lightColor",out int uniformLightColor);
+					activeShader.TryGetUniformLocation("lightRange", out int uniformLightRange);
+					activeShader.TryGetUniformLocation("lightPosition", out int uniformLightPosition);
+					activeShader.TryGetUniformLocation("lightDirection", out int uniformLightDirection);
+					activeShader.TryGetUniformLocation("lightIntensity", out int uniformLightIntensity);
+					activeShader.TryGetUniformLocation("lightColor", out int uniformLightColor);
 
 					foreach(var light in ComponentManager.EnumerateComponents<Light>()) {
-						if(light.type!=lightType) {
+						if(light.type != lightType) {
 							continue;
 						}
 
 						var lightTransform = light.Transform;
 						var lightPosition = lightTransform.Position;
 
-						var world = Matrix4x4.CreateScale(light.range)*Matrix4x4.CreateTranslation(lightPosition);
+						var world = Matrix4x4.CreateScale(light.range) * Matrix4x4.CreateTranslation(lightPosition);
 
 						activeShader.SetupMatrixUniforms(
 							lightTransform,
-							ref world,ref worldInverse,
-							ref worldView,ref worldViewInverse,
-							ref worldViewProj,ref worldViewProjInverse,
-							ref camera.matrix_view,ref camera.matrix_viewInverse,
-							ref camera.matrix_proj,ref camera.matrix_projInverse,
+							ref world, ref worldInverse,
+							ref worldView, ref worldViewInverse,
+							ref worldViewProj, ref worldViewProjInverse,
+							ref camera.matrix_view, ref camera.matrix_viewInverse,
+							ref camera.matrix_proj, ref camera.matrix_projInverse,
 							true
 						);
 
-						if(uniformLightRange!=-1) {
-							GL.Uniform1(uniformLightRange,light.range);
+						if(uniformLightRange != -1) {
+							GL.Uniform1(uniformLightRange, light.range);
 						}
 
-						if(uniformLightPosition!=-1) {
-							GL.Uniform3(uniformLightPosition,lightPosition.x,lightPosition.y,lightPosition.z);
+						if(uniformLightPosition != -1) {
+							GL.Uniform3(uniformLightPosition, lightPosition.x, lightPosition.y, lightPosition.z);
 						}
 
-						if(uniformLightDirection!=-1) {
+						if(uniformLightDirection != -1) {
 							var forward = lightTransform.Forward;
 
-							GL.Uniform3(uniformLightDirection,forward.x,forward.y,forward.z);
+							GL.Uniform3(uniformLightDirection, forward.x, forward.y, forward.z);
 						}
 
-						if(uniformLightIntensity!=-1) {
-							GL.Uniform1(uniformLightIntensity,light.intensity);
+						if(uniformLightIntensity != -1) {
+							GL.Uniform1(uniformLightIntensity, light.intensity);
 						}
 
-						if(uniformLightColor!=-1) {
-							GL.Uniform3(uniformLightColor,light.color.x,light.color.y,light.color.z);
+						if(uniformLightColor != -1) {
+							GL.Uniform3(uniformLightColor, light.color.x, light.color.y, light.color.z);
 						}
 
 						switch(lightType) {
@@ -137,7 +137,7 @@ namespace Dissonance.Engine.Graphics.RenderPasses.Default
 
 			Shader.SetShader(null);
 
-			GL.BindTexture(TextureTarget.Texture2D,0);
+			GL.BindTexture(TextureTarget.Texture2D, 0);
 		}
 	}
 }

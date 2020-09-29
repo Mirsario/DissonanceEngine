@@ -14,7 +14,7 @@ namespace Dissonance.Engine.IO
 
 	public abstract class AssetManager<T> : AssetManager where T : class
 	{
-		public virtual T Import(Stream stream,string filePath) => throw new NotImplementedException();
-		public virtual void Export(T asset,Stream stream) => throw new NotImplementedException();
+		public virtual T Import(Stream stream, string filePath) => throw new NotImplementedException();
+		public virtual void Export(T asset, Stream stream) => throw new NotImplementedException();
 	}
 }

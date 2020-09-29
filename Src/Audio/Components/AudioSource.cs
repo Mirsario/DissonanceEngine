@@ -29,7 +29,7 @@ namespace Dissonance.Engine.Audio.Components
 		protected bool updatePlaybackOffset;
 
 		///<summary>Indicates whether or not the source is currently playing.</summary>
-		public bool IsPlaying => (SourceState)AL.GetSource(sourceId,GetSourceInt.SourceState)==SourceState.Playing;
+		public bool IsPlaying => (SourceState)AL.GetSource(sourceId, GetSourceInt.SourceState) == SourceState.Playing;
 
 		public AudioClip Clip {
 			get => clip;
@@ -41,7 +41,7 @@ namespace Dissonance.Engine.Audio.Components
 				clip = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceInt.Buffer,(int)(clip?.bufferId ?? 0));
+					AL.Source(sourceId, SourceInt.Buffer, (int)(clip?.bufferId ?? 0));
 
 					updateClip = false;
 				} else {
@@ -55,10 +55,10 @@ namespace Dissonance.Engine.Audio.Components
 				is2D = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceBool.SourceRelative,is2D);
+					AL.Source(sourceId, SourceBool.SourceRelative, is2D);
 
 					unsafe {
-						AL.Source(sourceId,SourceFloatArray.Position,is2D ? Vector3.Zero : Transform.Position);
+						AL.Source(sourceId, SourceFloatArray.Position, is2D ? Vector3.Zero : Transform.Position);
 					}
 
 					updateIs2D = false;
@@ -73,7 +73,7 @@ namespace Dissonance.Engine.Audio.Components
 				loop = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceBool.Looping,loop);
+					AL.Source(sourceId, SourceBool.Looping, loop);
 
 					updateLoop = false;
 				} else {
@@ -87,7 +87,7 @@ namespace Dissonance.Engine.Audio.Components
 				refDistance = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceFloat.ReferenceDistance,refDistance);
+					AL.Source(sourceId, SourceFloat.ReferenceDistance, refDistance);
 
 					updateRefDistance = false;
 				} else {
@@ -101,7 +101,7 @@ namespace Dissonance.Engine.Audio.Components
 				maxDistance = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceFloat.MaxDistance,maxDistance);
+					AL.Source(sourceId, SourceFloat.MaxDistance, maxDistance);
 
 					updateMaxDistance = false;
 				} else {
@@ -115,12 +115,12 @@ namespace Dissonance.Engine.Audio.Components
 				volume = value;
 
 				if(beenEnabledBefore) {
-					if(value<1f) {
-						AL.Source(sourceId,SourceFloat.Gain,1f);
-						AL.Source(sourceId,SourceFloat.MaxGain,Math.Max(0f,value));
+					if(value < 1f) {
+						AL.Source(sourceId, SourceFloat.Gain, 1f);
+						AL.Source(sourceId, SourceFloat.MaxGain, Math.Max(0f, value));
 					} else {
-						AL.Source(sourceId,SourceFloat.Gain,value);
-						AL.Source(sourceId,SourceFloat.MaxGain,1f);
+						AL.Source(sourceId, SourceFloat.Gain, value);
+						AL.Source(sourceId, SourceFloat.MaxGain, 1f);
 					}
 
 					updateVolume = false;
@@ -135,7 +135,7 @@ namespace Dissonance.Engine.Audio.Components
 				pitch = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceFloat.Pitch,value);
+					AL.Source(sourceId, SourceFloat.Pitch, value);
 
 					updatePitch = false;
 				} else {
@@ -149,7 +149,7 @@ namespace Dissonance.Engine.Audio.Components
 				playbackOffset = value;
 
 				if(beenEnabledBefore) {
-					AL.Source(sourceId,SourceFloat.SecOffset,value);
+					AL.Source(sourceId, SourceFloat.SecOffset, value);
 
 					updatePlaybackOffset = false;
 				} else {
@@ -207,13 +207,13 @@ namespace Dissonance.Engine.Audio.Components
 			if(!is2D) {
 				Vector3 pos = Transform.Position;
 
-				AL.Source(sourceId,SourceFloat3.Position,pos.x,pos.y,pos.z);
+				AL.Source(sourceId, SourceFloat3.Position, pos.x, pos.y, pos.z);
 			}
 		}
 
 		public void Play()
 		{
-			if(clip==null) {
+			if(clip == null) {
 				throw new Exception("This AudioSource has no clip set!");
 			}
 

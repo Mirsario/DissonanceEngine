@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Core.Internal
 			"BulletSharp"
 		};
 
-		private static Dictionary<string,Assembly> assemblyCache;
+		private static Dictionary<string, Assembly> assemblyCache;
 		private static bool initCalled;
 
 		public static void Init()
@@ -29,11 +29,11 @@ namespace Dissonance.Engine.Core.Internal
 
 			initCalled = true;
 
-			assemblyCache = new Dictionary<string,Assembly>();
+			assemblyCache = new Dictionary<string, Assembly>();
 
-			static bool TryGetAssembly(string assemblyName,string argsName,out Assembly assembly)
+			static bool TryGetAssembly(string assemblyName, string argsName, out Assembly assembly)
 			{
-				if(assemblyName==argsName || argsName.StartsWith(assemblyName+",")) {
+				if(assemblyName == argsName || argsName.StartsWith(assemblyName + ",")) {
 					try {
 						var obj = Properties.Resources.ResourceManager.GetObject(assemblyName);
 						var data = (byte[])obj;
@@ -55,18 +55,18 @@ namespace Dissonance.Engine.Core.Internal
 				return false;
 			}
 
-			AppDomain.CurrentDomain.AssemblyResolve += (obj,args) => {
+			AppDomain.CurrentDomain.AssemblyResolve += (obj, args) => {
 				string argsName = args.Name;
 
-				if(assemblyCache.TryGetValue(argsName,out var assembly)) {
+				if(assemblyCache.TryGetValue(argsName, out var assembly)) {
 					return assembly;
 				}
 
-				for(int i = 0;i<EmbeddedAssemblies.Length;i++) {
-					if(TryGetAssembly(EmbeddedAssemblies[i],argsName,out assembly)) {
+				for(int i = 0; i < EmbeddedAssemblies.Length; i++) {
+					if(TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
 						//TODO: Move this somewhere, and find a way to unhardcode?
 						if(assembly.FullName.StartsWith("BulletSharp,")) {
-							NativeLibrary.SetDllImportResolver(assembly,(name,assembly,path) => {
+							NativeLibrary.SetDllImportResolver(assembly, (name, assembly, path) => {
 								IntPtr pointer = IntPtr.Zero;
 
 								var libraryNames = name switch
@@ -81,27 +81,27 @@ namespace Dissonance.Engine.Core.Internal
 									_ => null
 								};
 
-								if(libraryNames==null) {
+								if(libraryNames == null) {
 									return pointer;
 								}
 
 								var paths = new List<string>();
 
-								for(int i = 0;i<DllManager.LibraryDirectories.Length;i++) {
+								for(int i = 0; i < DllManager.LibraryDirectories.Length; i++) {
 									string libraryDirectory = DllManager.LibraryDirectories[i];
 
-									for(int j = 0;j<libraryNames.Length;j++) {
-										paths.Add(Path.Combine(libraryDirectory,libraryNames[j]));
+									for(int j = 0; j < libraryNames.Length; j++) {
+										paths.Add(Path.Combine(libraryDirectory, libraryNames[j]));
 									}
 								}
 
 								foreach(string currentPath in paths) {
 									try {
-										pointer = NativeLibrary.Load(currentPath,assembly,path);
+										pointer = NativeLibrary.Load(currentPath, assembly, path);
 									}
 									catch { }
 
-									if(pointer!=IntPtr.Zero) {
+									if(pointer != IntPtr.Zero) {
 										break;
 									}
 								}

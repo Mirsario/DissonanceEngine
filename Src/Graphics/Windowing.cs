@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Graphics
 				lock(GlfwLock) {
 					WindowHandle = GLFW.GetCurrentContext();
 
-					if(WindowHandle==IntPtr.Zero) {
+					if(WindowHandle == IntPtr.Zero) {
 						throw new InvalidOperationException("No GLFW/OpenGL context has been set for the game's thread.");
 					}
 				}
@@ -36,28 +36,28 @@ namespace Dissonance.Engine.Graphics
 			Debug.Log("Creating window...");
 
 			lock(GlfwLock) {
-				GLFW.SetErrorCallback((GLFWError code,string description) => Debug.Log(code switch
+				GLFW.SetErrorCallback((GLFWError code, string description) => Debug.Log(code switch
 				{
 					GLFWError.VersionUnavailable => throw new GraphicsException(description),
 					_ => $"GLFW Error {code}: {description}"
 				}));
 
-				if(GLFW.Init()==0) {
+				if(GLFW.Init() == 0) {
 					throw new Exception("Unable to initialize GLFW!");
 				}
 
-				GLFW.WindowHint(WindowHint.ContextVersionMajor,Rendering.OpenGLVersion.Major); //Targeted major version
-				GLFW.WindowHint(WindowHint.ContextVersionMinor,Rendering.OpenGLVersion.Minor); //Targeted minor version
-				GLFW.WindowHint(WindowHint.OpenGLForwardCompat,1);
-				GLFW.WindowHint(WindowHint.OpenGLProfile,GLFW.OPENGL_CORE_PROFILE);
+				GLFW.WindowHint(WindowHint.ContextVersionMajor, Rendering.OpenGLVersion.Major); //Targeted major version
+				GLFW.WindowHint(WindowHint.ContextVersionMinor, Rendering.OpenGLVersion.Minor); //Targeted minor version
+				GLFW.WindowHint(WindowHint.OpenGLForwardCompat, 1);
+				GLFW.WindowHint(WindowHint.OpenGLProfile, GLFW.OPENGL_CORE_PROFILE);
 
 				IntPtr monitor = IntPtr.Zero;
 				int resolutionWidth = 800;
 				int resolutionHeight = 600;
 
-				WindowHandle = GLFW.CreateWindow(resolutionWidth,resolutionHeight,Game.DisplayName,monitor,IntPtr.Zero);
+				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, monitor, IntPtr.Zero);
 
-				if(WindowHandle==IntPtr.Zero) {
+				if(WindowHandle == IntPtr.Zero) {
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
@@ -69,7 +69,7 @@ namespace Dissonance.Engine.Graphics
 		}
 		protected override void OnDispose()
 		{
-			if(WindowHandle!=IntPtr.Zero) {
+			if(WindowHandle != IntPtr.Zero) {
 				GLFW.DestroyWindow(WindowHandle);
 				GLFW.Terminate();
 			}

@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 
 		internal static CustomVertexAttribute[] instances;
 
-		private static Dictionary<Type,int> idByType;
+		private static Dictionary<Type, int> idByType;
 
 		public static int Count { get; private set; }
 
@@ -37,17 +37,17 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 
 		internal static void Initialize()
 		{
-			if(CustomVertexBuffer.TypeById==null) {
+			if(CustomVertexBuffer.TypeById == null) {
 				throw new InvalidOperationException($"{nameof(CustomVertexAttribute)}.{nameof(Initialize)}() must be called after {nameof(CustomVertexBuffer)}.{nameof(CustomVertexAttribute.Initialize)}().");
 			}
 
-			idByType = new Dictionary<Type,int>();
+			idByType = new Dictionary<Type, int>();
 
 			var instanceList = new List<CustomVertexAttribute>();
 			var bufferAttachmentsList = new List<int>[CustomVertexBuffer.Count];
 
-			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexAttribute).IsAssignableFrom(t) && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition()==typeof(CustomVertexAttribute<>))) {
-				var instance = (CustomVertexAttribute)Activator.CreateInstance(type,true);
+			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexAttribute).IsAssignableFrom(t) && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition() == typeof(CustomVertexAttribute<>))) {
+				var instance = (CustomVertexAttribute)Activator.CreateInstance(type, true);
 
 				int id = instanceList.Count;
 
@@ -56,8 +56,8 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 				//Set attribute's id.
 				typeof(IDs<>)
 					.MakeGenericType(type)
-					.GetField(nameof(IDs<CustomVertexAttribute>.id),BindingFlags.Public|BindingFlags.Static)
-					.SetValue(null,id);
+					.GetField(nameof(IDs<CustomVertexAttribute>.id), BindingFlags.Public | BindingFlags.Static)
+					.SetValue(null, id);
 
 				idByType[type] = id;
 
@@ -90,7 +90,7 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 		{
 			//This is quite weird.
 
-			Init(out var nameId,out var pointerType,out var isNormalized,out var size,out var stride,out var offset);
+			Init(out var nameId, out var pointerType, out var isNormalized, out var size, out var stride, out var offset);
 
 			NameId = nameId;
 			PointerType = pointerType;
@@ -100,6 +100,6 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
 			Offset = offset;
 		}
 
-		public abstract void Init(out string nameId,out VertexAttribPointerType pointerType,out bool isNormalized,out int size,out int stride,out int offset);
+		public abstract void Init(out string nameId, out VertexAttribPointerType pointerType, out bool isNormalized, out int size, out int stride, out int offset);
 	}
 }

@@ -23,20 +23,20 @@ namespace Dissonance.Engine.Input
 			get {
 				float value = RawValue;
 
-				return value>deadZone || value<-deadZone ? (inversed ? -value : value)*sensitivity : 0f;
+				return value > deadZone || value < -deadZone ? (inversed ? -value : value) * sensitivity : 0f;
 			}
 		}
 		public float RawValue => InputEngine.GetSignal(Binding);
 
-		public InputBinding(string input,float sensitivity = 1f,float deadZone = 0.2f) : this(sensitivity,deadZone,false)
+		public InputBinding(string input, float sensitivity = 1f, float deadZone = 0.2f) : this(sensitivity, deadZone, false)
 		{
 			if(string.IsNullOrWhiteSpace(input)) {
 				throw new Exception("Input name cannot be empty.");
 			}
 
-			bool minus = input[0]=='-';
+			bool minus = input[0] == '-';
 
-			if(minus || input[0]=='+') {
+			if(minus || input[0] == '+') {
 				if(minus) {
 					inversed = true;
 				}
@@ -47,7 +47,7 @@ namespace Dissonance.Engine.Input
 			Binding = input;
 		}
 
-		protected InputBinding(float sensitivity = 1f,float deadZone = 0.2f,bool inversed = false)
+		protected InputBinding(float sensitivity = 1f, float deadZone = 0.2f, bool inversed = false)
 		{
 			this.sensitivity = sensitivity;
 			this.deadZone = deadZone;

@@ -32,34 +32,34 @@ namespace Dissonance.Engine.Core
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(sbyte)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(sbyte)));
 
-			return (sbyte)(buffer[0]%maxValue);
+			return (sbyte)(buffer[0] % maxValue);
 		}
 		public static byte Next(byte maxValue)
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(byte)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(byte)));
 
-			return (byte)(buffer[0]%maxValue);
+			return (byte)(buffer[0] % maxValue);
 		}
 		//Next - 2 bytes
 		public static short Next(short maxValue)
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(short)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(short)));
 
-			return (short)(BitConverter.ToInt32(buffer,0)%maxValue);
+			return (short)(BitConverter.ToInt32(buffer, 0) % maxValue);
 		}
 		public static ushort Next(ushort maxValue)
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(ushort)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(ushort)));
 
-			return (ushort)(BitConverter.ToUInt32(buffer,0)%maxValue);
+			return (ushort)(BitConverter.ToUInt32(buffer, 0) % maxValue);
 		}
 		//Next - 4 bytes
 		public static int Next(int maxValue) => ThreadRandom.Next(maxValue);
@@ -67,43 +67,43 @@ namespace Dissonance.Engine.Core
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(uint)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(uint)));
 
-			return BitConverter.ToUInt32(buffer,0)%maxValue;
+			return BitConverter.ToUInt32(buffer, 0) % maxValue;
 		}
-		public static float Next(float maxValue) => (float)ThreadRandom.NextDouble()*maxValue;
+		public static float Next(float maxValue) => (float)ThreadRandom.NextDouble() * maxValue;
 		//Next - 8 bytes
 		public static long Next(long maxValue)
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(long)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(long)));
 
-			return BitConverter.ToInt64(buffer,0)%maxValue;
+			return BitConverter.ToInt64(buffer, 0) % maxValue;
 		}
 		public static ulong Next(ulong maxValue)
 		{
 			var buffer = ThreadBuffer;
 
-			ThreadRandom.NextBytes(new Span<byte>(buffer,0,sizeof(ulong)));
+			ThreadRandom.NextBytes(new Span<byte>(buffer, 0, sizeof(ulong)));
 
-			return BitConverter.ToUInt64(buffer,0)%maxValue;
+			return BitConverter.ToUInt64(buffer, 0) % maxValue;
 		}
-		public static double Next(double maxValue) => ThreadRandom.NextDouble()*maxValue;
+		public static double Next(double maxValue) => ThreadRandom.NextDouble() * maxValue;
 		//NextBytes
 		public static void NextBytes(byte[] buffer) => ThreadRandom.NextBytes(buffer);
 		//Range
-		public static int Range(int minValue,int maxValue) => ThreadRandom.Next(minValue,maxValue);
-		public static float Range(float minValue,float maxValue)
+		public static int Range(int minValue, int maxValue) => ThreadRandom.Next(minValue, maxValue);
+		public static float Range(float minValue, float maxValue)
 		{
-			if(minValue>maxValue) {
+			if(minValue > maxValue) {
 				float tempVal = maxValue;
 
 				maxValue = minValue;
 				minValue = tempVal;
 			}
 
-			return minValue+(float)ThreadRandom.NextDouble()*(maxValue-minValue);
+			return minValue + (float)ThreadRandom.NextDouble() * (maxValue - minValue);
 		}
 	}
 }

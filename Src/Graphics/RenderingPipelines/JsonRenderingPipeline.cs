@@ -14,27 +14,27 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 {
 	public partial class JsonRenderingPipeline : RenderingPipeline
 	{
-		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
-		{	
+		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
+		{
 			const string FileName = "rendersettings.json";
 
-			string filePath = Directory.GetFiles("Assets","*.json").FirstOrDefault(file => Path.GetFileName(file).ToLower()==FileName) ?? Resources.BuiltInAssetsFolder+FileName;
+			string filePath = Directory.GetFiles("Assets", "*.json").FirstOrDefault(file => Path.GetFileName(file).ToLower() == FileName) ?? Resources.BuiltInAssetsFolder + FileName;
 			string jsonText = Resources.ImportText(filePath);
 
-			ParseJSON(jsonText,framebuffers,renderPasses);
+			ParseJSON(jsonText, framebuffers, renderPasses);
 		}
 
-		internal static void ParseJSON(string jsonText,List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
+		internal static void ParseJSON(string jsonText, List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			//TODO: Stop creating textures here, only make settings!
 			//TODO: Make textures resizable.
 			var jsonSettings = JsonConvert.DeserializeObject<Json>(jsonText);
 
-			ParseJsonFramebuffers(jsonSettings,framebuffers);
-			ParseJsonRenderPasses(jsonSettings,framebuffers,renderPasses);
+			ParseJsonFramebuffers(jsonSettings, framebuffers);
+			ParseJsonRenderPasses(jsonSettings, framebuffers, renderPasses);
 		}
 
-		private static void ParseJsonFramebuffers(Json jsonSettings,List<Framebuffer> framebuffers)
+		private static void ParseJsonFramebuffers(Json jsonSettings, List<Framebuffer> framebuffers)
 		{
 			//Framebuffers
 			foreach(var fbPair in jsonSettings.framebuffers) {
@@ -57,14 +57,14 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 							//noWrite = true;
 							break;
 						case TextureAttachmentType.DepthStencil: {
-							framebuffer.AttachRenderbuffer(new Renderbuffer(texName,RenderbufferStorage.Depth24Stencil8),FramebufferAttachment.DepthStencilAttachment);
-							continue;
-						}
+								framebuffer.AttachRenderbuffer(new Renderbuffer(texName, RenderbufferStorage.Depth24Stencil8), FramebufferAttachment.DepthStencilAttachment);
+								continue;
+							}
 						default:
 							throw new NotImplementedException();
 					}
 
-					framebuffer.AttachRenderTexture(new RenderTexture(texName,Screen.Width,Screen.Height,textureFormat:tex.format));
+					framebuffer.AttachRenderTexture(new RenderTexture(texName, Screen.Width, Screen.Height, textureFormat: tex.format));
 
 					Rendering.CheckFramebufferStatus();
 				}
@@ -72,21 +72,21 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 				framebuffers.Add(framebuffer);
 			}
 		}
-		private static void ParseJsonRenderPasses(Json jsonSettings,List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
+		private static void ParseJsonRenderPasses(Json jsonSettings, List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			//TODO: Ignore case
 			//TODO: Is this needed anywhere else?
-			Framebuffer FindFramebuffer(string name,bool throwException = true)
+			Framebuffer FindFramebuffer(string name, bool throwException = true)
 			{
 				Framebuffer framebuffer = null;
-				for(int i = 0;i<framebuffers.Count;i++) {
-					if(framebuffers[i].Name==name) {
+				for(int i = 0; i < framebuffers.Count; i++) {
+					if(framebuffers[i].Name == name) {
 						framebuffer = framebuffers[i];
 					}
 				}
 
-				if(framebuffer==null && throwException) {
-					throw new Exception("Couldn't find framebuffer named "+name);
+				if(framebuffer == null && throwException) {
+					throw new Exception("Couldn't find framebuffer named " + name);
 				}
 
 				return framebuffer;
@@ -97,7 +97,7 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 				string passName = passPair.Key;
 				var pass = passPair.Value;
 
-				if(!RenderPass.fullNameToType.TryGetValue(pass.type,out Type passType)) {
+				if(!RenderPass.fullNameToType.TryGetValue(pass.type, out Type passType)) {
 					throw new Exception($"Couldn't find type {pass.type}, or it does not derive from RenderPass.");
 				}
 
@@ -110,14 +110,14 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 					var texArray = texPair.Value;
 					var texFB = FindFramebuffer(fbName);
 
-					for(int i = 0;i<texArray.Length;i++) {
+					for(int i = 0; i < texArray.Length; i++) {
 						string texName = texArray[i];
 						bool callContinue = false;
 
-						for(int j = 0;j<texFB.renderTextures.Count;j++) {
+						for(int j = 0; j < texFB.renderTextures.Count; j++) {
 							var fb = texFB.renderTextures[j];
 
-							if(fb.name==texName) {
+							if(fb.name == texName) {
 								textureList.Add(fb);
 								callContinue = true;
 								break;
@@ -128,10 +128,10 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 							continue;
 						}
 
-						for(int j = 0;j<texFB.renderbuffers.Length;j++) {
+						for(int j = 0; j < texFB.renderbuffers.Length; j++) {
 							var rb = texFB.renderbuffers[j];
 
-							if(rb.Name==texName) {
+							if(rb.Name == texName) {
 								bufferList.Add(rb);
 								callContinue = true;
 								break;
@@ -152,17 +152,17 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 				Shader passShader = null;
 				Shader[] passShaders = null;
 
-				if(shadersArr==null) {
+				if(shadersArr == null) {
 					//Single shader
-					if(pass.shaders!=null) {
+					if(pass.shaders != null) {
 						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shaders'' field -- only ''shader'' field is allowed.");
 					}
 
 					string shaderName = pass.shader;
-					passShader = shaderName==null ? null : Resources.Find<Shader>(shaderName);
+					passShader = shaderName == null ? null : Resources.Find<Shader>(shaderName);
 
-					if(passShader==null) {
-						if(shaderName!=null) {
+					if(passShader == null) {
+						if(shaderName != null) {
 							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
 						if(shaderRequired) {
@@ -171,37 +171,37 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 					}
 				} else {
 					//Multiple shaders
-					if(pass.shader!=null) {
+					if(pass.shader != null) {
 						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");
 					}
 
 					passShaders = new Shader[shadersArr.Length];
 
 					foreach(var pair in pass.shaders) {
-						int index = Array.IndexOf(shadersArr,pair.Key);
-						if(index<0) {
+						int index = Array.IndexOf(shadersArr, pair.Key);
+						if(index < 0) {
 							throw new GraphicsException($"Unknown shader type ''{pair.Key}'' for render pass {passName} ({pass.type}).");
 						}
 
 						string shaderName = pair.Value;
-						if(shaderName==null) {
+						if(shaderName == null) {
 							continue;
 						}
 
-						if((passShaders[index] = Resources.Find<Shader>(shaderName))==null && shaderName!=null) {
+						if((passShaders[index] = Resources.Find<Shader>(shaderName)) == null && shaderName != null) {
 							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
 					}
 				}
 
-				renderPasses.Add(RenderPass.Create(passType,passName,p => {
-					p.Framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower()!="none" ? FindFramebuffer(pass.framebuffer) : null;
+				renderPasses.Add(RenderPass.Create(passType, passName, p => {
+					p.Framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower() != "none" ? FindFramebuffer(pass.framebuffer) : null;
 					p.PassedTextures = textureList.ToArray();
 					p.renderbuffers = bufferList.ToArray();
 
-					if(passShaders!=null) {
+					if(passShaders != null) {
 						p.Shaders = passShaders;
-					} else if(passShader!=null) {
+					} else if(passShader != null) {
 						p.Shader = passShader;
 					}
 				}));

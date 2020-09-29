@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Physics
 		public float Radius {
 			get => radius;
 			set {
-				if(radius!=value) {
+				if(radius != value) {
 					radius = value;
 
 					TryUpdateCollider();
@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Physics
 		public float Height {
 			get => height;
 			set {
-				if(height!=value) {
+				if(height != value) {
 					height = value;
 
 					TryUpdateCollider();
@@ -32,12 +32,12 @@ namespace Dissonance.Engine.Physics
 
 		internal override void UpdateCollider()
 		{
-			if(collShape!=null) {
+			if(collShape != null) {
 				collShape.Dispose();
 				collShape = null;
 			}
 
-			collShape = new CapsuleShape(radius,height-2f*radius);
+			collShape = new CapsuleShape(radius, height - 2f * radius);
 
 			base.UpdateCollider();
 		}

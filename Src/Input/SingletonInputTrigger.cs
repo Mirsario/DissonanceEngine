@@ -12,13 +12,13 @@ namespace Dissonance.Engine.Input
 
 		protected SingletonInputTrigger() : base() { }
 
-		protected abstract void Init(out string name,out InputBinding[] bindings,out float minValue,out float maxValue);
+		protected abstract void Init(out string name, out InputBinding[] bindings, out float minValue, out float maxValue);
 
-		internal override void Init(int id,string name,InputBinding[] bindings,float minValue,float maxValue)
+		internal override void Init(int id, string name, InputBinding[] bindings, float minValue, float maxValue)
 		{
-			Init(out name,out bindings,out float newMinValue,out float newMaxValue);
+			Init(out name, out bindings, out float newMinValue, out float newMaxValue);
 
-			base.Init(id,name,bindings,newMinValue,newMaxValue);
+			base.Init(id, name, bindings, newMinValue, newMaxValue);
 		}
 
 		internal static void StaticInit()
@@ -28,11 +28,11 @@ namespace Dissonance.Engine.Input
 					continue;
 				}
 
-				var trigger = InputEngine.RegisterTrigger(type,type.Name,null);
+				var trigger = InputEngine.RegisterTrigger(type, type.Name, null);
 
 				typeof(Info<>).MakeGenericType(type)
-					.GetField(nameof(Info<SingletonInputTrigger>.id),BindingFlags.Static|BindingFlags.Public)
-					.SetValue(null,trigger.Id);
+					.GetField(nameof(Info<SingletonInputTrigger>.id), BindingFlags.Static | BindingFlags.Public)
+					.SetValue(null, trigger.Id);
 			}
 		}
 	}

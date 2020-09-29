@@ -29,25 +29,25 @@ namespace Dissonance.Engine.Core.Components
 
 		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
 
-		private Dictionary<Type,ComponentInstanceLists> typeInstances = new Dictionary<Type,ComponentInstanceLists>();
-		private Dictionary<Type,ComponentInstanceLists> exactTypeInstances = new Dictionary<Type,ComponentInstanceLists>();
-		private Dictionary<Type,ComponentParameters> typeParameters = new Dictionary<Type,ComponentParameters>();
+		private Dictionary<Type, ComponentInstanceLists> typeInstances = new Dictionary<Type, ComponentInstanceLists>();
+		private Dictionary<Type, ComponentInstanceLists> exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
+		private Dictionary<Type, ComponentParameters> typeParameters = new Dictionary<Type, ComponentParameters>();
 
 		protected override void Init()
 		{
-			typeParameters = new Dictionary<Type,ComponentParameters>();
-			typeInstances = new Dictionary<Type,ComponentInstanceLists>();
-			exactTypeInstances = new Dictionary<Type,ComponentInstanceLists>();
+			typeParameters = new Dictionary<Type, ComponentParameters>();
+			typeInstances = new Dictionary<Type, ComponentInstanceLists>();
+			exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
 
 			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
-				if(!typeParameters.TryGetValue(type,out var parameters)) {
+				if(!typeParameters.TryGetValue(type, out var parameters)) {
 					typeParameters[type] = parameters = new ComponentParameters();
 				}
 
 				var attributes = type.GetCustomAttributes<ComponentAttribute>();
 
 				foreach(var attribute in attributes) {
-					attribute.SetParameters(type,parameters);
+					attribute.SetParameters(type, parameters);
 				}
 			}
 		}
@@ -55,46 +55,47 @@ namespace Dissonance.Engine.Core.Components
 		public static ComponentParameters GetParameters(Type type)
 			=> Instance.typeParameters[type];
 		//Count
-		public static int CountComponents<T>(bool? enabled = true,bool exactType = false)
-			=> CountComponents(typeof(T),exactType,enabled);
-		public static int CountComponents(Type type,bool exactType = false,bool? enabled = true)
-			=> GetComponentsList(type,exactType,enabled)?.Count ?? 0;
+		public static int CountComponents<T>(bool? enabled = true, bool exactType = false)
+			=> CountComponents(typeof(T), exactType, enabled);
+		public static int CountComponents(Type type, bool exactType = false, bool? enabled = true)
+			=> GetComponentsList(type, exactType, enabled)?.Count ?? 0;
 		//Enumerate
-		public static IEnumerable<Component> EnumerateComponents(Type type,bool exactType = false,bool? enabled = true)
-			=> GetComponentsList(type,exactType,enabled) ?? Enumerable.Empty<Component>();
+		public static IEnumerable<Component> EnumerateComponents(Type type, bool exactType = false, bool? enabled = true)
+			=> GetComponentsList(type, exactType, enabled) ?? Enumerable.Empty<Component>();
 		public static IEnumerable<T> EnumerateComponents<T>(bool exactType = false) where T : Component
 		{
-			foreach(var component in EnumerateComponents(typeof(T),exactType)) {
+			foreach(var component in EnumerateComponents(typeof(T), exactType)) {
 				yield return (T)component;
 			}
 		}
 
-		internal static void ModifyInstanceLists(Type type,Action<ComponentInstanceLists> action)
+		internal static void ModifyInstanceLists(Type type, Action<ComponentInstanceLists> action)
 		{
-			static ComponentInstanceLists GetLists(Type key,Dictionary<Type,ComponentInstanceLists> dictionary)
+			static ComponentInstanceLists GetLists(Type key, Dictionary<Type, ComponentInstanceLists> dictionary)
 			{
-				if(!dictionary.TryGetValue(key,out var lists)) {
+				if(!dictionary.TryGetValue(key, out var lists)) {
 					dictionary[key] = lists = new ComponentInstanceLists();
 				}
 
 				return lists;
 			}
 
-			action(GetLists(type,Instance.exactTypeInstances));
+			action(GetLists(type, Instance.exactTypeInstances));
 
 			//TODO: This enumeration could've been made faster.
-			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type,true,typeof(Component))) {
-				action(GetLists(baseType,Instance.typeInstances));
+			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type, true, typeof(Component))) {
+				action(GetLists(baseType, Instance.typeInstances));
 			}
 		}
 
-		private static IReadOnlyList<Component> GetComponentsList(Type type,bool exactType = false,bool? enabled = true)
+		private static IReadOnlyList<Component> GetComponentsList(Type type, bool exactType = false, bool? enabled = true)
 		{
-			if(!(exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type,out var lists)) {
+			if(!(exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type, out var lists)) {
 				return null;
 			}
 
-			return enabled switch {
+			return enabled switch
+			{
 				true => lists.enabledReadOnly,
 				false => lists.disabledReadOnly,
 				_ => lists.allReadOnly

@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics.Enums
 		public ActiveUniformType type;
 		public int location;
 
-		public ShaderUniform(string name,ActiveUniformType type,int location)
+		public ShaderUniform(string name, ActiveUniformType type, int location)
 		{
 			this.name = name;
 			this.type = type;

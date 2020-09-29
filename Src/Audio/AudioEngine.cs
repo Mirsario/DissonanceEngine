@@ -7,7 +7,7 @@ using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
-	[ModuleDependency(true,typeof(Windowing))]
+	[ModuleDependency(true, typeof(Windowing))]
 	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
 	public sealed class AudioEngine : EngineModule
 	{
@@ -18,10 +18,10 @@ namespace Dissonance.Engine.Audio
 		{
 			try {
 				audioDevice = ALC.OpenDevice(null);
-				audioContext = ALC.CreateContext(audioDevice,null);
+				audioContext = ALC.CreateContext(audioDevice, null);
 			}
 			catch(Exception e) {
-				throw new AudioException("An issue occured during Audio initialization.",e);
+				throw new AudioException("An issue occured during Audio initialization.", e);
 			}
 
 			if(!ALC.MakeContextCurrent(audioContext)) {
@@ -42,8 +42,8 @@ namespace Dissonance.Engine.Audio
 		{
 			var error = AL.GetError();
 
-			if(error!=AudioError.NoError) {
-				throw new Exception("AudioError: "+error);
+			if(error != AudioError.NoError) {
+				throw new Exception("AudioError: " + error);
 			}
 		}
 	}

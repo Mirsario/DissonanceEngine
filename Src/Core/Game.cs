@@ -78,7 +78,7 @@ namespace Dissonance.Engine.Core
 		public virtual void OnGUI() { }
 		public virtual void OnDispose() { }
 
-		public void Run(GameFlags flags = GameFlags.None,string[] args = null)
+		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
 		{
 			RegisterInstance();
 
@@ -94,18 +94,18 @@ namespace Dissonance.Engine.Core
 			Debug.Log("Loading engine...");
 
 			//TODO: Move this.
-			assetsPath = "Assets"+Path.DirectorySeparatorChar;
+			assetsPath = "Assets" + Path.DirectorySeparatorChar;
 
-			if(args!=null) {
-				string joinedArgs = string.Join(" ",args);
+			if(args != null) {
+				string joinedArgs = string.Join(" ", args);
 				var matches = RegexCache.commandArguments.Matches(joinedArgs);
-				var dict = new Dictionary<string,string>(StringComparer.InvariantCultureIgnoreCase);
+				var dict = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
 				foreach(Match match in matches) {
 					dict[match.Groups[1].Value] = match.Groups[2].Value;
 				}
 
-				if(dict.TryGetValue("assetspath",out string path)) {
+				if(dict.TryGetValue("assetspath", out string path)) {
 					assetsPath = path ?? throw new ArgumentException("Expected a directory path after command line argument 'assetspath'.");
 				}
 			}
@@ -130,8 +130,8 @@ namespace Dissonance.Engine.Core
 		{
 			OnDispose();
 
-			if(modules!=null) {
-				for(int i = 0;i<modules.Count;i++) {
+			if(modules != null) {
+				for(int i = 0; i < modules.Count; i++) {
 					modules[i]?.Dispose();
 				}
 
@@ -140,19 +140,19 @@ namespace Dissonance.Engine.Core
 
 			threadStaticInstance = null;
 
-			if(globalInstance==this) {
+			if(globalInstance == this) {
 				globalInstance = null;
 			}
 		}
 		public void Update()
 		{
-			if(updateStopwatch==null) {
+			if(updateStopwatch == null) {
 				updateStopwatch = new Stopwatch();
 
 				updateStopwatch.Start();
 			}
 
-			while(numFixedUpdates<(ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds*Time.TargetUpdateFrequency)) {
+			while(numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
 				if(!NoWindow) {
 					GLFW.PollEvents();
 				}
@@ -224,7 +224,7 @@ namespace Dissonance.Engine.Core
 
 			moduleHooks.PostRenderUpdate?.Invoke();
 		}
-		internal void ApplicationQuit(object sender,EventArgs e)
+		internal void ApplicationQuit(object sender, EventArgs e)
 		{
 			shouldQuit = true;
 
@@ -233,7 +233,7 @@ namespace Dissonance.Engine.Core
 
 		private void RegisterInstance()
 		{
-			if(threadStaticInstance!=null) {
+			if(threadStaticInstance != null) {
 				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
 			}
 
@@ -242,14 +242,14 @@ namespace Dissonance.Engine.Core
 
 				globalInstance ??= this;
 				threadStaticInstance = this;
-				multipleInstances = InstancesList.Count>1;
+				multipleInstances = InstancesList.Count > 1;
 			}
 		}
 		private void UpdateLoop()
 		{
 			var windowing = GetModule<Windowing>(false);
 
-			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle)==0)) {
+			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle) == 0)) {
 				Update();
 			}
 		}
@@ -266,13 +266,13 @@ namespace Dissonance.Engine.Core
 
 			instance.shouldQuit = true;
 
-			if(instance.TryGetModule<Windowing>(out var windowing) && windowing.WindowHandle!=IntPtr.Zero) {
-				GLFW.SetWindowShouldClose(windowing.WindowHandle,1);
+			if(instance.TryGetModule<Windowing>(out var windowing) && windowing.WindowHandle != IntPtr.Zero) {
+				GLFW.SetWindowShouldClose(windowing.WindowHandle, 1);
 			}
 		}
 
-		private static void OnFocusChange(IntPtr _,int isFocused) => HasFocus = isFocused!=0;
-		private static void OnUnhandledException(object sender,UnhandledExceptionEventArgs e) //Move this somewhere
+		private static void OnFocusChange(IntPtr _, int isFocused) => HasFocus = isFocused != 0;
+		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) //Move this somewhere
 		{
 #if WINDOWS
 			

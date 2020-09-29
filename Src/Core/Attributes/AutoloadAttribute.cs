@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Dissonance.Engine.Core.Attributes
 {
-	[AttributeUsage(AttributeTargets.Class,AllowMultiple = true,Inherited = true)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public class AutoloadAttribute : Attribute
 	{
 		private static readonly AutoloadAttribute Default = new AutoloadAttribute();
@@ -13,7 +13,7 @@ namespace Dissonance.Engine.Core.Attributes
 		public GameFlags RequiredGameFlags { get; set; } = GameFlags.None;
 		public GameFlags DisablingGameFlags { get; set; } = GameFlags.None;
 
-		public bool NeedsAutoloading => Enabled && (Game.Instance.Flags & RequiredGameFlags)>=RequiredGameFlags && (Game.Instance.Flags & DisablingGameFlags)==0;
+		public bool NeedsAutoloading => Enabled && (Game.Instance.Flags & RequiredGameFlags) >= RequiredGameFlags && (Game.Instance.Flags & DisablingGameFlags) == 0;
 
 		public AutoloadAttribute(bool enabled = true)
 		{
@@ -21,6 +21,6 @@ namespace Dissonance.Engine.Core.Attributes
 		}
 
 		public static AutoloadAttribute Get(Type type)
-			=> (AutoloadAttribute)type.GetCustomAttributes(typeof(AutoloadAttribute),true).FirstOrDefault() ?? Default;
+			=> (AutoloadAttribute)type.GetCustomAttributes(typeof(AutoloadAttribute), true).FirstOrDefault() ?? Default;
 	}
 }

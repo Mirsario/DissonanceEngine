@@ -2,14 +2,14 @@
 	"LightingPoint": {
 		"vertexShader": "Shaders/lighting.vert",
 		"fragmentShader": "Shaders/lighting.frag",
-		"shaderDefines": ["POINT"],
+		"shaderDefines": [ "POINT" ],
 		"blendFactorSrc": "OneMinusDstColor",
 		"blendFactorDst": "One"
 	},
 	"LightingDirectional": {
 		"vertexShader": "Shaders/lighting.vert",
 		"fragmentShader": "Shaders/lighting.frag",
-		"shaderDefines": ["DIRECTIONAL"],
+		"shaderDefines": [ "DIRECTIONAL" ],
 		"blendFactorSrc": "OneMinusDstColor",
 		"blendFactorDst": "One"
 	},

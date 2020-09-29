@@ -28,16 +28,16 @@ namespace Dissonance.Engine.Graphics.Textures
 		public PixelFormat PixelFormat { get; protected set; }
 		public PixelInternalFormat PixelInternalFormat { get; protected set; }
 
-		public Vector2Int Size => new Vector2Int(Width,Height);
+		public Vector2Int Size => new Vector2Int(Width, Height);
 
 		protected Texture() { }
 
-		public Texture(string name,int width,int height,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true,TextureFormat format = TextureFormat.RGBA8)
-			: this(width,height,filterMode,wrapMode,useMipmaps,format)
+		public Texture(string name, int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
+			: this(width, height, filterMode, wrapMode, useMipmaps, format)
 		{
 			this.name = name;
 		}
-		public Texture(int width,int height,FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true,TextureFormat format = TextureFormat.RGBA8)
+		public Texture(int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
 		{
 			Id = GL.GenTexture();
 			Width = width;
@@ -47,20 +47,20 @@ namespace Dissonance.Engine.Graphics.Textures
 			this.wrapMode = wrapMode ?? defaultWrapMode;
 			this.useMipmaps = useMipmaps;
 
-			var fillColor = new Pixel(255,255,255,255);
+			var fillColor = new Pixel(255, 255, 255, 255);
 
-			int length = width*height;
+			int length = width * height;
 
 			var pixels = new Pixel[length];
 
-			for(int i = 0;i<length;i++) {
+			for(int i = 0; i < length; i++) {
 				pixels[i] = fillColor;
 			}
 
 			SetPixels(pixels);
 		}
 
-		internal Texture(uint id,int width,int height)
+		internal Texture(uint id, int width, int height)
 		{
 			Id = id;
 			Width = width;
@@ -71,39 +71,39 @@ namespace Dissonance.Engine.Graphics.Textures
 
 		public T[,] GetPixels<T>() where T : unmanaged
 		{
-			var pixels = new T[Width,Height];
+			var pixels = new T[Width, Height];
 
 			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
+			GL.BindTexture(TextureTarget.Texture2D, Id);
 
 			//TODO: Ensure that this works.
 			unsafe {
-				fixed(T* ptr = &(pixels!=null && pixels.Length!=0 ? ref pixels[0,0] : ref *(T*)null)) {
-					GL.GetTexImage(TextureTarget.Texture2D,0,PixelFormat,PixelType,(IntPtr)ptr);
+				fixed(T* ptr = &(pixels != null && pixels.Length != 0 ? ref pixels[0, 0] : ref *(T*)null)) {
+					GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat, PixelType, (IntPtr)ptr);
 				}
 			}
 
-			GL.BindTexture(TextureTarget.Texture2D,0);
+			GL.BindTexture(TextureTarget.Texture2D, 0);
 
 			return pixels;
 		}
 
-		public void SetPixels(IntPtr pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat)
-			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+		public void SetPixels(IntPtr pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat)
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType, pixels), pixelType, pixelFormat, pixelInternalFormat);
 
-		public void SetPixels<T>(T[] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+		public void SetPixels<T>(T[] pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType, pixels), pixelType, pixelFormat, pixelInternalFormat);
 
-		public void SetPixels<T>(T[,] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+		public void SetPixels<T>(T[,] pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType, pixels), pixelType, pixelFormat, pixelInternalFormat);
 
-		public void SetPixels<T>(T[,,] pixels,PixelType pixelType = DefaultPixelType,PixelFormat pixelFormat = DefaultPixelFormat,PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
-			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat,Width,Height,0,PixelFormat,PixelType,pixels),pixelType,pixelFormat,pixelInternalFormat);
+		public void SetPixels<T>(T[,,] pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, PixelInternalFormat pixelInternalFormat = DefaultPixelInternalFormat) where T : unmanaged
+			=> SetPixelsInternal(() => GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType, pixels), pixelType, pixelFormat, pixelInternalFormat);
 
-		protected void SetPixelsInternal(Action setter,PixelType pixelType,PixelFormat pixelFormat,PixelInternalFormat pixelInternalFormat)
+		protected void SetPixelsInternal(Action setter, PixelType pixelType, PixelFormat pixelFormat, PixelInternalFormat pixelInternalFormat)
 		{
 			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D,Id);
+			GL.BindTexture(TextureTarget.Texture2D, Id);
 
 			PixelType = pixelType;
 			PixelFormat = pixelFormat;
@@ -111,15 +111,15 @@ namespace Dissonance.Engine.Graphics.Textures
 
 			setter();
 
-			SetupFiltering(filterMode,wrapMode,useMipmaps);
+			SetupFiltering(filterMode, wrapMode, useMipmaps);
 		}
 
-		internal static void SetupFiltering(FilterMode? filterMode = null,TextureWrapMode? wrapMode = null,bool useMipmaps = true)
+		internal static void SetupFiltering(FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true)
 		{
 			wrapMode ??= defaultWrapMode;
 			filterMode ??= defaultFilterMode;
 
-			uint wrapModeInt = wrapMode==TextureWrapMode.Repeat ? GLConstants.REPEAT : GLConstants.CLAMP_TO_EDGE;
+			uint wrapModeInt = wrapMode == TextureWrapMode.Repeat ? GLConstants.REPEAT : GLConstants.CLAMP_TO_EDGE;
 
 			(int magFilter, int minFilter) = filterMode switch
 			{
@@ -128,10 +128,10 @@ namespace Dissonance.Engine.Graphics.Textures
 				_ => ((int)TextureMagFilter.Nearest, (int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest))
 			};
 
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMinFilter,minFilter);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,magFilter);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS,wrapModeInt);
-			GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapT,wrapModeInt);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, minFilter);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, magFilter);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, wrapModeInt);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, wrapModeInt);
 
 			if(useMipmaps) {
 				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);

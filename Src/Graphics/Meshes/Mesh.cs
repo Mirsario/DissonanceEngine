@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 {
 	public class Mesh : Asset
 	{
-		public delegate void ArrayCopyDelegate<T>(uint meshIndex,T[] srcArray,uint srcIndex,Vector3[] dstArray,uint dstIndex,uint length);
+		public delegate void ArrayCopyDelegate<T>(uint meshIndex, T[] srcArray, uint srcIndex, Vector3[] dstArray, uint dstIndex, uint length);
 
 		public readonly IndexBuffer IndexBuffer;
 		//Cached Vertex Buffers
@@ -59,7 +59,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			VertexBuffers = new CustomVertexBuffer[CustomVertexBuffer.Count];
 
-			for(int i = 0;i<VertexBuffers.Length;i++) {
+			for(int i = 0; i < VertexBuffers.Length; i++) {
 				var instance = CustomVertexBuffer.CreateInstance(i);
 
 				instance.mesh = this;
@@ -81,10 +81,10 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			int indexCount = (int)IndexBuffer.DataLength;
 
-			if(indexCount>0) {
-				GL.DrawElements(currentPrimitiveType,indexCount,DrawElementsType.UnsignedInt,0);
+			if(indexCount > 0) {
+				GL.DrawElements(currentPrimitiveType, indexCount, DrawElementsType.UnsignedInt, 0);
 			} else {
-				GL.DrawArrays(currentPrimitiveType,0,(int)VertexBuffer.DataLength);
+				GL.DrawArrays(currentPrimitiveType, 0, (int)VertexBuffer.DataLength);
 			}
 
 			GL.BindVertexArray(0);
@@ -92,7 +92,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 		public override void Dispose()
 		{
-			if(vertexArrayId!=0) {
+			if(vertexArrayId != 0) {
 				GL.DeleteVertexArray(vertexArrayId);
 
 				vertexArrayId = 0;
@@ -100,7 +100,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			IndexBuffer.Dispose();
 
-			for(int i = 0;i<VertexBuffers.Length;i++) {
+			for(int i = 0; i < VertexBuffers.Length; i++) {
 				VertexBuffers[i].Dispose();
 			}
 		}
@@ -111,7 +111,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			//Vertex and triangle buffers are the only mandatory ones.
 
-			if(Vertices==null) {
+			if(Vertices == null) {
 				throw new InvalidOperationException($"{nameof(Mesh)}.{nameof(Apply)}() requires {nameof(VertexBuffer)} to be ready.");
 			}
 			/*if(Triangles==null) {
@@ -120,7 +120,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			//Bind vertex array object (and generate one if needed).
 
-			if(vertexArrayId==0) {
+			if(vertexArrayId == 0) {
 				vertexArrayId = GL.GenVertexArray();
 			}
 
@@ -132,7 +132,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 
 			//Bind and push vertex buffers.
 
-			for(int i = 0;i<VertexBuffers.Length;i++) {
+			for(int i = 0; i < VertexBuffers.Length; i++) {
 				var buffer = VertexBuffers[i];
 
 				buffer.Apply();
@@ -147,8 +147,8 @@ namespace Dissonance.Engine.Graphics.Meshes
 			Rendering.CheckGLErrors();
 
 			GL.BindVertexArray(0);
-			GL.BindBuffer(BufferTarget.ArrayBuffer,0);
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer,0);
+			GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
 			Rendering.CheckGLErrors();
 
@@ -170,44 +170,44 @@ namespace Dissonance.Engine.Graphics.Meshes
 		public static Mesh CombineMeshes(params Mesh[] meshes) => CombineMeshesInternal(meshes);
 		public static Mesh CombineMeshes(params (Mesh mesh, Vector3 offset)[] meshesWithOffsets)
 		{
-			return CombineMeshesInternal(meshesWithOffsets.Select(t => t.mesh),(meshIndex,srcVertices,srcIndex,dstVertices,dstIndex,length) => {
+			return CombineMeshesInternal(meshesWithOffsets.Select(t => t.mesh), (meshIndex, srcVertices, srcIndex, dstVertices, dstIndex, length) => {
 				var offset = meshesWithOffsets[meshIndex].offset;
 
-				for(int i = 0;i<length;i++) {
-					dstVertices[dstIndex+i] = srcVertices[srcIndex+i]+offset;
+				for(int i = 0; i < length; i++) {
+					dstVertices[dstIndex + i] = srcVertices[srcIndex + i] + offset;
 				}
 			});
 		}
 		public static Mesh CombineMeshes(params (Mesh mesh, Matrix4x4 matrix)[] meshesWithMatrices)
 		{
-			void CopyVertices(uint meshIndex,Vector3[] srcArray,uint srcIndex,Vector3[] dstArray,uint dstIndex,uint length)
+			void CopyVertices(uint meshIndex, Vector3[] srcArray, uint srcIndex, Vector3[] dstArray, uint dstIndex, uint length)
 			{
 				var matrix = meshesWithMatrices[meshIndex].matrix;
 
-				for(int i = 0;i<length;i++) {
-					dstArray[dstIndex+i] = matrix*srcArray[srcIndex+i];
+				for(int i = 0; i < length; i++) {
+					dstArray[dstIndex + i] = matrix * srcArray[srcIndex + i];
 				}
 			}
 
-			void CopyNormals(uint meshIndex,Vector3[] srcArray,uint srcIndex,Vector3[] dstArray,uint dstIndex,uint length)
+			void CopyNormals(uint meshIndex, Vector3[] srcArray, uint srcIndex, Vector3[] dstArray, uint dstIndex, uint length)
 			{
 				var matrix = meshesWithMatrices[meshIndex].matrix;
 
 				matrix.ClearScale();
 				matrix.ClearTranslation();
 
-				for(int i = 0;i<length;i++) {
-					dstArray[dstIndex+i] = matrix*srcArray[srcIndex+i];
+				for(int i = 0; i < length; i++) {
+					dstArray[dstIndex + i] = matrix * srcArray[srcIndex + i];
 				}
 			}
 
-			return CombineMeshesInternal(meshesWithMatrices.Select(t => t.mesh),CopyVertices,CopyNormals);
+			return CombineMeshesInternal(meshesWithMatrices.Select(t => t.mesh), CopyVertices, CopyNormals);
 		}
 
-		internal static Mesh CombineMeshesInternal(IEnumerable<Mesh> meshes,ArrayCopyDelegate<Vector3> vertexCopyAction = null,ArrayCopyDelegate<Vector3> normalCopyAction = null)
+		internal static Mesh CombineMeshesInternal(IEnumerable<Mesh> meshes, ArrayCopyDelegate<Vector3> vertexCopyAction = null, ArrayCopyDelegate<Vector3> normalCopyAction = null)
 		{
-			static void DefaultCopyAction<T>(uint meshIndex,T[] srcArray,uint srcIndex,T[] dstArray,uint dstIndex,uint length)
-				=> Array.Copy(srcArray,srcIndex,dstArray,dstIndex,length);
+			static void DefaultCopyAction<T>(uint meshIndex, T[] srcArray, uint srcIndex, T[] dstArray, uint dstIndex, uint length)
+				=> Array.Copy(srcArray, srcIndex, dstArray, dstIndex, length);
 
 			vertexCopyAction ??= DefaultCopyAction;
 			normalCopyAction ??= DefaultCopyAction;
@@ -230,19 +230,19 @@ namespace Dissonance.Engine.Graphics.Meshes
 				//Vertices
 				uint vertexCount = (uint)mesh.Vertices.Length;
 
-				vertexCopyAction(meshIndex,mesh.Vertices,0,newMesh.Vertices,vertex,vertexCount); //Array.Copy(mesh.vertices,0,newMesh.vertices,vertex,vertexCount);
-				normalCopyAction(meshIndex,mesh.Normals,0,newMesh.Normals,vertex,vertexCount); //Array.Copy(mesh.normals,0,newMesh.normals,vertex,vertexCount);
+				vertexCopyAction(meshIndex, mesh.Vertices, 0, newMesh.Vertices, vertex, vertexCount); //Array.Copy(mesh.vertices,0,newMesh.vertices,vertex,vertexCount);
+				normalCopyAction(meshIndex, mesh.Normals, 0, newMesh.Normals, vertex, vertexCount); //Array.Copy(mesh.normals,0,newMesh.normals,vertex,vertexCount);
 
-				Array.Copy(mesh.Uv0,0,newMesh.Uv0,vertex,vertexCount);
+				Array.Copy(mesh.Uv0, 0, newMesh.Uv0, vertex, vertexCount);
 
 				//Indices
 				uint indexCount = (uint)mesh.Indices.Length;
 
-				if(vertex==0) {
-					Array.Copy(mesh.Indices,newMesh.Indices,indexCount);
+				if(vertex == 0) {
+					Array.Copy(mesh.Indices, newMesh.Indices, indexCount);
 				} else {
-					for(int k = 0;k<indexCount;k++) {
-						newMesh.Indices[triangleIndex+k] = mesh.Indices[k]+vertex;
+					for(int k = 0; k < indexCount; k++) {
+						newMesh.Indices[triangleIndex + k] = mesh.Indices[k] + vertex;
 					}
 				}
 

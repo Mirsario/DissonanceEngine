@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Input
 		public bool[] mouseButtons = new bool[InputEngine.MaxMouseButtons];
 
 		//Keyboard
-		public Dictionary<Keys,byte> pressedKeys = new Dictionary<Keys,byte>(); //Value is amount of ticks left until released.
+		public Dictionary<Keys, byte> pressedKeys = new Dictionary<Keys, byte>(); //Value is amount of ticks left until released.
 		public string inputString = string.Empty;
 
 		//Gamepads
@@ -30,10 +30,10 @@ namespace Dissonance.Engine.Input
 			foreach(var pair in pairs) {
 				byte release = pair.Value;
 
-				if(release>0) {
+				if(release > 0) {
 					release--;
 
-					if(release==0) {
+					if(release == 0) {
 						pressedKeys.Remove(pair.Key);
 					} else {
 						pressedKeys[pair.Key] = release;
@@ -41,7 +41,7 @@ namespace Dissonance.Engine.Input
 				}
 			}
 		}
-		public void CopyTo(InputVariables other,bool reset = true)
+		public void CopyTo(InputVariables other, bool reset = true)
 		{
 			if(reset) {
 				other.Reset(false);
@@ -52,14 +52,14 @@ namespace Dissonance.Engine.Input
 			other.inputString = inputString;
 
 			foreach(var pair in pressedKeys) {
-				other.pressedKeys.Add(pair.Key,pair.Value);
+				other.pressedKeys.Add(pair.Key, pair.Value);
 			}
 
 			foreach(string str in pressedButtons) {
 				other.pressedButtons.Add(str);
 			}
 
-			for(int i = 0;i<InputEngine.MaxMouseButtons;i++) {
+			for(int i = 0; i < InputEngine.MaxMouseButtons; i++) {
 				other.mouseButtons[i] = mouseButtons[i];
 			}
 		}
@@ -73,7 +73,7 @@ namespace Dissonance.Engine.Input
 			pressedButtons.Clear();
 
 			if(resetArrays) {
-				for(int i = 0;i<InputEngine.MaxMouseButtons;i++) {
+				for(int i = 0; i < InputEngine.MaxMouseButtons; i++) {
 					mouseButtons[i] = false;
 				}
 			}

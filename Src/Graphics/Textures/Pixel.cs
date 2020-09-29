@@ -12,20 +12,20 @@ namespace Dissonance.Engine.Graphics.Textures
 		public byte a;
 
 		public float R {
-			get => r/255f;
-			set => r = (byte)(value/255);
+			get => r / 255f;
+			set => r = (byte)(value / 255);
 		}
 		public float G {
-			get => g/255f;
-			set => g = (byte)(value/255);
+			get => g / 255f;
+			set => g = (byte)(value / 255);
 		}
 		public float B {
-			get => b/255f;
-			set => b = (byte)(value/255);
+			get => b / 255f;
+			set => b = (byte)(value / 255);
 		}
 		public float A {
-			get => a/255f;
-			set => a = (byte)(value/255);
+			get => a / 255f;
+			set => a = (byte)(value / 255);
 		}
 
 		public byte this[int index] {
@@ -59,26 +59,26 @@ namespace Dissonance.Engine.Graphics.Textures
 			}
 		}
 
-		public Pixel(byte r,byte g,byte b,byte a)
+		public Pixel(byte r, byte g, byte b, byte a)
 		{
 			this.r = r;
 			this.g = g;
 			this.b = b;
 			this.a = a;
 		}
-		public Pixel(float r,float g,float b,float a)
+		public Pixel(float r, float g, float b, float a)
 		{
-			this.r = (byte)(r/255);
-			this.g = (byte)(g/255);
-			this.b = (byte)(b/255);
-			this.a = (byte)(a/255);
+			this.r = (byte)(r / 255);
+			this.g = (byte)(g / 255);
+			this.b = (byte)(b / 255);
+			this.a = (byte)(a / 255);
 		}
 
 		public override string ToString() => $"[{R}, {G}, {B}, {A}]";
 
-		public static implicit operator Color(Pixel value) => Color.FromArgb(value.a,value.r,value.g,value.b);
-		public static implicit operator Pixel(Color value) => new Pixel(value.R,value.G,value.B,value.A);
-		public static implicit operator Vector4(Pixel value) => new Vector4(value.R,value.G,value.B,value.A);
-		public static implicit operator Pixel(Vector4 value) => new Pixel(value.x,value.y,value.z,value.w);
+		public static implicit operator Color(Pixel value) => Color.FromArgb(value.a, value.r, value.g, value.b);
+		public static implicit operator Pixel(Color value) => new Pixel(value.R, value.G, value.B, value.A);
+		public static implicit operator Vector4(Pixel value) => new Vector4(value.R, value.G, value.B, value.A);
+		public static implicit operator Pixel(Vector4 value) => new Pixel(value.x, value.y, value.z, value.w);
 	}
 }

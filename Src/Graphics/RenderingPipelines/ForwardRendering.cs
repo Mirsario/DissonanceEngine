@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Graphics.RenderingPipelines
 {
 	public class ForwardRendering : RenderingPipeline
 	{
-		public override void Setup(List<Framebuffer> framebuffers,List<RenderPass> renderPasses)
+		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			//RenderPasses
 			renderPasses.AddRange(new RenderPass[] {

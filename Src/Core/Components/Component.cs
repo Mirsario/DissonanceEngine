@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Core.Components
 		public bool Enabled {
 			get => enabled;
 			set {
-				if(enabled==value) {
+				if(enabled == value) {
 					return;
 				}
 
@@ -26,7 +26,7 @@ namespace Dissonance.Engine.Core.Components
 					var type = GetType();
 					var parameters = ComponentManager.GetParameters(type);
 
-					if(parameters.allowOnlyOneInWorld && ComponentManager.CountComponents(type)>=1) {
+					if(parameters.allowOnlyOneInWorld && ComponentManager.CountComponents(type) >= 1) {
 						throw new InvalidOperationException($"Attempted to enable a second instance of component '{GetType().Name}', but only 1 instance is allowed to be enabled at the same time.");
 					}
 
@@ -35,10 +35,10 @@ namespace Dissonance.Engine.Core.Components
 
 						beenEnabledBefore = true;
 					} else {
-						ComponentManager.ModifyInstanceLists(GetType(),lists => lists.disabled.Remove(this)); //Remove from the list of disabled components.
+						ComponentManager.ModifyInstanceLists(GetType(), lists => lists.disabled.Remove(this)); //Remove from the list of disabled components.
 					}
 
-					ComponentManager.ModifyInstanceLists(GetType(),lists => lists.enabled.Add(this)); //Add to the list of enabled components.
+					ComponentManager.ModifyInstanceLists(GetType(), lists => lists.enabled.Add(this)); //Add to the list of enabled components.
 
 					OnEnable();
 
@@ -47,7 +47,7 @@ namespace Dissonance.Engine.Core.Components
 					enabled = true;
 				} else {
 					//Remove from the list of enabled components, and add to the list of disabled ones.
-					ComponentManager.ModifyInstanceLists(GetType(),lists => {
+					ComponentManager.ModifyInstanceLists(GetType(), lists => {
 						lists.enabled.Remove(this);
 						lists.disabled.Add(this);
 					});
@@ -71,7 +71,7 @@ namespace Dissonance.Engine.Core.Components
 			Name = type.Name;
 			NameHash = Name.GetHashCode();
 
-			ComponentManager.ModifyInstanceLists(GetType(),lists => lists.all.Add(this));
+			ComponentManager.ModifyInstanceLists(GetType(), lists => lists.all.Add(this));
 		}
 
 		protected virtual void OnPreInit() { }
@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Core.Components
 
 			OnDispose();
 
-			ComponentManager.ModifyInstanceLists(GetType(),lists => {
+			ComponentManager.ModifyInstanceLists(GetType(), lists => {
 				lists.all.Remove(this);
 
 				if(enabled) {
@@ -98,10 +98,10 @@ namespace Dissonance.Engine.Core.Components
 
 			var dict = gameObject.componentsByNameHash;
 
-			if(dict.TryGetValue(NameHash,out var list)) {
+			if(dict.TryGetValue(NameHash, out var list)) {
 				list.Remove(this);
 
-				if(list.Count==0) {
+				if(list.Count == 0) {
 					dict.Remove(NameHash);
 				}
 			}

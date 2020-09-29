@@ -5,7 +5,7 @@ namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes.Default
 {
 	public class ColorAttribute : CustomVertexAttribute<ColorBuffer>
 	{
-		public override void Init(out string nameId,out VertexAttribPointerType pointerType,out bool isNormalized,out int size,out int stride,out int offset)
+		public override void Init(out string nameId, out VertexAttribPointerType pointerType, out bool isNormalized, out int size, out int stride, out int offset)
 		{
 			nameId = "color";
 			pointerType = VertexAttribPointerType.Float;

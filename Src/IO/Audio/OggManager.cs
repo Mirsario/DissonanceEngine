@@ -8,18 +8,18 @@ namespace Dissonance.Engine.IO.Audio
 	{
 		public override string[] Extensions => new[] { ".ogg" };
 
-		public override AudioClip Import(Stream stream,string filePath)
+		public override AudioClip Import(Stream stream, string filePath)
 		{
-			using var r = new VorbisReader(stream,true);
+			using var r = new VorbisReader(stream, true);
 
-			long bufferSize = r.TotalSamples*r.Channels;
+			long bufferSize = r.TotalSamples * r.Channels;
 			var data = new float[bufferSize];
 
-			r.ReadSamples(data,0,(int)bufferSize);
+			r.ReadSamples(data, 0, (int)bufferSize);
 
 			var clip = new AudioClip();
 
-			clip.SetData(data,r.Channels,sizeof(float),r.SampleRate);
+			clip.SetData(data, r.Channels, sizeof(float), r.SampleRate);
 
 			return clip;
 		}

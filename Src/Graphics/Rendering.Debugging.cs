@@ -15,12 +15,13 @@ namespace Dissonance.Engine.Graphics
 
 				CheckGLErrors("After attempting to enable debugging.");
 
-				debugCallback = (uint source,uint type,uint id,uint severity,int length,string message,IntPtr userParameter) => {
-					if(severity==GLConstants.DEBUG_SEVERITY_NOTIFICATION) {
+				debugCallback = (uint source, uint type, uint id, uint severity, int length, string message, IntPtr userParameter) => {
+					if(severity == GLConstants.DEBUG_SEVERITY_NOTIFICATION) {
 						return;
 					}
 
-					string sourceName = source switch {
+					string sourceName = source switch
+					{
 						GLConstants.DEBUG_SOURCE_API => "API",
 						GLConstants.DEBUG_SOURCE_WINDOW_SYSTEM => "WINDOW SYSTEM",
 						GLConstants.DEBUG_SOURCE_SHADER_COMPILER => "SHADER COMPILER",
@@ -29,7 +30,8 @@ namespace Dissonance.Engine.Graphics
 						GLConstants.DEBUG_SOURCE_OTHER => "OTHER",
 						_ => "UNKNOWN",
 					};
-					string typeName = type switch {
+					string typeName = type switch
+					{
 						GLConstants.DEBUG_TYPE_ERROR => "ERROR",
 						GLConstants.DEBUG_TYPE_DEPRECATED_BEHAVIOR => "DEPRECATED BEHAVIOR",
 						GLConstants.DEBUG_TYPE_UNDEFINED_BEHAVIOR => "UDEFINED BEHAVIOR",
@@ -39,7 +41,8 @@ namespace Dissonance.Engine.Graphics
 						GLConstants.DEBUG_TYPE_MARKER => "MARKER",
 						_ => "UNKNOWN",
 					};
-					string severityName = severity switch {
+					string severityName = severity switch
+					{
 						GLConstants.DEBUG_SEVERITY_HIGH => "HIGH",
 						GLConstants.DEBUG_SEVERITY_MEDIUM => "MEDIUM",
 						GLConstants.DEBUG_SEVERITY_LOW => "LOW",
@@ -47,14 +50,14 @@ namespace Dissonance.Engine.Graphics
 						_ => "UNKNOWN",
 					};
 
-					if(severity==GLConstants.DEBUG_SEVERITY_HIGH) {
+					if(severity == GLConstants.DEBUG_SEVERITY_HIGH) {
 						throw new GraphicsException($"GL Error - ID: {id}; Type: {typeName}; Severity: {severityName}; From: {sourceName};\r\n{message}");
 					}
 
 					Debug.Log($"GL Debug - ID: {id}; Type: {typeName}; Severity: {severityName}; From: {sourceName};\r\n{message}");
 				};
 
-				GL.DebugMessageCallback(debugCallback,IntPtr.Zero);
+				GL.DebugMessageCallback(debugCallback, IntPtr.Zero);
 
 				Debug.Log("Activated OpenGL Debugging.");
 			}

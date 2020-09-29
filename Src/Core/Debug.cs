@@ -10,12 +10,12 @@ namespace Dissonance.Engine.Core
 	public static class Debug
 	{
 		public static readonly object LoggingLock = new object();
-		public static readonly Dictionary<string,ConsoleColor> ThreadNameToColor = new Dictionary<string,ConsoleColor>();
+		public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new Dictionary<string, ConsoleColor>();
 
 		public static bool LogCurrentThread { get; set; }
 		public static bool LogAssembly { get; set; } = true;
 
-		public static void Log(object message,bool showTrace = false,int stackframeOffset = 1)
+		public static void Log(object message, bool showTrace = false, int stackframeOffset = 1)
 		{
 			var stackTrace = new StackTrace(true);
 			var stackFrames = stackTrace.GetFrames();
@@ -26,10 +26,10 @@ namespace Dissonance.Engine.Core
 
 			lock(LoggingLock) {
 				string threadName = Thread.CurrentThread.Name;
-				bool logThread = LogCurrentThread && threadName!=null;
+				bool logThread = LogCurrentThread && threadName != null;
 
 				lock(ThreadNameToColor) {
-					Console.ForegroundColor = logThread && ThreadNameToColor.TryGetValue(threadName,out var consoleColor) ? consoleColor : ConsoleColor.DarkGray;
+					Console.ForegroundColor = logThread && ThreadNameToColor.TryGetValue(threadName, out var consoleColor) ? consoleColor : ConsoleColor.DarkGray;
 				}
 
 				Console.Write("[");
@@ -39,7 +39,7 @@ namespace Dissonance.Engine.Core
 				}
 
 				if(LogAssembly) {
-					Console.Write($"{(stackFrameMethod!=null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
+					Console.Write($"{(stackFrameMethod != null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
 				}
 
 				Console.Write($"{fileName}, line {lineNumber}] ");
@@ -51,8 +51,8 @@ namespace Dissonance.Engine.Core
 				if(showTrace) {
 					var stringBuilder = new StringBuilder();
 
-					for(int i = 1;i<stackFrames.Length;i++) {
-						if(stackFrames[i].GetFileName()==null) {
+					for(int i = 1; i < stackFrames.Length; i++) {
+						if(stackFrames[i].GetFileName() == null) {
 							break;
 						}
 
@@ -61,8 +61,8 @@ namespace Dissonance.Engine.Core
 
 						stringBuilder.Append($"  {Path.GetFileName(stackFrames[i].GetFileName())}:{method.Name}(");
 
-						for(int j = 0;j<parameters.Length;j++) {
-							stringBuilder.Append($"{(j>0 ? "," : "")}{parameters[j].ParameterType.Name}");
+						for(int j = 0; j < parameters.Length; j++) {
+							stringBuilder.Append($"{(j > 0 ? "," : "")}{parameters[j].ParameterType.Name}");
 						}
 
 						stringBuilder.Append($") at line {stackFrames[i].GetFileLineNumber()}");
@@ -74,13 +74,13 @@ namespace Dissonance.Engine.Core
 		}
 		public static void RemoveLine(int line)
 		{
-			int currentLine = Console.CursorTop-1;
+			int currentLine = Console.CursorTop - 1;
 
-			Console.SetCursorPosition(0,line);
+			Console.SetCursorPosition(0, line);
 
-			Console.Write(new string(' ',Console.WindowWidth));
+			Console.Write(new string(' ', Console.WindowWidth));
 
-			Console.SetCursorPosition(0,currentLine);
+			Console.SetCursorPosition(0, currentLine);
 		}
 	}
 }

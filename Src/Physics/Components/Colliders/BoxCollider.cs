@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 Size {
 			get => size;
 			set {
-				if(size!=value) {
+				if(size != value) {
 					size = value;
 
 					TryUpdateCollider();
@@ -22,12 +22,12 @@ namespace Dissonance.Engine.Physics
 
 		internal override void UpdateCollider()
 		{
-			if(collShape!=null) {
+			if(collShape != null) {
 				collShape.Dispose();
 				collShape = null;
 			}
 
-			collShape = new BoxShape(size*0.5f);
+			collShape = new BoxShape(size * 0.5f);
 
 			base.UpdateCollider();
 		}

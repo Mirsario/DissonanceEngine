@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Input
 		public const int MaxGamepads = 4;
 
 		//Mouse
-		public static Vector2 MouseDelta => PrevInput.mousePosition-CurrentInput.mousePosition;
+		public static Vector2 MouseDelta => PrevInput.mousePosition - CurrentInput.mousePosition;
 		public static Vector2 MousePosition => CurrentInput.mousePosition;
 		public static int MouseWheel => CurrentInput.mouseWheel;
 		//Keyboard
