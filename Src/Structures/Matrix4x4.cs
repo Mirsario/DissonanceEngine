@@ -373,6 +373,34 @@ namespace Dissonance.Engine.Structures
 
 			return new Vector3(-v1, -v2, v3) * Mathf.Rad2Deg;
 		}
+		public float ExtractEulerX()
+		{
+			if(m21 < -1f) {
+				return -Mathf.HalfPI;
+			} else if(m21 > 1f) {
+				return Mathf.HalfPI;
+			}
+			
+			return Mathf.Asin(m21);
+		}
+		public float ExtractEulerY()
+		{
+			if(m21 < -1f || m21 > 1f) {
+				return 0f;
+			}
+
+			return Mathf.Atan2(-m20, m22);
+		}
+		public float ExtractEulerZ()
+		{
+			if(m21 < -1f) {
+				return Mathf.Atan2(m02, m00);
+			} else if(m21 > 1f) {
+				return -Mathf.Atan2(m02, m00);
+			}
+
+			return Mathf.Atan2(-m01, m11);
+		}
 		public Quaternion ExtractQuaternion()
 		{
 			var row0 = Row0.XYZ.Normalized;
