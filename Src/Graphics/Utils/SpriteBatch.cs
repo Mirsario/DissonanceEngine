@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics.Utils
 			began = false;
 		}
 		public void Draw(RectFloat dstRect, float depth = 0f) => Draw(dstRect.Points, DefaultUvPoints, depth);
-		public void Draw(RectFloat dstRect, RectFloat srcRect, float depth = 0f) => Draw(dstRect.Points, new Vector4(srcRect.x, srcRect.y + srcRect.height, srcRect.x + srcRect.width, srcRect.y), depth);
+		public void Draw(RectFloat dstRect, RectFloat srcRect, float depth = 0f) => Draw(dstRect.Points, srcRect.Points, depth);
 		public void Draw(Vector4 vertexPoints, Vector4 uvPoints, float depth = 0f)
 		{
 			if(!began) {
@@ -67,10 +67,10 @@ namespace Dissonance.Engine.Graphics.Utils
 			vertices[vertexIndex + 2] = new Vector3(vertexPoints.z, vertexPoints.w, depth);
 			vertices[vertexIndex + 3] = new Vector3(vertexPoints.z, vertexPoints.y, depth);
 
-			uv0[vertexIndex] = new Vector2(uvPoints.x, uvPoints.w);
-			uv0[vertexIndex + 1] = new Vector2(uvPoints.x, uvPoints.y);
-			uv0[vertexIndex + 2] = new Vector2(uvPoints.z, uvPoints.y);
-			uv0[vertexIndex + 3] = new Vector2(uvPoints.z, uvPoints.w);
+			uv0[vertexIndex] = new Vector2(uvPoints.x, uvPoints.y);
+			uv0[vertexIndex + 1] = new Vector2(uvPoints.x, uvPoints.w);
+			uv0[vertexIndex + 2] = new Vector2(uvPoints.z, uvPoints.w);
+			uv0[vertexIndex + 3] = new Vector2(uvPoints.z, uvPoints.y);
 
 			indices[triangleIndex++] = vertexIndex;
 			indices[triangleIndex++] = vertexIndex + 1;
