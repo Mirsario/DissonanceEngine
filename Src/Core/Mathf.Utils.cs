@@ -4,7 +4,13 @@ namespace Dissonance.Engine.Core
 {
 	partial class Mathf
 	{
-		[MethodImpl(Inline)] public static int Repeat(int value, int length) => value >= 0 ? value % length : (value % length) + length;
+		[MethodImpl(Inline)]
+		public static int Repeat(int value, int length)
+		{
+			int r = value % length;
+
+			return r < 0 ? r + length : r;
+		}
 		[MethodImpl(Inline)] public static float Repeat(float value, float length) => value - Floor(value / length) * length;
 		[MethodImpl(Inline)] public static double Repeat(double value, double length) => value - Floor(value / length) * length;
 
