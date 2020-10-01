@@ -1,5 +1,6 @@
 using System;
 using Dissonance.Engine.Core;
+using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Structures
 {
@@ -173,17 +174,27 @@ namespace Dissonance.Engine.Structures
 		public static Matrix4x4 CreateOrthographic(float width, float height, float zNear, float zFar) => CreateOrthographicOffCenter(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
 		public static Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNear, float zFar)
 		{
-			var result = Identity;
-			float invRL = 1f / (right - left);
-			float invTB = 1f / (top - bottom);
-			float invFN = 1f / (zFar - zNear);
+			Matrix4x4 result;
 
-			result.m00 = 2 * invRL;
-			result.m11 = 2 * invTB;
-			result.m22 = -2 * invFN;
-			result.m30 = -(right + left) * invRL;
-			result.m31 = -(top + bottom) * invTB;
-			result.m32 = -(zFar + zNear) * invFN;
+			result.m00 = 2f / (right - left);
+			result.m01 = 0f;
+			result.m02 = 0f;
+			result.m03 = 0f;
+
+			result.m10 = 0f;
+			result.m11 = 2f / (top - bottom);
+			result.m12 = 0f;
+			result.m13 = 0f;
+
+			result.m20 = 0f;
+			result.m21 = 0f;
+			result.m22 = 1f / (zFar - zNear);
+			result.m23 = 0f;
+
+			result.m30 = (left + right) / (left - right);
+            result.m31 = (top + bottom) / (bottom - top);
+            result.m32 = -zNear / (zFar - zNear);
+            result.m33 = 1f;
 
 			return result;
 		}
