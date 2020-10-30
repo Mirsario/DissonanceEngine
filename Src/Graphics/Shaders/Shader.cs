@@ -398,10 +398,6 @@ namespace Dissonance.Engine.Graphics.Shaders
 
 		public static void SetShader(Shader shader)
 		{
-			if(shader == ActiveShader) {
-				return;
-			}
-
 			if(shader != null) {
 				GL.UseProgram(shader.Id);
 				ActiveShader = shader;
@@ -410,6 +406,7 @@ namespace Dissonance.Engine.Graphics.Shaders
 				Rendering.SetBlendFunc(shader.blendFactorSrc, shader.blendFactorDst);
 			} else {
 				GL.UseProgram(0);
+
 				ActiveShader = null;
 			}
 		}
