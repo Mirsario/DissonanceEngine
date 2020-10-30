@@ -44,7 +44,6 @@ namespace Dissonance.Engine.Graphics
 
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
-		public static Framebuffer DefaultFramebuffer { get; set; }
 		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
