@@ -4,9 +4,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class Renderbuffer
 	{
-		internal static Renderbuffer activeBuffer;
-
-		public static Renderbuffer ActiveBuffer => activeBuffer;
+		public static Renderbuffer ActiveBuffer { get; private set; }
 
 		public readonly uint Id;
 		public readonly string Name;
@@ -25,10 +23,9 @@ namespace Dissonance.Engine.Graphics
 
 		public static void Bind(Renderbuffer newBuffer)
 		{
-			if(newBuffer != activeBuffer) {
-				GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, newBuffer?.Id ?? 0);
-				activeBuffer = newBuffer;
-			}
+			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, newBuffer?.Id ?? 0);
+
+			ActiveBuffer = newBuffer;
 		}
 	}
 }

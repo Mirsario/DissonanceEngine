@@ -10,11 +10,9 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Some fields shouldn't be public
 	public class Framebuffer : IDisposable
 	{
-		internal static Framebuffer activeBuffer;
-
 		public static Framebuffer DefaultFramebuffer { get; set; }
 
-		public static Framebuffer ActiveBuffer => activeBuffer;
+		public static Framebuffer ActiveBuffer { get; private set; }
 
 		public readonly string Name;
 		public readonly uint Id;
@@ -171,7 +169,7 @@ namespace Dissonance.Engine.Graphics
 			GL.BindFramebuffer(target, fb?.Id ?? 0);
 
 			if(target == FramebufferTarget.Framebuffer) {
-				activeBuffer = fb;
+				ActiveBuffer = fb;
 			}
 		}
 		public static void BindWithDrawBuffers(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
