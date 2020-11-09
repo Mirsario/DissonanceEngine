@@ -18,14 +18,15 @@ namespace Dissonance.Engine.Core
 
 		public void AddModule(EngineModule module)
 		{
-			var type = module.GetType();
-
-			if(!modulesByType.TryGetValue(type, out var list)) {
-				modulesByType[type] = list = new List<EngineModule>();
-			}
-
-			list.Add(module);
 			modules.Add(module);
+
+			foreach(var type in ReflectionUtils.EnumerateBaseTypes(module.GetType(), true, typeof(EngineModule))) {
+				if(!modulesByType.TryGetValue(type, out var list)) {
+					modulesByType[type] = list = new List<EngineModule>();
+				}
+
+				list.Add(module);
+			}
 
 			if(modulesReady) {
 				RefreshModules();
@@ -33,19 +34,33 @@ namespace Dissonance.Engine.Core
 		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
-			if(modulesByType == null || !modulesByType.TryGetValue(typeof(T), out var list)) {
+			if(TryGetModule(typeof(T), out var tempResult)) {
+				result = (T)tempResult;
+
+				return true;
+			}
+
+			result = default;
+
+			return false;
+		}
+		public bool TryGetModule(Type type, out EngineModule result)
+		{
+			if(modulesByType == null || !modulesByType.TryGetValue(type, out var list)) {
 				result = default;
 
 				return false;
 			}
 
-			result = (T)list[0];
+			result = list[0];
 
 			return true;
 		}
 		public T GetModule<T>(bool throwOnFailure = true) where T : EngineModule
+			=> (T)GetModule(typeof(T), throwOnFailure);
+		public EngineModule GetModule(Type type, bool throwOnFailure = true)
 		{
-			if(TryGetModule<T>(out var result)) {
+			if(TryGetModule(type, out var result)) {
 				return result;
 			}
 
@@ -53,7 +68,7 @@ namespace Dissonance.Engine.Core
 				return null;
 			}
 
-			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
+			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{type.Name}' engine module.");
 		}
 
 		private void InitializeModules()
@@ -96,7 +111,7 @@ namespace Dissonance.Engine.Core
 		{
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
 				=> module.Dependencies?.Select(dependency => {
-					var result = modules.FirstOrDefault(m => m.GetType() == dependency.type);
+					var result = GetModule(dependency.type);
 
 					if(result == null && !dependency.optional) {
 						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{module.GetType().Name}'.");
