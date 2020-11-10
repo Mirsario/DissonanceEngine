@@ -249,7 +249,7 @@ namespace Dissonance.Engine.Core
 		{
 			var windowing = GetModule<Windowing>(false);
 
-			while(!shouldQuit && (NoWindow || GLFW.WindowShouldClose(windowing.WindowHandle) == 0)) {
+			while(!shouldQuit && (NoWindow || !windowing.ShouldClose)) {
 				Update();
 			}
 		}
@@ -265,10 +265,6 @@ namespace Dissonance.Engine.Core
 			Debug.Log("Game stopping...");
 
 			instance.shouldQuit = true;
-
-			if(instance.TryGetModule<Windowing>(out var windowing) && windowing.WindowHandle != IntPtr.Zero) {
-				GLFW.SetWindowShouldClose(windowing.WindowHandle, 1);
-			}
 		}
 
 		private static void OnFocusChange(IntPtr _, int isFocused) => HasFocus = isFocused != 0;

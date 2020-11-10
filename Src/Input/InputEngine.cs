@@ -40,10 +40,7 @@ namespace Dissonance.Engine.Input
 
 			InitSignals();
 			InitTriggers();
-
-			if(!Game.NoWindow) {
-				InitCallbacks();
-			}
+			InitCallbacks();
 
 			SingletonInputTrigger.StaticInit();
 		}
@@ -55,7 +52,7 @@ namespace Dissonance.Engine.Input
 
 		private void PreUpdate()
 		{
-			if(Game.NoWindow) {
+			if(windowing == null) {
 				return;
 			}
 
@@ -67,7 +64,7 @@ namespace Dissonance.Engine.Input
 		}
 		private void PostUpdate()
 		{
-			if(Game.NoWindow) {
+			if(windowing == null) {
 				return;
 			}
 
