@@ -61,6 +61,8 @@ namespace Dissonance.Engine.Graphics
 			maxTextureWidth = Math.Max(maxTextureWidth, texture.Width);
 			maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
 
+			Rendering.CheckFramebufferStatus();
+
 			Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 		}
 		public void AttachRenderTextures(params RenderTexture[] textures) => AttachRenderTextures((IEnumerable<RenderTexture>)textures);

@@ -180,9 +180,7 @@ namespace Dissonance.Engine.Graphics
 				BlitFramebuffers();
 			}
 
-			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
-				GLFW.SwapBuffers(windowing.WindowHandle);
-			}
+			windowing.SwapBuffers();
 
 			CheckGLErrors("After swapping buffers");
 		}

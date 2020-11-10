@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static CursorState CursorState {
 			get => cursorState;
-			set => GLFW.SetInputMode(Game.Instance.GetModule<Windowing>().WindowHandle, InputMode.Cursor, (int)(cursorState = value));
+			set => cursorState = Game.Instance.GetModule<Windowing>().CursorState = value;
 		}
 
 		private Windowing windowing;
@@ -62,6 +62,8 @@ namespace Dissonance.Engine.Graphics
 		protected override void PreInit()
 		{
 			windowing = Game.GetModule<Windowing>(false);
+
+			UpdateValues();
 		}
 		protected override void OnDispose()
 		{
@@ -74,31 +76,24 @@ namespace Dissonance.Engine.Graphics
 				return;
 			}
 
-			var windowHandle = windowing.WindowHandle;
-
 			//Framebuffer
-			GLFW.GetFramebufferSize(windowHandle, out int framebufferWidth, out int framebufferHeight);
+			Width = windowing.FramebufferSize.x;
+			Height = windowing.FramebufferSize.y;
 
-			Width = framebufferWidth;
-			Height = framebufferHeight;
-
-			Size = new Vector2Int(framebufferWidth, framebufferHeight);
-			Center = new Vector2(framebufferWidth * 0.5f, framebufferHeight * 0.5f);
-			Rectangle = new RectInt(0, 0, framebufferWidth, framebufferHeight);
+			Size = windowing.FramebufferSize;
+			Center = Size * 0.5f;
+			Rectangle = new RectInt(0, 0, Width, Height);
 
 			//Window
-			GLFW.GetWindowPos(windowHandle, out int windowX, out int windowY);
-			GLFW.GetWindowSize(windowHandle, out int windowWidth, out int windowHeight);
+			WindowX = windowing.WindowLocation.x;
+			WindowY = windowing.WindowLocation.y;
+			WindowWidth = windowing.WindowSize.x;
+			WindowHeight = windowing.WindowSize.y;
 
-			WindowX = windowX;
-			WindowY = windowY;
-			WindowWidth = windowWidth;
-			WindowHeight = windowHeight;
+			WindowSize = windowing.WindowSize;
+			WindowLocation = windowing.WindowLocation;
 
-			WindowSize = new Vector2Int(windowWidth, windowHeight);
-			WindowLocation = new Vector2Int(windowX, windowY);
-
-			WindowCenter = new Vector2(windowX + windowWidth * 0.5f, windowY + windowHeight * 0.5f);
+			WindowCenter = new Vector2(WindowX + WindowWidth * 0.5f, WindowY + WindowHeight * 0.5f);
 		}
 	}
 }

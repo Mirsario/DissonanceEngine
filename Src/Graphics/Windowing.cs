@@ -1,78 +1,36 @@
-﻿using System;
-using Dissonance.Engine.Core;
+﻿using Dissonance.Engine.Core;
 using Dissonance.Engine.Core.Attributes;
 using Dissonance.Engine.Core.Modules;
-using Dissonance.Framework.Graphics;
+using Dissonance.Engine.Structures;
 using Dissonance.Framework.Windowing;
+using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	public sealed class Windowing : EngineModule
+	public abstract class Windowing : EngineModule
 	{
-		private static readonly object GlfwLock = new object();
+		public delegate void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods);
+		public delegate void CharCallback(uint codePoint);
+		public delegate void ScrollCallback(double xOffset, double yOffset);
+		public delegate void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods);
+		public delegate void CursorPositionCallback(double x, double y);
 
-		public IntPtr WindowHandle { get; private set; }
-		public bool OwnsWindow { get; private set; }
+		public Vector2 WindowCenter => WindowLocation + WindowSize * 0.5f;
+		public RectInt WindowRectangle => new RectInt(WindowLocation, WindowSize);
 
-		protected override void PreInit()
-		{
-			OwnsWindow = !Game.Flags.HasFlag(GameFlags.NoWindow);
+		public abstract event CursorPositionCallback OnCursorPositionCallback;
+		public abstract event MouseButtonCallback OnMouseButtonCallback;
+		public abstract event ScrollCallback OnScrollCallback;
+		public abstract event KeyCallback OnKeyCallback;
+		public abstract event CharCallback OnCharCallback;
 
-			if(!OwnsWindow) {
-				lock(GlfwLock) {
-					WindowHandle = GLFW.GetCurrentContext();
+		public abstract Vector2Int WindowSize { get; }
+		public abstract Vector2Int WindowLocation { get; }
+		public abstract Vector2Int FramebufferSize { get; }
+		public abstract CursorState CursorState { get; set; }
+		public abstract bool ShouldClose { get; set; }
 
-					if(WindowHandle == IntPtr.Zero) {
-						throw new InvalidOperationException("No GLFW/OpenGL context has been set for the game's thread.");
-					}
-				}
-
-				Debug.Log("Found existing window.");
-
-				return;
-			}
-
-			Debug.Log("Creating window...");
-
-			lock(GlfwLock) {
-				GLFW.SetErrorCallback((GLFWError code, string description) => Debug.Log(code switch
-				{
-					GLFWError.VersionUnavailable => throw new GraphicsException(description),
-					_ => $"GLFW Error {code}: {description}"
-				}));
-
-				if(GLFW.Init() == 0) {
-					throw new Exception("Unable to initialize GLFW!");
-				}
-
-				GLFW.WindowHint(WindowHint.ContextVersionMajor, Rendering.OpenGLVersion.Major); //Targeted major version
-				GLFW.WindowHint(WindowHint.ContextVersionMinor, Rendering.OpenGLVersion.Minor); //Targeted minor version
-				GLFW.WindowHint(WindowHint.OpenGLForwardCompat, 1);
-				GLFW.WindowHint(WindowHint.OpenGLProfile, GLFW.OPENGL_CORE_PROFILE);
-
-				IntPtr monitor = IntPtr.Zero;
-				int resolutionWidth = 800;
-				int resolutionHeight = 600;
-
-				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, monitor, IntPtr.Zero);
-
-				if(WindowHandle == IntPtr.Zero) {
-					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
-				}
-
-				GLFW.MakeContextCurrent(WindowHandle);
-				GLFW.SwapInterval(1);
-			}
-
-			Debug.Log("Window created.");
-		}
-		protected override void OnDispose()
-		{
-			if(WindowHandle != IntPtr.Zero) {
-				GLFW.DestroyWindow(WindowHandle);
-				GLFW.Terminate();
-			}
-		}
+		public abstract void SwapBuffers();
+		public abstract bool SetVideoMode(int width, int height);
 	}
 }
