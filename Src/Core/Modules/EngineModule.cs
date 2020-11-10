@@ -1,12 +1,23 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Dissonance.Engine.Core.Modules
 {
 	public abstract class EngineModule : IDisposable
 	{
-		public Game Game { get; internal set; }
 		public ModuleDependency[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
+
+		public Game Game => Game.Instance;
+
+		public EngineModule()
+		{
+			Dependencies = GetType()
+				.GetCustomAttributes<ModuleDependencyAttribute>()
+				.SelectMany(a => a.Dependencies)
+				.ToArray();
+		}
 
 		public void Dispose() => OnDispose();
 

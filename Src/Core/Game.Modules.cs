@@ -12,9 +12,9 @@ namespace Dissonance.Engine.Core
 	partial class Game
 	{
 		private bool modulesReady;
-		private List<EngineModule> modules;
-		private Dictionary<Type, List<EngineModule>> modulesByType;
-		private EngineModuleHooks moduleHooks;
+		private List<EngineModule> modules = new List<EngineModule>();
+		private Dictionary<Type, List<EngineModule>> modulesByType = new Dictionary<Type, List<EngineModule>>();
+		private EngineModuleHooks moduleHooks = new EngineModuleHooks();
 
 		public void AddModule(EngineModule module)
 		{
@@ -73,10 +73,6 @@ namespace Dissonance.Engine.Core
 
 		private void InitializeModules()
 		{
-			moduleHooks = new EngineModuleHooks();
-			modules = new List<EngineModule>();
-			modulesByType = new Dictionary<Type, List<EngineModule>>();
-
 			lock(AssemblyCache.AllTypes) {
 				foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
 					var autoload = AutoloadAttribute.Get(type);
@@ -85,16 +81,7 @@ namespace Dissonance.Engine.Core
 						continue;
 					}
 
-					var instance = (EngineModule)Activator.CreateInstance(type);
-
-					instance.Game = this;
-					instance.Dependencies = instance
-						.GetType()
-						.GetCustomAttributes<ModuleDependencyAttribute>()
-						.SelectMany(a => a.Dependencies)
-						.ToArray();
-
-					AddModule(instance);
+					AddModule((EngineModule)Activator.CreateInstance(type));
 				}
 			}
 
