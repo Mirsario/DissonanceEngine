@@ -46,7 +46,7 @@ namespace Dissonance.Engine.Graphics.Textures
 			SetupTexture();
 		}
 
-		internal bool UpdateSize()
+		public bool UpdateSize()
 		{
 			if(TargetSize == null) {
 				return false;
