@@ -12,10 +12,6 @@ namespace Dissonance.Engine.Core.Modules
 		public ModuleDependencyAttribute(bool optional, params Type[] dependencies)
 		{
 			foreach(var type in dependencies) {
-				if(type.IsAbstract) {
-					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it's abstract.");
-				}
-
 				if(!typeof(EngineModule).IsAssignableFrom(type)) {
 					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it does not derive from '{nameof(EngineModule)}'.");
 				}
