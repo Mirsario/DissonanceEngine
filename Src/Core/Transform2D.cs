@@ -3,7 +3,6 @@ using System;
 
 namespace Dissonance.Engine.Core
 {
-	//TODO: Avoid gimbal-locking on rotation somehow.
 	/// <summary>
 	/// A wrapper around the normal Transform. Provides properties for easier use in a 2D context.
 	/// <para/> Note that the Y and Z coordinates are flipped here.
