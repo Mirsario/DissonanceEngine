@@ -20,10 +20,9 @@ namespace Dissonance.Engine.Core
 		}
 
 		public readonly IReadOnlyList<Transform> Children;
+		public readonly GameObject GameObject;
 
 		private readonly List<Transform> ChildrenInternal;
-
-		public GameObject gameObject;
 
 		internal UpdateFlags physicsUpdateFlags;
 
@@ -201,7 +200,7 @@ namespace Dissonance.Engine.Core
 
 		public Transform(GameObject gameObject = null)
 		{
-			this.gameObject = gameObject;
+			GameObject = gameObject;
 
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 		}

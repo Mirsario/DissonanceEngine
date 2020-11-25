@@ -63,6 +63,7 @@ namespace Dissonance.Engine.Core.Components
 
 		public GameObject GameObject => gameObject;
 		public Transform Transform => gameObject.Transform;
+		public Transform2D Transform2D => gameObject.Transform2D;
 
 		protected Component() : base()
 		{

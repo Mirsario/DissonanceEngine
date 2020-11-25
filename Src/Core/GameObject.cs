@@ -15,6 +15,7 @@ namespace Dissonance.Engine.Core
 		private byte layer;
 
 		public Transform Transform { get; }
+		public Transform2D Transform2D { get; }
 		public string Name {
 			get => name;
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
@@ -34,6 +35,7 @@ namespace Dissonance.Engine.Core
 		{
 			Name = GetType().Name;
 			Transform = new Transform(this);
+			Transform2D = new Transform2D(Transform);
 
 			ComponentPreInit();
 		}
