@@ -35,8 +35,14 @@ namespace Dissonance.Engine.Core
 
 			return AddComponentInternal(type, enable);
 		}
-		//GetComponent(s)
-		public T GetComponent<T>(bool noSubclasses = false) where T : Component
+		//(Try)GetComponent(s)
+		public T GetComponent<T>(bool exactType = false) where T : Component
+		{
+			TryGetComponent<T>(out var result, exactType);
+
+			return result;
+		}
+		public bool TryGetComponent<T>(out T result, bool exactType = false) where T : Component
 		{
 			var type = typeof(T);
 
@@ -44,14 +50,18 @@ namespace Dissonance.Engine.Core
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType == type || !noSubclasses && thisType.IsSubclassOf(type)) {
-					return (T)component;
+				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
+					result = (T)component;
+
+					return true;
 				}
 			}
 
-			return null;
+			result = default;
+
+			return false;
 		}
-		public IEnumerable<T> GetComponents<T>(bool noSubclasses = false) where T : Component
+		public IEnumerable<T> GetComponents<T>(bool exactType = false) where T : Component
 		{
 			var list = new List<T>();
 			var type = typeof(T);
@@ -60,7 +70,7 @@ namespace Dissonance.Engine.Core
 				var component = components[i];
 				var thisType = component.GetType();
 
-				if(thisType == type || !noSubclasses && thisType.IsSubclassOf(type)) {
+				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
 					list.Add((T)component);
 				}
 			}
