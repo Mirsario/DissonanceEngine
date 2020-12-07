@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using Dissonance.Engine.Core.ProgrammableEntities;
+using System;
 
 namespace Dissonance.Engine.Core.Components
 {
@@ -96,16 +95,6 @@ namespace Dissonance.Engine.Core.Components
 					lists.disabled.Remove(this);
 				}
 			});
-
-			var dict = gameObject.componentsByNameHash;
-
-			if(dict.TryGetValue(NameHash, out var list)) {
-				list.Remove(this);
-
-				if(list.Count == 0) {
-					dict.Remove(NameHash);
-				}
-			}
 		}
 
 		internal void PreInit() => OnPreInit();
