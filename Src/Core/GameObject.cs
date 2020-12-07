@@ -17,8 +17,8 @@ namespace Dissonance.Engine.Core
 		private string name;
 		private byte layer;
 
-		public Transform Transform { get; }
-		public Transform2D Transform2D { get; }
+		public Transform Transform { get; private set; }
+		public Transform2D Transform2D { get; private set; }
 		public string Name {
 			get => name;
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
@@ -46,6 +46,17 @@ namespace Dissonance.Engine.Core
 
 		public virtual void OnInit() { }
 		public virtual void OnDispose() { }
+		public virtual GameObject Clone()
+		{
+			var clone = (GameObject)MemberwiseClone();
+
+			clone.components = new List<Component>(components.Select(c => c.Clone(clone)));
+
+			clone.Transform = clone.GetComponent<Transform>();
+			clone.Transform2D = clone.GetComponent<Transform2D>();
+
+			return clone;
+		}
 
 		public void Init()
 		{
