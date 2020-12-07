@@ -1,16 +1,14 @@
+using Dissonance.Engine.Core.Components;
+using Dissonance.Engine.Utils.Internal;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Core.ProgrammableEntities;
-using Dissonance.Engine.Utils.Internal;
 
 namespace Dissonance.Engine.Core
 {
 	partial class GameObject
 	{
 		internal List<Component> components;
-		internal Dictionary<int, List<Component>> componentsByNameHash;
 
 		//AddComponent
 		public T AddComponent<T>(Action<T> initializer) where T : Component
@@ -102,11 +100,7 @@ namespace Dissonance.Engine.Core
 		}
 
 		//Init/Dispose fields.
-		private void ComponentPreInit()
-		{
-			components = new List<Component>();
-			componentsByNameHash = new Dictionary<int, List<Component>>();
-		}
+		private void ComponentPreInit() => components = new List<Component>();
 		private void ComponentDispose()
 		{
 			if(components != null) {
@@ -117,12 +111,6 @@ namespace Dissonance.Engine.Core
 				components.Clear();
 
 				components = null;
-			}
-
-			if(componentsByNameHash != null) {
-				componentsByNameHash.Clear();
-
-				componentsByNameHash = null;
 			}
 		}
 		//Etc
@@ -143,13 +131,6 @@ namespace Dissonance.Engine.Core
 				throw e.InnerException;
 			}
 
-			int key = newComponent.NameHash;
-
-			if(!componentsByNameHash.TryGetValue(key, out var componentList)) {
-				componentsByNameHash[key] = componentList = new List<Component>();
-			}
-
-			componentList.Add(newComponent);
 			components.Add(newComponent);
 
 			newComponent.gameObject = this;
