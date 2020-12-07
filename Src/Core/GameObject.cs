@@ -79,9 +79,9 @@ namespace Dissonance.Engine.Core
 			}
 		}
 
-		public static T Instantiate<T>(Action<T> preinitializer = null) where T : GameObject
-			=> Manager.Instantiate(preinitializer);
-		public static GameObject Instantiate(Type type, Action<GameObject> preinitializer = null)
-			=> Manager.Instantiate(type, preinitializer);
+		public static T Instantiate<T>(Action<T> preinitializer = null, bool init = true) where T : GameObject
+			=> Manager.Instantiate(preinitializer, init);
+		public static GameObject Instantiate(Type type, Action<GameObject> preinitializer = null, bool init = true)
+			=> Manager.Instantiate(type, preinitializer, init);
 	}
 }
