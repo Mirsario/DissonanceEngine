@@ -203,6 +203,15 @@ namespace Dissonance.Engine.Core
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 		}
 
+		public override Component Clone(GameObject newGameObject)
+		{
+			var clone = (Transform)base.Clone(newGameObject);
+
+			clone.parent = null;
+
+			return clone;
+		}
+
 		public IEnumerable<Transform> EnumerateParents()
 		{
 			var transform = this;

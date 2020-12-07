@@ -74,6 +74,15 @@ namespace Dissonance.Engine.Core.Components
 			ComponentManager.ModifyInstanceLists(GetType(), lists => lists.all.Add(this));
 		}
 
+		public virtual Component Clone(GameObject newGameObject)
+		{
+			var clone = (Component)MemberwiseClone();
+
+			clone.gameObject = newGameObject;
+
+			return clone;
+		}
+
 		protected virtual void OnPreInit() { }
 		protected virtual void OnInit() { }
 		protected virtual void OnEnable() { }
