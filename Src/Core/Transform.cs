@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Structures;
 
 namespace Dissonance.Engine.Core
 {
-	public class Transform
+	public class Transform : Component
 	{
 		//This enum won't be needed after the physics engine is made to use the game engine's matrices.
 		[Flags]
@@ -20,7 +21,6 @@ namespace Dissonance.Engine.Core
 		}
 
 		public readonly IReadOnlyList<Transform> Children;
-		public readonly GameObject GameObject;
 
 		private readonly List<Transform> ChildrenInternal;
 
@@ -198,10 +198,8 @@ namespace Dissonance.Engine.Core
 			}
 		}
 
-		public Transform(GameObject gameObject = null)
+		public Transform() : base()
 		{
-			GameObject = gameObject;
-
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 		}
 
