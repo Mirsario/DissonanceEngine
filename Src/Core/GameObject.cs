@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Dissonance.Engine.Core.Components;
 using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Physics;
 
@@ -34,10 +37,11 @@ namespace Dissonance.Engine.Core
 		protected GameObject() : base()
 		{
 			Name = GetType().Name;
-			Transform = new Transform(this);
-			Transform2D = new Transform2D(Transform);
 
 			ComponentPreInit();
+
+			Transform = AddComponent<Transform>();
+			Transform2D = AddComponent<Transform2D>();
 		}
 
 		public virtual void OnInit() { }
