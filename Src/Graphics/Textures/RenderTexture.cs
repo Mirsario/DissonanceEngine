@@ -1,9 +1,7 @@
 using System;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.Textures
+namespace Dissonance.Engine.Graphics
 {
 	public class RenderTexture : Texture
 	{

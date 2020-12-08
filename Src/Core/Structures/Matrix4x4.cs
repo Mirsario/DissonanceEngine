@@ -1,7 +1,6 @@
 using System;
-using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	public partial struct Matrix4x4
 	{
@@ -380,7 +379,7 @@ namespace Dissonance.Engine.Structures
 			} else if(m21 > 1f) {
 				return Mathf.HalfPI;
 			}
-			
+
 			return Mathf.Asin(m21);
 		}
 		public float ExtractEulerY()

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Dissonance.Engine.Utils.Extensions
+namespace Dissonance.Engine.Utils
 {
 	public static class StringExtensions
 	{

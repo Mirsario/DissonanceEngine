@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	partial class Mathf
 	{

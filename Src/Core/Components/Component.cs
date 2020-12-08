@@ -1,7 +1,6 @@
-using Dissonance.Engine.Core.ProgrammableEntities;
 using System;
 
-namespace Dissonance.Engine.Core.Components
+namespace Dissonance.Engine
 {
 	public class Component : ProgrammableEntity, IDisposable
 	{

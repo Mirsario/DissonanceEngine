@@ -1,4 +1,4 @@
-﻿namespace Dissonance.Engine.Core.ProgrammableEntities
+﻿namespace Dissonance.Engine
 {
 	public abstract class ProgrammableEntity //TODO: Come up with a better name?
 	{

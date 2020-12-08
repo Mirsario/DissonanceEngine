@@ -1,11 +1,11 @@
 ﻿using Dissonance.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Dissonance.Engine.Graphics.Enums;
+using Dissonance.Engine.Graphics;
 
 #pragma warning disable CS0649
 
-namespace Dissonance.Engine.IO.Graphics
+namespace Dissonance.Engine.IO
 {
 	public partial class ShaderManager
 	{

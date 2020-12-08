@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Structures;
+using Dissonance.Engine.Graphics;
 
-namespace Dissonance.Engine.IO.Graphics.Models
+namespace Dissonance.Engine.IO
 {
 	public class ObjManager : AssetManager<Mesh>
 	{

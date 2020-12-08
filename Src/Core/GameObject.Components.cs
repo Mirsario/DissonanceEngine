@@ -1,10 +1,9 @@
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Utils.Internal;
+using Dissonance.Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	partial class GameObject
 	{

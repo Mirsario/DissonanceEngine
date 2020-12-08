@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public static class AssemblyCache
 	{

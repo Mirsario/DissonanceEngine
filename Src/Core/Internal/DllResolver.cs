@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Dissonance.Framework;
 
-namespace Dissonance.Engine.Core.Internal
+namespace Dissonance.Engine
 {
 	internal static class DllResolver
 	{

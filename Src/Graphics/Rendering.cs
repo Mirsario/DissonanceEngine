@@ -1,20 +1,8 @@
 using System;
 using System.Linq;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Attributes;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Core.Modules;
-using Dissonance.Engine.Graphics.Components;
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Graphics.RenderingPipelines;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.Textures;
-using Dissonance.Engine.Graphics.UserInterface;
 using Dissonance.Engine.Input;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
-using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Graphics

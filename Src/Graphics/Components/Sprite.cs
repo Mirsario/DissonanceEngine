@@ -1,8 +1,4 @@
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Graphics.Renderers;
-using Dissonance.Engine.Structures;
-
-namespace Dissonance.Engine.Graphics.Components
+namespace Dissonance.Engine.Graphics
 {
 	public class Sprite : Renderer
 	{

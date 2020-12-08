@@ -1,10 +1,6 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.ProgrammableEntities;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.UserInterface;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.RenderPasses.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class GUIPass : RenderPass
 	{

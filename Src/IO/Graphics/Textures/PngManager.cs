@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Dissonance.Framework.Imaging;
-using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Graphics;
 
-namespace Dissonance.Engine.IO.Graphics.Textures
+namespace Dissonance.Engine.IO
 {
 	public class PngManager : AssetManager<Texture>
 	{

@@ -2,15 +2,8 @@ using Dissonance.Framework.Graphics;
 using System.Linq;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Input;
-using Dissonance.Engine.Core.Modules;
-using Dissonance.Engine.Structures;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Graphics.Textures;
-using Dissonance.Engine.Core.Attributes;
-using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine.Graphics.UserInterface
+namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Resources), typeof(Rendering))]

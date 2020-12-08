@@ -1,10 +1,9 @@
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Shaders;
+using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Dissonance.Engine.IO.Graphics
+namespace Dissonance.Engine.IO
 {
 	public partial class ShaderManager : AssetManager<Shader[]>
 	{

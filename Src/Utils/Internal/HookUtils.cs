@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Dissonance.Engine.Core.Modules;
 
-namespace Dissonance.Engine.Utils.Internal
+namespace Dissonance.Engine.Utils
 {
 	internal static class HookUtils
 	{

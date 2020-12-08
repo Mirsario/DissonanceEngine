@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Utils.Extensions
+namespace Dissonance.Engine.Utils
 {
 	public static class LinqExtensions
 	{

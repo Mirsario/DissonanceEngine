@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics;
-using Dissonance.Engine.Core.Modules;
 using Dissonance.Framework.Windowing;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public sealed class Time : EngineModule
 	{

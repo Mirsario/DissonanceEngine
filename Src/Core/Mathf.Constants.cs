@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	//Very aggressive class, be careful
 	partial class Mathf

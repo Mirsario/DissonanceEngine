@@ -1,4 +1,4 @@
-namespace Dissonance.Engine.Core.Components
+namespace Dissonance.Engine
 {
 	public class ComponentParameters
 	{

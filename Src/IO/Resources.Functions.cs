@@ -2,8 +2,7 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using Dissonance.Engine.Utils.Extensions;
-using Dissonance.Engine.Utils.Internal;
+using Dissonance.Engine.Utils;
 
 namespace Dissonance.Engine.IO
 {

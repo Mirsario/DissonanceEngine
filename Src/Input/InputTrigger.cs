@@ -1,5 +1,4 @@
 ﻿using System;
-using Dissonance.Engine.Core;
 
 namespace Dissonance.Engine.Input
 {

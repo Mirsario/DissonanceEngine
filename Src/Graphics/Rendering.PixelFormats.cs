@@ -1,5 +1,4 @@
-﻿using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 

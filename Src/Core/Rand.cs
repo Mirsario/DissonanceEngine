@@ -1,7 +1,6 @@
 using System;
-using Dissonance.Engine.Core.Modules;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public sealed class Rand : EngineModule
 	{

@@ -2,7 +2,7 @@ using System.IO;
 using Dissonance.Engine.Audio;
 using NVorbis;
 
-namespace Dissonance.Engine.IO.Audio
+namespace Dissonance.Engine.IO
 {
 	public class OggManager : AssetManager<AudioClip>
 	{

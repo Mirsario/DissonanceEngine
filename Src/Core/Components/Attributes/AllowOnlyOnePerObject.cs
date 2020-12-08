@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Core.Components.Attributes
+namespace Dissonance.Engine
 {
 	public class AllowOnlyOnePerObject : ComponentAttribute
 	{

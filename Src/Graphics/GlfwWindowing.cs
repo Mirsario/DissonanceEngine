@@ -1,7 +1,4 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Attributes;
-using Dissonance.Engine.Structures;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
 using System;

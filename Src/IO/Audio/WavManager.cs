@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Dissonance.Engine.Audio;
 
-namespace Dissonance.Engine.IO.Audio
+namespace Dissonance.Engine.IO
 {
 	public class WavManager : AssetManager<AudioClip>
 	{

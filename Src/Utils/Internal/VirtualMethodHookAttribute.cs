@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Core.Modules
+namespace Dissonance.Engine.Utils
 {
 	internal class VirtualMethodHookAttribute : Attribute
 	{

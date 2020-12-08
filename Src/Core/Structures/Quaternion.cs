@@ -1,7 +1,6 @@
 using System;
-using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	public struct Quaternion
 	{
@@ -176,8 +175,8 @@ namespace Dissonance.Engine.Structures
 		{
 			forward.Normalize();
 
-			Vector3 cross1 = Vector3.Normalize(Vector3.Cross(up, forward));
-			Vector3 cross2 = Vector3.Cross(forward, cross1);
+			var cross1 = Vector3.Normalize(Vector3.Cross(up, forward));
+			var cross2 = Vector3.Cross(forward, cross1);
 
 			float xyzSumm = cross1.x + cross2.y + forward.z;
 

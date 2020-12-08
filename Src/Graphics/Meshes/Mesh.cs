@@ -4,11 +4,8 @@ using System.Linq;
 using Dissonance.Framework.Graphics;
 using System.Runtime.CompilerServices;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
-using Dissonance.Engine.Graphics.Meshes.Buffers;
-using Dissonance.Engine.Graphics.Meshes.Buffers.Default;
 
-namespace Dissonance.Engine.Graphics.Meshes
+namespace Dissonance.Engine.Graphics
 {
 	public class Mesh : Asset
 	{
@@ -215,7 +212,7 @@ namespace Dissonance.Engine.Graphics.Meshes
 			int newVertexCount = meshes.Sum(m => m.Vertices.Length);
 			int newTriangleCount = meshes.Sum(m => m.Indices.Length);
 
-			Mesh newMesh = new Mesh {
+			var newMesh = new Mesh {
 				Indices = new uint[newTriangleCount],
 				Vertices = new Vector3[newVertexCount],
 				Normals = new Vector3[newVertexCount],

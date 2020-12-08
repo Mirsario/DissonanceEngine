@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Physics;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public partial class GameObject : ProgrammableEntity, IDisposable
 	{

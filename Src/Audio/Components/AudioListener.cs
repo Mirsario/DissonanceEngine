@@ -1,10 +1,7 @@
 using System;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Core.Components.Attributes;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Audio;
 
-namespace Dissonance.Engine.Audio.Components
+namespace Dissonance.Engine.Audio
 {
 	[AllowOnlyOneInWorld]
 	public class AudioListener : Component

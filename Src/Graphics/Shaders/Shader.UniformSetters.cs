@@ -1,7 +1,6 @@
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.Shaders
+namespace Dissonance.Engine.Graphics
 {
 	partial class Shader
 	{

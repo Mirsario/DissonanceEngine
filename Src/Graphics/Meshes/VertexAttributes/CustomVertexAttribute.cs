@@ -1,13 +1,11 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Meshes.Buffers;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 
-namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class CustomVertexAttribute
 	{

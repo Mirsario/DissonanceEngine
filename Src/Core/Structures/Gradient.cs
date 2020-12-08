@@ -1,7 +1,6 @@
 ﻿using System;
-using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	public class Gradient<T>
 	{

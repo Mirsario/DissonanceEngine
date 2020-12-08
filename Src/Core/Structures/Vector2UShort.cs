@@ -1,4 +1,4 @@
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	public struct Vector2UShort
 	{

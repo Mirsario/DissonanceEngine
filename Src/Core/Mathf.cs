@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public static partial class Mathf
 	{

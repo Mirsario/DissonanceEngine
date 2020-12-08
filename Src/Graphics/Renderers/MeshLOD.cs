@@ -1,6 +1,4 @@
-﻿using Dissonance.Engine.Graphics.Meshes;
-
-namespace Dissonance.Engine.Graphics.Renderers
+﻿namespace Dissonance.Engine.Graphics
 {
 	public class MeshLOD
 	{

@@ -2,14 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Dissonance.Framework.Graphics;
-using Dissonance.Engine.Utils.Extensions;
-using Dissonance.Engine.Utils.Internal;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
-using Dissonance.Engine.Graphics.Renderers;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Utils;
 
 namespace Dissonance.Engine.Graphics
 {

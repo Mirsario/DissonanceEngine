@@ -1,6 +1,4 @@
 using System;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Modules;
 
 namespace Dissonance.Engine.Physics
 {

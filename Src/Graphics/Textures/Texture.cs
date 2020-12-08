@@ -1,10 +1,8 @@
 using System;
-using Dissonance.Engine.Graphics.Enums;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.Textures
+namespace Dissonance.Engine.Graphics
 {
 	public class Texture : Asset
 	{
@@ -15,7 +13,7 @@ namespace Dissonance.Engine.Graphics.Textures
 		public static FilterMode defaultFilterMode = FilterMode.Trilinear;
 		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
 
-		public string name = "";
+		public string name = string.Empty;
 
 		protected FilterMode filterMode;
 		protected TextureWrapMode wrapMode;

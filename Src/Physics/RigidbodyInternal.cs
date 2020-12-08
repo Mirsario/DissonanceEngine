@@ -3,9 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
 using BulletSharp.Math;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Structures;
-using Vector3 = Dissonance.Engine.Structures.Vector3;
 
 namespace Dissonance.Engine.Physics
 {

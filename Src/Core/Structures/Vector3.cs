@@ -1,8 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
-using Dissonance.Engine.Core;
 
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	public struct Vector3
 	{

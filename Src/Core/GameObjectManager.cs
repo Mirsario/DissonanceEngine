@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dissonance.Engine.Core.Modules;
-using Dissonance.Engine.Structures;
-using Dissonance.Engine.Utils.Internal;
+using Dissonance.Engine.Utils;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public class GameObjectManager : EngineModule
 	{

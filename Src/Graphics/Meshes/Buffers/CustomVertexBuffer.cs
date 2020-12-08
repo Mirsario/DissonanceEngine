@@ -1,6 +1,4 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Meshes.VertexAttributes;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +7,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649 //Value is never assigned to.
 
-namespace Dissonance.Engine.Graphics.Meshes.Buffers
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class CustomVertexBuffer : MeshBuffer
 	{

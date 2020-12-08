@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Dissonance.Engine.Utils;
 
-namespace Dissonance.Engine.Core.Modules
+namespace Dissonance.Engine
 {
 	public abstract class EngineModule : IDisposable
 	{

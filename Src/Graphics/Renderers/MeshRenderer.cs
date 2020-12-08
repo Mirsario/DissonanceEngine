@@ -1,9 +1,7 @@
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Structures;
 using System;
 using System.Linq;
 
-namespace Dissonance.Engine.Graphics.Renderers
+namespace Dissonance.Engine.Graphics
 {
 	public class MeshRenderer : Renderer
 	{

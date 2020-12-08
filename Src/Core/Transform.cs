@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public class Transform : Component
 	{

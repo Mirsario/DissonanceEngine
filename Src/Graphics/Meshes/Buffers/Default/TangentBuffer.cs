@@ -1,7 +1,6 @@
 ﻿using System;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.Meshes.Buffers.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class TangentBuffer : CustomVertexBuffer<Vector4>
 	{
