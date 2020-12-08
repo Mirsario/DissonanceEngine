@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Dissonance.Engine.Graphics.Textures;
 using Dissonance.Engine.Utils;
 using Dissonance.Framework.Graphics;
 

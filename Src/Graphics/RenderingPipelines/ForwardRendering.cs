@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using Dissonance.Engine.Graphics.RenderPasses;
-using Dissonance.Engine.Graphics.RenderPasses.Default;
 
-namespace Dissonance.Engine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics
 {
 	public class ForwardRendering : RenderingPipeline
 	{

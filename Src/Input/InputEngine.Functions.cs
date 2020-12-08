@@ -1,5 +1,4 @@
-﻿using Dissonance.Engine.Structures;
-using Dissonance.Framework.Windowing.Input;
+﻿using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Input
 {

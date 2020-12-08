@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	[Flags]
 	public enum GameFlags

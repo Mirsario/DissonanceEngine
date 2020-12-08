@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Structures;
-using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Input

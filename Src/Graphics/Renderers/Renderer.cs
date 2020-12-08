@@ -1,9 +1,6 @@
 using System;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.Renderers
+namespace Dissonance.Engine.Graphics
 {
 	public abstract class Renderer : Component
 	{

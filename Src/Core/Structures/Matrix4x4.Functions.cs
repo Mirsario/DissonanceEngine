@@ -1,8 +1,6 @@
 using System;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Utils.Internal;
 
-namespace Dissonance.Engine.Structures
+namespace Dissonance.Engine
 {
 	partial struct Matrix4x4
 	{
@@ -192,9 +190,9 @@ namespace Dissonance.Engine.Structures
 			result.m23 = 0f;
 
 			result.m30 = (left + right) / (left - right);
-            result.m31 = (top + bottom) / (bottom - top);
-            result.m32 = -zNear / (zFar - zNear);
-            result.m33 = 1f;
+			result.m31 = (top + bottom) / (bottom - top);
+			result.m32 = -zNear / (zFar - zNear);
+			result.m33 = 1f;
 
 			return result;
 		}

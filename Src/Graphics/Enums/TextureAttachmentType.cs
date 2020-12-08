@@ -1,4 +1,4 @@
-namespace Dissonance.Engine.Graphics.Enums
+namespace Dissonance.Engine.Graphics
 {
 	public enum TextureAttachmentType
 	{

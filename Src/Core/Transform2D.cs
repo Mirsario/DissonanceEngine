@@ -1,8 +1,4 @@
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Structures;
-using System;
-
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	/// <summary>
 	/// A wrapper around the normal Transform. Provides properties for easier use in a 2D context.

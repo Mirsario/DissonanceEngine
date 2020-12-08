@@ -1,8 +1,4 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Attributes;
-using Dissonance.Engine.Core.Modules;
-using Dissonance.Engine.Structures;
-using Dissonance.Framework.Windowing;
+﻿using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine.Graphics
 {

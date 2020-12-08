@@ -3,14 +3,11 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Utils.Extensions;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.Textures;
+using Dissonance.Engine.Utils;
 
 #pragma warning disable CS0649
 
-namespace Dissonance.Engine.IO.Graphics
+namespace Dissonance.Engine.IO
 {
 	[AutoloadRequirement(typeof(ShaderManager))]
 	public class MaterialManager : AssetManager<Material>

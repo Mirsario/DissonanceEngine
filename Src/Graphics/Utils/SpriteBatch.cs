@@ -1,8 +1,6 @@
 ﻿using System;
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.Utils
+namespace Dissonance.Engine.Graphics
 {
 	public class SpriteBatch : IDisposable
 	{

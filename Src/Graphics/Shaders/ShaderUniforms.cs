@@ -1,4 +1,4 @@
-namespace Dissonance.Engine.Graphics.Shaders
+namespace Dissonance.Engine.Graphics
 {
 	internal class DefaultShaderUniforms
 	{

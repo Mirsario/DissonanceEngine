@@ -5,12 +5,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using Dissonance.Framework.Graphics;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.RenderPasses;
-using Dissonance.Engine.Graphics.Textures;
 
-namespace Dissonance.Engine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics
 {
 	public partial class JsonRenderingPipeline : RenderingPipeline
 	{

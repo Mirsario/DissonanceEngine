@@ -1,8 +1,6 @@
 ﻿using System;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.Meshes.Buffers.Default
+namespace Dissonance.Engine.Graphics
 {
 	//Rename to PositionBuffer?
 	public class VertexBuffer : CustomVertexBuffer<Vector3>

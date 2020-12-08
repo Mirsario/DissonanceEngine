@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Dissonance.Engine.Core.Modules
+namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public class ModuleDependencyAttribute : Attribute

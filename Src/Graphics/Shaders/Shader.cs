@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Components;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Graphics.Meshes.VertexAttributes;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
-using DSU = Dissonance.Engine.Graphics.Shaders.DefaultShaderUniforms;
+using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 
-namespace Dissonance.Engine.Graphics.Shaders
+namespace Dissonance.Engine.Graphics
 {
 	//TODO: Should this be renamed to ShaderProgram?
 	//TODO: Initialize static fields after Graphics.Init();

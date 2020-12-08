@@ -1,15 +1,8 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Graphics.RenderPasses;
-using Dissonance.Engine.Graphics.RenderPasses.Default;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Graphics.Textures;
-using Dissonance.Engine.IO;
-using Dissonance.Engine.Structures;
+﻿using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics
 {
 	public class DeferredRendering : RenderingPipeline
 	{

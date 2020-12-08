@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Dissonance.Engine.IO.Other
+namespace Dissonance.Engine.IO
 {
 	public class BytesManager : AssetManager<byte[]>
 	{

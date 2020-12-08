@@ -1,6 +1,4 @@
-﻿using Dissonance.Engine.Structures;
-
-namespace Dissonance.Engine.Physics
+﻿namespace Dissonance.Engine.Physics
 {
 	public struct ContactPoint2D
 	{

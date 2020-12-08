@@ -1,9 +1,9 @@
-using Dissonance.Engine.Graphics.Meshes;
+using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Physics;
 using System;
 using System.IO;
 
-namespace Dissonance.Engine.IO.Physics
+namespace Dissonance.Engine.IO
 {
 	public class ConvexCollisionMeshManager : AssetManager<ConvexCollisionMesh>
 	{

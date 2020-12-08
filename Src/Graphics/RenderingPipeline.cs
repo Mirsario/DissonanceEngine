@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dissonance.Engine.Graphics.RenderPasses;
 
 namespace Dissonance.Engine.Graphics
 {

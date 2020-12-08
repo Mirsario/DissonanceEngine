@@ -1,7 +1,4 @@
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Structures;
-
-namespace Dissonance.Engine.Graphics.Components
+namespace Dissonance.Engine.Graphics
 {
 	public class Light : Component
 	{

@@ -1,5 +1,3 @@
-using Dissonance.Engine.Graphics.Meshes;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Utils.Internal
+namespace Dissonance.Engine.Utils
 {
 	internal static class AssertionUtils
 	{

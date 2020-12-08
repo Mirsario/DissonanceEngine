@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Dissonance.Engine.Graphics.Textures;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.UserInterface
+namespace Dissonance.Engine.Graphics
 {
 	public class Font
 	{

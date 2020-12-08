@@ -1,4 +1,4 @@
-﻿namespace Dissonance.Engine.Graphics.Meshes
+﻿namespace Dissonance.Engine.Graphics
 {
 	public struct BoneWeights
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Dissonance.Engine.Core.Internal
+namespace Dissonance.Engine
 {
 	internal static class RegexCache
 	{

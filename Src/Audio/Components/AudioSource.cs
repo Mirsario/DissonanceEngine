@@ -1,9 +1,7 @@
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Audio;
 using System;
 
-namespace Dissonance.Engine.Audio.Components
+namespace Dissonance.Engine.Audio
 {
 	public class AudioSource : Component
 	{

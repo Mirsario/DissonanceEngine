@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
-using Dissonance.Engine.Core.Modules;
 using System.Collections.Concurrent;
 
-namespace Dissonance.Engine.Core.ProgrammableEntities
+namespace Dissonance.Engine
 {
 	//TODO: Refactor, get rid of string keyed dictionaries.
 	internal sealed class ProgrammableEntityManager : EngineModule

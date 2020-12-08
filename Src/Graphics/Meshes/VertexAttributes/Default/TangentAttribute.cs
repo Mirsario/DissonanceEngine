@@ -1,7 +1,6 @@
-﻿using Dissonance.Engine.Graphics.Meshes.Buffers.Default;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.Meshes.VertexAttributes.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class TangentAttribute : CustomVertexAttribute<TangentBuffer>
 	{

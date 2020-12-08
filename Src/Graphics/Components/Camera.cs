@@ -1,9 +1,6 @@
 using System;
-using Dissonance.Engine.Core;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Structures;
 
-namespace Dissonance.Engine.Graphics.Components
+namespace Dissonance.Engine.Graphics
 {
 	public class Camera : Component
 	{

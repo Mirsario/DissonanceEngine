@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	public static class Debug
 	{

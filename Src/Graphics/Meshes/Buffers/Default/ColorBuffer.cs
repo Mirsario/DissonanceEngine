@@ -1,6 +1,4 @@
-﻿using Dissonance.Engine.Structures;
-
-namespace Dissonance.Engine.Graphics.Meshes.Buffers.Default
+﻿namespace Dissonance.Engine.Graphics
 {
 	public class ColorBuffer : CustomVertexBuffer<Vector4>
 	{

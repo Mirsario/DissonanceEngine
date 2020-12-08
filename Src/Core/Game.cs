@@ -1,20 +1,12 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
-using Dissonance.Engine.Core.Internal;
-using Dissonance.Engine.Core.ProgrammableEntities;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Graphics.Meshes.Buffers;
-using Dissonance.Engine.Graphics.Meshes.VertexAttributes;
-using Dissonance.Engine.Graphics.RenderPasses;
 using Dissonance.Framework.Windowing;
 
-namespace Dissonance.Engine.Core
+namespace Dissonance.Engine
 {
 	//TODO: Add animations
 	//TODO: Add proper built-in skybox rendering

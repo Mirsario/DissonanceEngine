@@ -1,10 +1,6 @@
-﻿using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Graphics.Components;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Structures;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.RenderPasses.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class PostProcessPass : RenderPass
 	{

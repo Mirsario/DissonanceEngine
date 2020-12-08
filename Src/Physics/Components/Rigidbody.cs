@@ -1,5 +1,3 @@
-using Dissonance.Engine.Structures;
-
 namespace Dissonance.Engine.Physics
 {
 	public class Rigidbody : RigidbodyBase

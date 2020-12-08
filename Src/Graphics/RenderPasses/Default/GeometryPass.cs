@@ -1,13 +1,7 @@
 ﻿using Dissonance.Engine.Physics;
 using Dissonance.Framework.Graphics;
-using Dissonance.Engine.Structures;
-using Dissonance.Engine.Graphics.Renderers;
-using Dissonance.Engine.Graphics.Enums;
-using Dissonance.Engine.Graphics.Shaders;
-using Dissonance.Engine.Core.Components;
-using Dissonance.Engine.Graphics.Components;
 
-namespace Dissonance.Engine.Graphics.RenderPasses.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{

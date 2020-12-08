@@ -1,8 +1,7 @@
 ﻿using System;
-using Dissonance.Engine.Structures;
 using Dissonance.Framework.Graphics;
 
-namespace Dissonance.Engine.Graphics.Meshes.Buffers.Default
+namespace Dissonance.Engine.Graphics
 {
 	public class NormalBuffer : CustomVertexBuffer<Vector3>
 	{

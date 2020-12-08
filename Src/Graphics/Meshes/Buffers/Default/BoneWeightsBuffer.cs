@@ -1,4 +1,4 @@
-﻿namespace Dissonance.Engine.Graphics.Meshes.Buffers.Default
+﻿namespace Dissonance.Engine.Graphics
 {
 	public class BoneWeightsBuffer : CustomVertexBuffer<BoneWeights>
 	{

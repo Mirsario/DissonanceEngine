@@ -1,4 +1,4 @@
-﻿namespace Dissonance.Engine.Graphics.UserInterface
+﻿namespace Dissonance.Engine.Graphics
 {
 	public enum TextAlignment
 	{

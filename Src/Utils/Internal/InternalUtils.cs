@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Utils.Internal
+namespace Dissonance.Engine.Utils
 {
 	internal static class InternalUtils
 	{

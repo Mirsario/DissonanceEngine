@@ -1,7 +1,4 @@
-﻿using Dissonance.Engine.Core;
-using Dissonance.Engine.Structures;
-
-namespace Dissonance.Engine.Graphics.Meshes
+﻿namespace Dissonance.Engine.Graphics
 {
 	public static class PrimitiveMeshes
 	{

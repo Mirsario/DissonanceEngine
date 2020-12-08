@@ -1,5 +1,3 @@
-using Dissonance.Engine.Core.Components.Attributes;
-
 namespace Dissonance.Engine.Physics
 {
 	[AllowOnlyOnePerObject]

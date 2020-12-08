@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Dissonance.Engine.Core.Components.Attributes;
-using Dissonance.Engine.Core.Modules;
-using Dissonance.Engine.Utils.Internal;
+using Dissonance.Engine.Utils;
 
-namespace Dissonance.Engine.Core.Components
+namespace Dissonance.Engine
 {
 	public class ComponentManager : EngineModule
 	{

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649 //Value is never assigned to.
 
-namespace Dissonance.Engine.Graphics.Meshes.Buffers
+namespace Dissonance.Engine.Graphics
 {
 	public interface IMeshBuffer : IDisposable
 	{

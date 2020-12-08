@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Graphics.RenderPasses
+namespace Dissonance.Engine.Graphics
 {
 	public class RenderPassInfoAttribute : Attribute
 	{

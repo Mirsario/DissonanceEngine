@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using Ionic.Zip;
 using System.Text;
 using System.Runtime.Serialization;
-using Dissonance.Engine.Utils.Internal;
-using Dissonance.Engine.Core.Modules;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Core;
 using Dissonance.Framework.Imaging;
+using Dissonance.Engine.Utils;
 
 namespace Dissonance.Engine.IO
 {

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Dissonance.Engine.Graphics.Enums;
 using Newtonsoft.Json;
 
 #pragma warning disable CS0649
 
-namespace Dissonance.Engine.Graphics.RenderingPipelines
+namespace Dissonance.Engine.Graphics
 {
 	partial class JsonRenderingPipeline
 	{
