@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	public static class ArrayUtils
 	{

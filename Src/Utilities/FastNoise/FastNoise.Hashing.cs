@@ -6,7 +6,7 @@ using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	public partial class FastNoise
 	{

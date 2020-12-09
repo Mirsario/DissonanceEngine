@@ -3,19 +3,18 @@
 
 using DECIMAL = System.Single;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	public partial class FastNoise
 	{
-		private struct Decimal3
+		private struct Decimal2
 		{
-			public readonly DECIMAL x, y, z;
+			public readonly DECIMAL x, y;
 
-			public Decimal3(DECIMAL x, DECIMAL y, DECIMAL z)
+			public Decimal2(DECIMAL x, DECIMAL y)
 			{
 				this.x = x;
 				this.y = y;
-				this.z = z;
 			}
 		}
 	}

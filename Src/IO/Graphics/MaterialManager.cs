@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Utils;
+using Dissonance.Engine.Utilities;
 
 #pragma warning disable CS0649
 

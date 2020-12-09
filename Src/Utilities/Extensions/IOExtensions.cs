@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	public static class IOExtensions
 	{

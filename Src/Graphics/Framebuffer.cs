@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Dissonance.Engine.Utils;
+using Dissonance.Engine.Utilities;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
