@@ -17,7 +17,8 @@ namespace Dissonance.Engine.IO
 	[ModuleDependency(true, typeof(Windowing))]
 	public sealed partial class Resources : EngineModule
 	{
-		public const string BuiltInAssetsFolder = "BuiltInAssets/";
+		public const string AssetsFolder = "Assets";
+		public const string BuiltInAssetsFolder = "BuiltInAssets";
 
 		private static readonly string[] DefaultSearchPattern = { "*" };
 
@@ -168,6 +169,7 @@ namespace Dissonance.Engine.IO
 
 			foreach(var pair in builtInAssets) {
 				string filePath = pair.Key;
+
 				if(!TryGetFileAssetManager(filePath, out var manager)) {
 					continue;
 				}
@@ -277,7 +279,7 @@ namespace Dissonance.Engine.IO
 				string lowerPath = path.ToLower();
 
 				if(!lowerPath.StartsWith(BuiltInAssetsFolder.ToLower()) && !lowerPath.StartsWith("assets/")) {
-					path = importingBuiltInAssets ? BuiltInAssetsFolder + path : $"Assets/{path}";
+					path = Path.Combine(importingBuiltInAssets ? BuiltInAssetsFolder : AssetsFolder, path).Replace('\\', '/');
 				}
 			}
 		}

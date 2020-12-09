@@ -6,7 +6,7 @@
 		<RootNamespace>Dissonance.Engine</RootNamespace>
 		<Platforms>AnyCPU</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<TieredCompilation>false</TieredCompilation>
+		<TieredCompilation>false</TieredCompilation>
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 
@@ -18,8 +18,9 @@
 	
 	<ItemGroup>
 		<Compile Remove="References\**" />
-		<EmbeddedResource Remove="References\**" />
 		<EmbeddedResource Include="BuiltInAssets\**" />
+		<EmbeddedResource Include="References\**" />
+		<EmbeddedResource Remove="References\DissonanceFramework.*" />
 		<None Remove="References\**" />
 		<None Remove="BuiltInAssets\**" />
 	</ItemGroup>
