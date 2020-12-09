@@ -35,8 +35,10 @@ namespace Dissonance.Engine
 			{
 				if(assemblyName == argsName || argsName.StartsWith(assemblyName + ",")) {
 					try {
-						var obj = Properties.Resources.ResourceManager.GetObject(assemblyName);
-						var data = (byte[])obj;
+						using var stream = AssemblyCache.EngineAssembly.GetManifestResourceStream($"{nameof(Dissonance)}.{nameof(Engine)}.References.{assemblyName}.dll");
+						byte[] data = new byte[stream.Length];
+
+						stream.Read(data, 0, data.Length);
 
 						assembly = assemblyCache[argsName] = Assembly.Load(data);
 
