@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	internal static class HookUtils
 	{

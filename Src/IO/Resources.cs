@@ -7,7 +7,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Imaging;
-using Dissonance.Engine.Utils;
+using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine.IO
 {

@@ -4,7 +4,7 @@
 using System.Runtime.CompilerServices;
 using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	public partial class FastNoise
 	{

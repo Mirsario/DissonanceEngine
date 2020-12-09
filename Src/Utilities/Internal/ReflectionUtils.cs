@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Utils
+namespace Dissonance.Engine.Utilities
 {
 	internal static class ReflectionUtils
 	{

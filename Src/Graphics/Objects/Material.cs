@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Dissonance.Framework.Graphics;
 using Dissonance.Engine.IO;
-using Dissonance.Engine.Utils;
+using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine.Graphics
 {
