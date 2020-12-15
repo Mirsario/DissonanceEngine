@@ -26,10 +26,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Condition="$(SolutionProjects.Contains('DissonanceFramework'))" Include="$(DissonanceFrameworkPath)" />
-		<Reference Condition="!$(SolutionProjects.Contains('DissonanceFramework'))" Include="DissonanceFramework">
-			<HintPath>References/DissonanceFramework.dll</HintPath>
-		</Reference>
+		<ProjectReference Include="../Framework/Src/DissonanceFramework.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>
