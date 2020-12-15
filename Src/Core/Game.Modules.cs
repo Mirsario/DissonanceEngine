@@ -69,8 +69,8 @@ namespace Dissonance.Engine
 
 		private void InitializeModules()
 		{
-			lock(AssemblyCache.AllTypes) {
-				foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
+			lock(AssemblyCache.EngineTypes) {
+				foreach(var type in AssemblyCache.EngineTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
 					var autoload = AutoloadAttribute.Get(type);
 
 					if(!autoload.NeedsAutoloading) {
