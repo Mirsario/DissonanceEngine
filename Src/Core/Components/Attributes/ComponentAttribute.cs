@@ -1,10 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public abstract class ComponentAttribute : Attribute
 	{
-		public abstract void SetParameters(Type type, ComponentParameters parameters);
+		private static Dictionary<Type, ComponentAttribute[]> cache = new Dictionary<Type, ComponentAttribute[]>();
+
+		public virtual void PreAddComponent(GameObject gameObject, Type type) { }
+		public virtual void OnComponentEnabled(GameObject gameObject, Component component) { }
+		public virtual void OnComponentDisabled(GameObject gameObject, Component component) { }
+
+		public static IEnumerable<ComponentAttribute> EnumerateForType(Type type)
+		{
+			if(!cache.TryGetValue(type, out var array)) {
+				cache[type] = array = type.GetCustomAttributes<ComponentAttribute>(true).ToArray();
+			}
+
+			return array;
+		}
 	}
 }

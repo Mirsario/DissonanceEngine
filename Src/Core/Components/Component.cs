@@ -21,11 +21,9 @@ namespace Dissonance.Engine
 				}
 
 				if(value) {
-					var type = GetType();
-					var parameters = ComponentManager.GetParameters(type);
-
-					if(parameters.allowOnlyOneInWorld && ComponentManager.CountComponents(type) >= 1) {
-						throw new InvalidOperationException($"Attempted to enable a second instance of component '{GetType().Name}', but only 1 instance is allowed to be enabled at the same time.");
+					//Call ComponentAttribute hooks.
+					foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
+						componentAttribute.OnComponentEnabled(gameObject, this);
 					}
 
 					if(!beenEnabledBefore) {
@@ -44,6 +42,11 @@ namespace Dissonance.Engine
 
 					enabled = true;
 				} else {
+					//Call ComponentAttribute hooks.
+					foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
+						componentAttribute.OnComponentDisabled(gameObject, this);
+					}
+
 					//Remove from the list of enabled components, and add to the list of disabled ones.
 					ComponentManager.ModifyInstanceLists(GetType(), lists => {
 						lists.enabled.Remove(this);
