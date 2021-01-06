@@ -29,29 +29,13 @@ namespace Dissonance.Engine
 
 		private Dictionary<Type, ComponentInstanceLists> typeInstances = new Dictionary<Type, ComponentInstanceLists>();
 		private Dictionary<Type, ComponentInstanceLists> exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
-		private Dictionary<Type, ComponentParameters> typeParameters = new Dictionary<Type, ComponentParameters>();
 
 		protected override void Init()
 		{
-			typeParameters = new Dictionary<Type, ComponentParameters>();
 			typeInstances = new Dictionary<Type, ComponentInstanceLists>();
 			exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
-
-			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(Component).IsAssignableFrom(t))) {
-				if(!typeParameters.TryGetValue(type, out var parameters)) {
-					typeParameters[type] = parameters = new ComponentParameters();
-				}
-
-				var attributes = type.GetCustomAttributes<ComponentAttribute>();
-
-				foreach(var attribute in attributes) {
-					attribute.SetParameters(type, parameters);
-				}
-			}
 		}
 
-		public static ComponentParameters GetParameters(Type type)
-			=> Instance.typeParameters[type];
 		//Count
 		public static int CountComponents<T>(bool? enabled = true, bool exactType = false)
 			=> CountComponents(typeof(T), exactType, enabled);

@@ -115,10 +115,9 @@ namespace Dissonance.Engine
 		//Etc
 		private Component AddComponentInternal(Type type, bool enable = true)
 		{
-			var parameters = ComponentManager.GetParameters(type);
-
-			if(parameters.allowOnlyOnePerObject && CountComponents(type) >= 1) {
-				throw new Exception($"Cannot add more than 1 component of type '{type.Name}' to a single {nameof(GameObject)}.");
+			//Call ComponentAttribute hooks.
+			foreach(var componentAttribute in ComponentAttribute.EnumerateForType(type)) {
+				componentAttribute.PreAddComponent(this, type);
 			}
 
 			Component newComponent;
