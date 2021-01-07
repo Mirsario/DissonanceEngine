@@ -88,6 +88,7 @@ namespace Dissonance.Engine
 		private TimeData renderTime;
 		private TimeData renderTimePrev;
 		//Framerate
+		private Stopwatch globalStopwatch;
 		private Stopwatch fixedStopwatch;
 		private Stopwatch renderStopwatch;
 
@@ -101,6 +102,9 @@ namespace Dissonance.Engine
 		{
 			fixedStopwatch = new Stopwatch();
 			renderStopwatch = new Stopwatch();
+			globalStopwatch = new Stopwatch();
+
+			globalStopwatch.Start();
 		}
 
 		//Fixed Update
@@ -121,7 +125,7 @@ namespace Dissonance.Engine
 		{
 			stopwatch.Restart();
 
-			currentTime.global = (float)GLFW.GetTime();
+			currentTime.global = (float)globalStopwatch.Elapsed.TotalSeconds;
 			currentTime.globalDelta = currentTime.global - previousTime.global;
 			currentTime.gameDelta = currentTime.globalDelta * timeScale;
 			currentTime.game += currentTime.gameDelta;
