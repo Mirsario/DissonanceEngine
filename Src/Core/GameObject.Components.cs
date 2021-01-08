@@ -60,7 +60,6 @@ namespace Dissonance.Engine
 		}
 		public IEnumerable<T> GetComponents<T>(bool exactType = false) where T : Component
 		{
-			var list = new List<T>();
 			var type = typeof(T);
 
 			for(int i = 0; i < components.Count; i++) {
@@ -68,11 +67,9 @@ namespace Dissonance.Engine
 				var thisType = component.GetType();
 
 				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
-					list.Add((T)component);
+					yield return (T)component;
 				}
 			}
-
-			return list;
 		}
 		//CountComponents
 		public int CountComponents<T>(bool exactType = false) where T : Component
