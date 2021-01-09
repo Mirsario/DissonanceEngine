@@ -9,14 +9,55 @@ namespace Dissonance.Engine
 	{
 		private static GameObjectManager Manager => Game.Instance.GetModule<GameObjectManager>();
 
-		internal bool initialized;
 		internal RigidbodyInternal rigidbodyInternal;
 
 		private string name;
 		private byte layer;
+		private bool enabled;
+		private bool enabledLocal;
+		private bool enabledInHierarchy = true;
+		private bool initialized;
 
 		public Transform Transform { get; private set; }
 		public Transform2D Transform2D { get; private set; }
+
+		public bool Enabled {
+			get => enabled;
+			private set {
+				if(enabled == value) {
+					return;
+				}
+
+				if(value) {
+					enabled = true;
+
+					OnEnabled();
+				} else {
+					enabled = false;
+
+					OnDisabled();
+				}
+
+				//Enable/disable components
+				var components = GetComponents();
+
+				foreach(var component in components) {
+					component.EnabledInHierarchy = value;
+				}
+
+				//Enable/disable children
+				foreach(var child in Transform.Children) {
+					child.GameObject.EnabledInHierarchy = value;
+				}
+			}
+		}
+		public bool EnabledLocal {
+			get => enabledLocal;
+			set {
+				enabledLocal = value;
+				Enabled = enabledLocal && enabledInHierarchy;
+			}
+		}
 		public string Name {
 			get => name;
 			set => name = value ?? throw new Exception("GameObject's name cannot be set to null");
@@ -29,6 +70,14 @@ namespace Dissonance.Engine
 				}
 
 				layer = value;
+			}
+		}
+
+		internal bool EnabledInHierarchy {
+			get => enabledInHierarchy;
+			set {
+				enabledInHierarchy = value;
+				Enabled = enabledLocal && enabledInHierarchy;
 			}
 		}
 
@@ -49,31 +98,13 @@ namespace Dissonance.Engine
 			var clone = (GameObject)MemberwiseClone();
 
 			clone.components = new List<Component>(components.Select(c => c.Clone(clone)));
-
+			clone.componentsReadOnly = clone.components.AsReadOnly();
 			clone.Transform = clone.GetComponent<Transform>();
 			clone.Transform2D = clone.GetComponent<Transform2D>();
 
 			return clone;
 		}
 
-		public void Init()
-		{
-			if(initialized) {
-				return;
-			}
-
-			var manager = Manager;
-
-			lock(manager.gameObjects) {
-				manager.gameObjects.Add(this);
-			}
-
-			ProgrammableEntityManager.SubscribeEntity(this);
-
-			OnInit();
-
-			initialized = true;
-		}
 		public void Dispose()
 		{
 			ProgrammableEntityManager.UnsubscribeEntity(this);
@@ -81,16 +112,51 @@ namespace Dissonance.Engine
 			OnDispose();
 			ComponentDispose();
 
-			var manager = Manager;
+			Manager.ModifyInstanceLists(lists => {
+				lists.all.Remove(this);
 
-			lock(manager.gameObjects) {
-				manager.gameObjects.Remove(this);
-			}
+				if(Enabled) {
+					lists.enabled.Remove(this);
+				} else {
+					lists.disabled.Remove(this);
+				}
+			});
 		}
 
-		public static T Instantiate<T>(Action<T> preinitializer = null, bool init = true) where T : GameObject
-			=> Manager.Instantiate(preinitializer, init);
-		public static GameObject Instantiate(Type type, Action<GameObject> preinitializer = null, bool init = true)
-			=> Manager.Instantiate(type, preinitializer, init);
+		private void OnEnabled()
+		{
+			if(!initialized) {
+				Init();
+			}
+
+			Manager.ModifyInstanceLists(lists => {
+				lists.enabled.Add(this);
+				lists.disabled.Remove(this);
+			});
+
+			ProgrammableEntityManager.SubscribeEntity(this);
+		}
+		private void OnDisabled()
+		{
+			Manager.ModifyInstanceLists(lists => {
+				lists.disabled.Add(this);
+				lists.enabled.Remove(this);
+			});
+
+			ProgrammableEntityManager.UnsubscribeEntity(this);
+		}
+		private void Init()
+		{
+			Manager.ModifyInstanceLists(lists => lists.all.Add(this));
+
+			OnInit();
+
+			initialized = true;
+		}
+
+		public static T Instantiate<T>(Action<T> preinitializer = null, bool enable = true) where T : GameObject
+			=> Manager.Instantiate(preinitializer, enable);
+		public static GameObject Instantiate(Type type, Action<GameObject> preinitializer = null, bool enable = true)
+			=> Manager.Instantiate(type, preinitializer, enable);
 	}
 }

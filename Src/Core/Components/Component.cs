@@ -10,61 +10,48 @@ namespace Dissonance.Engine
 
 		internal GameObject gameObject;
 
-		protected bool beenEnabledBefore;
-		protected bool enabled;
+		private bool initialized;
+		private bool enabled;
+		private bool enabledLocal;
+		private bool enabledInHierarchy = true;
+
+		public GameObject GameObject => gameObject;
+		public Transform Transform => gameObject.Transform;
+		public Transform2D Transform2D => gameObject.Transform2D;
 
 		public bool Enabled {
 			get => enabled;
-			set {
+			internal set {
 				if(enabled == value) {
 					return;
 				}
 
 				if(value) {
-					//Call ComponentAttribute hooks.
-					foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
-						componentAttribute.OnComponentEnabled(gameObject, this);
-					}
-
-					if(!beenEnabledBefore) {
-						OnInit();
-
-						beenEnabledBefore = true;
-					} else {
-						ComponentManager.ModifyInstanceLists(GetType(), lists => lists.disabled.Remove(this)); //Remove from the list of disabled components.
-					}
-
-					ComponentManager.ModifyInstanceLists(GetType(), lists => lists.enabled.Add(this)); //Add to the list of enabled components.
-
-					OnEnable();
-
-					ProgrammableEntityManager.SubscribeEntity(this);
-
 					enabled = true;
+
+					OnEnableInternal();
 				} else {
-					//Call ComponentAttribute hooks.
-					foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
-						componentAttribute.OnComponentDisabled(gameObject, this);
-					}
-
-					//Remove from the list of enabled components, and add to the list of disabled ones.
-					ComponentManager.ModifyInstanceLists(GetType(), lists => {
-						lists.enabled.Remove(this);
-						lists.disabled.Add(this);
-					});
-
-					OnDisable();
-
-					ProgrammableEntityManager.UnsubscribeEntity(this);
-
 					enabled = false;
+
+					OnDisableInternal();
 				}
 			}
 		}
+		public bool EnabledLocal {
+			get => enabledLocal;
+			set {
+				enabledLocal = value;
+				Enabled = enabledLocal && enabledInHierarchy;
+			}
+		}
 
-		public GameObject GameObject => gameObject;
-		public Transform Transform => gameObject.Transform;
-		public Transform2D Transform2D => gameObject.Transform2D;
+		internal bool EnabledInHierarchy {
+			get => enabledInHierarchy;
+			set {
+				enabledInHierarchy = value;
+				Enabled = enabledLocal && enabledInHierarchy;
+			}
+		}
 
 		protected Component() : base()
 		{
@@ -109,5 +96,44 @@ namespace Dissonance.Engine
 		}
 
 		internal void PreInit() => OnPreInit();
+
+		private void OnEnableInternal()
+		{
+			//Call ComponentAttribute hooks.
+			foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
+				componentAttribute.OnComponentEnabled(gameObject, this);
+			}
+
+			if(!initialized) {
+				OnInit();
+
+				initialized = true;
+			} else {
+				ComponentManager.ModifyInstanceLists(GetType(), lists => lists.disabled.Remove(this)); //Remove from the list of disabled components.
+			}
+
+			ComponentManager.ModifyInstanceLists(GetType(), lists => lists.enabled.Add(this)); //Add to the list of enabled components.
+
+			OnEnable();
+
+			ProgrammableEntityManager.SubscribeEntity(this);
+		}
+		private void OnDisableInternal()
+		{
+			//Call ComponentAttribute hooks.
+			foreach(var componentAttribute in ComponentAttribute.EnumerateForType(GetType())) {
+				componentAttribute.OnComponentDisabled(gameObject, this);
+			}
+
+			//Remove from the list of enabled components, and add to the list of disabled ones.
+			ComponentManager.ModifyInstanceLists(GetType(), lists => {
+				lists.enabled.Remove(this);
+				lists.disabled.Add(this);
+			});
+
+			OnDisable();
+
+			ProgrammableEntityManager.UnsubscribeEntity(this);
+		}
 	}
 }
