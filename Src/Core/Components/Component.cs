@@ -13,7 +13,7 @@ namespace Dissonance.Engine
 		private bool initialized;
 		private bool enabled;
 		private bool enabledLocal;
-		private bool enabledInHierarchy = true;
+		private bool enabledInHierarchy;
 
 		public GameObject GameObject => gameObject;
 		public Transform Transform => gameObject.Transform;
