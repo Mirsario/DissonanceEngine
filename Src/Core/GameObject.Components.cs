@@ -1,15 +1,16 @@
 using Dissonance.Engine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Dissonance.Engine
 {
 	partial class GameObject
 	{
-		internal List<Component> components;
+		internal List<Component> componentsInternal;
 
-		private IReadOnlyList<Component> componentsReadOnly;
+		public IReadOnlyList<Component> Components { get; private set; }
 
 		//AddComponent
 		public T AddComponent<T>(Action<T> initializer) where T : Component
@@ -45,8 +46,8 @@ namespace Dissonance.Engine
 		{
 			var type = typeof(T);
 
-			for(int i = 0; i < components.Count; i++) {
-				var component = components[i];
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				var component = componentsInternal[i];
 				var thisType = component.GetType();
 
 				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
@@ -60,13 +61,12 @@ namespace Dissonance.Engine
 
 			return false;
 		}
-		public IReadOnlyList<Component> GetComponents() => componentsReadOnly;
 		public IEnumerable<T> GetComponents<T>(bool exactType = false) where T : Component
 		{
 			var type = typeof(T);
 
-			for(int i = 0; i < components.Count; i++) {
-				var component = components[i];
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				var component = componentsInternal[i];
 				var thisType = component.GetType();
 
 				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
@@ -80,8 +80,8 @@ namespace Dissonance.Engine
 			int count = 0;
 			var type = typeof(T);
 
-			for(int i = 0; i < components.Count; i++) {
-				var component = components[i];
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				var component = componentsInternal[i];
 				var thisType = component.GetType();
 
 				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
@@ -101,19 +101,24 @@ namespace Dissonance.Engine
 		//Init/Dispose fields.
 		private void ComponentPreInit()
 		{
-			components = new List<Component>();
-			componentsReadOnly = components.AsReadOnly();
+			componentsInternal = new List<Component>();
+			Components = componentsInternal.AsReadOnly();
+		}
+		private void ComponentClone(GameObject clone)
+		{
+			clone.componentsInternal = new List<Component>(componentsInternal.Select(c => c.Clone(clone)));
+			clone.Components = clone.componentsInternal.AsReadOnly();
 		}
 		private void ComponentDispose()
 		{
-			if(components != null) {
-				for(int i = 0; i < components.Count; i++) {
-					components[i].Dispose();
+			if(componentsInternal != null) {
+				for(int i = 0; i < componentsInternal.Count; i++) {
+					componentsInternal[i].Dispose();
 				}
 
-				components.Clear();
+				componentsInternal.Clear();
 
-				components = null;
+				componentsInternal = null;
 			}
 		}
 		//Etc
@@ -133,7 +138,7 @@ namespace Dissonance.Engine
 				throw e.InnerException;
 			}
 
-			components.Add(newComponent);
+			componentsInternal.Add(newComponent);
 
 			newComponent.gameObject = this;
 			newComponent.EnabledInHierarchy = Enabled;
@@ -150,8 +155,8 @@ namespace Dissonance.Engine
 		{
 			int count = 0;
 
-			for(int i = 0; i < components.Count; i++) {
-				var component = components[i];
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				var component = componentsInternal[i];
 				var thisType = component.GetType();
 
 				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
