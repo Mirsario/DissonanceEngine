@@ -39,9 +39,7 @@ namespace Dissonance.Engine
 				}
 
 				//Enable/disable components
-				var components = GetComponents();
-
-				foreach(var component in components) {
+				foreach(var component in Components) {
 					component.EnabledInHierarchy = value;
 				}
 
@@ -97,8 +95,8 @@ namespace Dissonance.Engine
 		{
 			var clone = (GameObject)MemberwiseClone();
 
-			clone.components = new List<Component>(components.Select(c => c.Clone(clone)));
-			clone.componentsReadOnly = clone.components.AsReadOnly();
+			ComponentClone(clone);
+
 			clone.Transform = clone.GetComponent<Transform>();
 			clone.Transform2D = clone.GetComponent<Transform2D>();
 
