@@ -32,13 +32,13 @@ namespace Dissonance.Engine.Audio
 		public AudioClip Clip {
 			get => clip;
 			set {
-				if(beenEnabledBefore && IsPlaying) {
+				if(Enabled && IsPlaying) {
 					Stop();
 				}
 
 				clip = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceInt.Buffer, (int)(clip?.bufferId ?? 0));
 
 					updateClip = false;
@@ -52,7 +52,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				is2D = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceBool.SourceRelative, is2D);
 
 					unsafe {
@@ -70,7 +70,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				loop = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceBool.Looping, loop);
 
 					updateLoop = false;
@@ -84,7 +84,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				refDistance = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.ReferenceDistance, refDistance);
 
 					updateRefDistance = false;
@@ -98,7 +98,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				maxDistance = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.MaxDistance, maxDistance);
 
 					updateMaxDistance = false;
@@ -112,7 +112,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				volume = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					if(value < 1f) {
 						AL.Source(sourceId, SourceFloat.Gain, 1f);
 						AL.Source(sourceId, SourceFloat.MaxGain, Math.Max(0f, value));
@@ -132,7 +132,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				pitch = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.Pitch, value);
 
 					updatePitch = false;
@@ -146,7 +146,7 @@ namespace Dissonance.Engine.Audio
 			set {
 				playbackOffset = value;
 
-				if(beenEnabledBefore) {
+				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.SecOffset, value);
 
 					updatePlaybackOffset = false;

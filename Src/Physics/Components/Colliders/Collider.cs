@@ -59,7 +59,7 @@ namespace Dissonance.Engine.Physics
 
 		protected void TryUpdateCollider()
 		{
-			if(enabled) {
+			if(Enabled) {
 				UpdateCollider();
 			} else {
 				needsUpdate = true;

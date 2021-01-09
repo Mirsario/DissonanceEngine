@@ -1,30 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Dissonance.Engine.Utilities;
+using ComponentInstanceLists = Dissonance.Engine.InstanceLists<Dissonance.Engine.Component>;
 
 namespace Dissonance.Engine
 {
 	public class ComponentManager : EngineModule
 	{
-		internal class ComponentInstanceLists
-		{
-			public List<Component> all;
-			public List<Component> enabled;
-			public List<Component> disabled;
-			public IReadOnlyList<Component> allReadOnly;
-			public IReadOnlyList<Component> enabledReadOnly;
-			public IReadOnlyList<Component> disabledReadOnly;
-
-			public ComponentInstanceLists()
-			{
-				allReadOnly = (all = new List<Component>()).AsReadOnly();
-				enabledReadOnly = (enabled = new List<Component>()).AsReadOnly();
-				disabledReadOnly = (disabled = new List<Component>()).AsReadOnly();
-			}
-		}
-
 		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
 
 		private Dictionary<Type, ComponentInstanceLists> typeInstances = new Dictionary<Type, ComponentInstanceLists>();

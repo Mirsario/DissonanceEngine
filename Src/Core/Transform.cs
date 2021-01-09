@@ -46,6 +46,7 @@ namespace Dissonance.Engine
 				}
 
 				parent = value;
+				GameObject.EnabledInHierarchy = parent?.Enabled ?? true;
 			}
 		}
 		public Vector3 Forward {

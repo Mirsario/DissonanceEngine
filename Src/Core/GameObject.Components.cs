@@ -9,6 +9,8 @@ namespace Dissonance.Engine
 	{
 		internal List<Component> components;
 
+		private IReadOnlyList<Component> componentsReadOnly;
+
 		//AddComponent
 		public T AddComponent<T>(Action<T> initializer) where T : Component
 			=> AddComponent(true, initializer);
@@ -19,7 +21,7 @@ namespace Dissonance.Engine
 			initializer(component);
 
 			if(enable) {
-				component.Enabled = true;
+				component.EnabledLocal = true;
 			}
 
 			return component;
@@ -58,6 +60,7 @@ namespace Dissonance.Engine
 
 			return false;
 		}
+		public IReadOnlyList<Component> GetComponents() => componentsReadOnly;
 		public IEnumerable<T> GetComponents<T>(bool exactType = false) where T : Component
 		{
 			var type = typeof(T);
@@ -96,7 +99,11 @@ namespace Dissonance.Engine
 		}
 
 		//Init/Dispose fields.
-		private void ComponentPreInit() => components = new List<Component>();
+		private void ComponentPreInit()
+		{
+			components = new List<Component>();
+			componentsReadOnly = components.AsReadOnly();
+		}
 		private void ComponentDispose()
 		{
 			if(components != null) {
@@ -129,11 +136,12 @@ namespace Dissonance.Engine
 			components.Add(newComponent);
 
 			newComponent.gameObject = this;
+			newComponent.EnabledInHierarchy = Enabled;
 
 			newComponent.PreInit();
 
 			if(enable) {
-				newComponent.Enabled = true;
+				newComponent.EnabledLocal = true;
 			}
 
 			return newComponent;
