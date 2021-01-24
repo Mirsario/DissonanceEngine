@@ -36,22 +36,17 @@ namespace Dissonance.Engine
 			return AddComponentInternal(type, enable);
 		}
 		//(Try)GetComponent(s)
-		public T GetComponent<T>(bool exactType = false) where T : Component
+		public T GetComponent<T>() where T : Component
 		{
-			TryGetComponent<T>(out var result, exactType);
+			TryGetComponent<T>(out var result);
 
 			return result;
 		}
-		public bool TryGetComponent<T>(out T result, bool exactType = false) where T : Component
+		public bool TryGetComponent<T>(out T result) where T : Component
 		{
-			var type = typeof(T);
-
 			for(int i = 0; i < componentsInternal.Count; i++) {
-				var component = componentsInternal[i];
-				var thisType = component.GetType();
-
-				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
-					result = (T)component;
+				if(componentsInternal[i] is T tComponent) {
+					result = tComponent;
 
 					return true;
 				}
@@ -61,30 +56,21 @@ namespace Dissonance.Engine
 
 			return false;
 		}
-		public IEnumerable<T> GetComponents<T>(bool exactType = false) where T : Component
+		public IEnumerable<T> GetComponents<T>() where T : Component
 		{
-			var type = typeof(T);
-
 			for(int i = 0; i < componentsInternal.Count; i++) {
-				var component = componentsInternal[i];
-				var thisType = component.GetType();
-
-				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
-					yield return (T)component;
+				if(componentsInternal[i] is T tComponent) {
+					yield return tComponent;
 				}
 			}
 		}
 		//CountComponents
-		public int CountComponents<T>(bool exactType = false) where T : Component
+		public int CountComponents<T>() where T : Component
 		{
 			int count = 0;
-			var type = typeof(T);
 
 			for(int i = 0; i < componentsInternal.Count; i++) {
-				var component = componentsInternal[i];
-				var thisType = component.GetType();
-
-				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
+				if(componentsInternal[i] is T) {
 					count++;
 				}
 			}
@@ -95,7 +81,18 @@ namespace Dissonance.Engine
 		{
 			AssertionUtils.TypeIsAssignableFrom(typeof(Component), type);
 
-			return CountComponentsInternal(type, exactType);
+			int count = 0;
+
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				var component = componentsInternal[i];
+				var thisType = component.GetType();
+
+				if(thisType == type || (!exactType && thisType.IsSubclassOf(type))) {
+					count++;
+				}
+			}
+
+			return count;
 		}
 
 		//Init/Dispose fields.
@@ -150,21 +147,6 @@ namespace Dissonance.Engine
 			}
 
 			return newComponent;
-		}
-		private int CountComponentsInternal(Type type, bool exactType = false)
-		{
-			int count = 0;
-
-			for(int i = 0; i < componentsInternal.Count; i++) {
-				var component = componentsInternal[i];
-				var thisType = component.GetType();
-
-				if(thisType == type || !exactType && thisType.IsSubclassOf(type)) {
-					count++;
-				}
-			}
-
-			return count;
 		}
 	}
 }
