@@ -194,7 +194,7 @@
 
 			return newMesh;
 		}
-		public static Mesh GenerateSphere(int xRes = 16, int yRes = 16, float radius = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool apply = true)
+		public static Mesh GenerateSphere(int xRes = 16, int yRes = 16, float radius = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
 			//TODO: There's plenty of unneeded vertex repeating, which is only needed on UV seams.
 
@@ -254,6 +254,10 @@
 
 					vertexIndex += 4;
 				}
+			}
+
+			if(addTangents) {
+				newMesh.TangentBuffer.Recalculate();
 			}
 
 			if(apply) {
