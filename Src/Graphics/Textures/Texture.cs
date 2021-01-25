@@ -121,8 +121,8 @@ namespace Dissonance.Engine.Graphics
 
 			(int magFilter, int minFilter) = filterMode switch
 			{
-				FilterMode.Bilinear => ((int)TextureMagFilter.Linear, (int)TextureMinFilter.Linear),
-				FilterMode.Trilinear => ((int)TextureMagFilter.Linear, (int)TextureMinFilter.LinearMipmapLinear),
+				FilterMode.Bilinear => ((int)TextureMagFilter.Linear, (int)(useMipmaps ? TextureMinFilter.LinearMipmapNearest : TextureMinFilter.Linear)),
+				FilterMode.Trilinear => ((int)TextureMagFilter.Linear, (int)(useMipmaps ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear)),
 				_ => ((int)TextureMagFilter.Nearest, (int)(useMipmaps ? TextureMinFilter.NearestMipmapNearest : TextureMinFilter.Nearest))
 			};
 
