@@ -3,7 +3,7 @@
 uniform mat4 world;
 uniform mat4 worldViewProj;
 #ifdef TILING
-	uniform vec2 uvTiling = vec2(1f,1f);
+	uniform vec2 uvTiling = vec2(1f, 1f);
 #endif
 #ifdef SKINNED
 	uniform mat4 boneMatrices[64];
@@ -37,28 +37,28 @@ out vec3 worldPos;
 void main(void)
 {
 	#ifdef NORMALMAP
-		vec3 binormal = cross(tangent.xyz,normal)*tangent.w;
-		vec3 T = normalize((world*vec4(tangent.xyz,0.0)).xyz);
-		vec3 B = normalize((world*vec4(binormal,0.0)).xyz);
-		vec3 N = normalize((world*vec4(normal,0.0)).xyz);
+		vec3 binormal = cross(tangent.xyz, normal) * tangent.w;
+		vec3 T = normalize((world * vec4(tangent.xyz, 0.0)).xyz);
+		vec3 B = normalize((world * vec4(binormal, 0.0)).xyz);
+		vec3 N = normalize((world * vec4(normal, 0.0)).xyz);
 
-		TBN = mat3(T,B,N);
+		TBN = mat3(T, B, N);
 	#else
-		N = normalize(mat3(world)*normal)*0.5+0.5;
+		N = normalize(mat3(world) * normal) * 0.5 + 0.5;
 	#endif
 	
 	#ifdef SKINNED
 		//Mesh skinning is totally unfinished.
-		vec4 pos = vec4(0,0,0,0);
+		vec4 pos = vec4(0, 0, 0, 0);
 		mat4 matrix =
-			boneMatrices[int(boneIndices.x)]*boneWeights.x+
-			boneMatrices[int(boneIndices.y)]*boneWeights.y+
-			boneMatrices[int(boneIndices.z)]*boneWeights.z+
-			boneMatrices[int(boneIndices.w)]*boneWeights.w;
+			boneMatrices[int(boneIndices.x)] * boneWeights.x +
+			boneMatrices[int(boneIndices.y)] * boneWeights.y +
+			boneMatrices[int(boneIndices.z)] * boneWeights.z +
+			boneMatrices[int(boneIndices.w)] * boneWeights.w;
 		
-		gl_Position = worldViewProj*(vertex*matrix);
+		gl_Position = worldViewProj * (vertex * matrix);
 	#else
-		gl_Position = worldViewProj*vertex;
+		gl_Position = worldViewProj * vertex;
 	#endif
 	
 	#ifdef VERTEXCOLOR
@@ -68,8 +68,8 @@ void main(void)
 	uv = uv0;
 	
 	#ifdef TILING
-		uv *= uvTiling;
+		uv  *= uvTiling;
 	#endif
 	
-	worldPos = (world*vertex).xyz;
+	worldPos = (world * vertex).xyz;
 }

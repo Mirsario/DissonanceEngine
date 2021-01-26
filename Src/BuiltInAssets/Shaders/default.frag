@@ -17,7 +17,7 @@ uniform sampler2D mainTex;
 	uniform sampler2D specularMap;
 #endif
 #ifdef COLOR
-	uniform vec4 color = vec4(1f,1f,1f,1f);
+	uniform vec4 color = vec4(1f, 1f, 1f, 1f);
 #endif
 #ifdef ALPHATEST
 	uniform float cutoff = 1f;
@@ -40,14 +40,14 @@ out vec3 oPosition;
 out vec4 oEmission;
 out float oSpecular;
 
-void main (void)  
+void main(void)
 {
 	//Color
 	
-	oDiffuse = texture(mainTex,uv);
+	oDiffuse = texture(mainTex, uv);
 	
 	#ifdef ALPHATEST
-		if(oDiffuse.a<cutoff) {
+		if(oDiffuse.a < cutoff) {
 			discard;
 		}
 	#endif
@@ -63,7 +63,7 @@ void main (void)
 	//Normals
 	
 	#ifdef NORMALMAP
-		oNormal = normalize(TBN*(texture(normalMap,uv).rgb*2f-1f))*0.5f+0.5f;
+		oNormal = normalize(TBN * (texture(normalMap, uv).rgb * 2f - 1f)) * 0.5f + 0.5f;
 	#else
 		oNormal = N;
 	#endif
@@ -71,26 +71,26 @@ void main (void)
 	//Emission
 	
 	#ifdef EMISSIONMAP
-		oEmission = texture(emissionMap,uv);
+		oEmission = texture(emissionMap, uv);
 		
 		#ifdef EMISSION
-			oEmission = clamp(oEmission+emission,0f,1f);
+			oEmission = clamp(oEmission + emission, 0f, 1f);
 		#endif
 	#else
 		#ifdef EMISSION
-			oEmission = vec4(emission,emission,emission,emission);
+			oEmission = vec4(emission, emission, emission, emission);
 		#else
-			oEmission = vec4(0f,0f,0f,0f);
+			oEmission = vec4(0f, 0f, 0f, 0f);
 		#endif
 	#endif
 
 	//Specular
 	
 	#ifdef SPECULARMAP
-		oSpecular = texture(specularMap,uv).r;
+		oSpecular = texture(specularMap, uv).r;
 		
 		#ifdef SPECULAR
-			oSpecular = clamp(oSpecular+specular,0f,1f);
+			oSpecular = clamp(oSpecular + specular, 0f, 1f);
 		#endif
 	#else
 		#ifdef SPECULAR
