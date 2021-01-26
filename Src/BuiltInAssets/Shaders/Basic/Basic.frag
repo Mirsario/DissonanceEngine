@@ -4,7 +4,7 @@
 	uniform sampler2D mainTex;
 #endif
 #ifdef COLOR
-	uniform vec4 color = vec4(1f,1f,1f,1f);
+	uniform vec4 color = vec4(1f, 1f, 1f, 1f);
 #endif
 
 #ifdef TEXTURE
@@ -19,7 +19,7 @@ out vec4 oDiffuse;
 void main (void)  
 {
 	#ifdef TEXTURE
-		oDiffuse = texture(mainTex,vUV);
+		oDiffuse = texture(mainTex, vUV);
 	#else
 		oDiffuse = vec4(1.0);
 	#endif

@@ -12,5 +12,5 @@ void main()
 	
 	pos.xyz /= pos.w;
 	
-	screenPos = (pos.xy+vec2(1f,1f))/2f;
+	screenPos = (pos.xy + vec2(1f, 1f)) / 2f;
 }

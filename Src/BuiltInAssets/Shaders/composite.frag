@@ -13,18 +13,18 @@ out vec4 oColor;
 
 void main()
 {
-	vec4 color = texture(colorBuffer,screenPos);
-	vec3 normal = texture(normalBuffer,screenPos).xyz;
+	vec4 color = texture(colorBuffer, screenPos);
+	vec3 normal = texture(normalBuffer, screenPos).xyz;
 	
 	//For now, [0,0,0] normals mean that the pixel should be unlit.
 	//TODO: Use stencils for this instead?
-	if(normal.x==0f && normal.y==0f && normal.z==0f) {
-		oColor = vec4(color.rgb,1f);
+	if(normal.x == 0f && normal.y == 0f && normal.z == 0f) {
+		oColor = vec4(color.rgb, 1f);
 
 		return;
 	}
 	
-	vec4 lighting = texture(lightingBuffer,screenPos)+texture(emissionBuffer,screenPos)+vec4(ambientColor,0.0);
+	vec4 lighting = texture(lightingBuffer, screenPos) + texture(emissionBuffer, screenPos) + vec4(ambientColor, 0.0);
 	
-	oColor = vec4(color.rgb*lighting.rgb,1.0);
+	oColor = vec4(color.rgb * lighting.rgb, 1.0);
 }

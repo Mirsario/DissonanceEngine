@@ -21,20 +21,20 @@ out vec4 oColor;
 void main()
 {
 	vec2 screenPos = vec2(
-		gl_FragCoord.x/screenWidth,
-		gl_FragCoord.y/screenHeight
+		gl_FragCoord.x / screenWidth,
+		gl_FragCoord.y / screenHeight
 	);
 	
-	vec3 surfacePosition = texture(positionBuffer,screenPos).xyz;
-	vec3 normal = texture(normalBuffer,screenPos).xyz*2f-1f;
+	vec3 surfacePosition = texture(positionBuffer, screenPos).xyz;
+	vec3 normal = texture(normalBuffer, screenPos).xyz * 2f - 1f;
 	
 	#ifdef DIRECTIONAL
 		vec3 lightDir = lightDirection;
 	#else
-		vec3 lightDir = surfacePosition-lightPosition;
+		vec3 lightDir = surfacePosition - lightPosition;
 		float distance = length(lightDir);
 		
-		if(distance>lightRange){
+		if(distance > lightRange){
 			discard;
 		}
 		
@@ -43,35 +43,35 @@ void main()
 	
 	float intensity;
 	
-	if(normal.x==0.0 && normal.y==0.0 && normal.z==0.0) {
+	if(normal.x == 0.0 && normal.y == 0.0 && normal.z == 0.0) {
 		#ifdef DIRECTIONAL
 			intensity = 1.0;
 		#else
-			intensity = clamp(1.0-(distance/lightRange),0.0,1.0);
+			intensity = clamp(1.0 - (distance / lightRange), 0.0, 1.0);
 		#endif
 	}else{
-		float diffuse = clamp(dot(normal,-lightDir),0f,1f);
+		float diffuse = clamp(dot(normal, -lightDir), 0f, 1f);
 		
 		#ifdef POINT
-			diffuse *= clamp(1f-(distance/lightRange),0f,1f);
+			diffuse *= clamp(1f - (distance / lightRange), 0f, 1f);
 		#endif
 		
 		intensity = diffuse;
 		
-		float specularIntensity = texture(specularBuffer,screenPos).r;
+		float specularIntensity = texture(specularBuffer, screenPos).r;
 
-		if(specularIntensity>0.1f) {
-			vec3 eyeDirection = normalize(cameraPosition-surfacePosition);
-			vec3 reflection = reflect(lightDir,normal);
-			float specular = pow(max(dot(eyeDirection,reflection),0f),16f);
+		if(specularIntensity > 0.1f) {
+			vec3 eyeDirection = normalize(cameraPosition - surfacePosition);
+			vec3 reflection = reflect(lightDir, normal);
+			float specular = pow(max(dot(eyeDirection, reflection), 0f), 16f);
 			
 			#ifdef POINT
-				specular /= distance*distance;
+				specular /= distance * distance;
 			#endif
 			
-			intensity += clamp(specular,0f,1f);
+			intensity += clamp(specular, 0f, 1f);
 		}
 	}
 
-	oColor = vec4(lightColor*intensity*lightIntensity,1.0);
+	oColor = vec4(lightColor * intensity * lightIntensity, 1.0);
 }
