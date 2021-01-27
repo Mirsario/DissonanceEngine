@@ -19,10 +19,12 @@ namespace Dissonance.Engine.Physics
 			Transform.OnModified += OnTransformModified;
 		}
 
+		//Called by bullet whenever a rigidbody is created, and every frame for kinematic rigidbodies.
 		public override void GetWorldTransform(out Matrix matrix)
 		{
 			matrix = Transform.Parent == null ? Transform.Matrix : Transform.ToWorldSpace(Transform.Matrix);
 		}
+		//Called by bullet for every frame or update of an active rigidbody.
 		public override void SetWorldTransform(ref Matrix matrix)
 		{
 			ignoreNextUpdate = true;
@@ -37,6 +39,7 @@ namespace Dissonance.Engine.Physics
 			Transform.OnModified -= OnTransformModified;
 		}
 
+		//Updates bullet's rigidbody's transformation with ours if it has been updated.
 		public void Update()
 		{
 			var btRigidbody = RBInternal.btRigidbody;
@@ -70,8 +73,14 @@ namespace Dissonance.Engine.Physics
 			}
 
 			updateFlags = Transform.UpdateFlags.None;
+
+			//Activate the rigidbody if it's sleeping
+			if(!btRigidbody.IsActive) {
+				btRigidbody.Activate();
+			}
 		}
 
+		//This callback is used to keep track of transform updates.
 		private void OnTransformModified(Transform transform, Transform.UpdateFlags updateFlags)
 		{
 			if(ignoreNextUpdate) {
