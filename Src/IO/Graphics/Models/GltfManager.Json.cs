@@ -3,7 +3,7 @@ using Dissonance.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Dissonance.Engine.IO.Graphics.Models
+namespace Dissonance.Engine.IO
 {
 	partial class GltfManager
 	{
@@ -277,7 +277,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				public class PbrMetallicRoughness : JsonElementBase
 				{
 					/// <summary> The material's base color factor. </summary>
-					public float[] baseColorFactor = { 1f,1f,1f,1f };
+					public float[] baseColorFactor = { 1f, 1f, 1f, 1f };
 					/// <summary> The base color texture. </summary>
 					public JObject baseColorTexture;
 					/// <summary> The metalness of the material. </summary>
@@ -295,7 +295,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				/// <summary> The occlusion map texture. </summary>
 				public OcclusionTextureInfo occlusionTexture;
 				/// <summary> The emissive color of the material. </summary>
-				public float[] emissiveFactor = { 0f,0f,0f };
+				public float[] emissiveFactor = { 0f, 0f, 0f };
 				/// <summary> The alpha rendering mode of the material. </summary>
 				public string alphaMode = "OPAQUE";
 				/// <summary> The alpha cutoff value of the material. </summary>
@@ -312,7 +312,7 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				{
 					/// <summary> A dictionary object, where each key corresponds to mesh attribute semantic and each value is the index of the accessor containing attribute's data. </summary>
 					[JsonRequired]
-					public Dictionary<string,int> attributes;
+					public Dictionary<string, int> attributes;
 
 					/// <summary> The index of the accessor that contains the indices. </summary>
 					public uint? indices;
@@ -352,11 +352,11 @@ namespace Dissonance.Engine.IO.Graphics.Models
 				/// <summary> The index of the mesh in this node. </summary>
 				public int? mesh;
 				/// <summary> The node's unit quaternion rotation in the order (x, y, z, w), where w is the scalar. </summary>
-				public float[] rotation = { 0f,0f,0f,1f };
+				public float[] rotation = { 0f, 0f, 0f, 1f };
 				/// <summary> The node's non-uniform scale, given as the scaling factors along the x, y, and z axes. </summary>
-				public float[] scale = { 1f,1f,1f };
+				public float[] scale = { 1f, 1f, 1f };
 				/// <summary> The node's translation along the x, y, and z axes. </summary>
-				public float[] translation = { 0f,0f,0f };
+				public float[] translation = { 0f, 0f, 0f };
 				/// <summary> The weights of the instantiated Morph Target. Number of elements must match number of Morph Targets of used mesh. </summary>
 				public float[] weights;
 			}
