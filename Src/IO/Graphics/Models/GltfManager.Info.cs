@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Dissonance.Engine.IO.Graphics.Models
+namespace Dissonance.Engine.IO
 {
 	partial class GltfManager
 	{
