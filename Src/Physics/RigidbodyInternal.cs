@@ -8,20 +8,8 @@ namespace Dissonance.Engine.Physics
 {
 	internal class RigidbodyInternal : IDisposable
 	{
-		private class MotionStateInternal : MotionState
-		{
-			private readonly Transform Transform;
+		public readonly MotionStateInternal MotionState;
 
-			public MotionStateInternal(Transform transform)
-			{
-				Transform = transform;
-			}
-
-			public override void GetWorldTransform(out Matrix matrix) => matrix = Transform.Parent == null ? Transform.Matrix : Transform.ToWorldSpace(Transform.Matrix);
-			public override void SetWorldTransform(ref Matrix matrix) => Transform.Matrix = Transform.Parent == null ? matrix : (Matrix)Transform.ToLocalSpace(matrix);
-		}
-
-		//private readonly MotionStateInternal MotionState;
 		internal PhysicsEngine engine;
 		internal RigidBody btRigidbody;
 		internal CollisionShape collisionShape;
@@ -143,8 +131,9 @@ namespace Dissonance.Engine.Physics
 			collisions2D = new List<Collision2D>();
 			collisionShape = new EmptyShape();
 
-			var motionState = new MotionStateInternal(gameObject.Transform);
-			var rbInfo = new RigidBodyConstructionInfo(0f, motionState, collisionShape, Vector3.Zero) {
+			MotionState = new MotionStateInternal(this);
+
+			var rbInfo = new RigidBodyConstructionInfo(0f, MotionState, collisionShape, Vector3.Zero) {
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,
 				Friction = 0.6f,
@@ -182,6 +171,7 @@ namespace Dissonance.Engine.Physics
 				engine = null;
 			}
 
+			gameObject = null;
 			collisionShape = null;
 		}
 

@@ -47,35 +47,9 @@ namespace Dissonance.Engine.Physics
 			for(int i = 0; i < rigidbodies.Count; i++) {
 				var rigidbody = rigidbodies[i];
 
-				if(!rigidbody.enabled) {
-					continue;
+				if(rigidbody.enabled) {
+					rigidbody.MotionState.Update();
 				}
-
-				var transform = rigidbody.gameObject.Transform;
-
-				//TODO: The following code partially updates physics transform if game transforms were updated. This is pretty lame, it's preferable to just have physics rely on the game's transforms instead.
-
-				if(transform.physicsUpdateFlags == Transform.UpdateFlags.None) {
-					continue;
-				}
-
-				Matrix4x4 matrix = rigidbody.btRigidbody.WorldTransform;
-
-				if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Position)) {
-					matrix.SetTranslation(transform.Position);
-				}
-
-				if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Scale) && transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Rotation)) {
-					matrix.SetRotationAndScale(transform.Rotation, transform.LocalScale);
-				} else if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Scale)) {
-					matrix.SetScale(transform.LocalScale);
-				} else if(transform.physicsUpdateFlags.HasFlag(Transform.UpdateFlags.Rotation)) {
-					matrix.SetRotation(transform.Rotation);
-				}
-
-				transform.physicsUpdateFlags = Transform.UpdateFlags.None;
-
-				rigidbody.btRigidbody.WorldTransform = matrix;
 			}
 
 			world.StepSimulation(Time.FixedDeltaTime);

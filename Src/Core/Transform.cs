@@ -7,9 +7,8 @@ namespace Dissonance.Engine
 {
 	public class Transform : Component
 	{
-		//This enum won't be needed after the physics engine is made to use the game engine's matrices.
 		[Flags]
-		internal enum UpdateFlags
+		public enum UpdateFlags
 		{
 			None = 0,
 			Position = 1,
@@ -22,12 +21,8 @@ namespace Dissonance.Engine
 
 		private readonly List<Transform> ChildrenInternal;
 
-		internal UpdateFlags physicsUpdateFlags;
-
 		private Matrix4x4 matrix = Matrix4x4.Identity;
 		private Transform parent;
-		private Matrix4x4 worldMatrixCache;
-		private bool worldMatrixNeedsRecalculation;
 
 		public Transform Root => Parent == null ? this : EnumerateParents().Last();
 		public Transform Parent {
@@ -88,24 +83,21 @@ namespace Dissonance.Engine
 				}
 
 				matrix.SetTranslation(m.ExtractTranslation());
-
-				OnModified(UpdateFlags.Position);
+				OnModified?.Invoke(this, UpdateFlags.Position);
 			}
 		}
 		public Vector3 LocalPosition {
 			get => matrix.ExtractTranslation();
 			set {
 				matrix.SetTranslation(value);
-
-				OnModified(UpdateFlags.Position);
+				OnModified?.Invoke(this, UpdateFlags.Position);
 			}
 		}
 		public Vector3 LocalScale {
 			get => matrix.ExtractScale();
 			set {
 				matrix.SetScale(value);
-
-				OnModified(UpdateFlags.Scale);
+				OnModified?.Invoke(this, UpdateFlags.Scale);
 			}
 		}
 		public Quaternion Rotation {
@@ -121,7 +113,7 @@ namespace Dissonance.Engine
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				OnModified(UpdateFlags.Rotation);
+				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
 		public Quaternion LocalRotation {
@@ -134,7 +126,7 @@ namespace Dissonance.Engine
 				LocalPosition = tempPos;
 				LocalScale = tempScale;
 
-				OnModified(UpdateFlags.Rotation);
+				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
 		public Vector3 EulerRot {
@@ -148,7 +140,7 @@ namespace Dissonance.Engine
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				OnModified(UpdateFlags.Rotation);
+				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
 		public Vector3 LocalEulerRot {
@@ -164,7 +156,7 @@ namespace Dissonance.Engine
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
 
-				OnModified(UpdateFlags.Rotation);
+				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
 		public Matrix4x4 Matrix {
@@ -172,30 +164,19 @@ namespace Dissonance.Engine
 			set {
 				matrix = value;
 
-				OnModified(UpdateFlags.All);
+				OnModified?.Invoke(this, UpdateFlags.All);
 			}
 		}
 		public Matrix4x4 WorldMatrix {
-			get {
-				if(Parent == null) {
-					return matrix;
-				}
-
-				if(worldMatrixNeedsRecalculation) {
-					worldMatrixCache = ToWorldSpace(matrix);
-
-					worldMatrixNeedsRecalculation = false;
-				}
-
-				return worldMatrixCache;
-			}
+			get => Parent == null ? matrix : ToWorldSpace(matrix);
 			set {
 				matrix = Parent == null ? value : ToLocalSpace(value);
-				worldMatrixCache = value;
 
-				OnModified(UpdateFlags.All, false);
+				OnModified?.Invoke(this, UpdateFlags.All);
 			}
 		}
+
+		public event Action<Transform, UpdateFlags> OnModified;
 
 		public Transform() : base()
 		{
@@ -254,17 +235,6 @@ namespace Dissonance.Engine
 			}
 
 			return matrix;
-		}
-
-		private void OnModified(UpdateFlags physicsUpdateFlags, bool worldMatrixNeedsRecalculation = true)
-		{
-			this.physicsUpdateFlags |= physicsUpdateFlags;
-			this.worldMatrixNeedsRecalculation = worldMatrixNeedsRecalculation;
-
-			foreach(var child in EnumerateChildren()) {
-				child.physicsUpdateFlags |= physicsUpdateFlags;
-				child.worldMatrixNeedsRecalculation |= worldMatrixNeedsRecalculation;
-			}
 		}
 	}
 }
