@@ -3,8 +3,8 @@
 uniform sampler2D colorBuffer;
 uniform sampler2D normalBuffer;
 uniform sampler2D emissionBuffer;
-uniform sampler2D lightingBuffer;
-uniform sampler2D depthBuffer;
+uniform sampler2D lightingDiffuseBuffer;
+uniform sampler2D lightingSpecularBuffer;
 uniform vec3 ambientColor;
 
 in vec2 screenPos;
@@ -24,7 +24,8 @@ void main()
 		return;
 	}
 	
-	vec4 lighting = texture(lightingBuffer, screenPos) + texture(emissionBuffer, screenPos) + vec4(ambientColor, 0.0);
+	vec3 multiplicativeLighting = ambientColor + texture(lightingDiffuseBuffer, screenPos).rgb;
+	vec3 additiveLighting = texture(lightingSpecularBuffer, screenPos).rgb + texture(emissionBuffer, screenPos).rgb;
 	
-	oColor = vec4(color.rgb * lighting.rgb, 1.0);
+	oColor = vec4((color.rgb * multiplicativeLighting) + additiveLighting, 1.0);
 }

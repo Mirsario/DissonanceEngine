@@ -5,7 +5,7 @@ uniform sampler2D mainTex;
 	uniform sampler2D normalMap;
 #endif
 #ifdef EMISSION
-	uniform float emission = 1f;
+	uniform vec3 emission;
 #endif
 #ifdef EMISSIONMAP
 	uniform sampler2D emissionMap;
@@ -37,7 +37,7 @@ in vec3 worldPos;
 out vec4 oDiffuse;
 out vec3 oNormal;
 out vec3 oPosition;
-out vec4 oEmission;
+out vec3 oEmission;
 out float oSpecular;
 
 void main(void)
@@ -71,18 +71,13 @@ void main(void)
 	//Emission
 	
 	#ifdef EMISSIONMAP
-		oEmission = texture(emissionMap, uv);
-		
-		#ifdef EMISSION
-			oEmission = clamp(oEmission + emission, 0f, 1f);
-		#endif
+		oEmission = texture(emissionMap, uv).rgb;
+	#elif defined EMISSION
+		oEmission = emission;
 	#else
-		#ifdef EMISSION
-			oEmission = vec4(emission, emission, emission, emission);
-		#else
-			oEmission = vec4(0f, 0f, 0f, 0f);
-		#endif
+		oEmission = vec3(0f, 0f, 0f);
 	#endif
+	
 
 	//Specular
 	
