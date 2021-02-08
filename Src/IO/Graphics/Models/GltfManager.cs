@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class GltfManager : AssetManager<AssetPack>
+	public partial class GltfManager : AssetManager<GameObject>
 	{
 		public const uint FormatHeader = 0x46546C67;
 
@@ -44,12 +44,9 @@ namespace Dissonance.Engine.IO
 
 		public override string[] Extensions => new[] { ".gltf", ".glb" };
 
-		public override AssetPack Import(Stream stream, string filePath)
+		public override GameObject Import(Stream stream, string filePath)
 		{
-			var info = new GltfInfo {
-				filePath = filePath,
-				assets = new AssetPack()
-			};
+			var info = new GltfInfo(filePath);
 
 			if(filePath.EndsWith(".gltf")) {
 				byte[] textBytes = new byte[stream.Length - stream.Position];
@@ -70,7 +67,7 @@ namespace Dissonance.Engine.IO
 
 			LoadMeshes(info);
 
-			return info.assets;
+			return info.RootObject;
 		}
 
 		protected static void HandleGltf(GltfInfo info, byte[] textBytes)
@@ -159,7 +156,7 @@ namespace Dissonance.Engine.IO
 
 					//If uri/path is not absolute, we make it relative to the .gltf file's location.
 					if(!buffer.uri.Contains(":/") && !buffer.uri.Contains(":\\") && !buffer.uri.StartsWith("/")) {
-						path = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.GetDirectoryName(info.filePath)) + Path.DirectorySeparatorChar + buffer.uri;
+						path = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.GetDirectoryName(info.FilePath)) + Path.DirectorySeparatorChar + buffer.uri;
 					}
 
 					stream = File.OpenRead(path);
@@ -236,11 +233,13 @@ namespace Dissonance.Engine.IO
 					meshes.Add(mesh);
 				}
 
-				var model = new Model() {
-					meshes = meshes.ToArray()
-				};
+				for(int i = 0; i < meshes.Count; i++) {
+					info.RootObject.AddComponent<MeshRenderer>(c => {
+						c.Mesh = meshes[i];
+					});
+				}
 
-				info.assets.Add(model, jsonMesh.name);
+				//info.result.Add(model, jsonMesh.name);
 			}
 		}
 	}
