@@ -39,7 +39,8 @@ void main()
 			discard;
 		}
 		
-		lightDir = normalize(lightDir);
+		lightDir = lightDir / distance;
+		distance = distance * distance;
 	#endif
 	
 	float diffuse;
@@ -65,7 +66,7 @@ void main()
 			float specular = pow(max(dot(eyeDirection, reflection), 0f), 16f);
 			
 			#ifdef POINT
-				specular /= distance * distance;
+				specular /= distance;
 			#endif
 			
 			oSpecular = lightColor * specular * specularIntensity * lightIntensity;
