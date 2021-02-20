@@ -78,7 +78,10 @@ namespace Dissonance.Engine.Graphics
 				}),
 
 				//GUI
-				RenderPass.Create<GUIPass>("GUI")
+				RenderPass.Create<DebugPass>("Debug"),
+
+				//GUI
+				RenderPass.Create<GUIPass>("GUI"),
 			});
 
 			Framebuffer.Bind(null);

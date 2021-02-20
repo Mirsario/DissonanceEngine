@@ -88,8 +88,8 @@ namespace Dissonance.Engine.Graphics
 			InstantiateRenderingPipeline();
 
 			PrimitiveMeshes.Init();
-
 			DrawUtils.Init();
+			Debug.ResetRendering();
 
 			whiteTexture = new Texture(1, 1);
 			whiteTexture.SetPixels(new[] { new Pixel(1f, 1f, 1f, 1f) });
@@ -99,6 +99,8 @@ namespace Dissonance.Engine.Graphics
 		protected override void RenderUpdate()
 		{
 			drawCallsCount = 0;
+
+			Debug.ResetRendering();
 
 			//Calculate view and projection matrices, culling frustums
 			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
