@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Dissonance.Engine
 {
-	public static class Debug
+	public static partial class Debug
 	{
 		public static readonly object LoggingLock = new object();
 		public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new Dictionary<string, ConsoleColor>();
