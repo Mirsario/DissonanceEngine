@@ -34,9 +34,9 @@ namespace Dissonance.Engine
 		{
 			Vector3 result;
 
-			result.x = m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m30;
-			result.y = m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m31;
-			result.z = m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m32;
+			result.x = m.m00 * v.x + m.m10 * v.y + m.m20 * v.z + m.m30;
+			result.y = m.m01 * v.x + m.m11 * v.y + m.m21 * v.z + m.m31;
+			result.z = m.m02 * v.x + m.m12 * v.y + m.m22 * v.z + m.m32;
 
 			return result;
 		}
