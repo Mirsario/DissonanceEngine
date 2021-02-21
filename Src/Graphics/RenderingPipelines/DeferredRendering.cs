@@ -77,7 +77,7 @@ namespace Dissonance.Engine.Graphics
 					};
 				}),
 
-				//GUI
+				//Debug
 				RenderPass.Create<DebugPass>("Debug"),
 
 				//GUI
