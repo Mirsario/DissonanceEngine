@@ -8,8 +8,6 @@ namespace Dissonance.Engine.Graphics
 			FlipVertically = 2
 		}
 
-		protected static readonly Bounds DefaultBounds = new Bounds(Vector3.Zero, Vector3.One);
-
 		public static float DefaultPixelSize { get; set; } = 1f;
 
 		protected static Mesh bufferMesh;
@@ -24,6 +22,8 @@ namespace Dissonance.Engine.Graphics
 		protected float pixelSize = DefaultPixelSize;
 		protected bool setSize;
 		protected Material material;
+
+		public override Bounds AABB => new Bounds(Vector3.Zero, Vector3.One);
 
 		public RectFloat SourceRectangle {
 			get => sourceRectangle;
@@ -80,11 +80,10 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public override bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out Bounds bounds, out object renderObject)
+		public override bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
 		{
 			material = this.material;
 
-			bounds = DefaultBounds;
 			renderObject = null;
 
 			return true;

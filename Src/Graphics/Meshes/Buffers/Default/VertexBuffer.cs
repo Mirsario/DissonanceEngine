@@ -36,18 +36,7 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			var boundsCenter = new Vector3(
-				(min.x + max.x) * 0.5f,
-				(min.y + max.y) * 0.5f,
-				(min.z + max.z) * 0.5f
-			);
-			var boundsExtents = new Vector3(
-				Mathf.Max(Mathf.Abs(min.x), Mathf.Abs(max.x)) - boundsCenter.x,
-				Mathf.Max(Mathf.Abs(min.y), Mathf.Abs(max.y)) - boundsCenter.y,
-				Mathf.Max(Mathf.Abs(min.z), Mathf.Abs(max.z)) - boundsCenter.z
-			);
-
-			return new Bounds(boundsCenter, boundsExtents);
+			return new Bounds(min, max);
 		}
 	}
 }

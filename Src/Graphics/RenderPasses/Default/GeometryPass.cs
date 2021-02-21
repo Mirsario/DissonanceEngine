@@ -68,23 +68,21 @@ namespace Dissonance.Engine.Graphics
 
 					var meshPos = renderer.Transform.Position;
 
-					if(!renderer.GetRenderData(meshPos, cameraPos, out var material, out var bounds, out var renderObject)) {
+					if(!renderer.GetRenderData(meshPos, cameraPos, out var material, out object renderObject)) {
 						continue;
 					}
 
 					var shader = material.Shader;
+
 					if(shader == null) {
 						continue;
 					}
 
-					bool cullResult = renderer.PreCullingModifyResult?.Invoke() ?? camera.orthographic || camera.BoxInFrustum(meshPos + bounds.center, bounds.extents * renderer.Transform.LocalScale);
-					var postCullResult = renderer.PostCullingModifyResult?.Invoke(cullResult);
-					if(postCullResult != null) {
-						cullResult = postCullResult.Value;
-					}
+					bool cullResult = camera.orthographic || camera.BoxInFrustum(renderer.AABB);
 
 					if(cullResult) {
 						ref var entry = ref renderQueue[numToRenderer++];
+
 						entry.shader = shader;
 						entry.material = material;
 						entry.renderer = renderer;
@@ -112,7 +110,7 @@ namespace Dissonance.Engine.Graphics
 					var shader = entry.shader;
 					var material = entry.material;
 					var renderer = entry.renderer;
-					var renderObject = entry.renderObject;
+					object renderObject = entry.renderObject;
 
 					//Update Shader
 					if(lastShader != shader) {
