@@ -96,14 +96,14 @@ namespace Dissonance.Engine.Graphics
 
 			return true;
 		}
-		public bool BoxInFrustum(Vector3 point, Vector3 extents)
+		public bool BoxInFrustum(Bounds box)
 		{
-			float x1 = point.x - extents.x;
-			float x2 = point.x + extents.x;
-			float y1 = point.y - extents.y;
-			float y2 = point.y + extents.y;
-			float z1 = point.z - extents.z;
-			float z2 = point.z + extents.z;
+			float x1 = box.min.x;
+			float x2 = box.max.x;
+			float y1 = box.min.y;
+			float y2 = box.max.y;
+			float z1 = box.min.z;
+			float z2 = box.max.z;
 
 			for(int i = 0; i < 6; i++) {
 				float f0 = frustum[i, 0];
