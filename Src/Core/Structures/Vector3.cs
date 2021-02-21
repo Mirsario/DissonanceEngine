@@ -154,6 +154,14 @@ namespace Dissonance.Engine
 		public Vector3 RotatedBy(Vector3 vec) => Matrix4x4.CreateRotation(-vec.x, vec.y, -vec.z) * this;
 		public Vector3 RotatedBy(float x, float y, float z) => Matrix4x4.CreateRotation(-x, y, -z) * this;
 
+		public static Vector3 Min(Vector3 a, Vector3 b)
+		{
+			return new Vector3(Math.Min(a.x, b.x), Math.Min(a.y, b.y), Math.Min(a.z, b.z));
+		}
+		public static Vector3 Max(Vector3 a, Vector3 b)
+		{
+			return new Vector3(Math.Max(a.x, b.x), Math.Max(a.y, b.y), Math.Max(a.z, b.z));
+		}
 		public static Vector3 StepTowards(Vector3 val, Vector3 goal, float step)
 		{
 			return new Vector3(
