@@ -9,6 +9,7 @@ namespace Dissonance.Engine.Graphics
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
 			GL.Enable(EnableCap.Blend);
+			GL.DepthMask(false);
 
 			Shader.SetShader(passShader);
 
@@ -45,6 +46,7 @@ namespace Dissonance.Engine.Graphics
 				DrawUtils.DrawQuadUv0(vpPointsB, vpPointsA);
 			}
 
+			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 		}
 	}
