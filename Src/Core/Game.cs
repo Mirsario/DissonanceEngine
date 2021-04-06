@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing;
 
@@ -48,6 +49,7 @@ namespace Dissonance.Engine
 		internal string assetsPath;
 
 		private Stopwatch updateStopwatch;
+		private Stopwatch renderStopwatch;
 		private ulong numFixedUpdates;
 
 		public string Name { get; set; } = "UntitledGame";
@@ -156,6 +158,18 @@ namespace Dissonance.Engine
 
 			if(!NoGraphics) {
 				RenderUpdateInternal();
+
+				if(Time.TargetRenderFrequency > 0) {
+					double targetMs = 1000.0 / Time.TargetRenderFrequency;
+
+					TimeSpan timeToSleep = TimeSpan.FromMilliseconds(targetMs) - renderStopwatch.Elapsed;
+
+					if(timeToSleep > TimeSpan.Zero) {
+						Thread.Sleep(timeToSleep);
+					}
+				}
+
+				(renderStopwatch ??= new Stopwatch()).Restart();
 			}
 		}
 		public void AssociateWithCurrentThread() => threadStaticInstance = this;
