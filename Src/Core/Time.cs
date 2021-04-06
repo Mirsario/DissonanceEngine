@@ -79,8 +79,8 @@ namespace Dissonance.Engine
 		}
 
 		//Target Framerate
-		private double targetUpdateFrequency = 60;
-		private double targetRenderFrequency = 0;
+		private double targetUpdateFrequency;
+		private double targetRenderFrequency;
 		//Time
 		private float timeScale = 1f;
 		private TimeData fixedTime;
@@ -95,7 +95,7 @@ namespace Dissonance.Engine
 		//Initialization
 		protected override void PreInit()
 		{
-			targetRenderFrequency = 60; //device.RefreshRate;
+			targetRenderFrequency = 0;
 			targetUpdateFrequency = 60;
 		}
 		protected override void Init()
@@ -108,17 +108,17 @@ namespace Dissonance.Engine
 		}
 
 		//Fixed Update
-		[HookPosition(-100000)]
+		[HookPosition(int.MinValue)]
 		protected override void PreFixedUpdate() => PreUpdate(ref fixedTime, ref fixedTimePrev, fixedStopwatch);
 
-		[HookPosition(100000)]
+		[HookPosition(int.MaxValue)]
 		protected override void PostFixedUpdate() => PostUpdate(ref fixedTime, ref fixedTimePrev, fixedStopwatch);
 
 		//Render Update
-		[HookPosition(-100000)]
+		[HookPosition(int.MinValue)]
 		protected override void PreRenderUpdate() => PreUpdate(ref renderTime, ref renderTimePrev, renderStopwatch);
 
-		[HookPosition(100000)]
+		[HookPosition(int.MaxValue)]
 		protected override void PostRenderUpdate() => PostUpdate(ref renderTime, ref renderTimePrev, renderStopwatch);
 
 		private void PreUpdate(ref TimeData currentTime, ref TimeData previousTime, Stopwatch stopwatch)
