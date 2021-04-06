@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine
 {
-	public class AllowOnlyOneInWorld : ComponentAttribute
+	public class AllowOnlyOneInWorldAttribute : ComponentAttribute
 	{
 		public override void OnComponentEnabled(GameObject gameObject, Component component)
 		{

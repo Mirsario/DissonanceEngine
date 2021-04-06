@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine
 {
-	public class AllowOnlyOnePerObject : ComponentAttribute
+	public class AllowOnlyOnePerObjectAttribute : ComponentAttribute
 	{
 		public override void PreAddComponent(GameObject gameObject, Type type)
 		{
