@@ -157,6 +157,8 @@ namespace Dissonance.Engine
 			}
 
 			if(!NoGraphics) {
+				renderStopwatch ??= new Stopwatch();
+
 				RenderUpdateInternal();
 
 				if(Time.TargetRenderFrequency > 0) {
@@ -169,7 +171,7 @@ namespace Dissonance.Engine
 					}
 				}
 
-				(renderStopwatch ??= new Stopwatch()).Restart();
+				renderStopwatch.Restart();
 			}
 		}
 		public void AssociateWithCurrentThread() => threadStaticInstance = this;
