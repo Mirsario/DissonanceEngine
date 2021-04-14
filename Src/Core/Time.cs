@@ -28,7 +28,7 @@ namespace Dissonance.Engine
 		public static float GameTime => Game.IsFixedUpdate ? FixedGameTime : RenderGameTime;
 		public static float GlobalTime => Game.IsFixedUpdate ? FixedGlobalTime : RenderGlobalTime;
 		public static float DeltaTime => Game.IsFixedUpdate ? FixedDeltaTime : RenderDeltaTime; //It might be a bit weird that this isn't 2 'GameDeltaTime' and 'GlobalDeltaTime' properties.
-																								//Fixed Time
+		//Fixed Time
 		public static float FixedGameTime => Instance.fixedTime.game;
 		public static float FixedGlobalTime => Instance.fixedTime.global;
 		public static float FixedDeltaTime => 1f / (float)TargetUpdateFrequency;
