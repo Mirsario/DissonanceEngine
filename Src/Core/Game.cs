@@ -156,23 +156,26 @@ namespace Dissonance.Engine
 				numFixedUpdates++;
 			}
 
-			if(!NoGraphics) {
-				renderStopwatch ??= new Stopwatch();
-
-				RenderUpdateInternal();
-
-				if(Time.TargetRenderFrequency > 0) {
-					double targetMs = 1000.0 / Time.TargetRenderFrequency;
-
-					TimeSpan timeToSleep = TimeSpan.FromMilliseconds(targetMs) - renderStopwatch.Elapsed;
-
-					if(timeToSleep > TimeSpan.Zero) {
-						Thread.Sleep(timeToSleep);
-					}
-				}
-
-				renderStopwatch.Restart();
+			if(NoGraphics) {
+				Thread.Sleep(1);
+				return;
 			}
+
+			renderStopwatch ??= new Stopwatch();
+
+			RenderUpdateInternal();
+
+			if(Time.TargetRenderFrequency > 0) {
+				double targetMs = 1000.0 / Time.TargetRenderFrequency;
+
+				TimeSpan timeToSleep = TimeSpan.FromMilliseconds(targetMs) - renderStopwatch.Elapsed;
+
+				if(timeToSleep > TimeSpan.Zero) {
+					Thread.Sleep(timeToSleep);
+				}
+			}
+
+			renderStopwatch.Restart();
 		}
 		public void AssociateWithCurrentThread() => threadStaticInstance = this;
 
