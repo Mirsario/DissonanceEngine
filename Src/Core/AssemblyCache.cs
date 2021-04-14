@@ -18,6 +18,7 @@ namespace Dissonance.Engine
 			EngineReferences = EngineAssembly.GetReferencedAssemblies();
 			EngineTypes = EngineAssembly.GetTypes();
 
+			/*
 			var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
 			//Attempt to load assemblies that are referenced, but weren't loaded yet.
@@ -32,7 +33,7 @@ namespace Dissonance.Engine
 						catch { }
 					}
 				}
-			}
+			}*/
 
 			var assemblies = AppDomain.CurrentDomain
 				.GetAssemblies()
