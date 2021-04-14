@@ -30,10 +30,12 @@ namespace Dissonance.Engine
 		}
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
-			if(TryGetModule(typeof(T), out var tempResult)) {
-				result = (T)tempResult;
+			for(int i = 0; i < modules.Count; i++) {
+				if(modules[i] is T t) {
+					result = t;
 
-				return true;
+					return true;
+				}
 			}
 
 			result = default;
@@ -53,7 +55,17 @@ namespace Dissonance.Engine
 			return true;
 		}
 		public T GetModule<T>(bool throwOnFailure = true) where T : EngineModule
-			=> (T)GetModule(typeof(T), throwOnFailure);
+		{
+			if(TryGetModule<T>(out var result)) {
+				return result;
+			}
+
+			if(!throwOnFailure) {
+				return null;
+			}
+
+			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
+		}
 		public EngineModule GetModule(Type type, bool throwOnFailure = true)
 		{
 			if(TryGetModule(type, out var result)) {
