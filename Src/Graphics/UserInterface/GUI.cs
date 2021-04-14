@@ -90,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 
 			if(style == null || style.border.left == 0) {
 				DrawUtils.DrawQuadUv0(
-					new Vector4(vector.x, 1f - vector.y, vector.z, 1f - vector.w),
+					new Vector4(vector.x, 1f - vector.w, vector.z, 1f - vector.y),
 					new Vector4(0f, 0f, 1f, 1f)
 				);
 
