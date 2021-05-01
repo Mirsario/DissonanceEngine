@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Dissonance.Engine.Physics;
 
 namespace Dissonance.Engine
 {
-	public partial class GameObject : ProgrammableEntity, IDisposable
+	public partial class GameObject : IDisposable
 	{
 		private static GameObjectManager Manager => Game.Instance.GetModule<GameObjectManager>();
 
@@ -105,8 +103,6 @@ namespace Dissonance.Engine
 
 		public void Dispose()
 		{
-			ProgrammableEntityManager.UnsubscribeEntity(this);
-
 			OnDispose();
 			ComponentDispose();
 
@@ -131,8 +127,6 @@ namespace Dissonance.Engine
 				lists.enabled.Add(this);
 				lists.disabled.Remove(this);
 			});
-
-			ProgrammableEntityManager.SubscribeEntity(this);
 		}
 		private void OnDisabled()
 		{
@@ -140,8 +134,6 @@ namespace Dissonance.Engine
 				lists.disabled.Add(this);
 				lists.enabled.Remove(this);
 			});
-
-			ProgrammableEntityManager.UnsubscribeEntity(this);
 		}
 		private void Init()
 		{
