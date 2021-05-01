@@ -14,7 +14,9 @@ namespace Dissonance.Engine
 
 		//AddComponent
 		public T AddComponent<T>(Action<T> initializer) where T : Component
-			=> AddComponent(true, initializer);
+		{
+			return AddComponent(true, initializer);
+		}
 		public T AddComponent<T>(bool enable, Action<T> initializer) where T : Component
 		{
 			T component = AddComponent<T>(false);
@@ -28,7 +30,9 @@ namespace Dissonance.Engine
 			return component;
 		}
 		public T AddComponent<T>(bool enable = true) where T : Component
-			=> (T)AddComponentInternal(typeof(T), enable);
+		{
+			return (T)AddComponentInternal(typeof(T), enable);
+		}
 		public Component AddComponent(Type type, bool enable = true)
 		{
 			AssertionUtils.TypeIsAssignableFrom(typeof(Component), type);
@@ -61,6 +65,26 @@ namespace Dissonance.Engine
 			for(int i = 0; i < componentsInternal.Count; i++) {
 				if(componentsInternal[i] is T tComponent) {
 					yield return tComponent;
+				}
+			}
+		}
+		//GetOrAddComponent
+		public T GetOrAddComponent<T>() where T : Component
+		{
+			if(!TryGetComponent<T>(out var result)) {
+				result = AddComponent<T>();
+			}
+
+			return result;
+		}
+		//RemoveComponent
+		public void RemoveComponent<T>() where T : Component
+		{
+			for(int i = 0; i < componentsInternal.Count; i++) {
+				if(componentsInternal[i] is T component) {
+					component.Dispose();
+
+					componentsInternal.RemoveAt(i--);
 				}
 			}
 		}
