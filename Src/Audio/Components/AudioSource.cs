@@ -3,28 +3,34 @@ using System;
 
 namespace Dissonance.Engine.Audio
 {
-	public class AudioSource : Component
+	public struct AudioSource : IComponent
 	{
-		public static float defaultMaxDistance = 32f;
+		[Flags]
+		internal enum UpdateFlags : byte
+		{
+			Clip = 1,
+			Volume = 2,
+			Pitch = 4,
+			Loop = 8,
+			PlaybackOffset = 16,
+			Is2D = 32,
+			RefDistance = 64,
+			MaxDistance = 128,
+		}
+
+		public static float DefaultMaxDistance { get; set; } = 32f;
 
 		internal uint sourceId;
+		internal UpdateFlags updateFlags;
 
-		protected AudioClip clip;
-		protected bool is2D;
-		protected bool loop;
-		protected float refDistance = 0f;
-		protected float maxDistance = defaultMaxDistance;
-		protected float volume = 1f;
-		protected float pitch = 1f;
-		protected float playbackOffset;
-		protected bool updateClip;
-		protected bool updateIs2D;
-		protected bool updateLoop;
-		protected bool updateRefDistance = true;
-		protected bool updateMaxDistance = true;
-		protected bool updateVolume = true;
-		protected bool updatePitch = true;
-		protected bool updatePlaybackOffset;
+		private AudioClip clip;
+		private bool is2D;
+		private bool loop;
+		private float refDistance;
+		private float maxDistance; // = DefaultMaxDistance;
+		private float volume; // = 1f;
+		private float pitch; // = 1f;
+		private float playbackOffset;
 
 		///<summary>Indicates whether or not the source is currently playing.</summary>
 		public bool IsPlaying => (SourceState)AL.GetSource(sourceId, GetSourceInt.SourceState) == SourceState.Playing;
@@ -32,180 +38,73 @@ namespace Dissonance.Engine.Audio
 		public AudioClip Clip {
 			get => clip;
 			set {
-				if(Enabled && IsPlaying) {
-					Stop();
-				}
-
-				clip = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceInt.Buffer, (int)(clip?.bufferId ?? 0));
-
-					updateClip = false;
-				} else {
-					updateClip = true;
+				if(clip != value) {
+					clip = value;
+					updateFlags |= UpdateFlags.Clip;
 				}
 			}
 		}
 		public bool Is2D {
 			get => is2D;
 			set {
-				is2D = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceBool.SourceRelative, is2D);
-
-					unsafe {
-						AL.Source(sourceId, SourceFloatArray.Position, is2D ? Vector3.Zero : Transform.Position);
-					}
-
-					updateIs2D = false;
-				} else {
-					updateIs2D = true;
+				if(is2D != value) {
+					is2D = value;
+					updateFlags |= UpdateFlags.Is2D;
 				}
 			}
 		}
 		public bool Loop {
 			get => loop;
 			set {
-				loop = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceBool.Looping, loop);
-
-					updateLoop = false;
-				} else {
-					updateLoop = true;
+				if(loop != value) {
+					loop = value;
+					updateFlags |= UpdateFlags.Loop;
 				}
 			}
 		}
 		public float RefDistance {
 			get => refDistance;
 			set {
-				refDistance = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceFloat.ReferenceDistance, refDistance);
-
-					updateRefDistance = false;
-				} else {
-					updateRefDistance = true;
+				if(refDistance != value) {
+					refDistance = value;
+					updateFlags |= UpdateFlags.RefDistance;
 				}
 			}
 		}
 		public float MaxDistance {
 			get => maxDistance;
 			set {
-				maxDistance = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceFloat.MaxDistance, maxDistance);
-
-					updateMaxDistance = false;
-				} else {
-					updateMaxDistance = true;
+				if(maxDistance != value) {
+					maxDistance = value;
+					updateFlags |= UpdateFlags.MaxDistance;
 				}
 			}
 		}
 		public float Volume {
 			get => volume;
 			set {
-				volume = value;
-
-				if(Enabled) {
-					if(value < 1f) {
-						AL.Source(sourceId, SourceFloat.Gain, 1f);
-						AL.Source(sourceId, SourceFloat.MaxGain, Math.Max(0f, value));
-					} else {
-						AL.Source(sourceId, SourceFloat.Gain, value);
-						AL.Source(sourceId, SourceFloat.MaxGain, 1f);
-					}
-
-					updateVolume = false;
-				} else {
-					updateVolume = true;
+				if(volume != value) {
+					volume = value;
+					updateFlags |= UpdateFlags.Volume;
 				}
 			}
 		}
 		public float Pitch {
 			get => pitch;
 			set {
-				pitch = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceFloat.Pitch, value);
-
-					updatePitch = false;
-				} else {
-					updatePitch = true;
+				if(pitch != value) {
+					pitch = value;
+					updateFlags |= UpdateFlags.Pitch;
 				}
 			}
 		}
 		public float PlaybackOffset {
 			get => playbackOffset;
 			set {
-				playbackOffset = value;
-
-				if(Enabled) {
-					AL.Source(sourceId, SourceFloat.SecOffset, value);
-
-					updatePlaybackOffset = false;
-				} else {
-					updatePlaybackOffset = true;
+				if(playbackOffset != value) {
+					playbackOffset = value;
+					updateFlags |= UpdateFlags.PlaybackOffset;
 				}
-			}
-		}
-
-		protected override void OnInit()
-		{
-			AL.GenSource(out sourceId);
-
-			FixedUpdate();
-		}
-		protected override void OnEnable()
-		{
-			if(updateClip) {
-				Clip = clip;
-			}
-
-			if(updateIs2D) {
-				Is2D = is2D;
-			}
-
-			if(updateLoop) {
-				Loop = loop;
-			}
-
-			if(updateRefDistance) {
-				RefDistance = refDistance;
-			}
-
-			if(updateMaxDistance) {
-				MaxDistance = maxDistance;
-			}
-
-			if(updateVolume) {
-				Volume = volume;
-			}
-
-			if(updatePitch) {
-				Pitch = pitch;
-			}
-
-			if(updatePlaybackOffset) {
-				PlaybackOffset = playbackOffset;
-			}
-		}
-		protected override void OnDispose()
-		{
-			AL.DeleteSource(sourceId);
-		}
-		public override void FixedUpdate()
-		{
-			if(!is2D) {
-				Vector3 pos = Transform.Position;
-
-				AL.Source(sourceId, SourceFloat3.Position, pos.x, pos.y, pos.z);
 			}
 		}
 

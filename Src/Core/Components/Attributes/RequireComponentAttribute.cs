@@ -10,7 +10,7 @@ namespace Dissonance.Engine
 
 		public RequireComponentAttribute(Type componentType)
 		{
-			AssertionUtils.TypeIsAssignableFrom(typeof(Component), componentType);
+			AssertionUtils.TypeIsAssignableFrom(typeof(IComponent), componentType);
 
 			RequiredType = componentType;
 		}

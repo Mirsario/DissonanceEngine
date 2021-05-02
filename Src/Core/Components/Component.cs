@@ -2,7 +2,12 @@ using System;
 
 namespace Dissonance.Engine
 {
-	public class Component : ProgrammableEntity, IDisposable
+	public interface IComponent
+	{
+		virtual void EnsureInitialized() { }
+	}
+
+	/*public class Component : ProgrammableEntity, IDisposable
 	{
 		public readonly string Name;
 
@@ -135,5 +140,5 @@ namespace Dissonance.Engine
 
 			ProgrammableEntityManager.UnsubscribeEntity(this);
 		}
-	}
+	}*/
 }

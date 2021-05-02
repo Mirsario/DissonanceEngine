@@ -112,12 +112,12 @@ namespace Dissonance.Engine.Graphics
 
 				camera.matrix_view = Matrix4x4.LookAt(cameraPosition, cameraPosition + cameraTransform.Forward, cameraTransform.Up);
 
-				if(camera.orthographic) {
+				if(camera.Orthographic) {
 					float max = Mathf.Max(Screen.Width, Screen.Height);
 
-					camera.matrix_proj = Matrix4x4.CreateOrthographic(Screen.Width / max * camera.orthographicSize, Screen.Height / max * camera.orthographicSize, camera.nearClip, camera.farClip);
+					camera.matrix_proj = Matrix4x4.CreateOrthographic(Screen.Width / max * camera.OrthographicSize, Screen.Height / max * camera.OrthographicSize, camera.NearClip, camera.FarClip);
 				} else {
-					camera.matrix_proj = Matrix4x4.CreatePerspectiveFOV(camera.fov * Mathf.Deg2Rad, aspectRatio, camera.nearClip, camera.farClip);
+					camera.matrix_proj = Matrix4x4.CreatePerspectiveFOV(camera.Fov * Mathf.Deg2Rad, aspectRatio, camera.NearClip, camera.FarClip);
 				}
 
 				camera.matrix_viewInverse = Matrix4x4.Invert(camera.matrix_view);

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public class Transform : Component
+	public struct Transform : IComponent
 	{
 		[Flags]
 		public enum UpdateFlags
@@ -21,14 +21,14 @@ namespace Dissonance.Engine
 
 		private readonly List<Transform> ChildrenInternal;
 
-		private Matrix4x4 matrix = Matrix4x4.Identity;
-		private Transform parent;
+		private Matrix4x4 matrix;
+		//private Transform parent;
 
-		public Transform Root => Parent == null ? this : EnumerateParents().Last();
-		public Transform Parent {
-			get => parent;
+		public Transform Root => Parent != null ? EnumerateParents().Last() : this;
+		public Transform? Parent {
+			get => null; //parent;
 			set {
-				if(parent == value) {
+				/*if(parent == value) {
 					return;
 				}
 
@@ -41,7 +41,7 @@ namespace Dissonance.Engine
 				}
 
 				parent = value;
-				GameObject.EnabledInHierarchy = parent?.Enabled ?? true;
+				GameObject.EnabledInHierarchy = parent?.Enabled ?? true;*/
 			}
 		}
 		public Vector3 Forward {
@@ -178,25 +178,13 @@ namespace Dissonance.Engine
 
 		public event Action<Transform, UpdateFlags> OnModified;
 
-		public Transform() : base()
-		{
-			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
-		}
-
-		public override Component Clone(GameObject newGameObject)
-		{
-			var clone = (Transform)base.Clone(newGameObject);
-
-			clone.parent = null;
-
-			return clone;
-		}
-
 		public IEnumerable<Transform> EnumerateParents()
 		{
-			var transform = this;
+			Transform transform = this;
 
-			while((transform = transform.Parent) != null) {
+			while(transform.Parent.HasValue) {
+				transform = transform.Parent.Value;
+
 				yield return transform;
 			}
 		}
@@ -216,10 +204,11 @@ namespace Dissonance.Engine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToLocalSpace(Matrix4x4 matrix)
 		{
-			Transform p = this;
+			Transform transform = this;
 
-			while((p = p.Parent) != null) {
-				matrix *= p.Matrix.Inverted;
+			while(transform.Parent.HasValue) {
+				transform = transform.Parent.Value;
+				matrix *= transform.Matrix.Inverted;
 			}
 
 			return matrix;
@@ -228,10 +217,11 @@ namespace Dissonance.Engine
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Matrix4x4 ToWorldSpace(Matrix4x4 matrix)
 		{
-			Transform p = this;
+			Transform transform = this;
 
-			while((p = p.Parent) != null) {
-				matrix *= p.Matrix;
+			while(transform.Parent.HasValue) {
+				transform = transform.Parent.Value;
+				matrix *= transform.Matrix;
 			}
 
 			return matrix;

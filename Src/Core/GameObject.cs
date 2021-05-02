@@ -16,9 +16,6 @@ namespace Dissonance.Engine
 		private bool enabledInHierarchy = true;
 		private bool initialized;
 
-		public Transform Transform { get; private set; }
-		public Transform2D Transform2D { get; private set; }
-
 		public bool Enabled {
 			get => enabled;
 			private set {
@@ -34,16 +31,6 @@ namespace Dissonance.Engine
 					enabled = false;
 
 					OnDisabled();
-				}
-
-				//Enable/disable components
-				foreach(var component in Components) {
-					component.EnabledInHierarchy = value;
-				}
-
-				//Enable/disable children
-				foreach(var child in Transform.Children) {
-					child.GameObject.EnabledInHierarchy = value;
 				}
 			}
 		}
@@ -82,9 +69,6 @@ namespace Dissonance.Engine
 			Name = GetType().Name;
 
 			ComponentPreInit();
-
-			Transform = AddComponent<Transform>();
-			Transform2D = AddComponent<Transform2D>();
 		}
 
 		public virtual void OnInit() { }
@@ -94,9 +78,6 @@ namespace Dissonance.Engine
 			var clone = (GameObject)MemberwiseClone();
 
 			ComponentClone(clone);
-
-			clone.Transform = clone.GetComponent<Transform>();
-			clone.Transform2D = clone.GetComponent<Transform2D>();
 
 			return clone;
 		}
