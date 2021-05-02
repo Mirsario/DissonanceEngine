@@ -3,28 +3,33 @@ using System;
 
 namespace Dissonance.Engine.Audio
 {
-	public class AudioSource : Component
+	public sealed class AudioSource : Component
 	{
-		public static float defaultMaxDistance = 32f;
+		[Flags]
+		private enum UpdateFlags : byte
+		{
+			Clip = 1,
+			Volume = 2,
+			Pitch = 4,
+			Loop = 8,
+			PlaybackOffset = 16,
+			Is2D = 32,
+			RefDistance = 64,
+			MaxDistance = 128,
+		}
 
-		internal uint sourceId;
+		public static float DefaultMaxDistance { get; set; } = 32f;
 
-		protected AudioClip clip;
-		protected bool is2D;
-		protected bool loop;
-		protected float refDistance = 0f;
-		protected float maxDistance = defaultMaxDistance;
-		protected float volume = 1f;
-		protected float pitch = 1f;
-		protected float playbackOffset;
-		protected bool updateClip;
-		protected bool updateIs2D;
-		protected bool updateLoop;
-		protected bool updateRefDistance = true;
-		protected bool updateMaxDistance = true;
-		protected bool updateVolume = true;
-		protected bool updatePitch = true;
-		protected bool updatePlaybackOffset;
+		private uint sourceId;
+		private AudioClip clip;
+		private bool is2D;
+		private bool loop;
+		private float refDistance = 0f;
+		private float maxDistance = DefaultMaxDistance;
+		private float volume = 1f;
+		private float pitch = 1f;
+		private float playbackOffset;
+		private UpdateFlags updateFlags = UpdateFlags.Volume | UpdateFlags.Pitch | UpdateFlags.RefDistance | UpdateFlags.MaxDistance;
 
 		///<summary>Indicates whether or not the source is currently playing.</summary>
 		public bool IsPlaying => (SourceState)AL.GetSource(sourceId, GetSourceInt.SourceState) == SourceState.Playing;
@@ -41,9 +46,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceInt.Buffer, (int)(clip?.bufferId ?? 0));
 
-					updateClip = false;
+					updateFlags &= ~UpdateFlags.Clip;
 				} else {
-					updateClip = true;
+					updateFlags |= UpdateFlags.Clip;
 				}
 			}
 		}
@@ -59,9 +64,9 @@ namespace Dissonance.Engine.Audio
 						AL.Source(sourceId, SourceFloatArray.Position, is2D ? Vector3.Zero : Transform.Position);
 					}
 
-					updateIs2D = false;
+					updateFlags &= ~UpdateFlags.Is2D;
 				} else {
-					updateIs2D = true;
+					updateFlags |= UpdateFlags.Is2D;
 				}
 			}
 		}
@@ -73,9 +78,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceBool.Looping, loop);
 
-					updateLoop = false;
+					updateFlags &= ~UpdateFlags.Loop;
 				} else {
-					updateLoop = true;
+					updateFlags |= UpdateFlags.Loop;
 				}
 			}
 		}
@@ -87,9 +92,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.ReferenceDistance, refDistance);
 
-					updateRefDistance = false;
+					updateFlags &= ~UpdateFlags.RefDistance;
 				} else {
-					updateRefDistance = true;
+					updateFlags |= UpdateFlags.RefDistance;
 				}
 			}
 		}
@@ -101,9 +106,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.MaxDistance, maxDistance);
 
-					updateMaxDistance = false;
+					updateFlags &= ~UpdateFlags.MaxDistance;
 				} else {
-					updateMaxDistance = true;
+					updateFlags |= UpdateFlags.MaxDistance;
 				}
 			}
 		}
@@ -121,9 +126,9 @@ namespace Dissonance.Engine.Audio
 						AL.Source(sourceId, SourceFloat.MaxGain, 1f);
 					}
 
-					updateVolume = false;
+					updateFlags &= ~UpdateFlags.Volume;
 				} else {
-					updateVolume = true;
+					updateFlags |= UpdateFlags.Volume;
 				}
 			}
 		}
@@ -135,9 +140,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.Pitch, value);
 
-					updatePitch = false;
+					updateFlags &= ~UpdateFlags.Pitch;
 				} else {
-					updatePitch = true;
+					updateFlags |= UpdateFlags.Pitch;
 				}
 			}
 		}
@@ -149,9 +154,9 @@ namespace Dissonance.Engine.Audio
 				if(Enabled) {
 					AL.Source(sourceId, SourceFloat.SecOffset, value);
 
-					updatePlaybackOffset = false;
+					updateFlags &= ~UpdateFlags.PlaybackOffset;
 				} else {
-					updatePlaybackOffset = true;
+					updateFlags |= UpdateFlags.PlaybackOffset;
 				}
 			}
 		}
@@ -164,35 +169,35 @@ namespace Dissonance.Engine.Audio
 		}
 		protected override void OnEnable()
 		{
-			if(updateClip) {
+			if(updateFlags.HasFlag(UpdateFlags.Clip)) {
 				Clip = clip;
 			}
 
-			if(updateIs2D) {
+			if(updateFlags.HasFlag(UpdateFlags.Is2D)) {
 				Is2D = is2D;
 			}
 
-			if(updateLoop) {
+			if(updateFlags.HasFlag(UpdateFlags.Loop)) {
 				Loop = loop;
 			}
 
-			if(updateRefDistance) {
+			if(updateFlags.HasFlag(UpdateFlags.RefDistance)) {
 				RefDistance = refDistance;
 			}
 
-			if(updateMaxDistance) {
+			if(updateFlags.HasFlag(UpdateFlags.MaxDistance)) {
 				MaxDistance = maxDistance;
 			}
 
-			if(updateVolume) {
+			if(updateFlags.HasFlag(UpdateFlags.Volume)) {
 				Volume = volume;
 			}
 
-			if(updatePitch) {
+			if(updateFlags.HasFlag(UpdateFlags.Pitch)) {
 				Pitch = pitch;
 			}
 
-			if(updatePlaybackOffset) {
+			if(updateFlags.HasFlag(UpdateFlags.PlaybackOffset)) {
 				PlaybackOffset = playbackOffset;
 			}
 		}
