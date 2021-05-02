@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			public Shader shader;
 			public Material material;
-			public Renderer renderer;
+			public IRenderer renderer;
 			public object renderObject;
 		}
 
@@ -37,7 +37,7 @@ namespace Dissonance.Engine.Graphics
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = ComponentManager.CountComponents<Renderer>();
+			int rendererCount = ComponentManager.CountComponents<IRenderer>();
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
 			//CameraLoop
@@ -78,7 +78,7 @@ namespace Dissonance.Engine.Graphics
 						continue;
 					}
 
-					bool cullResult = camera.orthographic || camera.BoxInFrustum(renderer.AABB);
+					bool cullResult = camera.Orthographic || camera.BoxInFrustum(renderer.AABB);
 
 					if(cullResult) {
 						ref var entry = ref renderQueue[numToRenderer++];
@@ -158,7 +158,7 @@ namespace Dissonance.Engine.Graphics
 					}
 
 					shader.SetupMatrixUniformsCached(
-						renderer.Transform, uniformComputed,
+						transform, uniformComputed,
 						ref world, ref worldInverse,
 						ref worldView, ref worldViewInverse,
 						ref worldViewProj, ref worldViewProjInverse,

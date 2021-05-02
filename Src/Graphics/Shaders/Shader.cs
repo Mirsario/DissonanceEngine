@@ -127,14 +127,14 @@ namespace Dissonance.Engine.Graphics
 				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.ambientColor.x, Rendering.ambientColor.y, Rendering.ambientColor.z);
 			}
 		}
-		internal void SetupCameraUniforms(Camera camera, Vector3 cameraPos)
+		internal void SetupCameraUniforms(in Camera camera, Vector3 cameraPos)
 		{
 			if(hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip], camera.nearClip);
+				GL.Uniform1(defaultUniformIndex[DSU.NearClip], camera.NearClip);
 			}
 
 			if(hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip], camera.farClip);
+				GL.Uniform1(defaultUniformIndex[DSU.FarClip], camera.FarClip);
 			}
 
 			if(hasDefaultUniform[DSU.CameraPosition]) {
@@ -147,7 +147,7 @@ namespace Dissonance.Engine.Graphics
 				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
-		internal void SetupMatrixUniformsCached(Transform transform, bool[] uniformComputed,
+		internal void SetupMatrixUniformsCached(in Transform transform, bool[] uniformComputed,
 			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,

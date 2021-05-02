@@ -2,7 +2,12 @@ using System;
 
 namespace Dissonance.Engine
 {
-	public class Component : IDisposable
+	public interface IComponent
+	{
+		virtual void EnsureInitialized() { }
+	}
+
+	/*public class Component : ProgrammableEntity, IDisposable
 	{
 		public readonly string Name;
 
@@ -72,10 +77,6 @@ namespace Dissonance.Engine
 			return clone;
 		}
 
-		internal protected virtual void FixedUpdate() { }
-		internal protected virtual void RenderUpdate() { }
-		internal protected virtual void OnGUI() { }
-
 		protected virtual void OnPreInit() { }
 		protected virtual void OnInit() { }
 		protected virtual void OnEnable() { }
@@ -84,6 +85,8 @@ namespace Dissonance.Engine
 
 		public void Dispose()
 		{
+			ProgrammableEntityManager.UnsubscribeEntity(this);
+
 			OnDispose();
 
 			ComponentManager.ModifyInstanceLists(GetType(), lists => {
@@ -117,6 +120,8 @@ namespace Dissonance.Engine
 			ComponentManager.ModifyInstanceLists(GetType(), lists => lists.enabled.Add(this)); //Add to the list of enabled components.
 
 			OnEnable();
+
+			ProgrammableEntityManager.SubscribeEntity(this);
 		}
 		private void OnDisableInternal()
 		{
@@ -132,6 +137,8 @@ namespace Dissonance.Engine
 			});
 
 			OnDisable();
+
+			ProgrammableEntityManager.UnsubscribeEntity(this);
 		}
-	}
+	}*/
 }

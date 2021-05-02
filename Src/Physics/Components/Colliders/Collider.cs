@@ -2,7 +2,7 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	public abstract class Collider : PhysicsComponent
+	public interface ICollider
 	{
 		internal CollisionShape collShape;
 
@@ -32,38 +32,6 @@ namespace Dissonance.Engine.Physics
 			gameObject.rigidbodyInternal.UpdateShape();
 
 			needsUpdate = false;
-		}
-
-		protected override void OnInit()
-		{
-			base.OnInit();
-
-			needsUpdate = true;
-		}
-		protected override void OnEnable()
-		{
-			base.OnEnable();
-
-			if(needsUpdate) {
-				UpdateCollider();
-			}
-		}
-		protected override void OnDispose()
-		{
-			base.OnDispose();
-
-			/*if(OwnsShape) {
-				collShape?.Dispose();
-			}*/
-		}
-
-		protected void TryUpdateCollider()
-		{
-			if(Enabled) {
-				UpdateCollider();
-			} else {
-				needsUpdate = true;
-			}
 		}
 	}
 }

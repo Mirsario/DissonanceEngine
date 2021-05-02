@@ -5,14 +5,14 @@ using System.Reflection;
 
 namespace Dissonance.Engine
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
 	public abstract class ComponentAttribute : Attribute
 	{
 		private static Dictionary<Type, ComponentAttribute[]> cache = new Dictionary<Type, ComponentAttribute[]>();
 
 		public virtual void PreAddComponent(GameObject gameObject, Type type) { }
-		public virtual void OnComponentEnabled(GameObject gameObject, Component component) { }
-		public virtual void OnComponentDisabled(GameObject gameObject, Component component) { }
+		public virtual void OnComponentEnabled(GameObject gameObject, IComponent component) { }
+		public virtual void OnComponentDisabled(GameObject gameObject, IComponent component) { }
 
 		public static IEnumerable<ComponentAttribute> EnumerateForType(Type type)
 		{

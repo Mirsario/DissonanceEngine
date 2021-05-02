@@ -24,7 +24,7 @@ namespace Dissonance.Engine.Graphics
 
 		protected Shader shader;
 
-		internal List<Renderer> rendererAttachments;
+		internal List<IRenderer> rendererAttachments;
 
 		public Shader Shader {
 			get => shader;

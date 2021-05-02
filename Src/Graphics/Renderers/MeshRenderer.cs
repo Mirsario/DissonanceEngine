@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class MeshRenderer : Renderer
+	public struct MeshRenderer : IComponent, IRenderer
 	{
 		internal MeshLOD[] lodMeshes = new MeshLOD[1] { new MeshLOD(null, null) };
 
 		private Bounds aabb;
 		private Matrix4x4 aabbLastMatrix;
 
-		public virtual MeshLOD[] LODMeshes {
+		public MeshLOD[] LODMeshes {
 			get => lodMeshes;
 			set {
 				if(value == null) {
@@ -40,7 +40,7 @@ namespace Dissonance.Engine.Graphics
 				lodMeshes = list.ToArray();
 			}
 		}
-		public virtual MeshLOD LODMesh {
+		public MeshLOD LODMesh {
 			get => lodMeshes?[0];
 			set {
 				if(lodMeshes != null) {
@@ -50,12 +50,12 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 		}
-		public virtual Mesh Mesh {
+		public Mesh Mesh {
 			get => lodMeshes[0].mesh;
 			set => lodMeshes[0].mesh = value;
 		}
 
-		public override Bounds AABB {
+		public Bounds AABB {
 			get {
 				var matrix = Transform.WorldMatrix;
 				var translation = matrix.ExtractTranslation();
@@ -98,12 +98,12 @@ namespace Dissonance.Engine.Graphics
 				return new Bounds(aabb.min + translation, aabb.max + translation);
 			}
 		}
-		public override Material Material {
+		public Material Material {
 			get => lodMeshes[0].material;
 			set => lodMeshes[0].material = value;
 		}
 
-		public override bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
+		public bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
 		{
 			var lods = LODMeshes;
 
@@ -136,6 +136,6 @@ namespace Dissonance.Engine.Graphics
 
 			return false;
 		}
-		public override void Render(object renderObject) => ((Mesh)renderObject).Render();
+		public void Render(object renderObject) => ((Mesh)renderObject).Render();
 	}
 }

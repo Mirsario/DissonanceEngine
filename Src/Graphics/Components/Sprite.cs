@@ -1,6 +1,7 @@
+/*
 namespace Dissonance.Engine.Graphics
 {
-	public class Sprite : Renderer
+	public struct Sprite : IComponent, IRenderer
 	{
 		public enum SpriteEffects
 		{
@@ -10,7 +11,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static float DefaultPixelSize { get; set; } = 1f;
 
-		protected static Mesh bufferMesh;
+		private static Mesh bufferMesh;
 
 		public SpriteEffects spriteEffects;
 
@@ -117,3 +118,4 @@ namespace Dissonance.Engine.Graphics
 		}
 	}
 }
+*/

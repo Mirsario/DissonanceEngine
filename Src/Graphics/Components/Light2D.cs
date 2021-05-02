@@ -1,9 +1,16 @@
 namespace Dissonance.Engine.Graphics
 {
-	public class Light2D : Component
+	public struct Light2D : IComponent
 	{
-		public Vector3 color = Vector3.One;
-		public float range = 16f;
-		public float intensity = 1f;
+		public float Range { get; set; }
+		public float Intensity { get; set; }
+		public Vector3 Color { get; set; }
+
+		public Light2D(Vector3 color, float range = 16f, float intensity = 1f)
+		{
+			Color = color;
+			Range = range;
+			Intensity = intensity;
+		}
 	}
 }
