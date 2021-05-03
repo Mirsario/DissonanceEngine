@@ -205,7 +205,7 @@ namespace Dissonance.Engine.Audio
 		{
 			AL.DeleteSource(sourceId);
 		}
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			if(!is2D) {
 				Vector3 pos = Transform.Position;

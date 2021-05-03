@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Dissonance.Engine.Utilities;
-using ComponentInstanceLists = Dissonance.Engine.InstanceLists<Dissonance.Engine.Component>;
 
 namespace Dissonance.Engine
 {
@@ -10,13 +10,74 @@ namespace Dissonance.Engine
 	{
 		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
 
-		private Dictionary<Type, ComponentInstanceLists> typeInstances = new Dictionary<Type, ComponentInstanceLists>();
-		private Dictionary<Type, ComponentInstanceLists> exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
+		private ComponentTypeInfo[] sortedComponentTypeInfo = Array.Empty<ComponentTypeInfo>();
+		private Dictionary<Type, ComponentTypeInfo> componentInfoByType = new Dictionary<Type, ComponentTypeInfo>();
+		private Type[] componentTypes;
+		private List<HookList> hookLists;
 
-		protected override void Init()
+		internal HookList HookFixedUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
+		internal HookList HookRenderUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("RenderUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
+		internal HookList HookOnGUI { get; private set; } = new HookList(typeof(Component).GetMethod("OnGUI", BindingFlags.Instance | BindingFlags.NonPublic));
+
+		protected override void PreInit()
 		{
-			typeInstances = new Dictionary<Type, ComponentInstanceLists>();
-			exactTypeInstances = new Dictionary<Type, ComponentInstanceLists>();
+			hookLists = new List<HookList> {
+				HookFixedUpdate,
+				HookRenderUpdate,
+				HookOnGUI
+			};
+
+			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
+				foreach(var type in types) {
+					if(!typeof(Component).IsAssignableFrom(type)) {
+						continue;
+					}
+
+					if(componentInfoByType.ContainsKey(type)) {
+						continue;
+					}
+
+					componentInfoByType.Add(type, new ComponentTypeInfo(type));
+				}
+
+				UpdateComponentTypeData();
+			};
+		}
+		protected override void FixedUpdate()
+		{
+			var instance = Instance;
+			int[] hookIndices = instance.HookFixedUpdate.ValidTypeIndices;
+
+			for(int i = 0; i < hookIndices.Length; i++) {
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+
+				for(int j = 0; j < instances.Count; j++) {
+					instances[j].FixedUpdate();
+				}
+			}
+		}
+		protected override void RenderUpdate()
+		{
+			var instance = Instance;
+			int[] hookIndices = instance.HookRenderUpdate.ValidTypeIndices;
+
+			for(int i = 0; i < hookIndices.Length; i++) {
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+
+				for(int j = 0; j < instances.Count; j++) {
+					instances[j].RenderUpdate();
+				}
+			}
+		}
+		protected override void OnDispose()
+		{
+			if(componentInfoByType != null) {
+				componentInfoByType.Clear();
+
+				componentInfoByType = null;
+			}
+
+			sortedComponentTypeInfo = null;
 		}
 
 		//Count
@@ -34,30 +95,39 @@ namespace Dissonance.Engine
 			}
 		}
 
-		internal static void ModifyInstanceLists(Type type, Action<ComponentInstanceLists> action)
+		//TODO: OnGUI hook should be removed forever in favor of adequate non-immediate rendering.
+		internal static void OnGUI()
 		{
-			static ComponentInstanceLists GetLists(Type key, Dictionary<Type, ComponentInstanceLists> dictionary)
-			{
-				if(!dictionary.TryGetValue(key, out var lists)) {
-					dictionary[key] = lists = new ComponentInstanceLists();
+			var instance = Instance;
+			int[] hookIndices = instance.HookOnGUI.ValidTypeIndices;
+
+			for(int i = 0; i < hookIndices.Length; i++) {
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+
+				for(int j = 0; j < instances.Count; j++) {
+					instances[j].OnGUI();
 				}
-
-				return lists;
 			}
+		}
+		internal static void ModifyInstanceLists(Type type, Action<InstanceLists<Component>> action)
+		{
+			var instance = Instance;
 
-			action(GetLists(type, Instance.exactTypeInstances));
+			action(instance.componentInfoByType[type].exactInstances);
 
 			//TODO: This enumeration could've been made faster.
 			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type, true, typeof(Component))) {
-				action(GetLists(baseType, Instance.typeInstances));
+				action(instance.componentInfoByType[baseType].sharedInstances);
 			}
 		}
 
 		private static IReadOnlyList<Component> GetComponentsList(Type type, bool exactType = false, bool? enabled = true)
 		{
-			if(!(exactType ? Instance.exactTypeInstances : Instance.typeInstances).TryGetValue(type, out var lists)) {
+			if(!Instance.componentInfoByType.TryGetValue(type, out var info)) {
 				return null;
 			}
+
+			var lists = exactType ? info.exactInstances : info.sharedInstances;
 
 			return enabled switch
 			{
@@ -65,6 +135,18 @@ namespace Dissonance.Engine
 				false => lists.disabledReadOnly,
 				_ => lists.allReadOnly
 			};
+		}
+		private static void UpdateComponentTypeData()
+		{
+			var instance = Instance;
+
+			//TODO:
+			instance.sortedComponentTypeInfo = instance.componentInfoByType.Values.ToArray();
+			instance.componentTypes = instance.sortedComponentTypeInfo.Select(i => i.type).ToArray();
+
+			for(int i = 0; i < instance.hookLists.Count; i++) {
+				instance.hookLists[i].Update(instance.componentTypes);
+			}
 		}
 	}
 }

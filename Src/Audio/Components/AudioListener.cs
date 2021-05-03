@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Audio
 	[AllowOnlyOneInWorld]
 	public class AudioListener : Component
 	{
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			Vector3 pos = Transform.Position;
 
