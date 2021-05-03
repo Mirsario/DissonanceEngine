@@ -33,6 +33,10 @@ namespace Dissonance.Engine
 						continue;
 					}
 
+					if(componentInfoByType.ContainsKey(type)) {
+						continue;
+					}
+
 					componentInfoByType.Add(type, new ComponentTypeInfo(type));
 				}
 
@@ -45,7 +49,7 @@ namespace Dissonance.Engine
 			int[] hookIndices = instance.HookFixedUpdate.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[i].exactInstances.enabled;
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].FixedUpdate();
@@ -58,7 +62,7 @@ namespace Dissonance.Engine
 			int[] hookIndices = instance.HookRenderUpdate.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[i].exactInstances.enabled;
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].RenderUpdate();
@@ -98,7 +102,7 @@ namespace Dissonance.Engine
 			int[] hookIndices = instance.HookOnGUI.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[i].exactInstances.enabled;
+				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].OnGUI();
