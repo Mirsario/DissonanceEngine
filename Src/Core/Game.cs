@@ -218,7 +218,6 @@ namespace Dissonance.Engine
 			}*/
 
 			FixedUpdate();
-			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.FixedUpdate));
 			moduleHooks.FixedUpdate?.Invoke();
 
 			moduleHooks.PostFixedUpdate?.Invoke();
@@ -230,7 +229,6 @@ namespace Dissonance.Engine
 			moduleHooks.PreRenderUpdate?.Invoke();
 
 			RenderUpdate();
-			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.RenderUpdate));
 			moduleHooks.RenderUpdate?.Invoke();
 
 			moduleHooks.PostRenderUpdate?.Invoke();
