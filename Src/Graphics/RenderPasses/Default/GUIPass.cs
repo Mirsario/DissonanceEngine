@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Graphics
 			GUI.canDraw = true;
 
 			Game.Instance?.OnGUI();
-			ProgrammableEntityManager.InvokeHook(nameof(ProgrammableEntity.OnGUI));
+			ComponentManager.OnGUI();
 
 			GUI.canDraw = false;
 

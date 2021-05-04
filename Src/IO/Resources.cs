@@ -22,15 +22,13 @@ namespace Dissonance.Engine.IO
 
 		private static readonly string[] DefaultSearchPattern = { "*" };
 
-		internal static Resources Instance => Game.Instance.GetModule<Resources>();
-
-		internal Dictionary<string, List<AssetManager>> assetManagers;
-		internal IEnumerable<IEnumerable<AssetManager>> autoloadOrder;
-		internal Dictionary<string, string> nameToPath;
-		internal Dictionary<Type, Dictionary<string, object>> cacheByPath;
-		internal Dictionary<Type, Dictionary<string, object>> cacheByName;
-		internal Dictionary<string, byte[]> builtInAssets;
-		internal bool importingBuiltInAssets;
+		internal static Dictionary<string, List<AssetManager>> assetManagers;
+		internal static IEnumerable<IEnumerable<AssetManager>> autoloadOrder;
+		internal static Dictionary<string, string> nameToPath;
+		internal static Dictionary<Type, Dictionary<string, object>> cacheByPath;
+		internal static Dictionary<Type, Dictionary<string, object>> cacheByName;
+		internal static Dictionary<string, byte[]> builtInAssets;
+		internal static bool importingBuiltInAssets;
 
 		protected override void Init()
 		{
@@ -51,8 +49,71 @@ namespace Dissonance.Engine.IO
 			AutoloadResources();
 		}
 
-		private void PrepareDevIL() => IL.Init();
-		private void LoadManagers()
+		public static void AddToCache<T>(string filePath, T content)
+		{
+			var type = typeof(T);
+
+			if(!cacheByPath.TryGetValue(typeof(T), out var dict)) {
+				cacheByPath[type] = dict = new Dictionary<string, object>(InternalUtils.strComparerInvariantIgnoreCase);
+			}
+
+			dict[filePath] = content;
+		}
+		public static void SetDefaultManager(string ext, Type type)
+		{
+			ext = ext.ToLower();
+
+			if(!assetManagers.TryGetValue(ext, out var list)) {
+				throw new NotImplementedException($"Could not find any '{ext}' asset managers.");
+			}
+
+			for(int i = 0; i < list.Count; i++) {
+				var manager = list[i];
+				var generics = manager.GetType().GetGenericArguments();
+
+				if(generics != null && generics.Length > 0 && generics[0] == type) {
+					list.RemoveAt(i);
+					list.Insert(0, manager);
+					return;
+				}
+			}
+
+			throw new NotImplementedException($"Could not find any ''{ext}'' asset managers which would return a {type.Name}.");
+		}
+		public static bool TryGetFileAssetManager(string file, out AssetManager outManager)
+		{
+			if(!assetManagers.TryGetValue(Path.GetExtension(file).ToLower(), out var list)) {
+				outManager = null;
+
+				return false;
+			}
+
+			outManager = list[0];
+
+			return outManager.Autoload(file);
+		}
+		public static T1 GetAssetManager<T1, T2>()
+			where T1 : AssetManager<T2>
+			where T2 : Asset
+		{
+			var type = typeof(T1);
+
+			//TODO: This loop is idiotic. Cache data for this exact method.
+			foreach(var pair in assetManagers) {
+				foreach(var assetManager in pair.Value) {
+					if(assetManager.GetType() == type) {
+						return (T1)assetManager;
+					}
+				}
+			}
+
+			return null;
+		}
+		public static void RegisterFormats<T>(AssetManager<T> importer, string[] formats, bool allowOverwriting = false) where T : class
+			=> RegisterFormats(typeof(T), importer, formats, allowOverwriting);
+
+		private static void PrepareDevIL() => IL.Init();
+		private static void LoadManagers()
 		{
 			var newOrder = new List<List<AssetManager>> { new List<AssetManager>() };
 
@@ -138,12 +199,12 @@ namespace Dissonance.Engine.IO
 
 			autoloadOrder = newOrder;
 		}
-		private void AutoloadResources()
+		private static void AutoloadResources()
 		{
 			AutoloadBuiltInResources();
 			AutoloadGameResources();
 		}
-		private void AutoloadBuiltInResources()
+		private static void AutoloadBuiltInResources()
 		{
 			importingBuiltInAssets = true;
 
@@ -199,11 +260,11 @@ namespace Dissonance.Engine.IO
 
 			importingBuiltInAssets = false;
 		}
-		private void AutoloadGameResources()
+		private static void AutoloadGameResources()
 		{
 			//Save assets which could be imported with an AssetManager into a dictionary, with AssetManagers being the keys.
 
-			var allGameFiles = Directory.GetFiles(Game.assetsPath, "*.*", SearchOption.AllDirectories);
+			var allGameFiles = Directory.GetFiles(Game.Instance.assetsPath, "*.*", SearchOption.AllDirectories);
 			var gameAssetsByManager = new Dictionary<AssetManager, List<string>>();
 
 			for(int i = 0; i < allGameFiles.Length; i++) {
@@ -259,7 +320,7 @@ namespace Dissonance.Engine.IO
 				}
 			}
 		}
-		private void NameToPath(ref string filePath, out bool multiplePathsFound)
+		private static void NameToPath(ref string filePath, out bool multiplePathsFound)
 		{
 			multiplePathsFound = false;
 
@@ -273,7 +334,7 @@ namespace Dissonance.Engine.IO
 				}
 			}
 		}
-		private void ReadyPath(ref string path)
+		private static void ReadyPath(ref string path)
 		{
 			if(!Path.IsPathRooted(path)) {
 				string lowerPath = path.ToLower();
@@ -283,7 +344,7 @@ namespace Dissonance.Engine.IO
 				}
 			}
 		}
-		private void RegisterFormats(Type type, AssetManager assetManager, string[] extensions, bool allowOverwriting = false)
+		private static void RegisterFormats(Type type, AssetManager assetManager, string[] extensions, bool allowOverwriting = false)
 		{
 			//TODO: Use the unused parameters.
 
@@ -299,70 +360,6 @@ namespace Dissonance.Engine.IO
 				assetManagers[ext] = list;
 			}
 		}
-
-		public static void AddToCache<T>(string filePath, T content)
-		{
-			var type = typeof(T);
-			var instance = Instance;
-
-			if(!instance.cacheByPath.TryGetValue(typeof(T), out var dict)) {
-				instance.cacheByPath[type] = dict = new Dictionary<string, object>(InternalUtils.strComparerInvariantIgnoreCase);
-			}
-
-			dict[filePath] = content;
-		}
-		public static void SetDefaultManager(string ext, Type type)
-		{
-			ext = ext.ToLower();
-
-			if(!Instance.assetManagers.TryGetValue(ext, out var list)) {
-				throw new NotImplementedException($"Could not find any '{ext}' asset managers.");
-			}
-
-			for(int i = 0; i < list.Count; i++) {
-				var manager = list[i];
-				var generics = manager.GetType().GetGenericArguments();
-
-				if(generics != null && generics.Length > 0 && generics[0] == type) {
-					list.RemoveAt(i);
-					list.Insert(0, manager);
-					return;
-				}
-			}
-
-			throw new NotImplementedException($"Could not find any ''{ext}'' asset managers which would return a {type.Name}.");
-		}
-		public static bool TryGetFileAssetManager(string file, out AssetManager outManager)
-		{
-			if(!Instance.assetManagers.TryGetValue(Path.GetExtension(file).ToLower(), out var list)) {
-				outManager = null;
-
-				return false;
-			}
-
-			outManager = list[0];
-
-			return outManager.Autoload(file);
-		}
-		public static T1 GetAssetManager<T1, T2>()
-			where T1 : AssetManager<T2>
-			where T2 : Asset
-		{
-			var type = typeof(T1);
-
-			//TODO: This loop is idiotic. Cache data for this exact method.
-			foreach(var pair in Instance.assetManagers) {
-				foreach(var assetManager in pair.Value) {
-					if(assetManager.GetType() == type) {
-						return (T1)assetManager;
-					}
-				}
-			}
-
-			return null;
-		}
-		public static void RegisterFormats<T>(AssetManager<T> importer, string[] formats, bool allowOverwriting = false) where T : class
-			=> Instance.RegisterFormats(typeof(T), importer, formats, allowOverwriting);
 
 		internal static string[] GetFilesRecursive(string path, string[] searchPattern = null, string[] ignoredPaths = null)
 		{

@@ -22,75 +22,73 @@ namespace Dissonance.Engine
 			public uint updateCount;
 		}
 
-		internal static Time Instance => Game.Instance.GetModule<Time>();
+		//Target Framerate
+		private static double targetUpdateFrequency;
+		private static double targetRenderFrequency;
+		//Time
+		private static float timeScale = 1f;
+		private static TimeData fixedTime;
+		private static TimeData fixedTimePrev;
+		private static TimeData renderTime;
+		private static TimeData renderTimePrev;
+		//Framerate
+		private static Stopwatch globalStopwatch;
+		private static Stopwatch fixedStopwatch;
+		private static Stopwatch renderStopwatch;
 
 		//Auto
 		public static float GameTime => Game.IsFixedUpdate ? FixedGameTime : RenderGameTime;
 		public static float GlobalTime => Game.IsFixedUpdate ? FixedGlobalTime : RenderGlobalTime;
 		public static float DeltaTime => Game.IsFixedUpdate ? FixedDeltaTime : RenderDeltaTime; //It might be a bit weird that this isn't 2 'GameDeltaTime' and 'GlobalDeltaTime' properties.
 		//Fixed Time
-		public static float FixedGameTime => Instance.fixedTime.game;
-		public static float FixedGlobalTime => Instance.fixedTime.global;
+		public static float FixedGameTime => fixedTime.game;
+		public static float FixedGlobalTime => fixedTime.global;
 		public static float FixedDeltaTime => 1f / (float)TargetUpdateFrequency;
-		public static uint FixedUpdateCount => Instance.fixedTime.updateCount;
+		public static uint FixedUpdateCount => fixedTime.updateCount;
 		//Render Time
-		public static float RenderGameTime => Instance.renderTime.game;
-		public static float RenderGlobalTime => Instance.renderTime.global;
-		public static float RenderDeltaTime => Instance.renderTime.gameDelta;
-		public static uint RenderUpdateCount => Instance.renderTime.updateCount;
+		public static float RenderGameTime => renderTime.game;
+		public static float RenderGlobalTime => renderTime.global;
+		public static float RenderDeltaTime => renderTime.gameDelta;
+		public static uint RenderUpdateCount => renderTime.updateCount;
 		//Fixed Framerate
-		public static uint FixedFramerate => Instance.fixedTime.framerate;
-		public static float FixedMs => Instance.fixedTime.ms;
+		public static uint FixedFramerate => fixedTime.framerate;
+		public static float FixedMs => fixedTime.ms;
 		//Render Framerate
-		public static uint RenderFramerate => Instance.renderTime.framerate;
-		public static float RenderMs => Instance.renderTime.ms;
+		public static uint RenderFramerate => renderTime.framerate;
+		public static float RenderMs => renderTime.ms;
 
 		//Time
 		public static float TimeScale {
-			get => Instance.timeScale;
+			get => timeScale;
 			set {
 				if(value < 0f) {
 					throw new Exception("TimeScale cannot be negative.");
 				}
 
-				Instance.timeScale = value;
+				timeScale = value;
 			}
 		}
 		//Target Framerate
 		public static double TargetUpdateFrequency {
-			get => Instance.targetUpdateFrequency;
+			get => targetUpdateFrequency;
 			set {
 				if(value <= 0) {
 					throw new ArgumentOutOfRangeException(nameof(value), "Value has to be more than zero.");
 				}
 
-				Instance.targetUpdateFrequency = value;
+				targetUpdateFrequency = value;
 			}
 		}
 		public static double TargetRenderFrequency {
-			get => Instance.targetRenderFrequency;
+			get => targetRenderFrequency;
 			set {
 				if(value < 0) {
 					throw new ArgumentOutOfRangeException(nameof(value), "Value has to be more than or equal to zero.");
 				}
 
-				Instance.targetRenderFrequency = value;
+				targetRenderFrequency = value;
 			}
 		}
-
-		//Target Framerate
-		private double targetUpdateFrequency;
-		private double targetRenderFrequency;
-		//Time
-		private float timeScale = 1f;
-		private TimeData fixedTime;
-		private TimeData fixedTimePrev;
-		private TimeData renderTime;
-		private TimeData renderTimePrev;
-		//Framerate
-		private Stopwatch globalStopwatch;
-		private Stopwatch fixedStopwatch;
-		private Stopwatch renderStopwatch;
 
 		//Initialization
 		protected override void PreInit()

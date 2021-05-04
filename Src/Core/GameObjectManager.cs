@@ -6,9 +6,7 @@ namespace Dissonance.Engine
 {
 	public class GameObjectManager : EngineModule
 	{
-		public static GameObjectManager Instance => Game.Instance.GetModule<GameObjectManager>();
-
-		internal InstanceLists<GameObject> gameObjects;
+		internal static InstanceLists<GameObject> gameObjects;
 
 		protected override void Init()
 		{
