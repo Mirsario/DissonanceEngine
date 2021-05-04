@@ -55,6 +55,7 @@ namespace Dissonance.Engine
 		public string Name { get; set; } = "UntitledGame";
 		public string DisplayName { get; set; } = "Untitled Game";
 		public GameFlags Flags { get; private set; }
+		public IReadOnlyList<string> StartArguments { get; private set; }
 
 		internal bool NoWindow { get; private set; }
 		internal bool NoGraphics { get; private set; }
@@ -77,6 +78,7 @@ namespace Dissonance.Engine
 			RegisterInstance();
 
 			Flags = flags;
+			StartArguments = Array.AsReadOnly(args);
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
