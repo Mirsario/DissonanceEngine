@@ -21,27 +21,12 @@ namespace Dissonance.Engine
 		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;
 		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;
 
-		private static readonly List<Game> InstancesList;
-
-		private static volatile Game globalInstance;
-		private static volatile bool multipleInstances;
-		[ThreadStatic]
-		private static Game threadStaticInstance;
+		private static volatile Game instance;
 
 		public static bool HasFocus { get; internal set; } = true;
 		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
 
-		public static Game Instance {
-			get {
-				if(multipleInstances) {
-					return threadStaticInstance ?? throw new InvalidOperationException($"Multiple Game instances were created, but there is no instance associated with the current thread.");
-				}
-
-				return globalInstance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
-			}
-		}
-
-		public static IReadOnlyList<Game> Instances;
+		public static Game Instance => instance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
 
 		internal bool shouldQuit;
 		internal bool preInitDone;
@@ -61,11 +46,6 @@ namespace Dissonance.Engine
 		internal bool NoGraphics { get; private set; }
 		internal bool NoAudio { get; private set; }
 
-		static Game()
-		{
-			Instances = (InstancesList = new List<Game>()).AsReadOnly();
-		}
-
 		public virtual void PreInit() { }
 		public virtual void Start() { }
 		public virtual void FixedUpdate() { }
@@ -75,8 +55,11 @@ namespace Dissonance.Engine
 
 		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
 		{
-			RegisterInstance();
+			if(instance != null) {
+				throw new InvalidOperationException("Cannot run a game while one instance is already running. If you wish to run multiple game instances - use AssemblyLoadContexts to isolate engine & same game assemblies from each other.");
+			}
 
+			instance = this;
 			Flags = flags;
 			StartArguments = Array.AsReadOnly(args);
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
@@ -134,10 +117,8 @@ namespace Dissonance.Engine
 				modules = null;
 			}
 
-			threadStaticInstance = null;
-
-			if(globalInstance == this) {
-				globalInstance = null;
+			if(instance == this) {
+				instance = null;
 			}
 		}
 		public void Update()
@@ -179,7 +160,6 @@ namespace Dissonance.Engine
 
 			renderStopwatch.Restart();
 		}
-		public void AssociateWithCurrentThread() => threadStaticInstance = this;
 
 		internal void Init()
 		{
@@ -238,24 +218,8 @@ namespace Dissonance.Engine
 		internal void ApplicationQuit(object sender, EventArgs e)
 		{
 			shouldQuit = true;
-
-			threadStaticInstance?.Dispose();
 		}
 
-		private void RegisterInstance()
-		{
-			if(threadStaticInstance != null) {
-				throw new InvalidOperationException("Cannot run a second Game instance on the same thread. Create it in a new thread.");
-			}
-
-			lock(InstancesList) {
-				InstancesList.Add(this);
-
-				globalInstance ??= this;
-				threadStaticInstance = this;
-				multipleInstances = InstancesList.Count > 1;
-			}
-		}
 		private void UpdateLoop()
 		{
 			var windowing = GetModule<Windowing>(false);
@@ -282,11 +246,9 @@ namespace Dissonance.Engine
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) //Move this somewhere
 		{
 #if WINDOWS
-			
 			var exception = (Exception)e.ExceptionObject;
 
 			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
-			
 #endif
 
 			Quit();
