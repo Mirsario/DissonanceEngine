@@ -8,16 +8,14 @@ namespace Dissonance.Engine
 {
 	public class ComponentManager : EngineModule
 	{
-		internal static ComponentManager Instance => Game.Instance.GetModule<ComponentManager>(true);
+		private static ComponentTypeInfo[] sortedComponentTypeInfo = Array.Empty<ComponentTypeInfo>();
+		private static Dictionary<Type, ComponentTypeInfo> componentInfoByType = new Dictionary<Type, ComponentTypeInfo>();
+		private static Type[] componentTypes;
+		private static List<HookList> hookLists;
 
-		private ComponentTypeInfo[] sortedComponentTypeInfo = Array.Empty<ComponentTypeInfo>();
-		private Dictionary<Type, ComponentTypeInfo> componentInfoByType = new Dictionary<Type, ComponentTypeInfo>();
-		private Type[] componentTypes;
-		private List<HookList> hookLists;
-
-		internal HookList HookFixedUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
-		internal HookList HookRenderUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("RenderUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
-		internal HookList HookOnGUI { get; private set; } = new HookList(typeof(Component).GetMethod("OnGUI", BindingFlags.Instance | BindingFlags.NonPublic));
+		internal static HookList HookFixedUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
+		internal static HookList HookRenderUpdate { get; private set; } = new HookList(typeof(Component).GetMethod("RenderUpdate", BindingFlags.Instance | BindingFlags.NonPublic));
+		internal static HookList HookOnGUI { get; private set; } = new HookList(typeof(Component).GetMethod("OnGUI", BindingFlags.Instance | BindingFlags.NonPublic));
 
 		protected override void PreInit()
 		{
@@ -45,11 +43,10 @@ namespace Dissonance.Engine
 		}
 		protected override void FixedUpdate()
 		{
-			var instance = Instance;
-			int[] hookIndices = instance.HookFixedUpdate.ValidTypeIndices;
+			int[] hookIndices = HookFixedUpdate.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+				var instances = sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].FixedUpdate();
@@ -58,11 +55,10 @@ namespace Dissonance.Engine
 		}
 		protected override void RenderUpdate()
 		{
-			var instance = Instance;
-			int[] hookIndices = instance.HookRenderUpdate.ValidTypeIndices;
+			int[] hookIndices = HookRenderUpdate.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+				var instances = sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].RenderUpdate();
@@ -98,11 +94,10 @@ namespace Dissonance.Engine
 		//TODO: OnGUI hook should be removed forever in favor of adequate non-immediate rendering.
 		internal static void OnGUI()
 		{
-			var instance = Instance;
-			int[] hookIndices = instance.HookOnGUI.ValidTypeIndices;
+			int[] hookIndices = HookOnGUI.ValidTypeIndices;
 
 			for(int i = 0; i < hookIndices.Length; i++) {
-				var instances = instance.sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
+				var instances = sortedComponentTypeInfo[hookIndices[i]].exactInstances.enabled;
 
 				for(int j = 0; j < instances.Count; j++) {
 					instances[j].OnGUI();
@@ -111,19 +106,17 @@ namespace Dissonance.Engine
 		}
 		internal static void ModifyInstanceLists(Type type, Action<InstanceLists<Component>> action)
 		{
-			var instance = Instance;
-
-			action(instance.componentInfoByType[type].exactInstances);
+			action(componentInfoByType[type].exactInstances);
 
 			//TODO: This enumeration could've been made faster.
 			foreach(var baseType in ReflectionUtils.EnumerateBaseTypes(type, true, typeof(Component))) {
-				action(instance.componentInfoByType[baseType].sharedInstances);
+				action(componentInfoByType[baseType].sharedInstances);
 			}
 		}
 
 		private static IReadOnlyList<Component> GetComponentsList(Type type, bool exactType = false, bool? enabled = true)
 		{
-			if(!Instance.componentInfoByType.TryGetValue(type, out var info)) {
+			if(!componentInfoByType.TryGetValue(type, out var info)) {
 				return null;
 			}
 
@@ -138,14 +131,12 @@ namespace Dissonance.Engine
 		}
 		private static void UpdateComponentTypeData()
 		{
-			var instance = Instance;
-
 			//TODO:
-			instance.sortedComponentTypeInfo = instance.componentInfoByType.Values.ToArray();
-			instance.componentTypes = instance.sortedComponentTypeInfo.Select(i => i.type).ToArray();
+			sortedComponentTypeInfo = componentInfoByType.Values.ToArray();
+			componentTypes = sortedComponentTypeInfo.Select(i => i.type).ToArray();
 
-			for(int i = 0; i < instance.hookLists.Count; i++) {
-				instance.hookLists[i].Update(instance.componentTypes);
+			for(int i = 0; i < hookLists.Count; i++) {
+				hookLists[i].Update(componentTypes);
 			}
 		}
 	}

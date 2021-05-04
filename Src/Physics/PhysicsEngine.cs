@@ -6,20 +6,18 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed partial class PhysicsEngine : EngineModule
 	{
-		internal static PhysicsEngine Instance => Game.Instance.GetModule<PhysicsEngine>();
-
-		internal DbvtBroadphase broadphase;
-		internal DiscreteDynamicsWorld world;
-		internal CollisionDispatcher dispatcher;
-		internal CollisionConfiguration collisionConf;
-		internal List<Collider> collidersToUpdate;
-		internal List<CollisionShape> collisionShapes;
-		internal List<RigidbodyInternal> rigidbodies;
+		internal static DbvtBroadphase broadphase;
+		internal static DiscreteDynamicsWorld world;
+		internal static CollisionDispatcher dispatcher;
+		internal static CollisionConfiguration collisionConf;
+		internal static List<Collider> collidersToUpdate;
+		internal static List<CollisionShape> collisionShapes;
+		internal static List<RigidbodyInternal> rigidbodies;
 
 		public static List<RigidbodyBase> ActiveRigidbodies { get; private set; }
 		public static Vector3 Gravity {
-			get => Instance.world.Gravity;
-			set => Instance.world.Gravity = value;
+			get => world.Gravity;
+			set => world.Gravity = value;
 		}
 
 		protected override void Init()
@@ -75,7 +73,7 @@ namespace Dissonance.Engine.Physics
 
 			var callback = new RaycastCallback(ref origin2, ref rayEnd, layerMask, customFilter);
 
-			Instance.world.RayTest(origin, rayEnd, callback);
+			world.RayTest(origin, rayEnd, callback);
 
 			if(!callback.HasHit) {
 				hit = new RaycastHit {

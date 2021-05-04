@@ -10,7 +10,6 @@ namespace Dissonance.Engine.Physics
 	{
 		public readonly MotionStateInternal MotionState;
 
-		internal PhysicsEngine engine;
 		internal RigidBody btRigidbody;
 		internal CollisionShape collisionShape;
 		internal List<Collision> collisions;
@@ -125,8 +124,6 @@ namespace Dissonance.Engine.Physics
 		{
 			this.gameObject = gameObject;
 
-			engine = PhysicsEngine.Instance;
-
 			collisions = new List<Collision>();
 			collisions2D = new List<Collision2D>();
 			collisionShape = new EmptyShape();
@@ -145,8 +142,8 @@ namespace Dissonance.Engine.Physics
 			btRigidbody.CollisionFlags |= CollisionFlags.CustomMaterialCallback;
 			btRigidbody.UserObject = this;
 
-			engine.world.AddRigidBody(btRigidbody);
-			engine.rigidbodies.Add(this);
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
+			PhysicsEngine.rigidbodies.Add(this);
 		}
 
 		public void ApplyForce(Vector3 force, Vector3 relativePos)
@@ -165,10 +162,8 @@ namespace Dissonance.Engine.Physics
 				btRigidbody = null;
 			}
 
-			if(engine != null) {
-				engine.rigidbodies.Remove(this);
-
-				engine = null;
+			if(PhysicsEngine.rigidbodies != null) {
+				PhysicsEngine.rigidbodies.Remove(this);
 			}
 
 			gameObject = null;
@@ -177,7 +172,7 @@ namespace Dissonance.Engine.Physics
 
 		internal void UpdateShape()
 		{
-			engine.world.RemoveRigidBody(btRigidbody);
+			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
 
 			if(collisionShape != null && (collisionShape is CompoundShape || collisionShape is EmptyShape)) {
 				collisionShape.Dispose();
@@ -219,11 +214,11 @@ namespace Dissonance.Engine.Physics
 			btRigidbody.CollisionShape = collisionShape;
 			btRigidbody.SetMassProps(tempMass, localInertia);
 
-			engine.world.AddRigidBody(btRigidbody);
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
 		}
 		internal void UpdateMass()
 		{
-			engine.world.RemoveRigidBody(btRigidbody);
+			PhysicsEngine.world.RemoveRigidBody(btRigidbody);
 
 			BulletSharp.Math.Vector3 localInertia = BulletSharp.Math.Vector3.Zero;
 
@@ -235,7 +230,7 @@ namespace Dissonance.Engine.Physics
 
 			btRigidbody.SetMassProps(tempMass, localInertia);
 
-			engine.world.AddRigidBody(btRigidbody);
+			PhysicsEngine.world.AddRigidBody(btRigidbody);
 		}
 		internal void AddCollision(RigidbodyInternal bodyOther)
 		{
