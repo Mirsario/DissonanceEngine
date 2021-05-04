@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Dissonance.Engine
@@ -9,18 +10,35 @@ namespace Dissonance.Engine
 
 		public static event AssemblyRegistrationCallback OnAssemblyRegistered;
 
+		private static readonly List<WeakReference<Assembly>> Assemblies = new List<WeakReference<Assembly>>();
+
+		private static bool ready;
+
 		protected override void Init()
 		{
-			var appDomain = AppDomain.CurrentDomain;
+			RegisterAssembly(GetType().Assembly);
+			RegisterAssembly(Game.GetType().Assembly);
 
-			appDomain.AssemblyLoad += (sender, args) => {
-				var assembly = args.LoadedAssembly;
+			ready = true;
+
+			for(int i = 0; i < Assemblies.Count; i++) {
+				var weakRef = Assemblies[i];
+
+				if(!weakRef.TryGetTarget(out var assembly)) {
+					Assemblies.RemoveAt(i--);
+					continue;
+				}
 
 				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
-			};
+			}
+		}
 
-			foreach(var assembly in appDomain.GetAssemblies()) {
+		public static void RegisterAssembly(Assembly assembly)
+		{
+			if(ready) {
 				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
+			} else {
+				Assemblies.Add(new WeakReference<Assembly>(assembly));
 			}
 		}
 	}
