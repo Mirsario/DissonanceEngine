@@ -6,8 +6,8 @@ namespace Dissonance.Engine.Input
 {
 	partial class InputEngine
 	{
-		private Dictionary<string, int> signalIdByName;
-		private List<(Func<object, float> getter, object arg)> signals;
+		private static Dictionary<string, int> signalIdByName;
+		private static List<(Func<object, float> getter, object arg)> signals;
 
 		private void InitSignals()
 		{
@@ -32,27 +32,24 @@ namespace Dissonance.Engine.Input
 		public static void RegisterSignal(string nameId, Func<object, float> valueGetter, object arg = null)
 		{
 			var tuple = (valueGetter, arg);
-			var instance = Instance;
 
-			if(instance.signalIdByName.TryGetValue(nameId, out int id)) {
-				instance.signals[id] = tuple;
+			if(signalIdByName.TryGetValue(nameId, out int id)) {
+				signals[id] = tuple;
 
 				return;
 			}
 
-			instance.signalIdByName[nameId] = instance.signals.Count;
+			signalIdByName[nameId] = signals.Count;
 
-			instance.signals.Add(tuple);
+			signals.Add(tuple);
 		}
 		public static float GetSignal(string nameId)
 		{
-			var instance = Instance;
-
-			if(!instance.signalIdByName.TryGetValue(nameId, out int id)) {
+			if(!signalIdByName.TryGetValue(nameId, out int id)) {
 				return 0f;
 			}
 
-			var (getter, arg) = instance.signals[id];
+			var (getter, arg) = signals[id];
 
 			return getter(arg);
 		}

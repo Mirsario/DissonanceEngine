@@ -10,34 +10,29 @@ namespace Dissonance.Engine.Input
 		internal static void CursorPositionCallback(double x, double y)
 		{
 			var value = new Vector2((float)x, (float)y) * (Screen.Size / Screen.WindowSize);
-			var instance = Instance;
 
-			instance.fixedInput.mousePosition = value;
-			instance.renderInput.mousePosition = value;
+			fixedInput.mousePosition = value;
+			renderInput.mousePosition = value;
 		}
 		private static void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods)
 		{
 			bool value = action == MouseAction.Press;
-			var instance = Instance;
 
-			instance.fixedInput.mouseButtons[(int)button] = value;
-			instance.renderInput.mouseButtons[(int)button] = value;
+			fixedInput.mouseButtons[(int)button] = value;
+			renderInput.mouseButtons[(int)button] = value;
 		}
 		private static void ScrollCallback(double xOffset, double yOffset)
 		{
-			var instance = Instance;
-
-			instance.fixedInput.mouseWheel = (int)yOffset;
-			instance.renderInput.mouseWheel = (int)yOffset;
+			fixedInput.mouseWheel = (int)yOffset;
+			renderInput.mouseWheel = (int)yOffset;
 		}
 		private static void CharCallback(uint codePoint)
 		{
 			byte[] bytes = BitConverter.GetBytes(codePoint);
 			string text = Encoding.UTF32.GetString(bytes);
-			var instance = Instance;
 
-			instance.fixedInput.inputString += text;
-			instance.renderInput.inputString += text;
+			fixedInput.inputString += text;
+			renderInput.inputString += text;
 		}
 		private static void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods)
 		{
@@ -45,12 +40,10 @@ namespace Dissonance.Engine.Input
 				return;
 			}
 
-			var instance = Instance;
-
 			void InputAction(Action<InputVariables> action)
 			{
-				action(instance.fixedInput);
-				action(instance.renderInput);
+				action(fixedInput);
+				action(renderInput);
 			}
 
 			switch(action) {
