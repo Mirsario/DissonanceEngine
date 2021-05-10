@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
+	/*[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
 	public class DeferredLightingPass : RenderPass
 	{
 		//public override string[] AcceptedShaderNames => Enum.GetNames(typeof(LightType)).Select(q => q.ToLower()).ToArray();
@@ -11,12 +11,12 @@ namespace Dissonance.Engine.Graphics
 		//public Shader directionalShader;
 		//public Shader spotShader;
 
-		/*public DeferredLightingPass(string name,Framebuffer framebuffer,RenderTexture[] renderTextures,Shader pointShader,Shader directionalShader,Shader spotShader) : base(name,framebuffer,renderTextures)
-		{
-			this.pointShader = pointShader;
-			this.directionalShader = directionalShader;
-			this.spotShader = spotShader;
-		}*/
+		//public DeferredLightingPass(string name,Framebuffer framebuffer,RenderTexture[] renderTextures,Shader pointShader,Shader directionalShader,Shader spotShader) : base(name,framebuffer,renderTextures)
+		//{
+		//	this.pointShader = pointShader;
+		//	this.directionalShader = directionalShader;
+		//	this.spotShader = spotShader;
+		//}
 
 		public override void Render()
 		{
@@ -134,5 +134,5 @@ namespace Dissonance.Engine.Graphics
 
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 		}
-	}
+	}*/
 }

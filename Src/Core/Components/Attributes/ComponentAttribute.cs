@@ -8,16 +8,16 @@ namespace Dissonance.Engine
 	[AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
 	public abstract class ComponentAttribute : Attribute
 	{
-		private static Dictionary<Type, ComponentAttribute[]> cache = new Dictionary<Type, ComponentAttribute[]>();
+		private static readonly Dictionary<Type, ComponentAttribute[]> Cache = new Dictionary<Type, ComponentAttribute[]>();
 
-		public virtual void PreAddComponent(GameObject gameObject, Type type) { }
-		public virtual void OnComponentEnabled(GameObject gameObject, IComponent component) { }
-		public virtual void OnComponentDisabled(GameObject gameObject, IComponent component) { }
+		public virtual void PreAddComponent(Entity entity, Type type) { }
+		public virtual void OnComponentEnabled(Entity entity, IComponent component) { }
+		public virtual void OnComponentDisabled(Entity entity, IComponent component) { }
 
 		public static IEnumerable<ComponentAttribute> EnumerateForType(Type type)
 		{
-			if(!cache.TryGetValue(type, out var array)) {
-				cache[type] = array = type.GetCustomAttributes<ComponentAttribute>(true).ToArray();
+			if(!Cache.TryGetValue(type, out var array)) {
+				Cache[type] = array = type.GetCustomAttributes<ComponentAttribute>(true).ToArray();
 			}
 
 			return array;

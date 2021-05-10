@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class GltfManager : AssetManager<GameObject>
+	/*public partial class GltfManager : AssetManager<GameObject>
 	{
 		public const uint FormatHeader = 0x46546C67;
 
@@ -170,17 +170,17 @@ namespace Dissonance.Engine.IO
 
 				//if(bufferView.byteStride==0) {
 				stream.Read(data, 0, (int)bufferView.byteLength);
-				/*} else {
-					int bytesRead = 0;
-
-					while(bytesRead<bufferView.byteLength) {
-						stream.Read(data,bytesRead,elementSize);
-
-						bytesRead += elementSize;
-
-						stream.Seek(bufferView.byteStride,SeekOrigin.Current);
-					}
-				}*/
+				//} else {
+				//	int bytesRead = 0;
+				//
+				//	while(bytesRead<bufferView.byteLength) {
+				//		stream.Read(data,bytesRead,elementSize);
+				//
+				//		bytesRead += elementSize;
+				//
+				//		stream.Seek(bufferView.byteStride,SeekOrigin.Current);
+				//	}
+				//}
 			}
 
 			return data;
@@ -242,5 +242,5 @@ namespace Dissonance.Engine.IO
 				//info.result.Add(model, jsonMesh.name);
 			}
 		}
-	}
+	}*/
 }

@@ -1,12 +1,9 @@
-using System;
-using Dissonance.Framework.Audio;
-
 namespace Dissonance.Engine.Audio
 {
 	[AllowOnlyOneInWorld]
-	public class AudioListener : Component
+	public struct AudioListener : IComponent
 	{
-		protected internal override void FixedUpdate()
+		/*protected internal override void FixedUpdate()
 		{
 			Vector3 pos = Transform.Position;
 
@@ -23,7 +20,7 @@ namespace Dissonance.Engine.Audio
 				lookAt.x,   lookAt.y,   lookAt.z,
 				up.x,       up.y,       up.z
 			});
-		}
+		}*/
 	}
 }
 

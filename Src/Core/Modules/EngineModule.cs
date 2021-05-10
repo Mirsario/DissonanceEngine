@@ -7,7 +7,7 @@ namespace Dissonance.Engine
 {
 	public abstract class EngineModule : IDisposable
 	{
-		public ModuleDependency[] Dependencies { get; internal set; }
+		public DependencyInfo[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
 
 		public Game Game => Game.Instance;

@@ -15,11 +15,12 @@ namespace Dissonance.Engine
 			RequiredType = componentType;
 		}
 
-		public override void PreAddComponent(GameObject gameObject, Type type)
+		public override void PreAddComponent(Entity entity, Type type)
 		{
-			if(!gameObject.Components.Any(c => c.GetType().IsAssignableFrom(RequiredType))) {
+			//TODO:
+			/*if(!gameObject.Components.Any(c => c.GetType().IsAssignableFrom(RequiredType))) {
 				throw new InvalidOperationException($"Expected '{RequiredType.Name}' component (required by '{type.Name}') was not found on '{gameObject.Name}' GameObject.");
-			}
+			}*/
 		}
 	}
 }

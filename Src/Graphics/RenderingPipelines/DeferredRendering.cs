@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class DeferredRendering : RenderingPipeline
+	/*public class DeferredRendering : RenderingPipeline
 	{
 		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
@@ -86,5 +86,5 @@ namespace Dissonance.Engine.Graphics
 
 			Framebuffer.Bind(null);
 		}
-	}
+	}*/
 }

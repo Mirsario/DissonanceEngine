@@ -5,10 +5,9 @@ namespace Dissonance.Engine.Graphics
 {
 	public struct MeshRenderer : IComponent, IRenderer
 	{
-		internal MeshLOD[] lodMeshes = new MeshLOD[1] { new MeshLOD(null, null) };
-
 		private Bounds aabb;
 		private Matrix4x4 aabbLastMatrix;
+		private MeshLOD[] lodMeshes;
 
 		public MeshLOD[] LODMeshes {
 			get => lodMeshes;
@@ -55,23 +54,35 @@ namespace Dissonance.Engine.Graphics
 			set => lodMeshes[0].mesh = value;
 		}
 
-		public Bounds AABB {
-			get {
-				var matrix = Transform.WorldMatrix;
-				var translation = matrix.ExtractTranslation();
+		public Material Material {
+			get => lodMeshes[0].material;
+			set => lodMeshes[0].material = value;
+		}
 
-				matrix.m30 = matrix.m31 = matrix.m32 = 0f; //Remove translation
-				matrix.m03 = matrix.m13 = matrix.m23 = matrix.m33 = 0f; //Remove projection
+		public MeshRenderer(Mesh mesh, Material material)
+		{
+			aabb = default;
+			aabbLastMatrix = default;
+			lodMeshes = new MeshLOD[1] { new MeshLOD(mesh, material) };
+		}
 
-				if(matrix == aabbLastMatrix) {
-					return new Bounds(aabb.min + translation, aabb.max + translation);
-				}
+		public Bounds GetAabb(Transform transform)
+		{
+			var matrix = transform.WorldMatrix;
+			var translation = matrix.ExtractTranslation();
 
-				var bounds = Mesh.bounds;
-				var min = bounds.min;
-				var max = bounds.max;
+			matrix.m30 = matrix.m31 = matrix.m32 = 0f; //Remove translation
+			matrix.m03 = matrix.m13 = matrix.m23 = matrix.m33 = 0f; //Remove projection
 
-				Vector3[] corners = new Vector3[8] {
+			if(matrix == aabbLastMatrix) {
+				return new Bounds(aabb.min + translation, aabb.max + translation);
+			}
+
+			var bounds = Mesh.bounds;
+			var min = bounds.min;
+			var max = bounds.max;
+
+			Vector3[] corners = new Vector3[8] {
 					min,
 					new Vector3(min.x, min.y, max.z),
 					new Vector3(min.x, max.y, min.z),
@@ -82,27 +93,21 @@ namespace Dissonance.Engine.Graphics
 					max,
 				};
 
-				var newMin = Vector3.One * float.PositiveInfinity;
-				var newMax = Vector3.One * float.NegativeInfinity;
+			var newMin = Vector3.One * float.PositiveInfinity;
+			var newMax = Vector3.One * float.NegativeInfinity;
 
-				for(int i = 0; i < corners.Length; i++) {
-					Vector3 transformed = matrix * corners[i];
+			for(int i = 0; i < corners.Length; i++) {
+				Vector3 transformed = matrix * corners[i];
 
-					newMin = Vector3.Min(newMin, transformed);
-					newMax = Vector3.Max(newMax, transformed);
-				}
-
-				aabb = new Bounds(newMin, newMax);
-				aabbLastMatrix = matrix;
-
-				return new Bounds(aabb.min + translation, aabb.max + translation);
+				newMin = Vector3.Min(newMin, transformed);
+				newMax = Vector3.Max(newMax, transformed);
 			}
-		}
-		public Material Material {
-			get => lodMeshes[0].material;
-			set => lodMeshes[0].material = value;
-		}
 
+			aabb = new Bounds(newMin, newMax);
+			aabbLastMatrix = matrix;
+
+			return new Bounds(aabb.min + translation, aabb.max + translation);
+		}
 		public bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
 		{
 			var lods = LODMeshes;

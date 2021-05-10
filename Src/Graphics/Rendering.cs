@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
-using Dissonance.Engine.Input;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
-using Dissonance.Framework.Windowing.Input;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -16,10 +14,6 @@ namespace Dissonance.Engine.Graphics
 		public static readonly Version MinOpenGLVersion = new Version(3, 2);
 		public static readonly Version[] SupportedOpenGLVersions = GL.SupportedVersions.Where(v => v >= MinOpenGLVersion).ToArray();
 
-		public static int drawCallsCount;
-		public static Vector3 ambientColor = new Vector3(0.1f, 0.1f, 0.1f);
-		public static Vector4 clearColor = Vector4.Zero;
-
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
@@ -30,6 +24,9 @@ namespace Dissonance.Engine.Graphics
 		private static GL.DebugCallback debugCallback;
 		private static Shader guiShader; //TODO: To be moved
 
+		public static int DrawCallsCount { get; set; }
+		public static Vector4 ClearColor { get; set; } = Vector4.One * 0.25f;
+		public static Vector3 AmbientColor { get; set; } = new Vector3(0.1f, 0.1f, 0.1f);
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
 		public static Version OpenGLVersion {
@@ -49,13 +46,13 @@ namespace Dissonance.Engine.Graphics
 
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
-		private Windowing windowing;
+		internal static Windowing windowing;
 
 		protected override void PreInit()
 		{
 			Game.TryGetModule(out windowing);
 
-			renderingPipelineType = typeof(DeferredRendering);
+			renderingPipelineType = typeof(ForwardRendering);
 
 			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
 				PrepareOpenGL();
@@ -98,81 +95,9 @@ namespace Dissonance.Engine.Graphics
 		}
 		protected override void RenderUpdate()
 		{
-			drawCallsCount = 0;
+			DrawCallsCount = 0;
 
 			Debug.ResetRendering();
-
-			//Calculate view and projection matrices, culling frustums
-			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
-				var viewSize = camera.ViewPixel;
-				float aspectRatio = viewSize.width / (float)viewSize.height;
-
-				var cameraTransform = camera.Transform;
-				var cameraPosition = cameraTransform.Position;
-
-				camera.matrix_view = Matrix4x4.LookAt(cameraPosition, cameraPosition + cameraTransform.Forward, cameraTransform.Up);
-
-				if(camera.Orthographic) {
-					float max = Mathf.Max(Screen.Width, Screen.Height);
-
-					camera.matrix_proj = Matrix4x4.CreateOrthographic(Screen.Width / max * camera.OrthographicSize, Screen.Height / max * camera.OrthographicSize, camera.NearClip, camera.FarClip);
-				} else {
-					camera.matrix_proj = Matrix4x4.CreatePerspectiveFOV(camera.Fov * Mathf.Deg2Rad, aspectRatio, camera.NearClip, camera.FarClip);
-				}
-
-				camera.matrix_viewInverse = Matrix4x4.Invert(camera.matrix_view);
-				camera.matrix_projInverse = Matrix4x4.Invert(camera.matrix_proj);
-
-				camera.CalculateFrustum(camera.matrix_view * camera.matrix_proj);
-			}
-
-			//Clear buffers
-			GL.Viewport(0, 0, Screen.Width, Screen.Height);
-
-			if(RenderingPipeline.Framebuffers != null) {
-				int length = RenderingPipeline.Framebuffers.Length;
-
-				for(int i = 0; i <= length; i++) {
-					var framebuffer = i == length ? null : RenderingPipeline.Framebuffers[i];
-
-					framebuffer?.PrepareAttachments();
-
-					Framebuffer.BindWithDrawBuffers(framebuffer);
-
-					GL.ClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-					//GL.StencilMask(~0);
-					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-				}
-			}
-
-			RenderingPipeline.PreRender();
-
-			Framebuffer.Bind(null);
-
-			CheckGLErrors("Before rendering passes");
-
-			//Render passes
-			for(int i = 0; i < RenderingPipeline.RenderPasses.Length; i++) {
-				var pass = RenderingPipeline.RenderPasses[i];
-
-				if(pass.enabled) {
-					pass.Render();
-
-					CheckGLErrors($"Rendering pass {pass.name} ({pass.GetType().Name})");
-				}
-			}
-
-			Framebuffer.Bind(null);
-
-			RenderingPipeline.PostRender();
-
-			if(DebugFramebuffers) {
-				BlitFramebuffers();
-			}
-
-			windowing.SwapBuffers();
-
-			CheckGLErrors("After swapping buffers");
 		}
 		protected override void OnDispose()
 		{
@@ -204,72 +129,10 @@ namespace Dissonance.Engine.Graphics
 		{
 			RenderingPipeline?.Dispose();
 
-			RenderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
+			if(renderingPipelineType != null) {
+				RenderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
 
-			RenderingPipeline.Init();
-		}
-		private static void BlitFramebuffers()
-		{
-			//TODO: This is temporary
-			static bool IsDepthTexture(RenderTexture tex) => tex.name.Contains("depth");
-
-			int textureCount = 0;
-			var framebuffers = RenderingPipeline.framebuffers;
-
-			for(int i = 0; i < framebuffers.Length; i++) {
-				var fb = framebuffers[i];
-
-				for(int j = 0; j < fb.renderTextures.Count; j++) {
-					var tex = fb.renderTextures[j];
-
-					if(!IsDepthTexture(tex)) {
-						textureCount++;
-					}
-				}
-			}
-
-			if(InputEngine.GetKey(Keys.LeftShift)) {
-				textureCount = Math.Min(textureCount, 1);
-			}
-
-			int size = 1;
-
-			while(size * size < textureCount) {
-				size++;
-			}
-
-			int x = 0;
-			int y = 0;
-
-			for(int i = 0; i < framebuffers.Length; i++) {
-				var framebuffer = framebuffers[i];
-
-				Framebuffer.Bind(framebuffer, FramebufferTarget.ReadFramebuffer);
-
-				for(int j = 0; j < framebuffer.renderTextures.Count; j++) {
-					var tex = framebuffer.renderTextures[j];
-
-					if(IsDepthTexture(tex)) {
-						continue;
-					}
-
-					GL.ReadBuffer(ReadBufferMode.ColorAttachment0 + j);
-
-					int wSize = Screen.Width / size;
-					int hSize = Screen.Height / size;
-
-					GL.BlitFramebuffer(
-						0, 0, tex.Width, tex.Height,
-						x * wSize, (size - y - 1) * hSize, (x + 1) * wSize, (size - y) * hSize,
-						ClearBufferMask.ColorBufferBit,
-						BlitFramebufferFilter.Nearest
-					);
-
-					if(++x >= size) {
-						x = 0;
-						y++;
-					}
-				}
+				RenderingPipeline.Init();
 			}
 		}
 	}

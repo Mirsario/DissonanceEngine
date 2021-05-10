@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	partial class GltfManager
+	/*partial class GltfManager
 	{
 		protected class GltfInfo
 		{
@@ -18,5 +18,5 @@ namespace Dissonance.Engine.IO
 				RootObject = GameObject.Instantiate<GameObject>(g => g.Name = Path.GetFileName(filePath), enable: false);
 			}
 		}
-	}
+	}*/
 }

@@ -124,7 +124,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if(hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.ambientColor.x, Rendering.ambientColor.y, Rendering.ambientColor.z);
+				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.x, Rendering.AmbientColor.y, Rendering.AmbientColor.z);
 			}
 		}
 		internal void SetupCameraUniforms(in Camera camera, Vector3 cameraPos)
@@ -142,9 +142,10 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if(hasDefaultUniform[DSU.CameraDirection]) {
-				var forward = camera.Transform.Forward;
-
-				GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
+				//TODO:
+				//var forward = camera.Transform.Forward;
+				//
+				//GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
 		internal void SetupMatrixUniformsCached(in Transform transform, bool[] uniformComputed,
@@ -227,93 +228,6 @@ namespace Dissonance.Engine.Graphics
 								worldViewProjInverse = worldViewProj.Inverted;
 								uniformComputed[DSU.WorldViewProjInverse] = true;
 							}
-
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
-						}
-					}
-
-					#endregion
-				}
-
-				#endregion
-			}
-
-			#endregion
-
-			#region View
-
-			if(hasDefaultUniform[DSU.View]) {
-				UniformMatrix4(defaultUniformIndex[DSU.View], ref view);
-			}
-
-			if(hasDefaultUniform[DSU.ViewInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], ref viewInverse);
-			}
-
-			#endregion
-
-			#region Proj
-
-			if(hasDefaultUniform[DSU.Proj]) {
-				UniformMatrix4(defaultUniformIndex[DSU.Proj], ref proj);
-			}
-
-			if(hasDefaultUniform[DSU.ProjInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], ref projInverse);
-			}
-
-			#endregion
-		}
-		internal void SetupMatrixUniforms(Transform transform,
-			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
-			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
-			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
-			ref Matrix4x4 view, ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj, ref Matrix4x4 projInverse,
-			bool dontCalculateWorld = false
-		)
-		{
-			#region World
-
-			if(hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-				if(!dontCalculateWorld) {
-					world = transform.WorldMatrix;
-				}
-
-				if(hasDefaultUniform[DSU.World]) {
-					UniformMatrix4(defaultUniformIndex[DSU.World], ref world);
-				}
-				if(hasDefaultUniform[DSU.WorldInverse]) {
-					worldInverse = world.Inverted;
-					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], ref worldInverse);
-				}
-
-				#region WorldView
-
-				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-					worldView = world * view;
-
-					if(hasDefaultUniform[DSU.WorldView]) {
-						UniformMatrix4(defaultUniformIndex[DSU.WorldView], ref worldView);
-					}
-
-					if(hasDefaultUniform[DSU.WorldViewInverse]) {
-						worldViewInverse = worldView.Inverted;
-
-						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], ref worldViewInverse);
-					}
-
-					#region WorldViewProj
-
-					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-						worldViewProj = worldView * proj;
-
-						if(hasDefaultUniform[DSU.WorldViewProj]) {
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], ref worldViewProj);
-						}
-
-						if(hasDefaultUniform[DSU.WorldViewProjInverse]) {
-							worldViewProjInverse = worldViewProj.Inverted;
 
 							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
 						}

@@ -1,9 +1,9 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using Dissonance.Framework.Graphics;
+using System.Linq;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Utilities;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {

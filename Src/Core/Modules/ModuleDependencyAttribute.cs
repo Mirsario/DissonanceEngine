@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public class ModuleDependencyAttribute : Attribute
 	{
-		public readonly ModuleDependency[] Dependencies;
+		public readonly DependencyInfo[] Dependencies;
 
 		public ModuleDependencyAttribute(params Type[] dependencies) : this(false, dependencies) { }
 		public ModuleDependencyAttribute(bool optional, params Type[] dependencies)
@@ -18,7 +18,7 @@ namespace Dissonance.Engine
 			}
 
 			Dependencies = dependencies
-				.Select(type => new ModuleDependency(type, optional))
+				.Select(type => new DependencyInfo(type, optional))
 				.ToArray();
 		}
 	}

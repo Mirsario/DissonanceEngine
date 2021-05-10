@@ -6,15 +6,15 @@ using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
-	internal class RigidbodyInternal : IDisposable
+	internal class RigidbodyInternal // : IDisposable
 	{
-		public readonly MotionStateInternal MotionState;
+		/*public readonly MotionStateInternal MotionState;
 
 		internal RigidBody btRigidbody;
 		internal CollisionShape collisionShape;
 		internal List<Collision> collisions;
 		internal List<Collision2D> collisions2D;
-		internal GameObject gameObject;
+		internal Entity entity;
 		internal RigidbodyBase rigidbody;
 		internal bool updateRotation = true;
 		internal bool enabled = true;
@@ -120,7 +120,7 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 
-		public RigidbodyInternal(GameObject gameObject)
+		public RigidbodyInternal(Entity entity)
 		{
 			this.gameObject = gameObject;
 
@@ -235,6 +235,6 @@ namespace Dissonance.Engine.Physics
 		internal void AddCollision(RigidbodyInternal bodyOther)
 		{
 
-		}
+		}*/
 	}
 }

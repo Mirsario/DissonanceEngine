@@ -4,7 +4,7 @@ namespace Dissonance.Engine
 {
 	public interface IComponent
 	{
-		virtual void EnsureInitialized() { }
+		
 	}
 
 	/*public class Component : ProgrammableEntity, IDisposable
@@ -13,14 +13,14 @@ namespace Dissonance.Engine
 
 		internal readonly int NameHash;
 
-		internal GameObject gameObject;
+		internal Entity entity;
 
 		private bool initialized;
 		private bool enabled;
 		private bool enabledLocal;
 		private bool enabledInHierarchy;
 
-		public GameObject GameObject => gameObject;
+		public Entity entity => gameObject;
 		public Transform Transform => gameObject.Transform;
 		public Transform2D Transform2D => gameObject.Transform2D;
 

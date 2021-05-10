@@ -1,4 +1,5 @@
-﻿using Dissonance.Engine.Physics;
+﻿using System.Linq;
+using Dissonance.Engine.Physics;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
@@ -10,6 +11,7 @@ namespace Dissonance.Engine.Graphics
 			public Shader shader;
 			public Material material;
 			public IRenderer renderer;
+			public Transform transform;
 			public object renderObject;
 		}
 
@@ -37,38 +39,48 @@ namespace Dissonance.Engine.Graphics
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = ComponentManager.CountComponents<IRenderer>();
+			int rendererCount = EntityManager.EnumerateEntities().Where(e => e.HasComponent<MeshRenderer>()).Count();
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
 			//CameraLoop
-			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
+			foreach(var cameraEntity in EntityManager.EnumerateEntities()) {
+				if(!cameraEntity.HasComponent<Camera>() || !cameraEntity.HasComponent<Transform>()) {
+					continue;
+				}
+
+				ref var camera = ref cameraEntity.GetComponent<Camera>();
+				var cameraTransform = cameraEntity.GetComponent<Transform>();
+
 				var viewport = GetViewport(camera);
+
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
-
-				camera.OnRenderStart?.Invoke(camera);
-
-				var cameraPos = camera.Transform.Position;
 
 				//RendererLoop
 				if(rendererCount == 0) {
 					continue;
 				}
 
+				var cameraPos = cameraTransform.Position;
 				int numToRenderer = 0;
 
-				foreach(var renderer in ComponentManager.EnumerateComponents<Renderer>()) {
-					if(!renderer.Enabled) {
+				foreach(var rendererEntity in EntityManager.EnumerateEntities()) {
+					if(!rendererEntity.HasComponent<MeshRenderer>() || !rendererEntity.HasComponent<Transform>()) {
 						continue;
 					}
+
+					ref var renderer = ref rendererEntity.GetComponent<MeshRenderer>();
+					var rendererTransform = rendererEntity.GetComponent<Transform>();
+
+					/*if(!renderer.Enabled) {
+						continue;
+					}*/
 
 					//TODO: To be optimized
-					if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.Layer) & layerMaskValue) == 0) {
+					/*if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.Layer) & layerMaskValue) == 0) {
 						continue;
-					}
+					}*/
 
-					var meshPos = renderer.Transform.Position;
-
-					if(!renderer.GetRenderData(meshPos, cameraPos, out var material, out object renderObject)) {
+					if(!renderer.GetRenderData(rendererTransform.Position, cameraPos, out var material, out object renderObject)) {
 						continue;
 					}
 
@@ -78,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 						continue;
 					}
 
-					bool cullResult = camera.Orthographic || camera.BoxInFrustum(renderer.AABB);
+					bool cullResult = camera.Orthographic || camera.BoxInFrustum(renderer.GetAabb(rendererTransform));
 
 					if(cullResult) {
 						ref var entry = ref renderQueue[numToRenderer++];
@@ -87,6 +99,7 @@ namespace Dissonance.Engine.Graphics
 						entry.material = material;
 						entry.renderer = renderer;
 						entry.renderObject = renderObject;
+						entry.transform = rendererTransform;
 					}
 				}
 
@@ -104,12 +117,19 @@ namespace Dissonance.Engine.Graphics
 					}
 				}
 
+				//Temporary bullshit
+				var viewMatrix = camera.ViewMatrix;
+				var projectionMatrix = camera.ProjectionMatrix;
+				var inverseViewMatrix = camera.InverseViewMatrix;
+				var inverseProjectionMatrix = camera.InverseProjectionMatrix;
+
 				//Render
 				for(int i = 0; i < numToRenderer; i++) {
 					var entry = renderQueue[i];
 					var shader = entry.shader;
 					var material = entry.material;
 					var renderer = entry.renderer;
+					var rendererTransform = entry.transform;
 					object renderObject = entry.renderObject;
 
 					//Update Shader
@@ -158,21 +178,25 @@ namespace Dissonance.Engine.Graphics
 					}
 
 					shader.SetupMatrixUniformsCached(
-						transform, uniformComputed,
+						rendererTransform, uniformComputed,
 						ref world, ref worldInverse,
 						ref worldView, ref worldViewInverse,
 						ref worldViewProj, ref worldViewProjInverse,
-						ref camera.matrix_view, ref camera.matrix_viewInverse,
-						ref camera.matrix_proj, ref camera.matrix_projInverse
+						ref viewMatrix, ref inverseViewMatrix,
+						ref projectionMatrix, ref inverseProjectionMatrix
 					);
 
 					renderer.ApplyUniforms(shader);
 					renderer.Render(renderObject);
 
-					Rendering.drawCallsCount++;
+					Rendering.DrawCallsCount++;
 				}
 
-				camera.OnRenderEnd?.Invoke(camera);
+				//Temporary bullshit
+				camera.ViewMatrix = viewMatrix;
+				camera.ProjectionMatrix = projectionMatrix;
+				camera.InverseViewMatrix = inverseViewMatrix;
+				camera.InverseProjectionMatrix = inverseProjectionMatrix;
 			}
 
 			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
