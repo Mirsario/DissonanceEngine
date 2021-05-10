@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public class Light2DPass : RenderPass
+	/*public class Light2DPass : RenderPass
 	{
 		public override void Render()
 		{
@@ -73,5 +73,5 @@ namespace Dissonance.Engine.Graphics
 			Shader.SetShader(null);
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 		}
-	}
+	}*/
 }

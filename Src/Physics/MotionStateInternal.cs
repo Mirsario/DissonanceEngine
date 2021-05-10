@@ -3,7 +3,7 @@ using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
-	internal class MotionStateInternal : MotionState
+	/*internal class MotionStateInternal : MotionState
 	{
 		private readonly RigidbodyInternal RBInternal;
 		private readonly Transform Transform;
@@ -90,5 +90,5 @@ namespace Dissonance.Engine.Physics
 
 			this.updateFlags |= updateFlags;
 		}
-	}
+	}*/
 }

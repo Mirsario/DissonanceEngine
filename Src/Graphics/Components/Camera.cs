@@ -1,25 +1,20 @@
-using System;
-
 namespace Dissonance.Engine.Graphics
 {
 	[RequireComponent(typeof(Transform))]
 	public struct Camera : IComponent
 	{
-		internal Matrix4x4 matrix_view;
-		internal Matrix4x4 matrix_proj;
-		internal Matrix4x4 matrix_viewInverse;
-		internal Matrix4x4 matrix_projInverse;
-
 		public RectFloat View { get; set; }
-		public bool Orthographic { get; set; }
-		public float OrthographicSize { get; set; }
+		public float Fov { get; set; }
 		public float NearClip { get; set; }
 		public float FarClip { get; set; }
-		public float Fov { get; set; }
-		public Action<Camera> OnRenderStart { get; private set; }
-		public Action<Camera> OnRenderEnd { get; private set; }
+		public bool Orthographic { get; set; }
+		public float OrthographicSize { get; set; }
 
-		internal float[,] Frustum { get; set; }
+		public float[,] Frustum { get; internal set; }
+		public Matrix4x4 ViewMatrix { get; internal set; }
+		public Matrix4x4 ProjectionMatrix { get; internal set; }
+		public Matrix4x4 InverseViewMatrix { get; internal set; }
+		public Matrix4x4 InverseProjectionMatrix { get; internal set; }
 
 		public RectInt ViewPixel {
 			get => new RectInt(
@@ -46,13 +41,10 @@ namespace Dissonance.Engine.Graphics
 			OrthographicSize = ortographicSize;
 			Frustum = new float[6, 4];
 
-			OnRenderStart = null;
-			OnRenderEnd = null;
-
-			matrix_view = default;
-			matrix_proj = default;
-			matrix_viewInverse = default;
-			matrix_projInverse = default;
+			ViewMatrix = default;
+			ProjectionMatrix = default;
+			InverseViewMatrix = default;
+			InverseProjectionMatrix = default;
 		}
 
 		public void CalculateFrustum(Matrix4x4 clip)
@@ -107,6 +99,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(5);
 		}
+
 		public bool PointInFrustum(Vector3 point)
 		{
 			for(int i = 0; i < 6; i++) {
@@ -117,6 +110,7 @@ namespace Dissonance.Engine.Graphics
 
 			return true;
 		}
+
 		public bool BoxInFrustum(Bounds box)
 		{
 			float x1 = box.min.x;

@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public class PostProcessPass : RenderPass
+	/*public class PostProcessPass : RenderPass
 	{
 		public override void Render()
 		{
@@ -49,5 +49,5 @@ namespace Dissonance.Engine.Graphics
 			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 		}
-	}
+	}*/
 }

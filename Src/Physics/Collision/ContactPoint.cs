@@ -4,8 +4,8 @@
 	{
 		public Vector3 point;
 		public Vector3 normal;
-		public Collider thisCollider;
-		public Collider otherCollider;
+		public ICollider thisCollider;
+		public ICollider otherCollider;
 		public float separation;
 	}
 }

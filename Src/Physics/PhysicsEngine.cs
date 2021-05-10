@@ -6,15 +6,15 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed partial class PhysicsEngine : EngineModule
 	{
-		internal static DbvtBroadphase broadphase;
+		/*internal static DbvtBroadphase broadphase;
 		internal static DiscreteDynamicsWorld world;
 		internal static CollisionDispatcher dispatcher;
 		internal static CollisionConfiguration collisionConf;
-		internal static List<Collider> collidersToUpdate;
+		internal static List<ICollider> collidersToUpdate;
 		internal static List<CollisionShape> collisionShapes;
 		internal static List<RigidbodyInternal> rigidbodies;
 
-		public static List<RigidbodyBase> ActiveRigidbodies { get; private set; }
+		public static List<Rigidbody> ActiveRigidbodies { get; private set; }
 		public static Vector3 Gravity {
 			get => world.Gravity;
 			set => world.Gravity = value;
@@ -23,9 +23,9 @@ namespace Dissonance.Engine.Physics
 		protected override void Init()
 		{
 			collisionShapes = new List<CollisionShape>();
-			collidersToUpdate = new List<Collider>();
+			collidersToUpdate = new List<ICollider>();
 			rigidbodies = new List<RigidbodyInternal>();
-			ActiveRigidbodies = new List<RigidbodyBase>();
+			ActiveRigidbodies = new List<Rigidbody>();
 
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
@@ -120,6 +120,6 @@ namespace Dissonance.Engine.Physics
 			}
 
 			return shape;
-		}
+		}*/
 	}
 }

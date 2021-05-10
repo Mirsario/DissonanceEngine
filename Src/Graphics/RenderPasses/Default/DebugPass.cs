@@ -4,7 +4,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class DebugPass : RenderPass
+	/*public class DebugPass : RenderPass
 	{
 		public override void Render()
 		{
@@ -34,5 +34,5 @@ namespace Dissonance.Engine.Graphics
 
 			Framebuffer.Bind(null);
 		}
-	}
+	}*/
 }

@@ -2,14 +2,14 @@ namespace Dissonance.Engine.Physics
 {
 	public class Collision
 	{
-		public readonly GameObject GameObject;
+		public readonly Entity Entity;
 		public readonly Rigidbody Rigidbody;
-		public readonly Collider Collider;
+		public readonly ICollider Collider;
 		public readonly ContactPoint[] Contacts;
 
-		public Collision(GameObject gameObject, Rigidbody rigidbody, Collider collider, ContactPoint[] contacts)
+		public Collision(Entity entity, Rigidbody rigidbody, ICollider collider, ContactPoint[] contacts)
 		{
-			GameObject = gameObject;
+			Entity = entity;
 			Rigidbody = rigidbody;
 			Collider = collider;
 			Contacts = contacts;

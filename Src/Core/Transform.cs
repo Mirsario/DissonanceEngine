@@ -17,6 +17,8 @@ namespace Dissonance.Engine
 			All = Position | Rotation | Scale
 		}
 
+		public static Transform Default = new Transform(Vector3.Zero);
+
 		public readonly IReadOnlyList<Transform> Children;
 
 		private readonly List<Transform> ChildrenInternal;
@@ -177,6 +179,15 @@ namespace Dissonance.Engine
 		}
 
 		public event Action<Transform, UpdateFlags> OnModified;
+
+		public Transform(Vector3 position)
+		{
+			matrix = Matrix4x4.Identity;
+			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
+			OnModified = null;
+
+			Position = position;
+		}
 
 		public IEnumerable<Transform> EnumerateParents()
 		{

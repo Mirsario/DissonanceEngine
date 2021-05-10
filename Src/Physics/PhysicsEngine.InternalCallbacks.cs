@@ -5,7 +5,7 @@ namespace Dissonance.Engine.Physics
 {
 	partial class PhysicsEngine
 	{
-		private static void Callback_ContactAdded(ManifoldPoint cp, CollisionObjectWrapper colObj0, int partId0, int index0, CollisionObjectWrapper colObj1, int partId1, int index1)
+		/*private static void Callback_ContactAdded(ManifoldPoint cp, CollisionObjectWrapper colObj0, int partId0, int index0, CollisionObjectWrapper colObj1, int partId1, int index1)
 		{
 			//Bullet seems to use edge normals by default. Code below corrects it so it uses face normals instead.
 			//This fixes tons of issues with rigidbodies jumping up when moving between terrain quads, even if the terrain is 100% flat.
@@ -101,6 +101,6 @@ namespace Dissonance.Engine.Physics
 					}
 				}
 			}
-		}
+		}*/
 	}
 }

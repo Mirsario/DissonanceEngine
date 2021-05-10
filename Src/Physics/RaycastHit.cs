@@ -5,7 +5,7 @@
 		public Vector3 point;
 		public Vector3 normal;
 		public int triangleIndex;
-		public Collider collider;
-		public GameObject gameObject;
+		public ICollider collider;
+		public Entity entity;
 	}
 }

@@ -3,12 +3,12 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	internal class RaycastCallback : ClosestRayResultCallback
+	/*internal class RaycastCallback : ClosestRayResultCallback
 	{
 		public Func<GameObject, bool?> customFilter;
 		public int triangleIndex = -1;
 		public ulong layerMask;
-		public Collider collider;
+		public ICollider collider;
 
 		public RaycastCallback(ref BulletSharp.Math.Vector3 rayFromWorld, ref BulletSharp.Math.Vector3 rayToWorld, ulong layerMask, Func<GameObject, bool?> customFilter) : base(ref rayFromWorld, ref rayToWorld)
 		{
@@ -28,7 +28,7 @@ namespace Dissonance.Engine.Physics
 				if(collShape != null) {
 					var userObject = collShape.UserObject;
 
-					if(userObject != null && userObject is Collider coll) {
+					if(userObject != null && userObject is ICollider coll) {
 						collider = coll;
 					}
 
@@ -59,5 +59,5 @@ namespace Dissonance.Engine.Physics
 
 			return base.NeedsCollision(proxy);
 		}
-	}
+	}*/
 }

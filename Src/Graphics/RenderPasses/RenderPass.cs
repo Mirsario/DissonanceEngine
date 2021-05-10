@@ -75,8 +75,22 @@ namespace Dissonance.Engine.Graphics
 		public virtual void OnInit() { }
 		public virtual void Dispose() { }
 
-		protected virtual RectInt GetViewport(Camera camera)
-			=> viewportFunc?.Invoke(camera) ?? camera?.ViewPixel ?? (framebuffer != null ? new RectInt(0, 0, framebuffer.maxTextureWidth, framebuffer.maxTextureHeight) : new RectInt(0, 0, Screen.Width, Screen.Height));
+		protected virtual RectInt GetViewport(Camera? camera)
+		{
+			if(camera.HasValue) {
+				if(viewportFunc != null) {
+					return viewportFunc(camera.Value);
+				}
+
+				return camera.Value.ViewPixel;
+			}
+
+			if(framebuffer != null) {
+				return new RectInt(0, 0, framebuffer.maxTextureWidth, framebuffer.maxTextureHeight);
+			}
+
+			return new RectInt(0, 0, Screen.Width, Screen.Height);
+		}
 
 		public static T Create<T>(string name, Action<T> initializer = null) where T : RenderPass, new()
 		{

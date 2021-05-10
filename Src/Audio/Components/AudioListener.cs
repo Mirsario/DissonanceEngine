@@ -1,11 +1,9 @@
 namespace Dissonance.Engine.Audio
 {
 	[AllowOnlyOneInWorld]
-	[RequireComponent(typeof(Transform))]
 	public struct AudioListener : IComponent
 	{
-		//TODO: ECS.
-		/*public override void FixedUpdate()
+		/*protected internal override void FixedUpdate()
 		{
 			Vector3 pos = Transform.Position;
 
