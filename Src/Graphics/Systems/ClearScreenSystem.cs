@@ -2,9 +2,9 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public sealed class ClearScreenSystem : SystemBase
+	public sealed class ClearScreenSystem : RenderSystem
 	{
-		public override void RenderUpdate()
+		public override void Update()
 		{
 			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 

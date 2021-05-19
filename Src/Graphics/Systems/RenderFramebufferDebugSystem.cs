@@ -3,9 +3,9 @@
 namespace Dissonance.Engine.Graphics
 {
 	[SystemDependency(typeof(RenderPassSystem))]
-	public sealed class RenderFramebufferDebugSystem : SystemBase
+	public sealed class RenderFramebufferDebugSystem : RenderSystem
 	{
-		public override void RenderUpdate()
+		public override void Update()
 		{
 			if(!Rendering.DebugFramebuffers) {
 				return;

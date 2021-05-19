@@ -1,11 +1,13 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	public sealed class CameraUpdateSystem : SystemBase
+	[Reads(typeof(Camera), typeof(Transform))]
+	[Writes(typeof(Camera))]
+	public sealed class CameraUpdateSystem : RenderSystem
 	{
-		public override void RenderUpdate()
+		public override void Update()
 		{
 			//Calculate view and projection matrices, culling frustums
-			foreach(var entity in EntityManager.EnumerateEntities()) {
+			foreach(var entity in ReadEntities()) {
 				if(!entity.HasComponent<Camera>() || !entity.HasComponent<Transform>()) {
 					continue;
 				}

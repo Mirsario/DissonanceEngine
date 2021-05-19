@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
 {
 	public class SystemsManager : EngineModule
 	{
-		private static readonly Dictionary<Type, SystemBase> SystemsByType = new Dictionary<Type, SystemBase>();
+		//private static readonly Dictionary<Type, GameSystem> GameSystemsByType = new Dictionary<Type, GameSystem>();
+		//private static readonly Dictionary<Type, RenderSystem> RenderSystemsByType = new Dictionary<Type, RenderSystem>();
 
-		private static List<SystemBase> systems = new List<SystemBase>();
+		internal static readonly List<Type> GameSystemTypes = new();
+		internal static readonly List<Type> RenderSystemTypes = new();
+		//private static List<GameSystem> gameSystems = new List<GameSystem>();
+		//private static List<RenderSystem> renderSystems = new List<RenderSystem>();
 
 		protected override void PreInit()
 		{
@@ -19,44 +21,71 @@ namespace Dissonance.Engine
 						continue;
 					}
 
-					var system = (SystemBase)Activator.CreateInstance(type);
-
-					systems.Add(system);
-					SystemsByType.Add(type, system);
+					if(typeof(GameSystem).IsAssignableFrom(type)) {
+						GameSystemTypes.Add(type);
+					} else if(typeof(RenderSystem).IsAssignableFrom(type)) {
+						RenderSystemTypes.Add(type);
+					}
 				}
 
-				SortSystems();
+				//SortSystems();
 			};
 		}
-		protected override void FixedUpdate()
+		/*protected override void FixedUpdate()
 		{
-			foreach(var system in systems) {
-				system.FixedUpdate();
+			foreach(var system in gameSystems) {
+				system.Update();
 			}
 		}
 		protected override void RenderUpdate()
 		{
-			foreach(var system in systems) {
-				system.RenderUpdate();
+			foreach(var system in renderSystems) {
+				system.Update();
 			}
-		}
+		}*/
 
-		private void SortSystems()
+		/*private void SortSystems()
 		{
-			IEnumerable<SystemBase> GetDirectDependencies(SystemBase system)
+			IEnumerable<GameSystem> GetGameSystemDependencies(GameSystem system)
 				=> system.Dependencies?.Select(dependency => {
-					if(!SystemsByType.TryGetValue(dependency.type, out var result) && !dependency.optional) {
+					if(!GameSystemsByType.TryGetValue(dependency.type, out var result) && !dependency.optional) {
 						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{system.GetType().Name}'.");
 					}
 
 					return result;
 				});
 
-			systems = systems.DependencySort(GetDirectDependencies, true).ToList();
+			gameSystems = gameSystems.DependencySort(GetGameSystemDependencies, true).ToList();
 
-			/*for(int i = 0; i < Systems.Count; i++) {
-				Systems[i].DependencyIndex = i;
-			}*/
+			IEnumerable<RenderSystem> GetRenderSystemDependencies(RenderSystem system)
+				=> system.Dependencies?.Select(dependency => {
+					if(!RenderSystemsByType.TryGetValue(dependency.type, out var result) && !dependency.optional) {
+						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{system.GetType().Name}'.");
+					}
+
+					return result;
+				});
+
+			renderSystems = renderSystems.DependencySort(GetRenderSystemDependencies, true).ToList();
+		}*/
+
+		internal static void AddDefaultSystemsToWorld(World world)
+		{
+			foreach(var type in GameSystemTypes) {
+				var gameSystem = (GameSystem)Activator.CreateInstance(type);
+
+				gameSystem.World = world;
+
+				world.AddSystem(gameSystem);
+			}
+
+			foreach(var type in RenderSystemTypes) {
+				var gameSystem = (RenderSystem)Activator.CreateInstance(type);
+
+				gameSystem.World = world;
+
+				world.AddSystem(gameSystem);
+			}
 		}
 	}
 }

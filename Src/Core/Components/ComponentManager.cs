@@ -3,40 +3,68 @@ using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
 {
-	public class ComponentManager : EngineModule
+	public sealed class ComponentManager : EngineModule
 	{
 		private static class ComponentData<T> where T : struct, IComponent
 		{
-			public static T[] data = Array.Empty<T>();
-			public static int[] entityRemapping = Array.Empty<int>();
-		}
+			public struct WorldData
+			{
+				public static WorldData Default = new() {
+					data = Array.Empty<T>(),
+					indicesByEntity = Array.Empty<int>(),
+				};
 
-		internal static bool HasComponent<T>(int entityId) where T : struct, IComponent
-		{
-			return entityId < ComponentData<T>.entityRemapping.Length && ComponentData<T>.entityRemapping[entityId] != -1;
-		}
-
-		internal static ref T GetComponent<T>(int entityId) where T : struct, IComponent
-		{
-			return ref ComponentData<T>.data[ComponentData<T>.entityRemapping[entityId]];
-		}
-
-		internal static void SetComponent<T>(int entityId, T value) where T : struct, IComponent
-		{
-			int dataId;
-
-			if(ComponentData<T>.entityRemapping.Length <= entityId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.entityRemapping, entityId + 1, -1);
-
-				dataId = ComponentData<T>.data.Length;
-				ComponentData<T>.entityRemapping[entityId] = dataId;
-
-				Array.Resize(ref ComponentData<T>.data, dataId + 1);
-			} else {
-				dataId = ComponentData<T>.entityRemapping[entityId];
+				public T[] data;
+				public int[] indicesByEntity;
 			}
 
-			ComponentData<T>.data[dataId] = value;
+			public static WorldData[] worldData = Array.Empty<WorldData>();
+		}
+
+		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct, IComponent
+		{
+			if(worldId >= ComponentData<T>.worldData.Length) {
+				return false;
+			}
+
+			int[] indicesByEntity = ComponentData<T>.worldData[worldId].indicesByEntity;
+
+			if(entityId >= indicesByEntity.Length) {
+				return false;
+			}
+
+			return indicesByEntity[entityId] != -1;
+		}
+
+		internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct, IComponent
+		{
+			ref var worldData = ref ComponentData<T>.worldData[worldId];
+
+			return ref worldData.data[worldData.indicesByEntity[entityId]];
+		}
+
+		internal static void SetComponent<T>(int worldId, int entityId, T value) where T : struct, IComponent
+		{
+			if(ComponentData<T>.worldData.Length <= worldId) {
+				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, worldId + 1, ComponentData<T>.WorldData.Default);
+			}
+
+			ref var worldData = ref ComponentData<T>.worldData[worldId];
+
+			int dataId;
+
+			if(worldData.indicesByEntity.Length <= entityId) {
+				ArrayUtils.ResizeAndFillArray(ref worldData.indicesByEntity, entityId + 1, -1);
+
+				dataId = worldData.data.Length;
+				worldData.indicesByEntity[entityId] = dataId;
+
+				Array.Resize(ref worldData.data, dataId + 1);
+			} else {
+				dataId = worldData.indicesByEntity[entityId];
+			}
+
+			worldData.data[dataId] = value;
 		}
 	}
 }

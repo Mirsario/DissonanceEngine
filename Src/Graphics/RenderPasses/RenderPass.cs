@@ -70,7 +70,7 @@ namespace Dissonance.Engine.Graphics
 
 		protected RenderPass() { }
 
-		public abstract void Render();
+		public abstract void Render(World world);
 
 		public virtual void OnInit() { }
 		public virtual void Dispose() { }
