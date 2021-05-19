@@ -1,40 +1,40 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
 	public sealed class EntityManager : EngineModule
 	{
-		private static readonly List<Entity> Entities = new List<Entity>();
-		private static readonly List<int> FreeEntityIndices = new List<int>();
-		
-		public static Entity CreateEntity()
+		private static List<Entity> allEntities = new();
+
+		internal static Entity CreateEntity(World world)
 		{
 			int id;
 
-			if(FreeEntityIndices.Count > 0) {
-				id = FreeEntityIndices[0];
-				FreeEntityIndices.RemoveAt(0);
+			if(world.FreeEntityIndices.Count > 0) {
+				id = world.FreeEntityIndices[0];
+				world.FreeEntityIndices.RemoveAt(0);
 			} else {
-				id = Entities.Count;
+				id = world.Entities.Count;
 			}
 
-			var entity = new Entity(id);
+			var entity = new Entity(id, world.Id);
 
-			if(id >= Entities.Count) {
-				Entities.Add(entity);
+			if(id >= world.Entities.Count) {
+				world.Entities.Add(entity);
 			} else {
-				Entities[id] = entity;
+				world.Entities[id] = entity;
 			}
+
+			allEntities.Add(entity);
 
 			return entity;
 		}
 
-		public static IEnumerable<Entity> EnumerateEntities()
+		public static ReadOnlySpan<Entity> ReadAllEntities()
 		{
-			return Entities;
+			return CollectionsMarshal.AsSpan(allEntities);
 		}
 	}
 }

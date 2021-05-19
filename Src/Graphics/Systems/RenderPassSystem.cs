@@ -1,8 +1,8 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	public sealed class RenderPassSystem : SystemBase
+	public sealed class RenderPassSystem : RenderSystem
 	{
-		public override void RenderUpdate()
+		public override void Update()
 		{
 			var pipeline = Rendering.RenderingPipeline;
 
@@ -10,7 +10,7 @@
 				var pass = pipeline.RenderPasses[i];
 
 				if(pass.enabled) {
-					pass.Render();
+					pass.Render(World);
 
 					Rendering.CheckGLErrors($"Rendering pass {pass.name} ({pass.GetType().Name})");
 				}

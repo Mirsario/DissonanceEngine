@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Dissonance.Engine.Physics;
-using Dissonance.Framework.Graphics;
+﻿using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -17,7 +15,7 @@ namespace Dissonance.Engine.Graphics
 
 		public ulong? layerMask;
 
-		public override void Render()
+		public override void Render(World world)
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
@@ -26,9 +24,9 @@ namespace Dissonance.Engine.Graphics
 			GL.Enable(EnableCap.Blend);
 
 			var uniformComputed = new bool[DefaultShaderUniforms.Count];
-			Matrix4x4 world = default, worldInverse = default,
-			worldView = default, worldViewInverse = default,
-			worldViewProj = default, worldViewProjInverse = default;
+			Matrix4x4 worldMatrix = default, inverseWorldMatrix = default,
+			worldViewMatrix = default, inverseWorldViewMatrix = default,
+			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
 
 			bool hasLayerMask = layerMask.HasValue;
 			ulong layerMaskValue = layerMask ?? 0;
@@ -39,11 +37,19 @@ namespace Dissonance.Engine.Graphics
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = EntityManager.EnumerateEntities().Where(e => e.HasComponent<MeshRenderer>()).Count();
+			int rendererCount = 0;
+
+			//TODO: This is temporary.
+			foreach(var entity in world.ReadEntities()) {
+				if(entity.HasComponent<MeshRenderer>()) {
+					rendererCount++;
+				}
+			}
+
 			var renderQueue = new RenderQueueEntry[rendererCount];
 
 			//CameraLoop
-			foreach(var cameraEntity in EntityManager.EnumerateEntities()) {
+			foreach(var cameraEntity in world.ReadEntities()) {
 				if(!cameraEntity.HasComponent<Camera>() || !cameraEntity.HasComponent<Transform>()) {
 					continue;
 				}
@@ -61,9 +67,9 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				var cameraPos = cameraTransform.Position;
-				int numToRenderer = 0;
+				int numToRender = 0;
 
-				foreach(var rendererEntity in EntityManager.EnumerateEntities()) {
+				foreach(var rendererEntity in world.ReadEntities()) {
 					if(!rendererEntity.HasComponent<MeshRenderer>() || !rendererEntity.HasComponent<Transform>()) {
 						continue;
 					}
@@ -93,7 +99,7 @@ namespace Dissonance.Engine.Graphics
 					bool cullResult = camera.Orthographic || camera.BoxInFrustum(renderer.GetAabb(rendererTransform));
 
 					if(cullResult) {
-						ref var entry = ref renderQueue[numToRenderer++];
+						ref var entry = ref renderQueue[numToRender++];
 
 						entry.shader = shader;
 						entry.material = material;
@@ -104,8 +110,8 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				//Sort the render queue
-				for(int i = 0; i < numToRenderer - 1; i++) {
-					for(int j = i + 1; j < numToRenderer; j++) {
+				for(int i = 0; i < numToRender - 1; i++) {
+					for(int j = i + 1; j < numToRender; j++) {
 						ref var iTuple = ref renderQueue[i];
 						ref var jTuple = ref renderQueue[j];
 
@@ -124,7 +130,7 @@ namespace Dissonance.Engine.Graphics
 				var inverseProjectionMatrix = camera.InverseProjectionMatrix;
 
 				//Render
-				for(int i = 0; i < numToRenderer; i++) {
+				for(int i = 0; i < numToRender; i++) {
 					var entry = renderQueue[i];
 					var shader = entry.shader;
 					var material = entry.material;
@@ -179,9 +185,9 @@ namespace Dissonance.Engine.Graphics
 
 					shader.SetupMatrixUniformsCached(
 						rendererTransform, uniformComputed,
-						ref world, ref worldInverse,
-						ref worldView, ref worldViewInverse,
-						ref worldViewProj, ref worldViewProjInverse,
+						ref worldMatrix, ref inverseWorldMatrix,
+						ref worldViewMatrix, ref inverseWorldViewMatrix,
+						ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
 						ref viewMatrix, ref inverseViewMatrix,
 						ref projectionMatrix, ref inverseProjectionMatrix
 					);

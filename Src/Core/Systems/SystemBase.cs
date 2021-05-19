@@ -1,13 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Dissonance.Engine
 {
 	public abstract class SystemBase
 	{
-		public DependencyInfo[] Dependencies { get; internal set; }
+		public DependencyInfo[] Dependencies { get; private set; }
 
-		public SystemBase()
+		internal World World { get; set; }
+
+		internal SystemBase()
 		{
 			Dependencies = GetType()
 				.GetCustomAttributes<SystemDependencyAttribute>()
@@ -15,7 +18,13 @@ namespace Dissonance.Engine
 				.ToArray();
 		}
 
-		public virtual void FixedUpdate() { }
-		public virtual void RenderUpdate() { }
+		public ReadOnlySpan<Entity> ReadEntities()
+		{
+			if(World != null) {
+				return World.ReadEntities();
+			}
+
+			return EntityManager.ReadAllEntities();
+		}
 	}
 }
