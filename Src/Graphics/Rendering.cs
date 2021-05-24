@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Graphics
 		private static Shader guiShader; //TODO: To be moved
 
 		public static int DrawCallsCount { get; set; }
-		public static Vector4 ClearColor { get; set; } = Vector4.One * 0.25f;
+		public static Vector4 ClearColor { get; set; } = Vector4.Zero;
 		public static Vector3 AmbientColor { get; set; } = new Vector3(0.1f, 0.1f, 0.1f);
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
@@ -58,6 +58,7 @@ namespace Dissonance.Engine.Graphics
 				PrepareOpenGL();
 			}
 		}
+
 		protected override void Init()
 		{
 			var glVersion = GetOpenGLVersion();
@@ -93,12 +94,25 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
-		protected override void RenderUpdate()
+
+		protected override void PreRenderUpdate()
 		{
+			ClearScreen();
+		}
+		protected override void PostRenderUpdate()
+		{
+			if(DebugFramebuffers) {
+				BlitFramebuffers();
+			}
+
+			windowing.SwapBuffers();
+			CheckGLErrors("After swapping buffers");
+
 			DrawCallsCount = 0;
 
 			Debug.ResetRendering();
 		}
+
 		protected override void OnDispose()
 		{
 			windowing = null;
@@ -125,6 +139,7 @@ namespace Dissonance.Engine.Graphics
 
 			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
 		}
+		
 		private static void InstantiateRenderingPipeline()
 		{
 			RenderingPipeline?.Dispose();
@@ -133,6 +148,94 @@ namespace Dissonance.Engine.Graphics
 				RenderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
 
 				RenderingPipeline.Init();
+			}
+		}
+		
+		private static void ClearScreen()
+		{
+			GL.Viewport(0, 0, Screen.Width, Screen.Height);
+
+			var pipeline = RenderingPipeline;
+			var clearColor = ClearColor;
+
+			if(pipeline.Framebuffers != null) {
+				int length = pipeline.Framebuffers.Length;
+
+				for(int i = 0; i <= length; i++) {
+					var framebuffer = i == length ? null : pipeline.Framebuffers[i];
+
+					framebuffer?.PrepareAttachments();
+
+					Framebuffer.BindWithDrawBuffers(framebuffer);
+
+					GL.ClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+					//GL.StencilMask(~0);
+					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+				}
+			}
+
+			Framebuffer.Bind(null);
+		}
+
+		private static void BlitFramebuffers()
+		{
+			static bool IsDepthTexture(RenderTexture tex)
+				=> tex.PixelFormat == PixelFormat.DepthComponent;
+
+			var renderingPipeline = RenderingPipeline;
+			var framebuffers = renderingPipeline.framebuffers;
+			int textureCount = 0;
+
+			for(int i = 0; i < framebuffers.Length; i++) {
+				var fb = framebuffers[i];
+
+				for(int j = 0; j < fb.renderTextures.Count; j++) {
+					var tex = fb.renderTextures[j];
+
+					if(!IsDepthTexture(tex)) {
+						textureCount++;
+					}
+				}
+			}
+
+			int size = 1;
+
+			while(size * size < textureCount) {
+				size++;
+			}
+
+			int x = 0;
+			int y = 0;
+
+			for(int i = 0; i < framebuffers.Length; i++) {
+				var framebuffer = framebuffers[i];
+
+				Framebuffer.Bind(framebuffer, FramebufferTarget.ReadFramebuffer);
+
+				for(int j = 0; j < framebuffer.renderTextures.Count; j++) {
+					var tex = framebuffer.renderTextures[j];
+
+					if(IsDepthTexture(tex)) {
+						continue;
+					}
+
+					GL.ReadBuffer(ReadBufferMode.ColorAttachment0 + j);
+
+					int wSize = Screen.Width / size;
+					int hSize = Screen.Height / size;
+
+					GL.BlitFramebuffer(
+						0, 0, tex.Width, tex.Height,
+						x * wSize, (size - y - 1) * hSize, (x + 1) * wSize, (size - y) * hSize,
+						ClearBufferMask.ColorBufferBit,
+						BlitFramebufferFilter.Nearest
+					);
+
+					if(++x >= size) {
+						x = 0;
+						y++;
+					}
+				}
 			}
 		}
 	}

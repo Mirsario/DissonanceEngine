@@ -148,62 +148,41 @@ namespace Dissonance.Engine.Graphics
 				//GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
-		internal void SetupMatrixUniformsCached(in Transform transform, bool[] uniformComputed,
+		internal void SetupMatrixUniforms(Transform transform,
 			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
 			ref Matrix4x4 view, ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj, ref Matrix4x4 projInverse
+			ref Matrix4x4 proj, ref Matrix4x4 projInverse,
+			bool dontCalculateWorld = false
 		)
 		{
-			//Heavily optimized shitcode below, forgive me future me
-			//no
-
 			#region World
 
-			//bool needsWorld;
 			if(hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-				//Check
-				if(!uniformComputed[DSU.World]) {
+				if(!dontCalculateWorld) {
 					world = transform.WorldMatrix;
-					uniformComputed[DSU.World] = true;
 				}
 
 				if(hasDefaultUniform[DSU.World]) {
-					//Assign
 					UniformMatrix4(defaultUniformIndex[DSU.World], ref world);
 				}
-
 				if(hasDefaultUniform[DSU.WorldInverse]) {
-					//Check, Assign
-					if(!uniformComputed[DSU.WorldInverse]) {
-						worldInverse = world.Inverted;
-						uniformComputed[DSU.WorldInverse] = true;
-					}
-
+					worldInverse = world.Inverted;
 					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], ref worldInverse);
 				}
 
 				#region WorldView
 
 				if(hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-					//Check
-					if(!uniformComputed[DSU.WorldView]) {
-						worldView = world * view;
-						uniformComputed[DSU.WorldView] = true;
-					}
+					worldView = world * view;
 
 					if(hasDefaultUniform[DSU.WorldView]) {
-						//Assign
 						UniformMatrix4(defaultUniformIndex[DSU.WorldView], ref worldView);
 					}
 
 					if(hasDefaultUniform[DSU.WorldViewInverse]) {
-						//Check, Assign
-						if(!uniformComputed[DSU.WorldViewInverse]) {
-							worldViewInverse = worldView.Inverted;
-							uniformComputed[DSU.WorldViewInverse] = true;
-						}
+						worldViewInverse = worldView.Inverted;
 
 						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], ref worldViewInverse);
 					}
@@ -211,23 +190,14 @@ namespace Dissonance.Engine.Graphics
 					#region WorldViewProj
 
 					if(hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-						//Check
-						if(!uniformComputed[DSU.WorldViewProj]) {
-							worldViewProj = worldView * proj;
-							uniformComputed[DSU.WorldViewProj] = true;
-						}
+						worldViewProj = worldView * proj;
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
-							//Assign
 							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], ref worldViewProj);
 						}
 
 						if(hasDefaultUniform[DSU.WorldViewProjInverse]) {
-							//Check, Assign
-							if(!uniformComputed[DSU.WorldViewProjInverse]) {
-								worldViewProjInverse = worldViewProj.Inverted;
-								uniformComputed[DSU.WorldViewProjInverse] = true;
-							}
+							worldViewProjInverse = worldViewProj.Inverted;
 
 							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
 						}

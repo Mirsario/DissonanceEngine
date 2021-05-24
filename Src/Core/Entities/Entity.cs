@@ -1,6 +1,8 @@
-﻿namespace Dissonance.Engine
+﻿using System;
+
+namespace Dissonance.Engine
 {
-	public readonly struct Entity
+	public readonly struct Entity : IEntity
 	{
 		internal readonly int Id;
 		internal readonly int WorldId;
