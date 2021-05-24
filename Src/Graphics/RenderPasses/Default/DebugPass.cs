@@ -18,11 +18,11 @@ namespace Dissonance.Engine.Graphics
 
 			//CameraLoop
 			foreach(var cameraEntity in world.ReadEntities()) {
-				if(!cameraEntity.HasComponent<Camera>()) {
+				if(!cameraEntity.Has<Camera>()) {
 					continue;
 				}
 
-				var camera = cameraEntity.GetComponent<Camera>();
+				var camera = cameraEntity.Get<Camera>();
 				var viewport = GetViewport(camera);
 
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);

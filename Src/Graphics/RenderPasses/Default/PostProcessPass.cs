@@ -18,12 +18,12 @@ namespace Dissonance.Engine.Graphics
 			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 
 			foreach(var entity in world.ReadEntities()) {
-				if(!entity.HasComponent<Camera>() || !entity.HasComponent<Transform>()) {
+				if(!entity.Has<Camera>() || !entity.Has<Transform>()) {
 					continue;
 				}
 
-				var camera = entity.GetComponent<Camera>();
-				var transform = entity.GetComponent<Transform>();
+				var camera = entity.Get<Camera>();
+				var transform = entity.Get<Transform>();
 				var viewport = GetViewport(camera);
 
 				passShader.SetupCameraUniforms(camera, transform.Position);

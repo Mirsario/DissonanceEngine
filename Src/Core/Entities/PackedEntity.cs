@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 {
 	public sealed class PackedEntity
 	{
-		private static MethodInfo EntitySetComponentMethod = typeof(Entity).GetMethod(nameof(Entity.SetComponent));
+		private static MethodInfo EntitySetComponentMethod = typeof(Entity).GetMethod(nameof(Entity.Set));
 
 		private readonly Dictionary<Type, object> PackedComponents = new();
 

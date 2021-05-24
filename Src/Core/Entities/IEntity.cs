@@ -2,10 +2,10 @@
 {
 	public interface IEntity
 	{
-		public bool HasComponent<T>() where T : struct, IComponent;
+		public bool Has<T>() where T : struct, IComponent;
 
-		public ref T GetComponent<T>() where T : struct, IComponent;
+		public ref T Get<T>() where T : struct, IComponent;
 
-		public void SetComponent<T>(T value) where T : struct, IComponent;
+		public void Set<T>(T value) where T : struct, IComponent;
 	}
 }
