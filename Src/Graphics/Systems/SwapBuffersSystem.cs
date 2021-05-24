@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dissonance.Engine.Graphics.Systems
+﻿namespace Dissonance.Engine.Graphics.Systems
 {
-	[SystemDependency(typeof(RenderFramebufferDebugSystem))]
+	/*[SystemDependency(typeof(RenderFramebufferDebugSystem))]
 	[SystemDependency(typeof(RenderPassSystem))]
 	public sealed class SwapBuffersSystem : RenderSystem
 	{
 		public override void Update()
 		{
-			Rendering.windowing.SwapBuffers();
+			//Rendering.windowing.SwapBuffers();
 
-			Rendering.CheckGLErrors("After swapping buffers");
+			//Rendering.CheckGLErrors("After swapping buffers");
 		}
-	}
+	}*/
 }

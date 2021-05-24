@@ -311,7 +311,7 @@ namespace Dissonance.Engine.IO
 								.GetMethod("Import", BindingFlags.Public | BindingFlags.Static)
 								.MakeGenericMethod(tType);
 
-							method.Invoke(manager, new object[] { fileList[k], true, manager, true });
+							method.Invoke(manager, new object[] { fileList[k], true, manager });
 						}
 						catch(TargetInvocationException e) {
 							throw e.InnerException;

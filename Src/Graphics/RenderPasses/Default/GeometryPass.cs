@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Graphics
 			GL.Enable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.Blend);
 
-			var uniformComputed = new bool[DefaultShaderUniforms.Count];
+			bool[] uniformComputed = new bool[DefaultShaderUniforms.Count];
 			Matrix4x4 worldMatrix = default, inverseWorldMatrix = default,
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
 			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
@@ -123,7 +123,7 @@ namespace Dissonance.Engine.Graphics
 					}
 				}
 
-				//Temporary bullshit
+				//Temporary
 				var viewMatrix = camera.ViewMatrix;
 				var projectionMatrix = camera.ProjectionMatrix;
 				var inverseViewMatrix = camera.InverseViewMatrix;
@@ -183,8 +183,8 @@ namespace Dissonance.Engine.Graphics
 						uniformComputed[k] = false;
 					}
 
-					shader.SetupMatrixUniformsCached(
-						rendererTransform, uniformComputed,
+					shader.SetupMatrixUniforms(
+						rendererTransform,
 						ref worldMatrix, ref inverseWorldMatrix,
 						ref worldViewMatrix, ref inverseWorldViewMatrix,
 						ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
@@ -198,7 +198,7 @@ namespace Dissonance.Engine.Graphics
 					Rendering.DrawCallsCount++;
 				}
 
-				//Temporary bullshit
+				//Temporary
 				camera.ViewMatrix = viewMatrix;
 				camera.ProjectionMatrix = projectionMatrix;
 				camera.InverseViewMatrix = inverseViewMatrix;

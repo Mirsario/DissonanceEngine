@@ -12,7 +12,7 @@ namespace Dissonance.Engine.IO
 		public virtual bool Autoload(string file) => false;
 	}
 
-	public abstract class AssetManager<T> : AssetManager where T : class
+	public abstract class AssetManager<T> : AssetManager
 	{
 		public virtual T Import(Stream stream, string filePath) => throw new NotImplementedException();
 		public virtual void Export(T asset, Stream stream) => throw new NotImplementedException();

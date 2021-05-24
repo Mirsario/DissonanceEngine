@@ -9,13 +9,13 @@ namespace Dissonance.Engine.IO
 	partial class Resources
 	{
 		//'Import' simply imports files, optionally caching them for Get.
-		public static T Import<T>(string filePath, bool addToCache = true, AssetManager<T> assetManager = null, bool throwOnFail = true) where T : class
+		public static T Import<T>(string filePath, bool addToCache = true, AssetManager<T> assetManager = null)
 		{
 			NameToPath(ref filePath, out bool ntpMultiplePaths);
 
-			return ImportInternal(filePath, addToCache, assetManager, ntpMultiplePaths, throwOnFail);
+			return ImportInternal(filePath, addToCache, assetManager, ntpMultiplePaths);
 		}
-		public static T ImportFromStream<T>(Stream stream, AssetManager<T> assetManager = null, string filePath = null) where T : class
+		public static T ImportFromStream<T>(Stream stream, AssetManager<T> assetManager = null, string filePath = null)
 		{
 			var type = typeof(T);
 
@@ -48,13 +48,13 @@ namespace Dissonance.Engine.IO
 
 			return output;
 		}
-		public static string ImportText(string filePath, bool addToCache = false, bool throwOnFail = true)
-			=> Import(filePath, addToCache, (AssetManager<string>)assetManagers[".txt"][0], throwOnFail);
-		public static byte[] ImportBytes(string filePath, bool addToCache = false, bool throwOnFail = true)
-			=> Import(filePath, addToCache, (AssetManager<byte[]>)assetManagers[".bytes"][0], throwOnFail);
+		public static string ImportText(string filePath, bool addToCache = false)
+			=> Import(filePath, addToCache, (AssetManager<string>)assetManagers[".txt"][0]);
+		public static byte[] ImportBytes(string filePath, bool addToCache = false)
+			=> Import(filePath, addToCache, (AssetManager<byte[]>)assetManagers[".bytes"][0]);
 
 		//'Get' imports and caches files, or gets them from cache, if they have already been loaded.
-		public static T Get<T>(string filePath, bool throwOnFail = true) where T : class
+		public static T Get<T>(string filePath)
 		{
 			ReadyPath(ref filePath);
 			NameToPath(ref filePath, out bool ntpMultiplePaths);
@@ -63,7 +63,7 @@ namespace Dissonance.Engine.IO
 				return content;
 			}
 
-			return ImportInternal<T>(filePath, true, null, ntpMultiplePaths, throwOnFail);
+			return ImportInternal<T>(filePath, true, null, ntpMultiplePaths);
 		}
 
 		//'Find' finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
@@ -118,19 +118,15 @@ namespace Dissonance.Engine.IO
 			assetManager.Export(asset, stream);
 		}
 
-		internal static T ImportInternal<T>(string filePath, bool addToCache, AssetManager<T> assetManager, bool ntpMultiplePaths, bool throwOnFail = true) where T : class
+		internal static T ImportInternal<T>(string filePath, bool addToCache, AssetManager<T> assetManager, bool ntpMultiplePaths)
 		{
 			ReadyPath(ref filePath);
 
 			if(importingBuiltInAssets || filePath.ToLower().StartsWith(BuiltInAssetsFolder.ToLower())) {
-				return ImportBuiltInAsset(filePath, assetManager) as T;
+				return (T)ImportBuiltInAsset(filePath, assetManager);
 			}
 
 			if(!File.Exists(filePath)) {
-				if(!throwOnFail) {
-					return null;
-				}
-
 				if(ntpMultiplePaths) {
 					throw new FileNotFoundException($"Couldn't find file '{filePath}' for import. There were multiple path aliases for that filename.");
 				}

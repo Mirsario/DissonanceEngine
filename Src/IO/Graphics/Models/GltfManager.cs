@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	/*public partial class GltfManager : AssetManager<GameObject>
+	public partial class GltfManager : AssetManager<PackedScene>
 	{
 		public const uint FormatHeader = 0x46546C67;
 
@@ -44,7 +44,7 @@ namespace Dissonance.Engine.IO
 
 		public override string[] Extensions => new[] { ".gltf", ".glb" };
 
-		public override GameObject Import(Stream stream, string filePath)
+		public override PackedScene Import(Stream stream, string filePath)
 		{
 			var info = new GltfInfo(filePath);
 
@@ -67,14 +67,22 @@ namespace Dissonance.Engine.IO
 
 			LoadMeshes(info);
 
-			return info.RootObject;
+			return info.Scene;
 		}
 
 		protected static void HandleGltf(GltfInfo info, byte[] textBytes)
 		{
 			info.json = JsonConvert.DeserializeObject<GltfJson>(Encoding.UTF8.GetString(textBytes));
 
-			File.WriteAllText("Gltf.json", JsonConvert.SerializeObject(info.json, Formatting.Indented, new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore }));
+#if DEBUG
+			Directory.CreateDirectory("DebugInfo");
+			File.WriteAllText(
+				Path.Combine("DebugInfo", "Gltf.json"),
+				JsonConvert.SerializeObject(info.json, Formatting.Indented, new JsonSerializerSettings() {
+					DefaultValueHandling = DefaultValueHandling.Ignore
+				})
+			);
+#endif
 		}
 		protected static void HandleGlb(GltfInfo info, Stream stream)
 		{
@@ -233,14 +241,17 @@ namespace Dissonance.Engine.IO
 					meshes.Add(mesh);
 				}
 
+				var material = new Material("DefaultMaterial", Resources.Find<Shader>("Diffuse"));
+
 				for(int i = 0; i < meshes.Count; i++) {
-					info.RootObject.AddComponent<MeshRenderer>(c => {
-						c.Mesh = meshes[i];
-					});
+					var entity = info.Scene.CreateEntity();
+
+					entity.SetComponent(new Transform(Vector3.Zero));
+					entity.SetComponent(new MeshRenderer(meshes[i], material));
 				}
 
 				//info.result.Add(model, jsonMesh.name);
 			}
 		}
-	}*/
+	}
 }

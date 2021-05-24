@@ -4,9 +4,9 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	/*public class DebugPass : RenderPass
+	public class DebugPass : RenderPass
 	{
-		public override void Render()
+		public override void Render(World world)
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
@@ -17,12 +17,17 @@ namespace Dissonance.Engine.Graphics
 			Shader.SetShader(shader);
 
 			//CameraLoop
-			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
+			foreach(var cameraEntity in world.ReadEntities()) {
+				if(!cameraEntity.HasComponent<Camera>()) {
+					continue;
+				}
+
+				var camera = cameraEntity.GetComponent<Camera>();
 				var viewport = GetViewport(camera);
 
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-				var viewProj = camera.matrix_view * camera.matrix_proj;
+				var viewProj = camera.ViewMatrix * camera.ProjectionMatrix;
 
 				Shader.UniformMatrix4(shader.GetUniformLocation("viewProj"), ref viewProj);
 
@@ -34,5 +39,5 @@ namespace Dissonance.Engine.Graphics
 
 			Framebuffer.Bind(null);
 		}
-	}*/
+	}
 }

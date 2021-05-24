@@ -2,9 +2,9 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	/*public class PostProcessPass : RenderPass
+	public class PostProcessPass : RenderPass
 	{
-		public override void Render()
+		public override void Render(World world)
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
@@ -17,10 +17,16 @@ namespace Dissonance.Engine.Graphics
 
 			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 
-			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
+			foreach(var entity in world.ReadEntities()) {
+				if(!entity.HasComponent<Camera>() || !entity.HasComponent<Transform>()) {
+					continue;
+				}
+
+				var camera = entity.GetComponent<Camera>();
+				var transform = entity.GetComponent<Transform>();
 				var viewport = GetViewport(camera);
 
-				passShader.SetupCameraUniforms(camera, camera.Transform.Position);
+				passShader.SetupCameraUniforms(camera, transform.Position);
 
 				if(passedTextures != null) {
 					for(int j = 0; j < passedTextures.Length; j++) {
@@ -49,5 +55,5 @@ namespace Dissonance.Engine.Graphics
 			GL.DepthMask(true);
 			GL.Disable(EnableCap.Blend);
 		}
-	}*/
+	}
 }
