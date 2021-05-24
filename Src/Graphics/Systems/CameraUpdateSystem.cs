@@ -8,12 +8,12 @@
 		{
 			//Calculate view and projection matrices, culling frustums
 			foreach(var entity in ReadEntities()) {
-				if(!entity.HasComponent<Camera>() || !entity.HasComponent<Transform>()) {
+				if(!entity.Has<Camera>() || !entity.Has<Transform>()) {
 					continue;
 				}
 
-				ref var camera = ref entity.GetComponent<Camera>();
-				var transform = entity.GetComponent<Transform>();
+				ref var camera = ref entity.Get<Camera>();
+				var transform = entity.Get<Transform>();
 
 				var viewSize = camera.ViewPixel;
 				float aspectRatio = viewSize.width / (float)viewSize.height;

@@ -28,9 +28,6 @@ namespace Dissonance.Engine.Graphics
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
 			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
 
-			bool hasLayerMask = layerMask.HasValue;
-			ulong layerMaskValue = layerMask ?? 0;
-
 			//Render cache
 			Shader lastShader = null;
 			Material lastMaterial = null;
@@ -41,7 +38,7 @@ namespace Dissonance.Engine.Graphics
 
 			//TODO: This is temporary.
 			foreach(var entity in world.ReadEntities()) {
-				if(entity.HasComponent<MeshRenderer>()) {
+				if(entity.Has<MeshRenderer>()) {
 					rendererCount++;
 				}
 			}
@@ -50,12 +47,12 @@ namespace Dissonance.Engine.Graphics
 
 			//CameraLoop
 			foreach(var cameraEntity in world.ReadEntities()) {
-				if(!cameraEntity.HasComponent<Camera>() || !cameraEntity.HasComponent<Transform>()) {
+				if(!cameraEntity.Has<Camera>() || !cameraEntity.Has<Transform>()) {
 					continue;
 				}
 
-				ref var camera = ref cameraEntity.GetComponent<Camera>();
-				var cameraTransform = cameraEntity.GetComponent<Transform>();
+				ref var camera = ref cameraEntity.Get<Camera>();
+				var cameraTransform = cameraEntity.Get<Transform>();
 
 				var viewport = GetViewport(camera);
 
@@ -70,12 +67,12 @@ namespace Dissonance.Engine.Graphics
 				int numToRender = 0;
 
 				foreach(var rendererEntity in world.ReadEntities()) {
-					if(!rendererEntity.HasComponent<MeshRenderer>() || !rendererEntity.HasComponent<Transform>()) {
+					if(!rendererEntity.Has<MeshRenderer>() || !rendererEntity.Has<Transform>()) {
 						continue;
 					}
 
-					ref var renderer = ref rendererEntity.GetComponent<MeshRenderer>();
-					var rendererTransform = rendererEntity.GetComponent<Transform>();
+					ref var renderer = ref rendererEntity.Get<MeshRenderer>();
+					var rendererTransform = rendererEntity.Get<Transform>();
 
 					/*if(!renderer.Enabled) {
 						continue;

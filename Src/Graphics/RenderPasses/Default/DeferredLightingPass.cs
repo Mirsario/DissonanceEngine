@@ -35,12 +35,12 @@ namespace Dissonance.Engine.Graphics
 			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
 
 			foreach(var cameraEntity in world.ReadEntities()) {
-				if(!cameraEntity.HasComponent<Camera>() || !cameraEntity.HasComponent<Transform>()) {
+				if(!cameraEntity.Has<Camera>() || !cameraEntity.Has<Transform>()) {
 					continue;
 				}
 
-				var camera = cameraEntity.GetComponent<Camera>();
-				var cameraTransform = cameraEntity.GetComponent<Transform>();
+				var camera = cameraEntity.Get<Camera>();
+				var cameraTransform = cameraEntity.Get<Transform>();
 				var viewRect = camera.ViewPixel;
 
 				GL.Viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
@@ -86,17 +86,17 @@ namespace Dissonance.Engine.Graphics
 					activeShader.TryGetUniformLocation("lightColor", out int uniformLightColor);
 
 					foreach(var lightEntity in world.ReadEntities()) {
-						if(!lightEntity.HasComponent<Light>() || !lightEntity.HasComponent<Transform>()) {
+						if(!lightEntity.Has<Light>() || !lightEntity.Has<Transform>()) {
 							continue;
 						}
 
-						var light = lightEntity.GetComponent<Light>();
+						var light = lightEntity.Get<Light>();
 
 						if(light.Type != lightType) {
 							continue;
 						}
 
-						var lightTransform = lightEntity.GetComponent<Transform>();
+						var lightTransform = lightEntity.Get<Transform>();
 						var lightPosition = lightTransform.Position;
 
 						worldMatrix = Matrix4x4.CreateScale(light.Range) * Matrix4x4.CreateTranslation(lightPosition);
