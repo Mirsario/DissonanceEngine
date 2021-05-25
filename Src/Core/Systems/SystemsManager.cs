@@ -72,19 +72,23 @@ namespace Dissonance.Engine
 		internal static void AddDefaultSystemsToWorld(World world)
 		{
 			foreach(var type in GameSystemTypes) {
-				var gameSystem = (GameSystem)Activator.CreateInstance(type);
+				var system = (GameSystem)Activator.CreateInstance(type);
 
-				gameSystem.World = world;
+				system.World = world;
 
-				world.AddSystem(gameSystem);
+				system.Initialize();
+
+				world.AddSystem(system);
 			}
 
 			foreach(var type in RenderSystemTypes) {
-				var gameSystem = (RenderSystem)Activator.CreateInstance(type);
+				var system = (RenderSystem)Activator.CreateInstance(type);
 
-				gameSystem.World = world;
+				system.World = world;
 
-				world.AddSystem(gameSystem);
+				system.Initialize();
+
+				world.AddSystem(system);
 			}
 		}
 	}
