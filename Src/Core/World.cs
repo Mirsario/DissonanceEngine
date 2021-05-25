@@ -33,10 +33,17 @@ namespace Dissonance.Engine
 			RenderSystems.Add(renderSystem);
 		}
 
+		public bool Has<T>() where T : struct, IComponent
+			=> ComponentManager.HasComponent<T>(Id);
+
+		public ref T Get<T>() where T : struct, IComponent
+			=> ref ComponentManager.GetComponent<T>(Id);
+
+		public void Set<T>(T value) where T : struct, IComponent
+			=> ComponentManager.SetComponent(Id, value);
+
 		public ReadOnlySpan<Entity> ReadEntities()
-		{
-			return CollectionsMarshal.AsSpan(Entities);
-		}
+			=> CollectionsMarshal.AsSpan(Entities);
 
 		internal void FixedUpdate()
 		{
