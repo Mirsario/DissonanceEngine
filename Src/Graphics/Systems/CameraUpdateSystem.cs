@@ -7,7 +7,7 @@
 		public override void Update()
 		{
 			//Calculate view and projection matrices, culling frustums
-			foreach(var entity in ReadEntities()) {
+			foreach(var entity in World.ReadEntities()) {
 				if(!entity.Has<Camera>() || !entity.Has<Transform>()) {
 					continue;
 				}
