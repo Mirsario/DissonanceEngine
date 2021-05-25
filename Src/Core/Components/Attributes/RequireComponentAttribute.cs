@@ -4,6 +4,7 @@ using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
 {
+	[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
 	public class RequireComponentAttribute : ComponentAttribute
 	{
 		public readonly Type RequiredType;
