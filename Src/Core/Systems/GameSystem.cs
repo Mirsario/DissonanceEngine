@@ -1,7 +1,11 @@
 ﻿namespace Dissonance.Engine
 {
-	public abstract class GameSystem : SystemBase
+	public abstract class GameSystem
 	{
-		public virtual void Update() { }
+		public World World { get; internal set; }
+
+		public virtual void Initialize() { }
+		public virtual void FixedUpdate() { }
+		public virtual void RenderUpdate() { }
 	}
 }

@@ -1,8 +1,8 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	public sealed class RenderPassSystem : RenderSystem
+	public sealed class RenderPassSystem : GameSystem
 	{
-		public override void Update()
+		public override void RenderUpdate()
 		{
 			var pipeline = Rendering.RenderingPipeline;
 

@@ -8,8 +8,7 @@ namespace Dissonance.Engine
 	{
 		internal readonly List<Entity> Entities = new List<Entity>();
 		internal readonly List<int> FreeEntityIndices = new List<int>();
-		internal readonly List<RenderSystem> RenderSystems = new List<RenderSystem>();
-		internal readonly List<GameSystem> GameSystems = new List<GameSystem>();
+		internal readonly List<GameSystem> Systems = new List<GameSystem>();
 
 		internal readonly int Id;
 
@@ -25,12 +24,7 @@ namespace Dissonance.Engine
 
 		public void AddSystem(GameSystem gameSystem)
 		{
-			GameSystems.Add(gameSystem);
-		}
-
-		public void AddSystem(RenderSystem renderSystem)
-		{
-			RenderSystems.Add(renderSystem);
+			Systems.Add(gameSystem);
 		}
 
 		public bool Has<T>() where T : struct, IComponent
@@ -47,14 +41,14 @@ namespace Dissonance.Engine
 
 		internal void FixedUpdate()
 		{
-			foreach(var system in GameSystems) {
-				system.Update();
+			foreach(var system in Systems) {
+				system.FixedUpdate();
 			}
 		}
 		internal void RenderUpdate()
 		{
-			foreach(var system in RenderSystems) {
-				system.Update();
+			foreach(var system in Systems) {
+				system.RenderUpdate();
 			}
 		}
 	}

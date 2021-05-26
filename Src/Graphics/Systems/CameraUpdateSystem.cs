@@ -2,9 +2,9 @@
 {
 	[Reads(typeof(Camera), typeof(Transform))]
 	[Writes(typeof(Camera))]
-	public sealed class CameraUpdateSystem : RenderSystem
+	public sealed class CameraUpdateSystem : GameSystem
 	{
-		public override void Update()
+		public override void RenderUpdate()
 		{
 			//Calculate view and projection matrices, culling frustums
 			foreach(var entity in World.ReadEntities()) {

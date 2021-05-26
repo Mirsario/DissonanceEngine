@@ -8,7 +8,7 @@ namespace Dissonance.Engine
 		//private static readonly Dictionary<Type, GameSystem> GameSystemsByType = new Dictionary<Type, GameSystem>();
 		//private static readonly Dictionary<Type, RenderSystem> RenderSystemsByType = new Dictionary<Type, RenderSystem>();
 
-		internal static readonly List<Type> GameSystemTypes = new();
+		internal static readonly List<Type> SystemTypes = new();
 		internal static readonly List<Type> RenderSystemTypes = new();
 		//private static List<GameSystem> gameSystems = new List<GameSystem>();
 		//private static List<RenderSystem> renderSystems = new List<RenderSystem>();
@@ -17,14 +17,8 @@ namespace Dissonance.Engine
 		{
 			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
 				foreach(var type in types) {
-					if(type.IsAbstract || !typeof(SystemBase).IsAssignableFrom(type)) {
-						continue;
-					}
-
-					if(typeof(GameSystem).IsAssignableFrom(type)) {
-						GameSystemTypes.Add(type);
-					} else if(typeof(RenderSystem).IsAssignableFrom(type)) {
-						RenderSystemTypes.Add(type);
+					if(!type.IsAbstract && typeof(GameSystem).IsAssignableFrom(type)) {
+						SystemTypes.Add(type);
 					}
 				}
 
@@ -71,18 +65,8 @@ namespace Dissonance.Engine
 
 		internal static void AddDefaultSystemsToWorld(World world)
 		{
-			foreach(var type in GameSystemTypes) {
+			foreach(var type in SystemTypes) {
 				var system = (GameSystem)Activator.CreateInstance(type);
-
-				system.World = world;
-
-				system.Initialize();
-
-				world.AddSystem(system);
-			}
-
-			foreach(var type in RenderSystemTypes) {
-				var system = (RenderSystem)Activator.CreateInstance(type);
 
 				system.World = world;
 
