@@ -12,8 +12,8 @@ namespace Dissonance.Engine
 		public SystemDependencyAttribute(bool optional, params Type[] dependencies)
 		{
 			foreach(var type in dependencies) {
-				if(!typeof(SystemBase).IsAssignableFrom(type)) {
-					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it does not derive from '{nameof(SystemBase)}'.");
+				if(!typeof(GameSystem).IsAssignableFrom(type)) {
+					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it does not derive from '{nameof(GameSystem)}'.");
 				}
 			}
 
