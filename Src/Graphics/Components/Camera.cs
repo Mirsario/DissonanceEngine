@@ -1,6 +1,5 @@
 namespace Dissonance.Engine.Graphics
 {
-	[RequireComponent(typeof(Transform))]
 	public struct Camera : IComponent
 	{
 		public RectFloat View { get; set; }
