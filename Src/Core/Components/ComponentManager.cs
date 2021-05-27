@@ -79,25 +79,27 @@ namespace Dissonance.Engine
 			worldData.data[dataId] = value;
 		}
 
-		internal static void SetComponent<T>(int worldId, int entityId, T value) where T : struct, IComponent
+		internal static void SetComponent<T>(in Entity entity, T value) where T : struct, IComponent
 		{
-			if(ComponentData<T>.worldData.Length <= worldId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, worldId + 1, ComponentData<T>.WorldData.Default);
+			if(ComponentData<T>.worldData.Length <= entity.WorldId) {
+				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, entity.WorldId + 1, ComponentData<T>.WorldData.Default);
 			}
 
-			ref var worldData = ref ComponentData<T>.worldData[worldId];
+			ref var worldData = ref ComponentData<T>.worldData[entity.WorldId];
 
 			int dataId;
 
-			if(worldData.indicesByEntity.Length <= entityId) {
-				ArrayUtils.ResizeAndFillArray(ref worldData.indicesByEntity, entityId + 1, -1);
+			if(worldData.indicesByEntity.Length <= entity.Id) {
+				ArrayUtils.ResizeAndFillArray(ref worldData.indicesByEntity, entity.Id + 1, -1);
 
 				dataId = worldData.data.Length;
-				worldData.indicesByEntity[entityId] = dataId;
+				worldData.indicesByEntity[entity.Id] = dataId;
+
+				WorldManager.GetWorld(entity.WorldId).OnEntityUpdated(entity);
 
 				Array.Resize(ref worldData.data, dataId + 1);
 			} else {
-				dataId = worldData.indicesByEntity[entityId];
+				dataId = worldData.indicesByEntity[entity.Id];
 			}
 
 			worldData.data[dataId] = value;
