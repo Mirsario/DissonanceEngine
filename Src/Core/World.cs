@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
 	public sealed class World
 	{
-		internal readonly List<Entity> Entities = new List<Entity>();
-		internal readonly List<int> FreeEntityIndices = new List<int>();
-		internal readonly List<GameSystem> Systems = new List<GameSystem>();
-
+		internal readonly List<Entity> Entities = new();
+		internal readonly List<int> FreeEntityIndices = new();
+		internal readonly List<GameSystem> Systems = new();
 		internal readonly int Id;
+
+		private readonly List<EntitySet> EntitySets = new();
+		private readonly Dictionary<EntitySetType, Dictionary<Expression<Predicate<Entity>>, EntitySet>> EntitySetsQuery = new();
 
 		internal World(int id)
 		{
@@ -19,7 +22,41 @@ namespace Dissonance.Engine
 
 		public Entity CreateEntity()
 		{
-			return EntityManager.CreateEntity(this);
+			var entity = EntityManager.CreateEntity(this);
+
+			OnEntityUpdated(entity);
+
+			return entity;
+		}
+
+		public EntitySet GetEntitySet(Expression<Predicate<Entity>> predicate)
+			=> GetEntitySet(EntitySetType.Default, predicate);
+
+		public EntitySet GetEntitySet(EntitySetType type, Expression<Predicate<Entity>> predicate)
+		{
+			if(!EntitySetsQuery.TryGetValue(type, out var setsByExpressions)) {
+				EntitySetsQuery[type] = setsByExpressions = new();
+			} else {
+				//TODO: It seems like Expression.ToString() doesn't at all care about method type parameters.
+				/*string expressionString = predicate.ToString();
+
+				foreach(var pair in setsByExpressions) {
+					var expression = pair.Key;
+
+					//TODO: Make a more elaborate comparer for expressions. This check has a lot of issues, like variable names mattering.
+					if(expression.ToString() == expressionString) {
+						return pair.Value;
+					}
+				}*/
+			}
+
+			var entitySet = new EntitySet(type, predicate.Compile());
+
+			setsByExpressions[predicate] = entitySet;
+
+			EntitySets.Add(entitySet);
+
+			return entitySet;
 		}
 
 		public void AddSystem(GameSystem gameSystem)
@@ -45,10 +82,18 @@ namespace Dissonance.Engine
 				system.FixedUpdate();
 			}
 		}
+
 		internal void RenderUpdate()
 		{
 			foreach(var system in Systems) {
 				system.RenderUpdate();
+			}
+		}
+
+		internal void OnEntityUpdated(Entity entity)
+		{
+			foreach(var entitySet in EntitySets) {
+				entitySet.OnEntityUpdated(entity);
 			}
 		}
 	}

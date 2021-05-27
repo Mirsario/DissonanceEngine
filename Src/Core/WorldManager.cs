@@ -38,6 +38,11 @@ namespace Dissonance.Engine
 			return world;
 		}
 
+		public static World GetWorld(int id)
+		{
+			return Worlds[id];
+		}
+
 		public static IEnumerable<World> EnumerateWorlds()
 		{
 			return WorldsReadOnly;

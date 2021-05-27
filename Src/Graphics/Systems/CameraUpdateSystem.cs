@@ -4,14 +4,17 @@
 	[Writes(typeof(Camera))]
 	public sealed class CameraUpdateSystem : GameSystem
 	{
+		private EntitySet entities;
+
+		public override void Initialize()
+		{
+			entities = World.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
+		}
+
 		public override void RenderUpdate()
 		{
 			//Calculate view and projection matrices, culling frustums
-			foreach(var entity in World.ReadEntities()) {
-				if(!entity.Has<Camera>() || !entity.Has<Transform>()) {
-					continue;
-				}
-
+			foreach(var entity in entities.ReadEntities()) {
 				ref var camera = ref entity.Get<Camera>();
 				var transform = entity.Get<Transform>();
 

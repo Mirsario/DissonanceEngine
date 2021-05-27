@@ -6,6 +6,6 @@
 
 		public ref T Get<T>() where T : struct, IComponent;
 
-		public void Set<T>(T value) where T : struct, IComponent;
+		public void Set<T>(in T value) where T : struct, IComponent;
 	}
 }
