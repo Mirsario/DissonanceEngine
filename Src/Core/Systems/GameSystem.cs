@@ -6,6 +6,13 @@ namespace Dissonance.Engine
 	{
 		public World World { get; internal set; }
 
+		internal SystemTypeInfo TypeData { get; }
+
+		protected GameSystem()
+		{
+			TypeData = SystemsManager.SystemTypeInfo[GetType()];
+		}
+
 		public virtual void Initialize() { }
 		public virtual void FixedUpdate() { }
 		public virtual void RenderUpdate() { }
@@ -21,5 +28,11 @@ namespace Dissonance.Engine
 
 		public ReadOnlySpan<Entity> ReadEntities()
 			=> World.ReadEntities();
+
+		public void SendMessage<T>(in T message) where T : struct, IMessage
+			=> World.SendMessage(message);
+
+		public ReadOnlySpan<T> ReadMessages<T>() where T : struct, IMessage
+			=> World.ReadMessages<T>();
 	}
 }

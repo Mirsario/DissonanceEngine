@@ -7,13 +7,16 @@ namespace Dissonance.Engine
 {
 	public sealed class World
 	{
+		internal readonly int Id;
 		internal readonly List<Entity> Entities = new();
 		internal readonly List<int> FreeEntityIndices = new();
 		internal readonly List<GameSystem> Systems = new();
-		internal readonly int Id;
+		internal readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
 
 		private readonly List<EntitySet> EntitySets = new();
 		private readonly Dictionary<EntitySetType, Dictionary<Expression<Predicate<Entity>>, EntitySet>> EntitySetsQuery = new();
+
+		internal bool DefaultSystemsRegistered { get; set; }
 
 		internal World(int id)
 		{
@@ -59,9 +62,21 @@ namespace Dissonance.Engine
 			return entitySet;
 		}
 
-		public void AddSystem(GameSystem gameSystem)
+		public void AddSystem(GameSystem system)
 		{
-			Systems.Add(gameSystem);
+			var type = system.GetType();
+
+			Systems.Add(system);
+
+			if(!SystemsByType.TryGetValue(type, out var systemsOfThisType)) {
+				SystemsByType[type] = systemsOfThisType = new List<GameSystem>();
+			}
+
+			systemsOfThisType.Add(system);
+
+			if(DefaultSystemsRegistered) {
+				SystemsManager.SortSystems(Systems, SystemsByType);
+			}
 		}
 
 		internal bool Has<T>() where T : struct, IComponent
@@ -76,11 +91,19 @@ namespace Dissonance.Engine
 		internal ReadOnlySpan<Entity> ReadEntities()
 			=> CollectionsMarshal.AsSpan(Entities);
 
+		internal void SendMessage<T>(in T message) where T : struct, IMessage
+			=> MessageManager.SendMessage(Id, message);
+
+		internal ReadOnlySpan<T> ReadMessages<T>() where T : struct, IMessage
+			=> MessageManager.ReadMessages<T>(Id);
+
 		internal void FixedUpdate()
 		{
 			foreach(var system in Systems) {
 				system.FixedUpdate();
 			}
+
+			MessageManager.ClearMessages();
 		}
 
 		internal void RenderUpdate()
@@ -88,6 +111,8 @@ namespace Dissonance.Engine
 			foreach(var system in Systems) {
 				system.RenderUpdate();
 			}
+
+			MessageManager.ClearMessages();
 		}
 
 		internal void OnEntityUpdated(Entity entity)
