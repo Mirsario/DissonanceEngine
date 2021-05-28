@@ -113,8 +113,6 @@ namespace Dissonance.Engine
 
 				system.World = world;
 
-				system.Initialize();
-
 				world.AddSystem(system);
 			}
 
