@@ -36,6 +36,14 @@ namespace Dissonance.Engine.Audio
 
 					audioSource.bufferId = newBufferId;
 				}
+
+				//Update 3D position.
+				if(entity.Has<Transform>()) {
+					var transform = entity.Get<Transform>();
+					var position = transform.Position;
+
+					AL.Source(audioSource.sourceId, SourceFloat3.Position, position.x, position.y, position.z);
+				}
 			}
 
 			AudioEngine.CheckALErrors();
