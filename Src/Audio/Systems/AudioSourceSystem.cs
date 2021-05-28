@@ -38,11 +38,31 @@ namespace Dissonance.Engine.Audio
 				}
 
 				//Update 3D position.
-				if(entity.Has<Transform>()) {
+				if(!audioSource.Is2D && entity.Has<Transform>()) {
+					audioSource.was2D = false;
+
 					var transform = entity.Get<Transform>();
 					var position = transform.Position;
 
+					if(position == default) {
+						position.x = float.Epsilon;
+					}
+
 					AL.Source(audioSource.sourceId, SourceFloat3.Position, position.x, position.y, position.z);
+
+					AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
+					AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
+				} else if(!audioSource.was2D) {
+					audioSource.was2D = true;
+
+					AL.Source(audioSource.sourceId, SourceFloat3.Position, 0f, 0f, 0f);
+				}
+
+				//Update looping.
+				if(audioSource.Loop != audioSource.wasLooped) {
+					AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
+
+					audioSource.wasLooped = audioSource.Loop;
 				}
 			}
 

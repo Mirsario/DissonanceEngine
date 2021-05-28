@@ -6,6 +6,8 @@ namespace Dissonance.Engine.Audio
 
 		internal uint sourceId;
 		internal uint bufferId;
+		internal bool wasLooped;
+		internal bool was2D;
 
 		public AudioClip Clip { get; set; }
 		public float Volume { get; set; }
@@ -16,7 +18,7 @@ namespace Dissonance.Engine.Audio
 		public float MaxDistance { get; set; }
 		public float PlaybackOffset { get; set; }
 
-		public AudioSource(AudioClip clip, float volume = 1f, float pitch = 1f, bool loop = false, bool is2D = false, float refDistance = 1f, float maxDistance = 32f, float playbackOffset = 0f)
+		public AudioSource(AudioClip clip, float volume = 1f, float pitch = 1f, bool loop = false, bool is2D = false, float refDistance = 0f, float maxDistance = 32f, float playbackOffset = 0f)
 		{
 			Clip = clip;
 			Volume = volume;
@@ -27,8 +29,8 @@ namespace Dissonance.Engine.Audio
 			MaxDistance = maxDistance;
 			PlaybackOffset = playbackOffset;
 
-			sourceId = 0;
-			bufferId = 0;
+			sourceId = bufferId = 0;
+			wasLooped = was2D = false;
 		}
 	}
 }
