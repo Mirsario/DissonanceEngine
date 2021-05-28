@@ -129,7 +129,7 @@ namespace Dissonance.Engine
 				updateStopwatch.Start();
 			}
 
-			while(numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
+			while(numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
 				if(!NoWindow) {
 					GLFW.PollEvents();
 				}
