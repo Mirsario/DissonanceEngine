@@ -3,44 +3,34 @@ using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
-	/*internal class MotionStateInternal : MotionState
+	internal class RigidbodyMotionState : MotionState
 	{
-		private readonly RigidbodyInternal RBInternal;
-		private readonly Transform Transform;
+		private readonly Entity Entity;
 
-		private Transform.UpdateFlags updateFlags;
-		private bool ignoreNextUpdate;
-
-		public MotionStateInternal(RigidbodyInternal rbInternal)
+		public RigidbodyMotionState(Entity entity)
 		{
-			RBInternal = rbInternal;
-			Transform = rbInternal.gameObject.Transform;
-
-			Transform.OnModified += OnTransformModified;
+			Entity = entity;
 		}
 
 		//Called by bullet whenever a rigidbody is created, and every frame for kinematic rigidbodies.
 		public override void GetWorldTransform(out Matrix matrix)
 		{
-			matrix = Transform.Parent == null ? Transform.Matrix : Transform.ToWorldSpace(Transform.Matrix);
+			matrix = Entity.Get<Transform>().WorldMatrix;
 		}
+
 		//Called by bullet for every frame or update of an active rigidbody.
 		public override void SetWorldTransform(ref Matrix matrix)
 		{
-			ignoreNextUpdate = true;
-
-			Transform.Matrix = Transform.Parent == null ? matrix : (Matrix)Transform.ToLocalSpace(matrix);
+			Entity.Get<Transform>().WorldMatrix = matrix;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-
-			Transform.OnModified -= OnTransformModified;
 		}
 
 		//Updates bullet's rigidbody's transformation with ours if it has been updated.
-		public void Update()
+		/*public void Update()
 		{
 			var btRigidbody = RBInternal.btRigidbody;
 
@@ -89,6 +79,6 @@ namespace Dissonance.Engine.Physics
 			}
 
 			this.updateFlags |= updateFlags;
-		}
-	}*/
+		}*/
+	}
 }

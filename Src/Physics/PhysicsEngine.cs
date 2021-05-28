@@ -6,8 +6,7 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed partial class PhysicsEngine : EngineModule
 	{
-		/*internal static DbvtBroadphase broadphase;
-		internal static DiscreteDynamicsWorld world;
+		internal static DbvtBroadphase broadphase;
 		internal static CollisionDispatcher dispatcher;
 		internal static CollisionConfiguration collisionConf;
 		internal static List<ICollider> collidersToUpdate;
@@ -15,10 +14,6 @@ namespace Dissonance.Engine.Physics
 		internal static List<RigidbodyInternal> rigidbodies;
 
 		public static List<Rigidbody> ActiveRigidbodies { get; private set; }
-		public static Vector3 Gravity {
-			get => world.Gravity;
-			set => world.Gravity = value;
-		}
 
 		protected override void Init()
 		{
@@ -30,35 +25,33 @@ namespace Dissonance.Engine.Physics
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
 			dispatcher = new CollisionDispatcher(collisionConf);
-			world = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConf);
 
-			world.SetInternalTickCallback(InternalTickCallback);
-
-			Gravity = new Vector3(0f, -9.81f, 0f);
-
-			ManifoldPoint.ContactAdded += Callback_ContactAdded;
-			PersistentManifold.ContactProcessed += Callback_ContactProcessed;
-			PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
+			//ManifoldPoint.ContactAdded += Callback_ContactAdded;
+			//PersistentManifold.ContactProcessed += Callback_ContactProcessed;
+			//PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
 		}
-		protected override void PostFixedUpdate()
+		protected override void OnDispose()
 		{
-			for(int i = 0; i < rigidbodies.Count; i++) {
-				var rigidbody = rigidbodies[i];
+			dispatcher?.Dispose();
+			broadphase?.Dispose();
+			collidersToUpdate?.Clear();
 
-				if(rigidbody.enabled) {
-					rigidbody.MotionState.Update();
+			if(collisionShapes != null) {
+				for(int i = 0; i < collisionShapes.Count; i++) {
+					collisionShapes[i].Dispose();
 				}
 			}
 
-			world.StepSimulation(Time.FixedDeltaTime);
-		}
-		protected override void PostRenderUpdate()
-		{
-			//world.StepSimulation(Time.renderDeltaTime,1,0f);
-			//fixedStep = false;
+			/*if(rigidbodies != null) {
+				for(int i = 0; i < rigidbodies.Count; i++) {
+					rigidbodies[i].Dispose();
+				}
+
+				rigidbodies.Clear();
+			}*/
 		}
 
-		public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit, float range = 100000f, Func<ulong, ulong> mask = null, Func<GameObject, bool?> customFilter = null, bool debug = false)
+		/*public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit, float range = 100000f, Func<ulong, ulong> mask = null, Func<GameObject, bool?> customFilter = null, bool debug = false)
 		{
 			direction.Normalize();
 
@@ -91,28 +84,8 @@ namespace Dissonance.Engine.Physics
 			};
 
 			return true;
-		}
-		protected override void OnDispose()
-		{
-			world?.Dispose();
-			dispatcher?.Dispose();
-			broadphase?.Dispose();
-			collidersToUpdate?.Clear();
-
-			if(collisionShapes != null) {
-				for(int i = 0; i < collisionShapes.Count; i++) {
-					collisionShapes[i].Dispose();
-				}
-			}
-
-			if(rigidbodies != null) {
-				for(int i = 0; i < rigidbodies.Count; i++) {
-					rigidbodies[i].Dispose();
-				}
-
-				rigidbodies.Clear();
-			}
-		}
+		}*/
+		
 		internal static CollisionShape GetSubShape(CollisionShape shape, int subIndex)
 		{
 			if(shape is CompoundShape compoundShape && compoundShape.NumChildShapes > 0) {
@@ -120,6 +93,6 @@ namespace Dissonance.Engine.Physics
 			}
 
 			return shape;
-		}*/
+		}
 	}
 }
