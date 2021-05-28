@@ -7,6 +7,7 @@ namespace Dissonance.Engine
 		public World World { get; internal set; }
 
 		internal SystemTypeInfo TypeData { get; }
+		internal bool Initialized { get; set; }
 
 		protected GameSystem()
 		{

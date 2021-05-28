@@ -55,6 +55,10 @@ namespace Dissonance.Engine
 
 			var entitySet = new EntitySet(type, predicate.Compile());
 
+			foreach(var entity in Entities) {
+				entitySet.OnEntityUpdated(entity);
+			}
+
 			setsByExpressions[predicate] = entitySet;
 
 			EntitySets.Add(entitySet);
@@ -100,6 +104,12 @@ namespace Dissonance.Engine
 		internal void FixedUpdate()
 		{
 			foreach(var system in Systems) {
+				if(!system.Initialized) {
+					system.Initialize();
+
+					system.Initialized = true;
+				}
+
 				system.FixedUpdate();
 			}
 
