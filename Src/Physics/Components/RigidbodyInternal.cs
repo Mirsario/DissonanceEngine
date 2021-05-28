@@ -6,12 +6,14 @@ using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
-	internal class RigidbodyInternal // : IDisposable
+	internal struct RigidbodyInternal : IComponent //, IDisposable
 	{
+		public RigidBody BulletRigidbody { get; internal set; }
+		public RigidbodyMotionState MotionState { get; internal set; }
+		public CollisionShape CollisionShape { get; internal set; }
+
 		/*public readonly MotionStateInternal MotionState;
 
-		internal RigidBody btRigidbody;
-		internal CollisionShape collisionShape;
 		internal List<Collision> collisions;
 		internal List<Collision2D> collisions2D;
 		internal Entity entity;
@@ -126,23 +128,7 @@ namespace Dissonance.Engine.Physics
 
 			collisions = new List<Collision>();
 			collisions2D = new List<Collision2D>();
-			collisionShape = new EmptyShape();
 
-			MotionState = new MotionStateInternal(this);
-
-			var rbInfo = new RigidBodyConstructionInfo(0f, MotionState, collisionShape, Vector3.Zero) {
-				LinearSleepingThreshold = 0.1f,
-				AngularSleepingThreshold = 1f,
-				Friction = 0.6f,
-				RollingFriction = 0f,
-				Restitution = 0.1f,
-			};
-
-			btRigidbody = new RigidBody(rbInfo);
-			btRigidbody.CollisionFlags |= CollisionFlags.CustomMaterialCallback;
-			btRigidbody.UserObject = this;
-
-			PhysicsEngine.world.AddRigidBody(btRigidbody);
 			PhysicsEngine.rigidbodies.Add(this);
 		}
 
