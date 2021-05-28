@@ -3,13 +3,13 @@ using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
 {
-	public sealed class ReadsAttribute : SystemTypesAttribute
+	public sealed class ReceivesAttribute : SystemTypesAttribute
 	{
-		public ReadsAttribute(params Type[] types)
+		public ReceivesAttribute(params Type[] types)
 		{
 			AssertionUtils.ValuesNotNull(types, nameof(types));
 			AssertionUtils.TypesAreStruct(types);
-			AssertionUtils.TypesHaveInterface(types, typeof(IComponent));
+			AssertionUtils.TypesHaveInterface(types, typeof(IMessage));
 
 			Types = types;
 		}
