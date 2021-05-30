@@ -87,22 +87,23 @@ namespace Dissonance.Engine
 
 			ref var worldData = ref ComponentData<T>.worldData[entity.WorldId];
 
-			int dataId;
+			int dataId = -1;
 
-			if(worldData.indicesByEntity.Length <= entity.Id) {
+			if(entity.Id >= worldData.indicesByEntity.Length) {
 				ArrayUtils.ResizeAndFillArray(ref worldData.indicesByEntity, entity.Id + 1, -1);
-
-				dataId = worldData.data.Length;
-				worldData.indicesByEntity[entity.Id] = dataId;
-
-				WorldManager.GetWorld(entity.WorldId).OnEntityUpdated(entity);
-
-				Array.Resize(ref worldData.data, dataId + 1);
 			} else {
 				dataId = worldData.indicesByEntity[entity.Id];
 			}
+			
+			if(dataId < 0) {
+				dataId = worldData.data.Length;
+				worldData.indicesByEntity[entity.Id] = dataId;
+				Array.Resize(ref worldData.data, dataId + 1);
+			}
 
 			worldData.data[dataId] = value;
+
+			WorldManager.GetWorld(entity.WorldId).OnEntityUpdated(entity); //Too slow?
 		}
 	}
 }
