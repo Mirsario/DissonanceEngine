@@ -2,6 +2,9 @@
 
 namespace Dissonance.Engine.Physics.Systems
 {
+	[Reads(typeof(RigidbodyInternal))]
+	[Writes(typeof(RigidbodyInternal))]
+	[Receives(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage))]
 	public sealed class InternalRigidbodySystem : GameSystem
 	{
 		private EntitySet entities;
@@ -19,11 +22,61 @@ namespace Dissonance.Engine.Physics.Systems
 
 			var physics = World.Get<WorldPhysics>();
 
+			foreach(var message in ReadMessages<RemoveCollisionShapeMessage>()) {
+				if(!message.Entity.Has<RigidbodyInternal>()) {
+					continue;
+				}
+
+				message.Entity.Get<RigidbodyInternal>().CollisionShapes.Remove(message.CollisionShape);
+			}
+
+			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
+				if(!message.Entity.Has<RigidbodyInternal>()) {
+					message.Entity.Set(new RigidbodyInternal(0f));
+				}
+
+				message.Entity.Get<RigidbodyInternal>().CollisionShapes.Add(message.CollisionShape);
+			}
+
 			foreach(var entity in entities.ReadEntities()) {
 				ref var rb = ref entity.Get<RigidbodyInternal>();
 
 				rb.MotionState ??= new RigidbodyMotionState(entity);
 				rb.CollisionShape ??= new EmptyShape();
+
+				static void UpdateShapes(ref RigidbodyInternal rb)
+				{
+					if(rb.ownsCollisionShape && rb.CollisionShape != null) {
+						rb.CollisionShape.Dispose();
+					}
+
+					CollisionShape resultShape;
+
+					var collisionShapes = rb.CollisionShapes;
+
+					if(collisionShapes.Count == 0) {
+						//EmptyShape
+						resultShape = new EmptyShape();
+					} else {
+						//CompoundShape
+						var compoundShape = new CompoundShape();
+
+						for(int i = 0; i < collisionShapes.Count; i++) {
+							compoundShape.AddChildShape(Matrix4x4.Identity, collisionShapes[i]);
+						}
+
+						resultShape = compoundShape;
+					}
+
+					rb.ownsCollisionShape = true;
+					rb.BulletRigidbody.CollisionShape = resultShape;
+
+					float realMass = rb.rigidbodyType == RigidbodyType.Dynamic ? rb.Mass : 0f;
+					var localInertia = realMass > 0f ? resultShape.CalculateLocalInertia(rb.Mass) : BulletSharp.Math.Vector3.Zero;
+
+					rb.BulletRigidbody.SetMassProps(realMass, localInertia);
+					rb.updateShapes = false;
+				}
 
 				if(rb.BulletRigidbody == null) {
 					var rbInfo = new RigidBodyConstructionInfo(0f, rb.MotionState, rb.CollisionShape, Vector3.Zero) {
@@ -32,13 +85,24 @@ namespace Dissonance.Engine.Physics.Systems
 						Friction = 0.6f,
 						RollingFriction = 0f,
 						Restitution = 0.1f,
+						Mass = 1f
 					};
 
 					rb.BulletRigidbody = new RigidBody(rbInfo) {
-						UserObject = this,
+						UserObject = entity,
 					};
 
-					rb.BulletRigidbody.CollisionFlags |= CollisionFlags.CustomMaterialCallback;
+					UpdateShapes(ref rb);
+
+					//rb.BulletRigidbody.CollisionFlags |= CollisionFlags.CustomMaterialCallback;
+
+					physics.PhysicsWorld.AddRigidBody(rb.BulletRigidbody);
+				}
+
+				if(rb.updateShapes) {
+					physics.PhysicsWorld.RemoveRigidBody(rb.BulletRigidbody);
+
+					UpdateShapes(ref rb);
 
 					physics.PhysicsWorld.AddRigidBody(rb.BulletRigidbody);
 				}

@@ -8,7 +8,9 @@ namespace Dissonance.Engine.Physics.Systems
 		{
 			var physics = WorldPhysics.Default;
 
-			physics.PhysicsWorld = new DiscreteDynamicsWorld(PhysicsEngine.dispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf);
+			physics.PhysicsWorld = new DiscreteDynamicsWorld(PhysicsEngine.dispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
+				Gravity = new Vector3(0f, -9.807f, 0f)
+			};
 
 			World.Set(physics);
 		}

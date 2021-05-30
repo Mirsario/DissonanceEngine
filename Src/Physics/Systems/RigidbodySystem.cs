@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Dissonance.Engine.Physics
 {
+	[Reads(typeof(Rigidbody))]
+	[Writes(typeof(Rigidbody), typeof(RigidbodyInternal))]
 	public sealed class RigidbodySystem : GameSystem
 	{
 		private EntitySet entities;
@@ -20,7 +22,9 @@ namespace Dissonance.Engine.Physics
 			foreach(var entity in entities.ReadEntities()) {
 				ref var rigidbody = ref entity.Get<Rigidbody>();
 
-				
+				if(!entity.Has<RigidbodyInternal>()) {
+					entity.Set(new RigidbodyInternal(1f));
+				}
 			}
 		}
 	}

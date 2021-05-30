@@ -11,7 +11,6 @@ namespace Dissonance.Engine.Physics
 		internal static CollisionConfiguration collisionConf;
 		internal static List<ICollider> collidersToUpdate;
 		internal static List<CollisionShape> collisionShapes;
-		internal static List<RigidbodyInternal> rigidbodies;
 
 		public static List<Rigidbody> ActiveRigidbodies { get; private set; }
 
@@ -19,7 +18,6 @@ namespace Dissonance.Engine.Physics
 		{
 			collisionShapes = new List<CollisionShape>();
 			collidersToUpdate = new List<ICollider>();
-			rigidbodies = new List<RigidbodyInternal>();
 			ActiveRigidbodies = new List<Rigidbody>();
 
 			collisionConf = new DefaultCollisionConfiguration();

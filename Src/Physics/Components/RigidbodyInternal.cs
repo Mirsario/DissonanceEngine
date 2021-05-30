@@ -1,17 +1,25 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using BulletSharp;
-using BulletSharp.Math;
 
 namespace Dissonance.Engine.Physics
 {
 	internal struct RigidbodyInternal : IComponent //, IDisposable
 	{
-		public RigidBody BulletRigidbody { get; internal set; }
-		public RigidbodyMotionState MotionState { get; internal set; }
-		public CollisionShape CollisionShape { get; internal set; }
+		internal bool updateShapes;
+		internal bool ownsCollisionShape;
+		internal RigidbodyType rigidbodyType;
 
+		public float Mass { get; set; }
+		public RigidBody BulletRigidbody { get; set; }
+		public RigidbodyMotionState MotionState { get; set; }
+		public CollisionShape CollisionShape { get; set; }
+		public List<CollisionShape> CollisionShapes { get; set; }
+
+		public RigidbodyInternal(float mass) : this()
+		{
+			Mass = mass;
+			CollisionShapes = new();
+		}
 		/*public readonly MotionStateInternal MotionState;
 
 		internal List<Collision> collisions;
