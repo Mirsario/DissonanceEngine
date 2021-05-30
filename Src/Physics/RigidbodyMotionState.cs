@@ -21,7 +21,7 @@ namespace Dissonance.Engine.Physics
 		//Called by bullet for every frame or update of an active rigidbody.
 		public override void SetWorldTransform(ref Matrix matrix)
 		{
-			Entity.Get<Transform>().WorldMatrix = matrix;
+			Entity.Get<Transform>().Matrix = matrix;
 		}
 
 		protected override void Dispose(bool disposing)

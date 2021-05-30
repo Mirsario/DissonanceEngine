@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Physics
 				);
 			}
 
-			collShape = new BvhTriangleMeshShape(triMesh, true);
+			collisionShape = new BvhTriangleMeshShape(triMesh, true);
 		}
 
 		public static explicit operator ConcaveCollisionMesh(Mesh mesh)
