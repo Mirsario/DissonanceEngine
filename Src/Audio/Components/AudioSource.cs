@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Audio
 {
-	public struct AudioSource : IComponent
+	public struct AudioSource
 	{
 		public static readonly AudioSource Default = new(null);
 

@@ -5,7 +5,7 @@ namespace Dissonance.Engine
 {
 	public sealed class ComponentManager : EngineModule
 	{
-		private static class ComponentData<T> where T : struct, IComponent
+		private static class ComponentData<T> where T : struct
 		{
 			public struct WorldData
 			{
@@ -20,10 +20,11 @@ namespace Dissonance.Engine
 				public int globalDataIndex;
 			}
 
+			public static T globalSingleton;
 			public static WorldData[] worldData = Array.Empty<WorldData>();
 		}
 
-		internal static bool HasComponent<T>(int worldId) where T : struct, IComponent
+		internal static bool HasComponent<T>(int worldId) where T : struct
 		{
 			if(worldId >= ComponentData<T>.worldData.Length) {
 				return false;
@@ -32,7 +33,7 @@ namespace Dissonance.Engine
 			return ComponentData<T>.worldData[worldId].globalDataIndex >= 0;
 		}
 
-		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct, IComponent
+		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct
 		{
 			if(worldId >= ComponentData<T>.worldData.Length) {
 				return false;
@@ -47,21 +48,27 @@ namespace Dissonance.Engine
 			return indicesByEntity[entityId] != -1;
 		}
 
-		internal static ref T GetComponent<T>(int worldId) where T : struct, IComponent
+		internal static ref T GetComponent<T>() where T : struct
+			=> ref ComponentData<T>.globalSingleton;
+
+		internal static ref T GetComponent<T>(int worldId) where T : struct
 		{
 			ref var worldData = ref ComponentData<T>.worldData[worldId];
 
 			return ref worldData.data[worldData.globalDataIndex];
 		}
 
-		internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct, IComponent
+		internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct
 		{
 			ref var worldData = ref ComponentData<T>.worldData[worldId];
 
 			return ref worldData.data[worldData.indicesByEntity[entityId]];
 		}
 
-		internal static void SetComponent<T>(int worldId, T value) where T : struct, IComponent
+		internal static void SetComponent<T>(T value) where T : struct
+			=> ComponentData<T>.globalSingleton = value;
+
+		internal static void SetComponent<T>(int worldId, T value) where T : struct
 		{
 			if(ComponentData<T>.worldData.Length <= worldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, worldId + 1, ComponentData<T>.WorldData.Default);
@@ -79,7 +86,7 @@ namespace Dissonance.Engine
 			worldData.data[dataId] = value;
 		}
 
-		internal static void SetComponent<T>(in Entity entity, T value) where T : struct, IComponent
+		internal static void SetComponent<T>(in Entity entity, T value) where T : struct
 		{
 			if(ComponentData<T>.worldData.Length <= entity.WorldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, entity.WorldId + 1, ComponentData<T>.WorldData.Default);

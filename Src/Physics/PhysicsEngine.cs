@@ -12,14 +12,10 @@ namespace Dissonance.Engine.Physics
 		internal static List<ICollider> collidersToUpdate;
 		internal static List<CollisionShape> collisionShapes;
 
-		public static List<Rigidbody> ActiveRigidbodies { get; private set; }
-
 		protected override void Init()
 		{
 			collisionShapes = new List<CollisionShape>();
 			collidersToUpdate = new List<ICollider>();
-			ActiveRigidbodies = new List<Rigidbody>();
-
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
 			dispatcher = new CollisionDispatcher(collisionConf);

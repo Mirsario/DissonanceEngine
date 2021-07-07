@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dissonance.Engine
 {
-	public struct Transform : IComponent
+	public struct Transform
 	{
 		[Flags]
 		public enum UpdateFlags

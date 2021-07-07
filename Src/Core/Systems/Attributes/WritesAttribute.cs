@@ -9,7 +9,6 @@ namespace Dissonance.Engine
 		{
 			AssertionUtils.ValuesNotNull(types, nameof(types));
 			AssertionUtils.TypesAreStruct(types);
-			AssertionUtils.TypesHaveInterface(types, typeof(IComponent));
 
 			Types = types;
 		}

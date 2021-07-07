@@ -11,20 +11,26 @@ namespace Dissonance.Engine
 
 		protected GameSystem()
 		{
-			TypeData = SystemsManager.SystemTypeInfo[GetType()];
+			TypeData = SystemManager.SystemTypeInfo[GetType()];
 		}
 
 		public virtual void Initialize() { }
 		public virtual void FixedUpdate() { }
 		public virtual void RenderUpdate() { }
 
-		public bool Has<T>() where T : struct, IComponent
+		public ref T GlobalGet<T>() where T : struct
+			=> ref ComponentManager.GetComponent<T>();
+
+		public void GlobalSet<T>(T value) where T : struct
+			=> ComponentManager.SetComponent(value);
+
+		public bool WorldHas<T>() where T : struct
 			=> World.Has<T>();
 
-		public ref T Get<T>() where T : struct, IComponent
+		public ref T WorldGet<T>() where T : struct
 			=> ref World.Get<T>();
 
-		public void Set<T>(T value) where T : struct, IComponent
+		public void WorldSet<T>(T value) where T : struct
 			=> World.Set(value);
 
 		public ReadOnlySpan<Entity> ReadEntities()

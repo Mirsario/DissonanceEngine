@@ -25,6 +25,18 @@ namespace Dissonance.Engine
 
 		private static event Action ClearLists;
 
+		[HookPosition(1000)]
+		protected override void FixedUpdate()
+		{
+			ClearMessages();
+		}
+
+		[HookPosition(1000)]
+		protected override void RenderUpdate()
+		{
+			ClearMessages();
+		}
+
 		internal static void SendMessage<T>(int worldId, in T message) where T : struct, IMessage
 		{
 			if(worldId >= MessageData<T>.messagesByWorld.Length) {

@@ -12,30 +12,26 @@ namespace Dissonance.Engine.Graphics
 		internal static Dictionary<string, Type> fullNameToType;
 		internal static Dictionary<string, RenderPassInfoAttribute> fullNameToInfo;
 
-		public string name;
-		public bool enabled = true;
-		public Renderbuffer[] renderbuffers;
-		public Shader passShader; //Remove this field?
-
 		protected Func<Camera, RectInt> viewportFunc;
-		protected Framebuffer framebuffer;
 		protected Shader[] shaders;
 		protected RenderTexture[] passedTextures;
+
+		public string Name { get; set; }
+		public bool Enabled { get; set; } = true;
+		public Framebuffer Framebuffer { get; set; }
+		public Renderbuffer[] Renderbuffers { get; set; }
+		public Shader PassShader { get; set; } //Remove this?
 
 		public Func<Camera, RectInt> ViewportFunc {
 			get => viewportFunc;
 			set => viewportFunc = value;
-		}
-		public Framebuffer Framebuffer {
-			get => framebuffer;
-			set => framebuffer = value;
 		}
 		public Shader[] Shaders {
 			get => shaders;
 			set {
 				if(value == null || value.Length == 0) {
 					shaders = null;
-					passShader = null;
+					PassShader = null;
 					return;
 				}
 
@@ -44,7 +40,7 @@ namespace Dissonance.Engine.Graphics
 
 				Array.Copy(value, shaders, length);
 
-				passShader = length == 0 ? null : value[0]; //Temp?
+				PassShader = length == 0 ? null : value[0]; //Temp?
 			}
 		}
 		public Shader Shader {
@@ -70,9 +66,10 @@ namespace Dissonance.Engine.Graphics
 
 		protected RenderPass() { }
 
-		public abstract void Render(World world);
+		public abstract void Render();
 
 		public virtual void OnInit() { }
+
 		public virtual void Dispose() { }
 
 		protected virtual RectInt GetViewport(Camera? camera)
@@ -85,17 +82,23 @@ namespace Dissonance.Engine.Graphics
 				return camera.Value.ViewPixel;
 			}
 
-			if(framebuffer != null) {
-				return new RectInt(0, 0, framebuffer.maxTextureWidth, framebuffer.maxTextureHeight);
+			if(Framebuffer != null) {
+				return new RectInt(0, 0, Framebuffer.maxTextureWidth, Framebuffer.maxTextureHeight);
 			}
 
 			return new RectInt(0, 0, Screen.Width, Screen.Height);
 		}
 
+		public ref T GlobalGet<T>() where T : struct
+			=> ref ComponentManager.GetComponent<T>();
+
+		public void GlobalSet<T>(T value) where T : struct
+			=> ComponentManager.SetComponent(value);
+
 		public static T Create<T>(string name, Action<T> initializer = null) where T : RenderPass, new()
 		{
 			var pass = new T {
-				name = name
+				Name = name
 			};
 
 			initializer?.Invoke(pass);
@@ -104,13 +107,13 @@ namespace Dissonance.Engine.Graphics
 
 			return pass;
 		}
+
 		public static RenderPass Create(Type type, string name, Action<RenderPass> initializer = null)
 		{
-			//TODO: This is not ideal, because it's skipping setting of default values.
-			var pass = (RenderPass)FormatterServices.GetUninitializedObject(type);
+			var pass = (RenderPass)Activator.CreateInstance(type, true);
 
-			pass.name = name;
-			pass.enabled = true;
+			pass.Name = name;
+			pass.Enabled = true;
 
 			initializer?.Invoke(pass);
 

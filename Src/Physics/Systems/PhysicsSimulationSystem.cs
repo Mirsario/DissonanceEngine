@@ -1,6 +1,6 @@
 ﻿using BulletSharp;
 
-namespace Dissonance.Engine.Physics.Systems
+namespace Dissonance.Engine.Physics
 {
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{

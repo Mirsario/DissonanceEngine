@@ -23,7 +23,8 @@ namespace Dissonance.Engine.Physics
 				ref var rigidbody = ref entity.Get<Rigidbody>();
 
 				if(!entity.Has<RigidbodyInternal>()) {
-					entity.Set(new RigidbodyInternal(1f));
+					;
+					//entity.Set(new RigidbodyInternal(1f));
 				}
 			}
 		}

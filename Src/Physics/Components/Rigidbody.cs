@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Physics
 {
-	public struct Rigidbody : IComponent
+	public struct Rigidbody
 	{
 		public static readonly Rigidbody Default = new();
 

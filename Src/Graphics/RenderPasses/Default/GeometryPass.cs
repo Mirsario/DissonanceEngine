@@ -1,23 +1,43 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using System.Collections.Generic;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class GeometryPass : RenderPass
+	public struct GeometryPassData
 	{
-		protected struct RenderQueueEntry
+		public readonly struct RenderEntry
 		{
-			public Shader shader;
-			public Material material;
-			public IRenderer renderer;
-			public Transform transform;
-			public object renderObject;
+			public readonly Transform transform;
+			public readonly Mesh mesh;
+			public readonly Material material;
+
+			public RenderEntry(Transform transform, Mesh mesh, Material material)
+			{
+				this.transform = transform;
+				this.mesh = mesh;
+				this.material = material;
+			}
 		}
 
+		public List<RenderEntry> RenderEntries { get; set; }
+	}
+
+	public class GeometryPass : RenderPass
+	{
 		public ulong? layerMask;
 
-		public override void Render(World world)
+		public override void OnInit()
 		{
-			Framebuffer.BindWithDrawBuffers(framebuffer);
+			ref var geometryData = ref GlobalGet<GeometryPassData>();
+
+			geometryData = new() {
+				RenderEntries = new List<GeometryPassData.RenderEntry>()
+			};
+		}
+
+		public override void Render()
+		{
+			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
 			GL.Enable(EnableCap.CullFace);
 			GL.Enable(EnableCap.DepthTest);
@@ -34,106 +54,28 @@ namespace Dissonance.Engine.Graphics
 			var lastCullMode = CullMode.Front;
 			var lastPolygonMode = PolygonMode.Fill;
 
-			int rendererCount = 0;
+			var renderViewData = GlobalGet<RenderViewData>();
+			var geometryPassData = GlobalGet<GeometryPassData>();
 
-			//TODO: This is temporary.
-			foreach(var entity in world.ReadEntities()) {
-				if(entity.Has<MeshRenderer>()) {
-					rendererCount++;
-				}
-			}
-
-			var renderQueue = new RenderQueueEntry[rendererCount];
+			renderViewData.RenderViews ??= new();
+			geometryPassData.RenderEntries ??= new();
 
 			//CameraLoop
-			foreach(var cameraEntity in world.ReadEntities()) {
-				if(!cameraEntity.Has<Camera>() || !cameraEntity.Has<Transform>()) {
-					continue;
-				}
-
-				ref var camera = ref cameraEntity.Get<Camera>();
-				var cameraTransform = cameraEntity.Get<Transform>();
-
+			foreach(var renderView in renderViewData.RenderViews) {
+				var camera = renderView.camera;
+				var cameraTransform = renderView.transform;
 				var viewport = GetViewport(camera);
 
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-				//RendererLoop
-				if(rendererCount == 0) {
-					continue;
-				}
-
 				var cameraPos = cameraTransform.Position;
-				int numToRender = 0;
-
-				foreach(var rendererEntity in world.ReadEntities()) {
-					if(!rendererEntity.Has<MeshRenderer>() || !rendererEntity.Has<Transform>()) {
-						continue;
-					}
-
-					ref var renderer = ref rendererEntity.Get<MeshRenderer>();
-					var rendererTransform = rendererEntity.Get<Transform>();
-
-					/*if(!renderer.Enabled) {
-						continue;
-					}*/
-
-					//TODO: To be optimized
-					/*if(hasLayerMask && (Layers.GetLayerMask(renderer.gameObject.Layer) & layerMaskValue) == 0) {
-						continue;
-					}*/
-
-					if(!renderer.GetRenderData(rendererTransform.Position, cameraPos, out var material, out object renderObject)) {
-						continue;
-					}
-
-					var shader = material.Shader;
-
-					if(shader == null) {
-						continue;
-					}
-
-					bool cullResult = camera.Orthographic || camera.BoxInFrustum(renderer.GetAabb(rendererTransform));
-
-					if(cullResult) {
-						ref var entry = ref renderQueue[numToRender++];
-
-						entry.shader = shader;
-						entry.material = material;
-						entry.renderer = renderer;
-						entry.renderObject = renderObject;
-						entry.transform = rendererTransform;
-					}
-				}
-
-				//Sort the render queue
-				for(int i = 0; i < numToRender - 1; i++) {
-					for(int j = i + 1; j < numToRender; j++) {
-						ref var iTuple = ref renderQueue[i];
-						ref var jTuple = ref renderQueue[j];
-
-						if(iTuple.shader.queue > jTuple.shader.queue || iTuple.shader.Id > jTuple.shader.Id || iTuple.material.Id > jTuple.material.Id) {
-							var temp = iTuple;
-							iTuple = jTuple;
-							jTuple = temp;
-						}
-					}
-				}
-
-				//Temporary
-				var viewMatrix = camera.ViewMatrix;
-				var projectionMatrix = camera.ProjectionMatrix;
-				var inverseViewMatrix = camera.InverseViewMatrix;
-				var inverseProjectionMatrix = camera.InverseProjectionMatrix;
 
 				//Render
-				for(int i = 0; i < numToRender; i++) {
-					var entry = renderQueue[i];
-					var shader = entry.shader;
+				for(int i = 0; i < geometryPassData.RenderEntries.Count; i++) {
+					var entry = geometryPassData.RenderEntries[i];
 					var material = entry.material;
-					var renderer = entry.renderer;
+					var shader = material.Shader;
 					var rendererTransform = entry.transform;
-					object renderObject = entry.renderObject;
 
 					//Update Shader
 					if(lastShader != shader) {
@@ -180,26 +122,20 @@ namespace Dissonance.Engine.Graphics
 						uniformComputed[k] = false;
 					}
 
+					worldMatrix = rendererTransform.WorldMatrix;
+
 					shader.SetupMatrixUniforms(
-						rendererTransform,
-						ref worldMatrix, ref inverseWorldMatrix,
+						worldMatrix, ref inverseWorldMatrix,
 						ref worldViewMatrix, ref inverseWorldViewMatrix,
 						ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
-						ref viewMatrix, ref inverseViewMatrix,
-						ref projectionMatrix, ref inverseProjectionMatrix
+						camera.ViewMatrix, camera.InverseViewMatrix,
+						camera.ProjectionMatrix, camera.InverseProjectionMatrix
 					);
 
-					renderer.ApplyUniforms(shader);
-					renderer.Render(renderObject);
+					entry.mesh.Render();
 
 					Rendering.DrawCallsCount++;
 				}
-
-				//Temporary
-				camera.ViewMatrix = viewMatrix;
-				camera.ProjectionMatrix = projectionMatrix;
-				camera.InverseViewMatrix = inverseViewMatrix;
-				camera.InverseProjectionMatrix = inverseProjectionMatrix;
 			}
 
 			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);

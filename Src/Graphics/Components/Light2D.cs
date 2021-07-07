@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Graphics
 {
-	public struct Light2D : IComponent
+	public struct Light2D
 	{
 		public float Range { get; set; }
 		public float Intensity { get; set; }

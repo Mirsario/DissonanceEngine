@@ -1,14 +1,13 @@
 ﻿using Dissonance.Engine.IO;
-using Dissonance.Engine.Physics;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
 	public class DebugPass : RenderPass
 	{
-		public override void Render(World world)
+		public override void Render()
 		{
-			Framebuffer.BindWithDrawBuffers(framebuffer);
+			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
 			GL.Enable(EnableCap.DepthTest);
 
@@ -17,7 +16,7 @@ namespace Dissonance.Engine.Graphics
 			Shader.SetShader(shader);
 
 			//CameraLoop
-			foreach(var cameraEntity in world.ReadEntities()) {
+			/*foreach(var cameraEntity in renderFrame.World.ReadEntities()) {
 				if(!cameraEntity.Has<Camera>()) {
 					continue;
 				}
@@ -32,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 				Shader.UniformMatrix4(shader.GetUniformLocation("viewProj"), ref viewProj);
 
 				Debug.FlushRendering();
-			}
+			}*/
 
 			Shader.SetShader(null);
 			GL.Disable(EnableCap.DepthTest);

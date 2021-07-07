@@ -1,6 +1,6 @@
 ﻿using BulletSharp;
 
-namespace Dissonance.Engine.Physics.Systems
+namespace Dissonance.Engine.Physics
 {
 	[Reads(typeof(RigidbodyInternal))]
 	[Writes(typeof(RigidbodyInternal))]
@@ -32,7 +32,7 @@ namespace Dissonance.Engine.Physics.Systems
 
 			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
 				if(!message.Entity.Has<RigidbodyInternal>()) {
-					message.Entity.Set(new RigidbodyInternal(0f));
+					message.Entity.Set(RigidbodyInternal.Create());
 				}
 
 				message.Entity.Get<RigidbodyInternal>().CollisionShapes.Add(message.CollisionShape);
@@ -71,11 +71,8 @@ namespace Dissonance.Engine.Physics.Systems
 					rb.ownsCollisionShape = true;
 					rb.BulletRigidbody.CollisionShape = resultShape;
 
-					float realMass = rb.rigidbodyType == RigidbodyType.Dynamic ? rb.Mass : 0f;
-					var localInertia = realMass > 0f ? resultShape.CalculateLocalInertia(rb.Mass) : BulletSharp.Math.Vector3.Zero;
-
-					rb.BulletRigidbody.SetMassProps(realMass, localInertia);
 					rb.updateShapes = false;
+					rb.updateMass = true;
 				}
 
 				if(rb.BulletRigidbody == null) {
@@ -84,8 +81,7 @@ namespace Dissonance.Engine.Physics.Systems
 						AngularSleepingThreshold = 1f,
 						Friction = 0.6f,
 						RollingFriction = 0f,
-						Restitution = 0.1f,
-						Mass = 1f
+						Restitution = 0.1f
 					};
 
 					rb.BulletRigidbody = new RigidBody(rbInfo) {
@@ -105,6 +101,15 @@ namespace Dissonance.Engine.Physics.Systems
 					UpdateShapes(ref rb);
 
 					physics.PhysicsWorld.AddRigidBody(rb.BulletRigidbody);
+				}
+
+				if(rb.updateMass) {
+					float realMass = rb.rigidbodyType == RigidbodyType.Dynamic ? rb.Mass : 0f;
+					var localInertia = realMass > 0f ? rb.BulletRigidbody.CollisionShape.CalculateLocalInertia(rb.Mass) : BulletSharp.Math.Vector3.Zero;
+
+					rb.BulletRigidbody.SetMassProps(realMass, localInertia);
+
+					rb.updateMass = false;
 				}
 			}
 		}

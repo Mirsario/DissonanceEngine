@@ -148,28 +148,24 @@ namespace Dissonance.Engine.Graphics
 				//GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
-		internal void SetupMatrixUniforms(Transform transform,
-			ref Matrix4x4 world, ref Matrix4x4 worldInverse,
+		internal void SetupMatrixUniforms(
+			in Matrix4x4 world, ref Matrix4x4 worldInverse,
 			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
 			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
-			ref Matrix4x4 view, ref Matrix4x4 viewInverse,
-			ref Matrix4x4 proj, ref Matrix4x4 projInverse,
-			bool dontCalculateWorld = false
+			in Matrix4x4 view, in Matrix4x4 viewInverse,
+			in Matrix4x4 proj, in Matrix4x4 projInverse
 		)
 		{
 			#region World
 
 			if(hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-				if(!dontCalculateWorld) {
-					world = transform.WorldMatrix;
+				if(hasDefaultUniform[DSU.World]) {
+					UniformMatrix4(defaultUniformIndex[DSU.World], in world);
 				}
 
-				if(hasDefaultUniform[DSU.World]) {
-					UniformMatrix4(defaultUniformIndex[DSU.World], ref world);
-				}
 				if(hasDefaultUniform[DSU.WorldInverse]) {
 					worldInverse = world.Inverted;
-					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], ref worldInverse);
+					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], in worldInverse);
 				}
 
 				#region WorldView
@@ -178,13 +174,13 @@ namespace Dissonance.Engine.Graphics
 					worldView = world * view;
 
 					if(hasDefaultUniform[DSU.WorldView]) {
-						UniformMatrix4(defaultUniformIndex[DSU.WorldView], ref worldView);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldView], in worldView);
 					}
 
 					if(hasDefaultUniform[DSU.WorldViewInverse]) {
 						worldViewInverse = worldView.Inverted;
 
-						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], ref worldViewInverse);
+						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], in worldViewInverse);
 					}
 
 					#region WorldViewProj
@@ -193,13 +189,13 @@ namespace Dissonance.Engine.Graphics
 						worldViewProj = worldView * proj;
 
 						if(hasDefaultUniform[DSU.WorldViewProj]) {
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], ref worldViewProj);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], in worldViewProj);
 						}
 
 						if(hasDefaultUniform[DSU.WorldViewProjInverse]) {
 							worldViewProjInverse = worldViewProj.Inverted;
 
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], ref worldViewProjInverse);
+							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], in worldViewProjInverse);
 						}
 					}
 
@@ -214,11 +210,11 @@ namespace Dissonance.Engine.Graphics
 			#region View
 
 			if(hasDefaultUniform[DSU.View]) {
-				UniformMatrix4(defaultUniformIndex[DSU.View], ref view);
+				UniformMatrix4(defaultUniformIndex[DSU.View], in view);
 			}
 
 			if(hasDefaultUniform[DSU.ViewInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], ref viewInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], in viewInverse);
 			}
 
 			#endregion
@@ -226,11 +222,11 @@ namespace Dissonance.Engine.Graphics
 			#region Proj
 
 			if(hasDefaultUniform[DSU.Proj]) {
-				UniformMatrix4(defaultUniformIndex[DSU.Proj], ref proj);
+				UniformMatrix4(defaultUniformIndex[DSU.Proj], in proj);
 			}
 
 			if(hasDefaultUniform[DSU.ProjInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], ref projInverse);
+				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], in projInverse);
 			}
 
 			#endregion
@@ -357,7 +353,7 @@ namespace Dissonance.Engine.Graphics
 			return shader;
 		}
 
-		internal static unsafe void UniformMatrix4(int location, ref Matrix4x4 matrix, bool transpose = false)
+		internal static unsafe void UniformMatrix4(int location, in Matrix4x4 matrix, bool transpose = false)
 		{
 			fixed(float* matrix_ptr = &matrix.m00) {
 				GL.UniformMatrix4(location, 1, transpose, matrix_ptr);
