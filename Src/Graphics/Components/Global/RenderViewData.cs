@@ -2,7 +2,7 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public struct RenderViewData
+	public struct RenderViewData : IRenderComponent
 	{
 		public struct RenderView
 		{
@@ -16,6 +16,15 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public List<RenderView> RenderViews { get; set; }
+		public List<RenderView> RenderViews { get; private set; }
+
+		public void Reset()
+		{
+			if(RenderViews != null) {
+				RenderViews.Clear();
+			} else {
+				RenderViews = new();
+			}
+		}
 	}
 }

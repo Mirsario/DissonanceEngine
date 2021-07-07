@@ -3,7 +3,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public struct GeometryPassData
+	public struct GeometryPassData : IRenderComponent
 	{
 		public readonly struct RenderEntry
 		{
@@ -19,21 +19,21 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public List<RenderEntry> RenderEntries { get; set; }
+		public List<RenderEntry> RenderEntries { get; private set; }
+
+		public void Reset()
+		{
+			if(RenderEntries != null) {
+				RenderEntries.Clear();
+			} else {
+				RenderEntries = new();
+			}
+		}
 	}
 
 	public class GeometryPass : RenderPass
 	{
 		public ulong? layerMask;
-
-		public override void OnInit()
-		{
-			ref var geometryData = ref GlobalGet<GeometryPassData>();
-
-			geometryData = new() {
-				RenderEntries = new List<GeometryPassData.RenderEntry>()
-			};
-		}
 
 		public override void Render()
 		{
@@ -56,9 +56,6 @@ namespace Dissonance.Engine.Graphics
 
 			var renderViewData = GlobalGet<RenderViewData>();
 			var geometryPassData = GlobalGet<GeometryPassData>();
-
-			renderViewData.RenderViews ??= new();
-			geometryPassData.RenderEntries ??= new();
 
 			//CameraLoop
 			foreach(var renderView in renderViewData.RenderViews) {

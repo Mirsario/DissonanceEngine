@@ -15,10 +15,6 @@
 		{
 			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
 
-			geometryPassData.RenderEntries ??= new();
-
-			geometryPassData.RenderEntries.Clear(); //temp
-
 			foreach(var entity in entities.ReadEntities()) {
 				var renderer = entity.Get<MeshRenderer>();
 				var transform = entity.Get<Transform>();
