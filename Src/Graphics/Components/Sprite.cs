@@ -1,8 +1,10 @@
-/*
+using System;
+
 namespace Dissonance.Engine.Graphics
 {
-	public struct Sprite : IComponent, IRenderer
+	public struct Sprite
 	{
+		[Flags]
 		public enum SpriteEffects
 		{
 			FlipHorizontally = 1,
@@ -11,111 +13,67 @@ namespace Dissonance.Engine.Graphics
 
 		public static float DefaultPixelSize { get; set; } = 1f;
 
-		private static Mesh bufferMesh;
+		internal Vector4 vertices;
+		internal bool verticesNeedRecalculation;
 
-		public SpriteEffects spriteEffects;
+		private Vector2 origin;
+		private float pixelSize;
+		private Vector2 sizeInPixels;
+		private Material material;
 
-		protected RectFloat sourceRectangle = RectFloat.Default;
-		protected Vector4 sourceUV = new Vector4(0f, 0f, 1f, 1f);
-		protected Vector4 vertices = new Vector4(-0.5f, -0.5f, 0.5f, 0.5f);
-		protected Vector2 origin = new Vector2(0.5f, 0.5f);
-		protected Vector2 sizeInPixels = Vector2.One;
-		protected float pixelSize = DefaultPixelSize;
-		protected bool setSize;
-		protected Material material;
+		public RectFloat SourceRectangle { get; set; }
+		public SpriteEffects Effects { get; set; }
+		public Bounds AABB { get; private set; }
 
-		public override Bounds AABB => new Bounds(Vector3.Zero, Vector3.One);
-
-		public RectFloat SourceRectangle {
-			get => sourceRectangle;
-			set {
-				sourceRectangle = value;
-				sourceUV = new Vector4(value.x, value.y, value.Right, value.Bottom);
-			}
-		}
 		public Vector2 FrameSize {
 			get => sizeInPixels;
 			set {
 				sizeInPixels = value;
-				setSize = true;
-
-				RecalculateVertices();
+				verticesNeedRecalculation = true;
 			}
 		}
 		public Vector2 FrameSizeInUnits {
 			get => sizeInPixels * pixelSize;
 			set {
 				sizeInPixels = value / pixelSize;
-				setSize = true;
-
-				RecalculateVertices();
+				verticesNeedRecalculation = true;
 			}
 		}
 		public Vector2 Origin {
 			get => origin;
 			set {
 				origin = value;
-
-				RecalculateVertices();
+				verticesNeedRecalculation = true;
 			}
 		}
 		public float PixelSize {
 			get => pixelSize;
 			set {
 				pixelSize = value;
-
-				RecalculateVertices();
+				verticesNeedRecalculation = true;
 			}
 		}
-
-		public override Material Material {
+		public Material Material {
 			get => material;
 			set {
 				material = value;
 
-				if(!setSize && material != null && material.GetTexture("mainTex", out var texture)) {
+				/*if(material != null && material.GetTexture("mainTex", out var texture)) {
 					sizeInPixels = (Vector2)texture.Size;
-
-					RecalculateVertices();
-				}
+					verticesNeedRecalculation = true;
+				}*/
 			}
 		}
 
-		public override bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
+		public Sprite(Material material) : this()
 		{
-			material = this.material;
+			vertices = new Vector4(-0.5f, -0.5f, 0.5f, 0.5f);
+			origin = new Vector2(0.5f, 0.5f);
+			sizeInPixels = Vector2.One;
+			pixelSize = DefaultPixelSize;
 
-			renderObject = null;
-
-			return true;
-		}
-		public override void Render(object renderObject)
-		{
-			Vector4 uvPoints = spriteEffects switch
-			{
-				SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically => new Vector4(sourceUV.z, sourceUV.w, sourceUV.x, sourceUV.y),
-				SpriteEffects.FlipHorizontally => new Vector4(sourceUV.z, sourceUV.y, sourceUV.x, sourceUV.w),
-				SpriteEffects.FlipVertically => new Vector4(sourceUV.x, sourceUV.w, sourceUV.z, sourceUV.y),
-				_ => sourceUV
-			};
-
-			DrawUtils.DrawQuadUv0(vertices, uvPoints);
-		}
-
-		protected void RecalculateVertices()
-		{
-			float xSize = sizeInPixels.x * pixelSize;
-			float ySize = sizeInPixels.y * pixelSize;
-
-			float yOrigin = 1f - origin.y;
-
-			vertices = new Vector4(
-				-origin.x * xSize,
-				-yOrigin * ySize,
-				(1f - origin.x) * xSize,
-				(1f - yOrigin) * ySize
-			);
+			SourceRectangle = RectFloat.Default;
+			Material = material;
 		}
 	}
 }
-*/

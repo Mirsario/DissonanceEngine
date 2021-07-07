@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Dissonance.Engine.Graphics
 {
-	public struct MeshRenderer : IRenderer
+	public struct MeshRenderer
 	{
 		private Bounds aabb;
 		private Matrix4x4 aabbLastMatrix;
@@ -108,41 +108,5 @@ namespace Dissonance.Engine.Graphics
 
 			return new Bounds(aabb.min + translation, aabb.max + translation);
 		}
-
-		public bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
-		{
-			var lods = LODMeshes;
-
-			if(lods != null) {
-				if(lods.Length == 1) {
-					var lod = lods[0];
-
-					material = lod.material;
-					renderObject = lod.mesh;
-
-					return material != null && lod.mesh != null && lod.mesh.IsReady;
-				}
-
-				float sqrDist = Vector3.SqrDistance(cameraPosition, rendererPosition);
-
-				for(int i = 0; i < lods.Length; i++) {
-					var lod = lods[i];
-
-					if(sqrDist <= lod.maxDistanceSqr || lod.maxDistance == 0f) {
-						material = lod.material;
-						renderObject = lod.mesh;
-
-						return material != null && lod.mesh != null && lod.mesh.IsReady;
-					}
-				}
-			}
-
-			material = null;
-			renderObject = null;
-
-			return false;
-		}
-
-		public void Render(object renderObject) => ((Mesh)renderObject).Render();
 	}
 }
