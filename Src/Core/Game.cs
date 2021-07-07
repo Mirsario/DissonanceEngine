@@ -48,8 +48,6 @@ namespace Dissonance.Engine
 
 		public virtual void PreInit() { }
 		public virtual void Start() { }
-		public virtual void FixedUpdate() { }
-		public virtual void RenderUpdate() { }
 		public virtual void OnGUI() { }
 		public virtual void OnDispose() { }
 
@@ -199,7 +197,6 @@ namespace Dissonance.Engine
 				GLFW.SetCursorPos(window,center.x,center.y);
 			}*/
 
-			FixedUpdate();
 			moduleHooks.FixedUpdate?.Invoke();
 
 			moduleHooks.PostFixedUpdate?.Invoke();
@@ -210,7 +207,6 @@ namespace Dissonance.Engine
 
 			moduleHooks.PreRenderUpdate?.Invoke();
 
-			RenderUpdate();
 			moduleHooks.RenderUpdate?.Invoke();
 
 			moduleHooks.PostRenderUpdate?.Invoke();
