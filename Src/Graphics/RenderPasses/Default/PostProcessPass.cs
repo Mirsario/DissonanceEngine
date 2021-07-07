@@ -19,8 +19,6 @@ namespace Dissonance.Engine.Graphics
 
 			var renderViewData = GlobalGet<RenderViewData>();
 
-			renderViewData.RenderViews ??= new();
-
 			foreach(var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
 				var transform = renderView.transform;

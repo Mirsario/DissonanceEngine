@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
 
@@ -8,7 +9,7 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Add submeshes to Mesh.cs
 	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Resources))]
+	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Resources), typeof(ComponentManager))]
 	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new Version(3, 2);
@@ -19,10 +20,12 @@ namespace Dissonance.Engine.Graphics
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
+		internal static Windowing windowing;
 
 		private static Version openGLVersion = MinOpenGLVersion;
 		private static GL.DebugCallback debugCallback;
 		private static Shader guiShader; //TODO: To be moved
+		private Action resetRenderComponents;
 
 		public static int DrawCallsCount { get; set; }
 		public static Vector4 ClearColor { get; set; } = Vector4.Zero;
@@ -46,8 +49,6 @@ namespace Dissonance.Engine.Graphics
 
 		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
 
-		internal static Windowing windowing;
-
 		protected override void PreInit()
 		{
 			Game.TryGetModule(out windowing);
@@ -57,6 +58,33 @@ namespace Dissonance.Engine.Graphics
 			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
 				PrepareOpenGL();
 			}
+
+			//Prepare the delegate for resetting render components. Could be moved somewhere else...
+			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
+				foreach(var type in types) {
+					if(type.IsClass || type.IsInterface || !typeof(IRenderComponent).IsAssignableFrom(type)) {
+						continue;
+					}
+
+					var methods = typeof(ComponentManager).GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
+
+					var getComponentMethod = methods
+						.First(m => m.Name == nameof(ComponentManager.GetComponent) && m.GetParameters().Length == 0)
+						.MakeGenericMethod(type);
+
+					var setComponentMethod = methods
+						.First(m => m.Name == nameof(ComponentManager.SetComponent) && m.GetParameters().Length == 1)
+						.MakeGenericMethod(type);
+
+					resetRenderComponents += () => {
+						IRenderComponent component = (IRenderComponent)getComponentMethod.Invoke(null, null);
+
+						component.Reset();
+
+						setComponentMethod.Invoke(null, new object[] { component });
+					};
+				}
+			};
 		}
 
 		protected override void Init()
@@ -95,6 +123,12 @@ namespace Dissonance.Engine.Graphics
 			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
 
+		protected override void PreRenderUpdate()
+		{
+			resetRenderComponents?.Invoke();
+		}
+
+		[HookPosition(10000)]
 		protected override void RenderUpdate()
 		{
 			//Clear the screen

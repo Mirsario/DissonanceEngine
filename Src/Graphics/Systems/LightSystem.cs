@@ -17,10 +17,6 @@ namespace Dissonance.Engine.Graphics
 		{
 			ref var lightingPassData = ref GlobalGet<LightingPassData>();
 
-			lightingPassData.Lights ??= new();
-
-			lightingPassData.Lights.Clear(); //temp
-
 			foreach(var entity in entities.ReadEntities()) {
 				var light = entity.Get<Light>();
 				var transform = entity.Get<Transform>();

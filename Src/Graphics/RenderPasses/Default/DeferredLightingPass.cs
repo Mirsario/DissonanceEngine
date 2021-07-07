@@ -3,7 +3,7 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public struct LightingPassData
+	public struct LightingPassData : IRenderComponent
 	{
 		public struct LightData
 		{
@@ -16,7 +16,16 @@ namespace Dissonance.Engine.Graphics
 			public Vector3? Direction;
 		}
 
-		public List<LightData> Lights { get; set; }
+		public List<LightData> Lights { get; private set; }
+
+		public void Reset()
+		{
+			if(Lights == null) {
+				Lights = new List<LightData>();
+			} else {
+				Lights.Clear();
+			}
+		}
 	}
 
 	[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
@@ -40,9 +49,6 @@ namespace Dissonance.Engine.Graphics
 
 			var renderViewData = GlobalGet<RenderViewData>();
 			var lightingData = GlobalGet<LightingPassData>();
-
-			renderViewData.RenderViews ??= new();
-			lightingData.Lights ??= new();
 
 			foreach(var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
