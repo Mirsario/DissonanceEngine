@@ -7,12 +7,12 @@
 	{
 		private EntitySet entities;
 
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<MeshCollider>());
 		}
 
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			foreach(var entity in entities.ReadEntities()) {
 				ref var collider = ref entity.Get<MeshCollider>();

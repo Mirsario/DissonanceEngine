@@ -12,12 +12,12 @@ namespace Dissonance.Engine.Physics
 	{
 		private EntitySet entities;
 
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 		}
 
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			foreach(var entity in entities.ReadEntities()) {
 				ref var rigidbody = ref entity.Get<Rigidbody>();

@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed class UpdateGravitySystem : GameSystem
 	{
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			
 		}

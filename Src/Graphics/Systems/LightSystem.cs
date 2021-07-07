@@ -8,12 +8,12 @@ namespace Dissonance.Engine.Graphics
 	{
 		private EntitySet entities;
 
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Light>() && e.Has<Transform>());
 		}
 
-		public override void RenderUpdate()
+		protected internal override void RenderUpdate()
 		{
 			ref var lightingPassData = ref GlobalGet<LightingPassData>();
 

@@ -6,12 +6,12 @@
 	{
 		private EntitySet entities;
 
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
 		}
 
-		public override void RenderUpdate()
+		protected internal override void RenderUpdate()
 		{
 			ref var renderViewData = ref GlobalGet<RenderViewData>();
 

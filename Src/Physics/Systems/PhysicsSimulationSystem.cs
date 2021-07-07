@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Physics
 {
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			var physics = WorldPhysics.Default;
 
@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Physics
 			World.Set(physics);
 		}
 
-		public override void FixedUpdate()
+		protected internal override void FixedUpdate()
 		{
 			if(!World.Has<WorldPhysics>()) {
 				return;
