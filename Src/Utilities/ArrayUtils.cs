@@ -74,5 +74,27 @@ namespace Dissonance.Engine.Utilities
 
 			array = newArray;
 		}
+
+		/// <summary> Reduce the array's size whenever it has null values at the end of it. </summary>
+		public static bool TryShrinking<T>(ref T[] array) where T : class
+		{
+			for(int i = array.Length - 1; i >= 0; i--) {
+				if(array[i] != null) {
+					int minimalSize = i + 1;
+
+					if(minimalSize < array.Length) {
+						Array.Resize(ref array, minimalSize);
+
+						return true;
+					}
+
+					return false;
+				}
+			}
+
+			array = Array.Empty<T>();
+
+			return true;
+		}
 	}
 }

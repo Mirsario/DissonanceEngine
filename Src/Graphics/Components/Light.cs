@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Graphics
 {
-	public struct Light : IComponent
+	public struct Light
 	{
 		public enum LightType
 		{

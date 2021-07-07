@@ -4,7 +4,7 @@ namespace Dissonance.Engine
 {
 	public class AllowOnlyOneInWorldAttribute : ComponentAttribute
 	{
-		public override void OnComponentEnabled(Entity entity, IComponent component)
+		public override void OnComponentEnabled(Entity entity, object component)
 		{
 			//TODO:
 			/*if(ComponentManager.CountComponents(component.GetType()) >= 1) {

@@ -11,8 +11,8 @@ namespace Dissonance.Engine
 		private static readonly Dictionary<Type, ComponentAttribute[]> Cache = new Dictionary<Type, ComponentAttribute[]>();
 
 		public virtual void PreAddComponent(Entity entity, Type type) { }
-		public virtual void OnComponentEnabled(Entity entity, IComponent component) { }
-		public virtual void OnComponentDisabled(Entity entity, IComponent component) { }
+		public virtual void OnComponentEnabled(Entity entity, object component) { }
+		public virtual void OnComponentDisabled(Entity entity, object component) { }
 
 		public static IEnumerable<ComponentAttribute> EnumerateForType(Type type)
 		{

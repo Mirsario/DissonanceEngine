@@ -10,13 +10,9 @@ namespace Dissonance.Engine
 		internal readonly int Id;
 		internal readonly List<Entity> Entities = new();
 		internal readonly List<int> FreeEntityIndices = new();
-		internal readonly List<GameSystem> Systems = new();
-		internal readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
 
 		private readonly List<EntitySet> EntitySets = new();
 		private readonly Dictionary<EntitySetType, Dictionary<Expression<Predicate<Entity>>, EntitySet>> EntitySetsQuery = new();
-
-		internal bool DefaultSystemsRegistered { get; set; }
 
 		internal World(int id)
 		{
@@ -67,29 +63,28 @@ namespace Dissonance.Engine
 		}
 
 		public void AddSystem(GameSystem system)
+			=> SystemManager.AddSystemToWorld(this, system);
+
+		/*public void AddRenderer(Renderer renderer)
 		{
-			var type = system.GetType();
+			var type = renderer.GetType();
 
-			Systems.Add(system);
+			Renderers.Add(renderer);
 
-			if(!SystemsByType.TryGetValue(type, out var systemsOfThisType)) {
-				SystemsByType[type] = systemsOfThisType = new List<GameSystem>();
+			if(!RenderersByType.TryGetValue(type, out var renderersOfThisType)) {
+				RenderersByType[type] = renderersOfThisType = new();
 			}
 
-			systemsOfThisType.Add(system);
+			renderersOfThisType.Add(renderer);
+		}*/
 
-			if(DefaultSystemsRegistered) {
-				SystemsManager.SortSystems(Systems, SystemsByType);
-			}
-		}
-
-		internal bool Has<T>() where T : struct, IComponent
+		internal bool Has<T>() where T : struct
 			=> ComponentManager.HasComponent<T>(Id);
 
-		internal ref T Get<T>() where T : struct, IComponent
+		internal ref T Get<T>() where T : struct
 			=> ref ComponentManager.GetComponent<T>(Id);
 
-		internal void Set<T>(T value) where T : struct, IComponent
+		internal void Set<T>(T value) where T : struct
 			=> ComponentManager.SetComponent(Id, value);
 
 		internal ReadOnlySpan<Entity> ReadEntities()
@@ -103,25 +98,11 @@ namespace Dissonance.Engine
 
 		internal void FixedUpdate()
 		{
-			foreach(var system in Systems) {
-				if(!system.Initialized) {
-					system.Initialize();
-
-					system.Initialized = true;
-				}
-
-				system.FixedUpdate();
-			}
-
 			MessageManager.ClearMessages();
 		}
 
 		internal void RenderUpdate()
 		{
-			foreach(var system in Systems) {
-				system.RenderUpdate();
-			}
-
 			MessageManager.ClearMessages();
 		}
 

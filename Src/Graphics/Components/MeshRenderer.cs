@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Dissonance.Engine.Graphics
 {
-	public struct MeshRenderer : IComponent, IRenderer
+	public struct MeshRenderer : IRenderer
 	{
 		private Bounds aabb;
 		private Matrix4x4 aabbLastMatrix;
@@ -83,15 +83,15 @@ namespace Dissonance.Engine.Graphics
 			var max = bounds.max;
 
 			Vector3[] corners = new Vector3[8] {
-					min,
-					new Vector3(min.x, min.y, max.z),
-					new Vector3(min.x, max.y, min.z),
-					new Vector3(max.x, min.y, min.z),
-					new Vector3(min.x, max.y, max.z),
-					new Vector3(max.x, min.y, max.z),
-					new Vector3(max.x, max.y, min.z),
-					max,
-				};
+				min,
+				new Vector3(min.x, min.y, max.z),
+				new Vector3(min.x, max.y, min.z),
+				new Vector3(max.x, min.y, min.z),
+				new Vector3(min.x, max.y, max.z),
+				new Vector3(max.x, min.y, max.z),
+				new Vector3(max.x, max.y, min.z),
+				max,
+			};
 
 			var newMin = Vector3.One * float.PositiveInfinity;
 			var newMax = Vector3.One * float.NegativeInfinity;
@@ -108,6 +108,7 @@ namespace Dissonance.Engine.Graphics
 
 			return new Bounds(aabb.min + translation, aabb.max + translation);
 		}
+
 		public bool GetRenderData(Vector3 rendererPosition, Vector3 cameraPosition, out Material material, out object renderObject)
 		{
 			var lods = LODMeshes;
@@ -141,6 +142,7 @@ namespace Dissonance.Engine.Graphics
 
 			return false;
 		}
+
 		public void Render(object renderObject) => ((Mesh)renderObject).Render();
 	}
 }

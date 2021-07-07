@@ -37,6 +37,9 @@ namespace Dissonance.Engine.Audio
 					audioSource.bufferId = newBufferId;
 				}
 
+				//Update volume.
+				AL.Source(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
+
 				//Update 3D position.
 				if(!audioSource.Is2D && entity.Has<Transform>()) {
 					audioSource.was2D = false;

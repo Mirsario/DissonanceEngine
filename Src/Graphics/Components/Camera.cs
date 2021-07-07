@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Graphics
 {
-	public struct Camera : IComponent
+	public struct Camera
 	{
 		public RectFloat View { get; set; }
 		public float Fov { get; set; }

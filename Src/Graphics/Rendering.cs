@@ -95,16 +95,32 @@ namespace Dissonance.Engine.Graphics
 			CheckGLErrors($"At the end '{nameof(Rendering)}.{nameof(Init)}' call.");
 		}
 
-		protected override void PreRenderUpdate()
+		protected override void RenderUpdate()
 		{
+			//Clear the screen
 			ClearScreen();
-		}
-		protected override void PostRenderUpdate()
-		{
+
+			//RenderPasses
+			var pipeline = RenderingPipeline;
+
+			for(int i = 0; i < pipeline.RenderPasses.Length; i++) {
+				var pass = pipeline.RenderPasses[i];
+
+				if(pass.Enabled) {
+					pass.Render();
+
+					CheckGLErrors($"Rendering pass {pass.Name} ({pass.GetType().Name})");
+				}
+			}
+
+			Framebuffer.Bind(null);
+
+			//Blit buffers
 			if(DebugFramebuffers) {
 				BlitFramebuffers();
 			}
 
+			//Swap buffers
 			windowing.SwapBuffers();
 			CheckGLErrors("After swapping buffers");
 

@@ -2,7 +2,7 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	public struct BoxCollider : IComponent
+	public struct BoxCollider
 	{
 		public static readonly BoxCollider Default = new BoxCollider(Vector3.One);
 

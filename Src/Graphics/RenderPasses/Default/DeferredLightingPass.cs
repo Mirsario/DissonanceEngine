@@ -1,57 +1,57 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using System.Collections.Generic;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
+	public struct LightingPassData
+	{
+		public struct LightData
+		{
+			public Light.LightType Type;
+			public Matrix4x4 Matrix;
+			public float Intensity;
+			public float? Range;
+			public Vector3 Color;
+			public Vector3? Position;
+			public Vector3? Direction;
+		}
+
+		public List<LightData> Lights { get; set; }
+	}
+
 	[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
 	public class DeferredLightingPass : RenderPass
 	{
-		//public override string[] AcceptedShaderNames => Enum.GetNames(typeof(LightType)).Select(q => q.ToLower()).ToArray();
-
-		//public Shader pointShader;
-		//public Shader directionalShader;
-		//public Shader spotShader;
-
-		//public DeferredLightingPass(string name,Framebuffer framebuffer,RenderTexture[] renderTextures,Shader pointShader,Shader directionalShader,Shader spotShader) : base(name,framebuffer,renderTextures)
-		//{
-		//	this.pointShader = pointShader;
-		//	this.directionalShader = directionalShader;
-		//	this.spotShader = spotShader;
-		//}
-
-		public override void Render(World world)
+		public override void Render()
 		{
-			Framebuffer.BindWithDrawBuffers(framebuffer);
+			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
 			GL.Enable(EnableCap.Blend);
 			GL.Enable(EnableCap.CullFace);
 			GL.DepthMask(false);
 
 			//test if it equals 1
-			//GL.StencilFunc(StencilFunction.Notequal,0x01,0x01);
+			//GL.StencilFunc(StencilFunction.Notequal, 0x01, 0x01);
 			//GL.StencilMask(0);
 
 			Matrix4x4 worldMatrix, inverseWorldMatrix = default,
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
 			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
 
-			foreach(var cameraEntity in world.ReadEntities()) {
-				if(!cameraEntity.Has<Camera>() || !cameraEntity.Has<Transform>()) {
-					continue;
-				}
+			var renderViewData = GlobalGet<RenderViewData>();
+			var lightingData = GlobalGet<LightingPassData>();
 
-				var camera = cameraEntity.Get<Camera>();
-				var cameraTransform = cameraEntity.Get<Transform>();
+			renderViewData.RenderViews ??= new();
+			lightingData.Lights ??= new();
+
+			foreach(var renderView in renderViewData.RenderViews) {
+				var camera = renderView.camera;
+				var cameraTransform = renderView.transform;
 				var viewRect = camera.ViewPixel;
 
 				GL.Viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
 
 				var cameraPos = cameraTransform.Position;
-
-				//Temporary
-				var viewMatrix = camera.ViewMatrix;
-				var projectionMatrix = camera.ProjectionMatrix;
-				var inverseViewMatrix = camera.InverseViewMatrix;
-				var inverseProjectionMatrix = camera.InverseProjectionMatrix;
 
 				for(int i = 0; i < shaders.Length; i++) {
 					var activeShader = shaders[i];
@@ -85,44 +85,35 @@ namespace Dissonance.Engine.Graphics
 					activeShader.TryGetUniformLocation("lightIntensity", out int uniformLightIntensity);
 					activeShader.TryGetUniformLocation("lightColor", out int uniformLightColor);
 
-					foreach(var lightEntity in world.ReadEntities()) {
-						if(!lightEntity.Has<Light>() || !lightEntity.Has<Transform>()) {
-							continue;
-						}
-
-						var light = lightEntity.Get<Light>();
-
+					foreach(var light in lightingData.Lights) {
 						if(light.Type != lightType) {
 							continue;
 						}
 
-						var lightTransform = lightEntity.Get<Transform>();
-						var lightPosition = lightTransform.Position;
-
-						worldMatrix = Matrix4x4.CreateScale(light.Range) * Matrix4x4.CreateTranslation(lightPosition);
+						worldMatrix = light.Matrix;
 
 						activeShader.SetupMatrixUniforms(
-							lightTransform,
-							ref worldMatrix, ref inverseWorldMatrix,
+							in worldMatrix, ref inverseWorldMatrix,
 							ref worldViewMatrix, ref inverseWorldViewMatrix,
 							ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
-							ref viewMatrix, ref inverseViewMatrix,
-							ref projectionMatrix, ref inverseProjectionMatrix,
-							true
+							camera.ViewMatrix, camera.InverseViewMatrix,
+							camera.ProjectionMatrix, camera.InverseProjectionMatrix
 						);
 
-						if(uniformLightRange != -1) {
-							GL.Uniform1(uniformLightRange, light.Range);
+						if(uniformLightRange != -1 && light.Range.HasValue) {
+							GL.Uniform1(uniformLightRange, light.Range.Value);
 						}
 
-						if(uniformLightPosition != -1) {
-							GL.Uniform3(uniformLightPosition, lightPosition.x, lightPosition.y, lightPosition.z);
+						if(uniformLightPosition != -1 && light.Position.HasValue) {
+							var position = light.Position.Value;
+
+							GL.Uniform3(uniformLightPosition, position.x, position.y, position.z);
 						}
 
-						if(uniformLightDirection != -1) {
-							var forward = lightTransform.Forward;
+						if(uniformLightDirection != -1 && light.Direction.HasValue) {
+							var direction = light.Direction.Value;
 
-							GL.Uniform3(uniformLightDirection, forward.x, forward.y, forward.z);
+							GL.Uniform3(uniformLightDirection, direction.x, direction.y, direction.z);
 						}
 
 						if(uniformLightIntensity != -1) {
@@ -143,12 +134,6 @@ namespace Dissonance.Engine.Graphics
 						}
 					}
 				}
-
-				//Temporary
-				camera.ViewMatrix = viewMatrix;
-				camera.ProjectionMatrix = projectionMatrix;
-				camera.InverseViewMatrix = inverseViewMatrix;
-				camera.InverseProjectionMatrix = inverseProjectionMatrix;
 			}
 
 			GL.DepthMask(true);

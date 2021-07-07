@@ -1,7 +1,7 @@
 namespace Dissonance.Engine.Audio
 {
 	[AllowOnlyOneInWorld]
-	public struct AudioListener : IComponent
+	public struct AudioListener
 	{
 		public static readonly AudioListener Default = new AudioListener();
 	}

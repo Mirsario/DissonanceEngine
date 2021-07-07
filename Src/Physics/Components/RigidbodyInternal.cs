@@ -3,9 +3,10 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	internal struct RigidbodyInternal : IComponent //, IDisposable
+	internal struct RigidbodyInternal //, IDisposable
 	{
 		internal bool updateShapes;
+		internal bool updateMass;
 		internal bool ownsCollisionShape;
 		internal RigidbodyType rigidbodyType;
 
@@ -15,11 +16,14 @@ namespace Dissonance.Engine.Physics
 		public CollisionShape CollisionShape { get; set; }
 		public List<CollisionShape> CollisionShapes { get; set; }
 
-		public RigidbodyInternal(float mass) : this()
+		internal static RigidbodyInternal Create()
 		{
-			Mass = mass;
-			CollisionShapes = new();
+			return new RigidbodyInternal {
+				CollisionShapes = new(),
+				rigidbodyType = RigidbodyType.Static,
+			};
 		}
+
 		/*public readonly MotionStateInternal MotionState;
 
 		internal List<Collision> collisions;

@@ -2,7 +2,7 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	public struct MeshCollider : IComponent
+	public struct MeshCollider
 	{
 		internal bool needsUpdate;
 		internal CollisionShape lastCollisionShape;

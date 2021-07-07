@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class GUIPass : RenderPass
 	{
-		public override void Render(World world)
+		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(null);
 

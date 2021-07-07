@@ -193,7 +193,7 @@ namespace Dissonance.Engine.Graphics
 				renderPasses.Add(RenderPass.Create(passType, passName, p => {
 					p.Framebuffer = !string.IsNullOrWhiteSpace(pass.framebuffer) && pass.framebuffer.ToLower() != "none" ? FindFramebuffer(pass.framebuffer) : null;
 					p.PassedTextures = textureList.ToArray();
-					p.renderbuffers = bufferList.ToArray();
+					p.Renderbuffers = bufferList.ToArray();
 
 					if(passShaders != null) {
 						p.Shaders = passShaders;

@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.Physics
 {
-	public struct Rigidbody2D : IComponent
+	public struct Rigidbody2D
 	{
 
 	}

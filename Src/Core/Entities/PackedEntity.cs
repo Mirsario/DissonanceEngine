@@ -10,13 +10,13 @@ namespace Dissonance.Engine
 
 		private readonly Dictionary<Type, object> PackedComponents = new();
 
-		public T GetComponent<T>() where T : struct, IComponent
+		public T GetComponent<T>() where T : struct
 			=> (T)PackedComponents[typeof(T)];
 
-		public bool HasComponent<T>() where T : struct, IComponent
+		public bool HasComponent<T>() where T : struct
 			=> PackedComponents.ContainsKey(typeof(T));
 
-		public void SetComponent<T>(T value) where T : struct, IComponent
+		public void SetComponent<T>(T value) where T : struct
 			=> PackedComponents[typeof(T)] = value;
 
 		public Entity Unpack(World world)
