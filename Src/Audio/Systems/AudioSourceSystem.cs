@@ -9,14 +9,14 @@ namespace Dissonance.Engine.Audio
 	{
 		private EntitySet entities;
 
-		public override void Initialize()
+		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<AudioSource>());
 		}
 
-		public override void RenderUpdate() => Update();
+		protected internal override void RenderUpdate() => Update();
 
-		public override void FixedUpdate() => Update();
+		protected internal override void FixedUpdate() => Update();
 
 		private void Update()
 		{
