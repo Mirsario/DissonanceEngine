@@ -22,7 +22,20 @@ namespace Dissonance.Engine
 			return world;
 		}
 
-		public static World GetWorld(int id) => Worlds[id];
+		public static World GetWorld(int id) => Worlds[id] ?? throw new ArgumentException($"No world with id '{id}'.");
+
+		public static bool TryGetWorld(int id, out World result)
+		{
+			if(id >= 0 && id < Worlds.Count) {
+				result = Worlds[id];
+
+				return result != null;
+			}
+
+			result = null;
+
+			return false;
+		}
 
 		internal static ReadOnlySpan<World> ReadWorlds() => CollectionsMarshal.AsSpan(Worlds);
 	}
