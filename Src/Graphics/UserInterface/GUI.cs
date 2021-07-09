@@ -35,6 +35,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			Draw(rect, skin.boxStyle.texNormal, color, skin.boxStyle);
 		}
+
 		public static bool Button(RectFloat rect, string text = null, bool active = true, Vector4? color = null)
 		{
 			bool hover = rect.Contains(InputEngine.MousePosition, true);
@@ -58,6 +59,7 @@ namespace Dissonance.Engine.Graphics
 
 			return active && hover && InputEngine.GetMouseButtonUp(0) && rect.Contains(InputEngine.MousePosition, true);
 		}
+
 		public static void DrawText(RectFloat rect, string text, Vector4? color = null, TextAlignment alignment = TextAlignment.UpperLeft, float fontSize = -1)
 		{
 			if(fontSize == -1) {
@@ -66,10 +68,12 @@ namespace Dissonance.Engine.Graphics
 
 			DrawString(font, fontSize, rect, text, color, alignment);
 		}
+
 		public static void DrawTexture(RectFloat rect, Texture texture, Vector4? color = null)
 		{
 			Draw(rect, texture, color);
 		}
+
 		internal static void Draw(RectFloat rect, Texture texture, Vector4? color = null, GUIStyle style = null)
 		{
 			var vector = new Vector4(
@@ -157,6 +161,7 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 		}
+
 		//TODO: Move this
 		internal static void DrawString(Font font, float fontSize, RectFloat rect, string text, Vector4? color = null, TextAlignment alignment = TextAlignment.UpperLeft)
 		{
@@ -176,9 +181,11 @@ namespace Dissonance.Engine.Graphics
 
 			float scale = fontSize / font.charSize.y;
 			var position = new Vector2(rect.x, rect.y);
+			
 			if(alignment == TextAlignment.UpperCenter || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.LowerCenter) {
 				position.x += rect.width / 2f - font.charSize.x * scale * text.Length / 2f;
 			}
+
 			if(alignment == TextAlignment.MiddleLeft || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.MiddleRight) {
 				position.y += rect.height / 2f - fontSize / 2f;
 			}
