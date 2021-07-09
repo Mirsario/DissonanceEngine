@@ -28,6 +28,11 @@ namespace Dissonance.Engine
 			return entity;
 		}
 
+		public bool RemoveEntity(Entity entity)
+		{
+			return EntityManager.RemoveEntity(entity);
+		}
+
 		public EntitySet GetEntitySet(Expression<Predicate<Entity>> predicate)
 			=> GetEntitySet(EntitySetType.Default, predicate);
 

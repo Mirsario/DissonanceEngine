@@ -32,6 +32,17 @@ namespace Dissonance.Engine
 			return entity;
 		}
 
+		internal static bool RemoveEntity(Entity entity)
+		{
+			if(!WorldManager.TryGetWorld(entity.WorldId, out var world)) {
+				return false;
+			}
+
+			world.Entities.Remove(entity);
+
+			return true;
+		}
+
 		public static ReadOnlySpan<Entity> ReadAllEntities()
 		{
 			return CollectionsMarshal.AsSpan(allEntities);
