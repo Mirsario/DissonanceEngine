@@ -42,6 +42,7 @@ namespace Dissonance.Engine.Graphics
 			GL.Enable(EnableCap.CullFace);
 			GL.Enable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.Blend);
+			GL.CullFace(CullFaceMode.Back);
 
 			bool[] uniformComputed = new bool[DefaultShaderUniforms.Count];
 			Matrix4x4 worldMatrix = default, inverseWorldMatrix = default,
@@ -51,7 +52,7 @@ namespace Dissonance.Engine.Graphics
 			//Render cache
 			Shader lastShader = null;
 			Material lastMaterial = null;
-			var lastCullMode = CullMode.Front;
+			var lastCullMode = CullMode.Back;
 			var lastPolygonMode = PolygonMode.Fill;
 
 			var renderViewData = GlobalGet<RenderViewData>();
@@ -136,12 +137,11 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-			GL.CullFace(CullFaceMode.Front);
+			GL.CullFace(CullFaceMode.Back);
 
 			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.Blend);
-			//GL.Disable(EnableCap.AlphaTest);
 
 			Framebuffer.Bind(null);
 		}

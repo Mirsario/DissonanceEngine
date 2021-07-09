@@ -11,6 +11,9 @@ namespace Dissonance.Engine.Graphics
 			Shader.SetShader(Rendering.GUIShader);
 
 			GL.Enable(EnableCap.Blend);
+			GL.Enable(EnableCap.CullFace);
+			GL.CullFace(CullFaceMode.Back);
+
 			GUI.canDraw = true;
 
 			Game.Instance?.OnGUI();
@@ -19,6 +22,7 @@ namespace Dissonance.Engine.Graphics
 			GUI.canDraw = false;
 
 			GL.Disable(EnableCap.Blend);
+			GL.Disable(EnableCap.CullFace);
 		}
 	}
 }
