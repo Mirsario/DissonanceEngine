@@ -76,26 +76,26 @@ namespace Dissonance.Engine.Graphics
 
 					var vertexPoints = sprite.vertices;
 					var position = transform.Position;
-					float depth = position.z;
 
-					vertices[vertex] = new Vector3(position.x + sprite.vertices.x, position.y + sprite.vertices.y, depth);
-					vertices[vertex + 1] = new Vector3(position.x + sprite.vertices.z, position.y + sprite.vertices.y, depth);
-					vertices[vertex + 2] = new Vector3(position.x + sprite.vertices.z, position.y + sprite.vertices.w, depth);
-					vertices[vertex + 3] = new Vector3(position.x + sprite.vertices.x, position.y + sprite.vertices.w, depth);
+					vertices[vertex] = position + new Vector3(sprite.vertices.x, sprite.vertices.y, 0f);
+					vertices[vertex + 1] = position + new Vector3(sprite.vertices.z, sprite.vertices.y, 0f);
+					vertices[vertex + 2] = position + new Vector3(sprite.vertices.z, sprite.vertices.w, 0f);
+					vertices[vertex + 3] = position + new Vector3(sprite.vertices.x, sprite.vertices.w, 0f);
 
-					uv0[vertex] = new Vector2(uvPoints.x, uvPoints.y);
-					uv0[vertex + 1] = new Vector2(uvPoints.x, uvPoints.w);
-					uv0[vertex + 2] = new Vector2(uvPoints.z, uvPoints.w);
-					uv0[vertex + 3] = new Vector2(uvPoints.z, uvPoints.y);
+					uv0[vertex] = new Vector2(uvPoints.x, uvPoints.w);
+					uv0[vertex + 1] = new Vector2(uvPoints.z, uvPoints.w);
+					uv0[vertex + 2] = new Vector2(uvPoints.z, uvPoints.y);
+					uv0[vertex + 3] = new Vector2(uvPoints.x, uvPoints.y);
 
-					indices[index++] = vertex;
-					indices[index++] = vertex + 1;
-					indices[index++] = vertex + 2;
-					indices[index++] = vertex;
-					indices[index++] = vertex + 2;
-					indices[index++] = vertex + 3;
+					indices[index] = vertex + 2;
+					indices[index + 1] = vertex + 1;
+					indices[index + 2] = vertex;
+					indices[index + 3] = vertex + 3;
+					indices[index + 4] = vertex + 2;
+					indices[index + 5] = vertex;
 
 					vertex += 4;
+					index += 6;
 				}
 
 				compoundMesh.Apply();

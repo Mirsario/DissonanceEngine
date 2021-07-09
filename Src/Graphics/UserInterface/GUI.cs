@@ -218,12 +218,12 @@ namespace Dissonance.Engine.Graphics
 					textBufferMesh.Uv0[vertex + 2] = uvs[2];
 					textBufferMesh.Uv0[vertex + 3] = uvs[3];
 
-					textBufferMesh.Indices[triangle++] = vertex;
+					textBufferMesh.Indices[triangle++] = vertex + 2;
 					textBufferMesh.Indices[triangle++] = vertex + 1;
+					textBufferMesh.Indices[triangle++] = vertex;
+					textBufferMesh.Indices[triangle++] = vertex + 3;
 					textBufferMesh.Indices[triangle++] = vertex + 2;
 					textBufferMesh.Indices[triangle++] = vertex;
-					textBufferMesh.Indices[triangle++] = vertex + 2;
-					textBufferMesh.Indices[triangle++] = vertex + 3;
 
 					vertex += 4;
 				}

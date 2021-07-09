@@ -108,9 +108,6 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"After initializing a default font.");
 
-			GL.CullFace(CullFaceMode.Back);
-			GL.DepthFunc(DepthFunction.Lequal);
-
 			InstantiateRenderingPipeline();
 
 			PrimitiveMeshes.Init();
