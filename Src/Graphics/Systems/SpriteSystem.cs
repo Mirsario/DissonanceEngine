@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
@@ -8,17 +9,18 @@ namespace Dissonance.Engine.Graphics
 	public sealed class SpriteSystem : GameSystem
 	{
 		private EntitySet entities;
+		private Dictionary<Material, Mesh> meshesByMaterial;
 
 		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
+			meshesByMaterial = new();
 		}
 
 		protected internal override void RenderUpdate()
 		{
 			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
 
-			var meshesByMaterial = new Dictionary<Material, Mesh>();
 			var entitiesByMaterial = new Dictionary<Material, List<Entity>>();
 
 			foreach(var entity in entities.ReadEntities()) {
@@ -36,13 +38,19 @@ namespace Dissonance.Engine.Graphics
 				entityList.Add(entity);
 			}
 
+			var meshKeysToRemove = meshesByMaterial.Keys.ToList();
+
 			foreach(var pair in entitiesByMaterial) {
 				var material = pair.Key;
 				var entities = pair.Value;
 
 				if(!meshesByMaterial.TryGetValue(material, out var compoundMesh)) {
 					meshesByMaterial[material] = compoundMesh = new();
+
+					compoundMesh.bufferUsage = BufferUsageHint.DynamicDraw;
 				}
+
+				meshKeysToRemove.Remove(material);
 
 				var vertices = compoundMesh.Vertices = new Vector3[entities.Count * 4];
 				var uv0 = compoundMesh.Uv0 = new Vector2[entities.Count * 4];
@@ -101,6 +109,14 @@ namespace Dissonance.Engine.Graphics
 				compoundMesh.Apply();
 
 				geometryPassData.RenderEntries.Add(new(Transform.Default, compoundMesh, material));
+			}
+
+			// Cleanup temporary meshes if they weren't used this frame.
+
+			foreach(var key in meshKeysToRemove) {
+				if(meshesByMaterial.Remove(key, out var mesh)) {
+					mesh.Dispose();
+				}
 			}
 		}
 
