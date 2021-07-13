@@ -36,10 +36,10 @@ namespace Dissonance.Engine
 		protected ReadOnlySpan<Entity> ReadEntities()
 			=> World.ReadEntities();
 
-		protected void SendMessage<T>(in T message) where T : struct, IMessage
+		protected void SendMessage<T>(in T message) where T : struct
 			=> World.SendMessage(message);
 
-		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct, IMessage
+		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct
 			=> World.ReadMessages<T>();
 	}
 }

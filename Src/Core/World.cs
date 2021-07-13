@@ -95,10 +95,10 @@ namespace Dissonance.Engine
 		internal ReadOnlySpan<Entity> ReadEntities()
 			=> CollectionsMarshal.AsSpan(Entities);
 
-		internal void SendMessage<T>(in T message) where T : struct, IMessage
+		internal void SendMessage<T>(in T message) where T : struct
 			=> MessageManager.SendMessage(Id, message);
 
-		internal ReadOnlySpan<T> ReadMessages<T>() where T : struct, IMessage
+		internal ReadOnlySpan<T> ReadMessages<T>() where T : struct
 			=> MessageManager.ReadMessages<T>(Id);
 
 		internal void FixedUpdate()
