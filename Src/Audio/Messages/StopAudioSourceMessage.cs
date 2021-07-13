@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine.Audio
 {
-	public readonly struct StopAudioSourceMessage : IMessage
+	public readonly struct StopAudioSourceMessage
 	{
 		public readonly Entity Entity;
 

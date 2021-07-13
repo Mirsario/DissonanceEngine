@@ -3,7 +3,7 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	public readonly struct AddCollisionShapeMessage : IMessage
+	public readonly struct AddCollisionShapeMessage
 	{
 		public readonly Entity Entity;
 		public readonly CollisionShape CollisionShape;

@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 {
 	internal sealed class MessageManager : EngineModule
 	{
-		private static class MessageData<T> where T : struct, IMessage
+		private static class MessageData<T> where T : struct
 		{
 			public static List<T>[] messagesByWorld = Array.Empty<List<T>>();
 
@@ -37,7 +37,7 @@ namespace Dissonance.Engine
 			ClearMessages();
 		}
 
-		internal static void SendMessage<T>(int worldId, in T message) where T : struct, IMessage
+		internal static void SendMessage<T>(int worldId, in T message) where T : struct
 		{
 			if(worldId >= MessageData<T>.messagesByWorld.Length) {
 				Array.Resize(ref MessageData<T>.messagesByWorld, worldId + 1);
@@ -48,7 +48,7 @@ namespace Dissonance.Engine
 			MessageData<T>.messagesByWorld[worldId].Add(message);
 		}
 
-		internal static ReadOnlySpan<T> ReadMessages<T>(int worldId) where T : struct, IMessage
+		internal static ReadOnlySpan<T> ReadMessages<T>(int worldId) where T : struct
 		{
 			if(worldId >= MessageData<T>.messagesByWorld.Length) {
 				return ReadOnlySpan<T>.Empty;
