@@ -24,6 +24,9 @@ namespace Dissonance.Engine
 			public static WorldData[] worldData = Array.Empty<WorldData>();
 		}
 
+		internal static Action<Entity, Type> OnComponentAdded;
+		internal static Action<Entity, Type> OnComponentRemoved;
+
 		internal static bool HasComponent<T>(int worldId) where T : struct
 		{
 			if(worldId >= ComponentData<T>.worldData.Length) {
@@ -101,16 +104,19 @@ namespace Dissonance.Engine
 			} else {
 				dataId = worldData.indicesByEntity[entity.Id];
 			}
-			
+
 			if(dataId < 0) {
 				dataId = worldData.data.Length;
 				worldData.indicesByEntity[entity.Id] = dataId;
+
 				Array.Resize(ref worldData.data, dataId + 1);
+
+				worldData.data[dataId] = value;
+
+				OnComponentAdded?.Invoke(entity, typeof(T));
+			} else {
+				worldData.data[dataId] = value;
 			}
-
-			worldData.data[dataId] = value;
-
-			WorldManager.GetWorld(entity.WorldId).OnEntityUpdated(entity); //Too slow?
 		}
 	}
 }

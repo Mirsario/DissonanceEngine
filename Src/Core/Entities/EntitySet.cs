@@ -10,11 +10,13 @@ namespace Dissonance.Engine
 
 		internal readonly EntitySetType Type;
 		internal readonly Predicate<Entity> Predicate;
+		internal readonly bool? EntityIsActiveFilter;
 
-		internal EntitySet(EntitySetType type, Predicate<Entity> predicate)
+		internal EntitySet(EntitySetType type, Predicate<Entity> predicate, bool? entityIsActiveFilter = true)
 		{
 			Type = type;
 			Predicate = predicate;
+			EntityIsActiveFilter = entityIsActiveFilter;
 		}
 
 		public ReadOnlySpan<Entity> ReadEntities()
@@ -24,7 +26,7 @@ namespace Dissonance.Engine
 
 		internal void OnEntityUpdated(in Entity entity)
 		{
-			bool result = Predicate(entity);
+			bool result = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && Predicate(entity);
 
 			if(Entities.Contains(entity) != result) {
 				if(result) {

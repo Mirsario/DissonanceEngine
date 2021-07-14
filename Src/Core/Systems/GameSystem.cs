@@ -33,7 +33,7 @@ namespace Dissonance.Engine
 		protected void WorldSet<T>(T value) where T : struct
 			=> World.Set(value);
 
-		protected ReadOnlySpan<Entity> ReadEntities()
+		protected ReadOnlySpan<Entity> ReadEntities(bool? active = true)
 			=> World.ReadEntities();
 
 		protected void SendMessage<T>(in T message) where T : struct

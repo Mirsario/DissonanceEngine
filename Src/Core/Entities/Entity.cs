@@ -5,6 +5,13 @@
 		internal readonly int Id;
 		internal readonly int WorldId;
 
+		public World World => WorldManager.GetWorld(WorldId);
+
+		public bool IsActive {
+			get => EntityManager.GetEntityIsActive(this);
+			set => EntityManager.SetEntityIsActive(this, value);
+		}
+
 		internal Entity(int id, int worldId)
 		{
 			Id = id;
