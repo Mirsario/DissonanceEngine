@@ -93,6 +93,29 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Position);
 			}
 		}
+
+		public Vector2 Position2D {
+			get => Position.XY;
+			set {
+				var position3D = Position;
+
+				position3D.XY = value;
+
+				Position = position3D;
+			}
+		}
+
+		public float Depth2D {
+			get => Position.z;
+			set {
+				var position3D = Position;
+
+				position3D.z = value;
+
+				Position = position3D;
+			}
+		}
+
 		public Vector3 LocalPosition {
 			get => matrix.ExtractTranslation();
 			set {
@@ -100,6 +123,29 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Position);
 			}
 		}
+
+		public Vector2 LocalPosition2D {
+			get => LocalPosition.XY;
+			set {
+				var position3D = LocalPosition;
+
+				position3D.XY = value;
+
+				LocalPosition = position3D;
+			}
+		}
+
+		public float LocalDepth2D {
+			get => LocalPosition.z;
+			set {
+				var position3D = LocalPosition;
+
+				position3D.z = value;
+
+				LocalPosition = position3D;
+			}
+		}
+
 		public Vector3 LocalScale {
 			get => matrix.ExtractScale();
 			set {
