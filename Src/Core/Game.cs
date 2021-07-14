@@ -9,9 +9,6 @@ using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {
-	//TODO: Add animations
-	//TODO: Add proper built-in skybox rendering
-	//TODO: Add occlusion culling
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	public partial class Game : IDisposable
 	{
@@ -47,8 +44,11 @@ namespace Dissonance.Engine
 		internal bool NoAudio { get; private set; }
 
 		public virtual void PreInit() { }
+		
 		public virtual void Start() { }
+		
 		public virtual void OnGUI() { }
+
 		public virtual void OnDispose() { }
 
 		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
@@ -103,6 +103,7 @@ namespace Dissonance.Engine
 				Dispose();
 			}
 		}
+
 		public void Dispose()
 		{
 			OnDispose();
@@ -119,6 +120,7 @@ namespace Dissonance.Engine
 				instance = null;
 			}
 		}
+
 		public void Update()
 		{
 			if(updateStopwatch == null) {
@@ -183,6 +185,7 @@ namespace Dissonance.Engine
 
 			Debug.Log("Game started.");
 		}
+
 		internal void FixedUpdateInternal()
 		{
 			fixedUpdate = true;
@@ -201,6 +204,7 @@ namespace Dissonance.Engine
 
 			moduleHooks.PostFixedUpdate?.Invoke();
 		}
+
 		internal void RenderUpdateInternal()
 		{
 			fixedUpdate = false;
@@ -211,6 +215,7 @@ namespace Dissonance.Engine
 
 			moduleHooks.PostRenderUpdate?.Invoke();
 		}
+
 		internal void ApplicationQuit(object sender, EventArgs e)
 		{
 			shouldQuit = true;
@@ -239,6 +244,7 @@ namespace Dissonance.Engine
 		}
 
 		private static void OnFocusChange(IntPtr _, int isFocused) => HasFocus = isFocused != 0;
+
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) //Move this somewhere
 		{
 #if WINDOWS

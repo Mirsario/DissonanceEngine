@@ -101,16 +101,6 @@ namespace Dissonance.Engine
 		internal ReadOnlySpan<T> ReadMessages<T>() where T : struct
 			=> MessageManager.ReadMessages<T>(Id);
 
-		internal void FixedUpdate()
-		{
-			MessageManager.ClearMessages();
-		}
-
-		internal void RenderUpdate()
-		{
-			MessageManager.ClearMessages();
-		}
-
 		internal void OnEntityUpdated(Entity entity)
 		{
 			foreach(var entitySet in EntitySets) {
