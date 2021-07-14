@@ -10,10 +10,10 @@ namespace Dissonance.Engine.Graphics
 		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;
 		protected const PixelInternalFormat DefaultPixelInternalFormat = PixelInternalFormat.Rgba;
 
-		public static FilterMode defaultFilterMode = FilterMode.Trilinear;
-		public static TextureWrapMode defaultWrapMode = TextureWrapMode.Repeat;
+		public static FilterMode DefaultFilterMode { get; set; } = FilterMode.Trilinear;
+		public static TextureWrapMode DefaultWrapMode { get; set; } = TextureWrapMode.Repeat;
 
-		public string name = string.Empty;
+		public string Name { get; set; } = string.Empty;
 
 		protected FilterMode filterMode;
 		protected TextureWrapMode wrapMode;
@@ -33,7 +33,7 @@ namespace Dissonance.Engine.Graphics
 		public Texture(string name, int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
 			: this(width, height, filterMode, wrapMode, useMipmaps, format)
 		{
-			this.name = name;
+			this.Name = name;
 		}
 		public Texture(int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
 		{
@@ -41,8 +41,8 @@ namespace Dissonance.Engine.Graphics
 			Width = width;
 			Height = height;
 
-			this.filterMode = filterMode ?? defaultFilterMode;
-			this.wrapMode = wrapMode ?? defaultWrapMode;
+			this.filterMode = filterMode ?? DefaultFilterMode;
+			this.wrapMode = wrapMode ?? DefaultWrapMode;
 			this.useMipmaps = useMipmaps;
 
 			var fillColor = new Pixel(255, 255, 255, 255);
@@ -114,8 +114,8 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void SetupFiltering(FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true)
 		{
-			wrapMode ??= defaultWrapMode;
-			filterMode ??= defaultFilterMode;
+			wrapMode ??= DefaultWrapMode;
+			filterMode ??= DefaultFilterMode;
 
 			uint wrapModeInt = wrapMode == TextureWrapMode.Repeat ? GLConstants.REPEAT : GLConstants.CLAMP_TO_EDGE;
 

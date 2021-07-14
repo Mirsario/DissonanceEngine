@@ -113,7 +113,7 @@ namespace Dissonance.Engine.Graphics
 						for(int j = 0; j < texFB.renderTextures.Count; j++) {
 							var fb = texFB.renderTextures[j];
 
-							if(fb.name == texName) {
+							if(fb.Name == texName) {
 								textureList.Add(fb);
 								callContinue = true;
 								break;

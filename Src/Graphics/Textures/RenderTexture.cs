@@ -20,9 +20,9 @@ namespace Dissonance.Engine.Graphics
 			Height = height;
 			TextureFormat = textureFormat;
 
-			this.name = name;
-			this.filterMode = filterMode ?? defaultFilterMode;
-			this.wrapMode = wrapMode ?? defaultWrapMode;
+			this.Name = name;
+			this.filterMode = filterMode ?? DefaultFilterMode;
+			this.wrapMode = wrapMode ?? DefaultWrapMode;
 			this.useMipmaps = useMipmaps;
 
 			//Debug.Log($"Created [{Width},{Height}] RenderTexture");

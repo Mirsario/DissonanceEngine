@@ -34,7 +34,7 @@ namespace Dissonance.Engine.Graphics
 						GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
 						if(PassShader != null) {
-							GL.Uniform1(GL.GetUniformLocation(PassShader.Id, texture.name), j);
+							GL.Uniform1(GL.GetUniformLocation(PassShader.Id, texture.Name), j);
 						}
 					}
 				}
