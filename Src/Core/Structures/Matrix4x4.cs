@@ -50,6 +50,7 @@ namespace Dissonance.Engine
 				m03 = value.w;
 			}
 		}
+
 		public Vector4 Row1 {
 			get => new Vector4(m10, m11, m12, m13);
 			set {
@@ -59,6 +60,7 @@ namespace Dissonance.Engine
 				m13 = value.w;
 			}
 		}
+
 		public Vector4 Row2 {
 			get => new Vector4(m20, m21, m22, m23);
 			set {
@@ -68,6 +70,7 @@ namespace Dissonance.Engine
 				m23 = value.w;
 			}
 		}
+
 		public Vector4 Row3 {
 			get => new Vector4(m30, m31, m32, m33);
 			set {
@@ -197,6 +200,7 @@ namespace Dissonance.Engine
 				}
 			}
 		}
+
 		public float this[int id] {
 			get => id switch
 			{
@@ -293,6 +297,7 @@ namespace Dissonance.Engine
 			this.m32 = m32;
 			this.m33 = m33;
 		}
+		
 		public Matrix4x4(Vector4 row0, Vector4 row1, Vector4 row2, Vector4 row3)
 		{
 			m00 = row0.x;
@@ -314,7 +319,9 @@ namespace Dissonance.Engine
 		}
 
 		public override string ToString() => $"[{m00}, {m01}, {m02}, {m03},\n {m10}, {m11}, {m12}, {m13},\n {m20}, {m21}, {m22}, {m23},\n {m30}, {m31}, {m32}, {m33}]";
+
 		public override int GetHashCode() => Row0.GetHashCode() ^ Row1.GetHashCode() << 2 ^ Row2.GetHashCode() >> 2 ^ Row3.GetHashCode() >> 1;
+
 		public override bool Equals(object other) => other is Matrix4x4 matrix && Equals(matrix);
 
 		//Clear
@@ -324,12 +331,14 @@ namespace Dissonance.Engine
 			m31 = 0f;
 			m32 = 0f;
 		}
+
 		public void ClearScale()
 		{
 			Row0 = new Vector4(((Vector3)Row0).Normalized, m03);
 			Row1 = new Vector4(((Vector3)Row1).Normalized, m13);
 			Row2 = new Vector4(((Vector3)Row2).Normalized, m23);
 		}
+
 		public void ClearRotation()
 		{
 			float mag0 = ((Vector3)Row0).Magnitude;
@@ -340,8 +349,10 @@ namespace Dissonance.Engine
 			Row1 = new Vector4(0f, mag1, 0f, m13);
 			Row2 = new Vector4(0f, 0f, mag2, m23);
 		}
+
 		//Extract
 		public Vector3 ExtractTranslation() => new Vector3(m30, m31, m32);
+
 		public Vector3 ExtractScale()
 		{
 			Vector3 result;
@@ -352,6 +363,7 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+
 		public Vector3 ExtractEuler()
 		{
 			float v1, v2, v3;
@@ -372,6 +384,7 @@ namespace Dissonance.Engine
 
 			return new Vector3(-v1, -v2, v3) * Mathf.Rad2Deg;
 		}
+
 		public float ExtractEulerX()
 		{
 			if(m21 < -1f) {
@@ -382,6 +395,7 @@ namespace Dissonance.Engine
 
 			return Mathf.Asin(m21);
 		}
+
 		public float ExtractEulerY()
 		{
 			if(m21 < -1f || m21 > 1f) {
@@ -390,6 +404,7 @@ namespace Dissonance.Engine
 
 			return Mathf.Atan2(-m20, m22);
 		}
+
 		public float ExtractEulerZ()
 		{
 			if(m21 < -1f) {
@@ -400,6 +415,7 @@ namespace Dissonance.Engine
 
 			return Mathf.Atan2(-m01, m11);
 		}
+
 		public Quaternion ExtractQuaternion()
 		{
 			var row0 = Row0.XYZ.Normalized;
@@ -447,6 +463,7 @@ namespace Dissonance.Engine
 
 			return q;
 		}
+
 		//Set
 		public void SetTranslation(Vector3 translation)
 		{
@@ -454,6 +471,7 @@ namespace Dissonance.Engine
 			m31 = translation.y;
 			m32 = translation.z;
 		}
+
 		public void SetScale(Vector3 scale)
 		{
 			ClearScale();
@@ -470,8 +488,10 @@ namespace Dissonance.Engine
 			m21 *= scale.z;
 			m22 *= scale.z;
 		}
+
 		public void SetRotation(Quaternion q)
 			=> SetRotationAndScale(q, ExtractScale());
+
 		public void SetRotationAndScale(Quaternion q, Vector3 scale)
 		{
 			float x = q.x * 2f;
@@ -499,11 +519,13 @@ namespace Dissonance.Engine
 			m21 = (yz - wx) * scale.z;
 			m22 = (1f - (xx + yy)) * scale.z;
 		}
+
 		//Etc
 		public bool Equals(Matrix4x4 o)
 			=> m00 == o.m00 && m01 == o.m01 && m02 == o.m02 && m03 == o.m03
 			&& m10 == o.m10 && m11 == o.m11 && m12 == o.m12 && m13 == o.m13
 			&& m20 == o.m20 && m21 == o.m21 && m22 == o.m22 && m23 == o.m23;
+
 		public void Normalize()
 		{
 			float d = Determinant;
@@ -513,6 +535,7 @@ namespace Dissonance.Engine
 			Row2 /= d;
 			Row3 /= d;
 		}
+
 		public void Invert()
 		{
 			//TODO: Optimize this???

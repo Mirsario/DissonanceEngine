@@ -27,6 +27,7 @@ namespace Dissonance.Engine
 		//private Transform parent;
 
 		public Transform Root => Parent != null ? EnumerateParents().Last() : this;
+		
 		public Transform? Parent {
 			get => null; //parent;
 			set {
@@ -46,6 +47,7 @@ namespace Dissonance.Engine
 				GameObject.EnabledInHierarchy = parent?.Enabled ?? true;*/
 			}
 		}
+
 		public Vector3 Forward {
 			get {
 				var m = WorldMatrix;
@@ -55,6 +57,7 @@ namespace Dissonance.Engine
 				return new Vector3(m.m20, m.m21, m.m22).Normalized;
 			}
 		}
+
 		public Vector3 Right {
 			get {
 				var m = WorldMatrix;
@@ -64,6 +67,7 @@ namespace Dissonance.Engine
 				return new Vector3(m.m00, m.m01, m.m02).Normalized;
 			}
 		}
+
 		public Vector3 Up {
 			get {
 				var m = WorldMatrix;
@@ -73,6 +77,7 @@ namespace Dissonance.Engine
 				return new Vector3(m.m10, m.m11, m.m12).Normalized;
 			}
 		}
+
 		public Vector3 Position {
 			get => WorldMatrix.ExtractTranslation();
 			set {
@@ -102,6 +107,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Scale);
 			}
 		}
+
 		public Quaternion Rotation {
 			get => WorldMatrix.ExtractQuaternion();
 			set {
@@ -118,6 +124,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
+
 		public Quaternion LocalRotation {
 			get => matrix.ExtractQuaternion();
 			set {
@@ -131,6 +138,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
+
 		public Vector3 EulerRot {
 			get => WorldMatrix.ExtractEuler();
 			set {
@@ -145,6 +153,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
+
 		public Vector3 LocalEulerRot {
 			get => matrix.ExtractEuler();
 			set {
@@ -161,6 +170,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.Rotation);
 			}
 		}
+
 		public Matrix4x4 Matrix {
 			get => matrix;
 			set {
@@ -169,6 +179,7 @@ namespace Dissonance.Engine
 				OnModified?.Invoke(this, UpdateFlags.All);
 			}
 		}
+
 		public Matrix4x4 WorldMatrix {
 			get => Parent == null ? matrix : ToWorldSpace(matrix);
 			set {
