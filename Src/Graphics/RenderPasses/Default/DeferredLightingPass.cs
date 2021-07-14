@@ -79,7 +79,7 @@ namespace Dissonance.Engine.Graphics
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, tex.Id);
 
-						if(activeShader.TryGetUniformLocation(tex.name, out int location)) {
+						if(activeShader.TryGetUniformLocation(tex.Name, out int location)) {
 							GL.Uniform1(location, j);
 						}
 					}
