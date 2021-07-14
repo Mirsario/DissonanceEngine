@@ -6,10 +6,17 @@ namespace Dissonance.Engine
 {
 	public sealed class WorldManager : EngineModule
 	{
+		public static World DefaultWorld { get; private set; }
+
 		internal static event Action<World> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
 
 		private static readonly List<World> Worlds = new List<World>();
+
+		protected override void Init()
+		{
+			DefaultWorld = CreateWorld();
+		}
 
 		public static World CreateWorld()
 		{
