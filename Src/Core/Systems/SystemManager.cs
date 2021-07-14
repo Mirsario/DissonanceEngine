@@ -15,7 +15,7 @@ namespace Dissonance.Engine
 			public readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
 		}
 
-		internal static readonly Dictionary<Type, SystemTypeInfo> SystemTypeInfo = new();
+		internal static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
 
 		private static readonly List<Type> SystemTypes = new();
 		private static readonly Dictionary<Type, List<Type>> ComponentTypeToWritingSystemTypes = new();
@@ -154,7 +154,7 @@ namespace Dissonance.Engine
 
 				SystemTypes.Add(type);
 
-				var systemTypeInfo = new SystemTypeInfo(type);
+				var systemTypeInfo = new SystemTypeData(type);
 
 				//Fill a dictionary that stores, by component type, lists of system types that write that component.
 				foreach(var writeType in systemTypeInfo.WriteTypes) {

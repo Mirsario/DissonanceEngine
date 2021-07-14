@@ -4,14 +4,14 @@ using System.Reflection;
 
 namespace Dissonance.Engine
 {
-	internal class SystemTypeInfo
+	public sealed class SystemTypeData
 	{
 		public readonly HashSet<Type> ReadTypes = new();
 		public readonly HashSet<Type> WriteTypes = new();
 		public readonly HashSet<Type> ReceiveTypes = new();
 		public readonly HashSet<Type> SendTypes = new();
 
-		public SystemTypeInfo(Type type)
+		public SystemTypeData(Type type)
 		{
 			void GetTypesFromAttribute<T>(HashSet<Type> hashSet) where T : SystemTypesAttribute
 			{
