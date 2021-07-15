@@ -388,12 +388,12 @@ namespace Dissonance.Engine
 		public float ExtractEulerX()
 		{
 			if(m21 < -1f) {
-				return -Mathf.HalfPI;
+				return Mathf.HalfPI * Mathf.Rad2Deg;
 			} else if(m21 > 1f) {
-				return Mathf.HalfPI;
+				return -Mathf.HalfPI * Mathf.Rad2Deg;
 			}
 
-			return Mathf.Asin(m21);
+			return -Mathf.Asin(m21) * Mathf.Rad2Deg;
 		}
 
 		public float ExtractEulerY()
@@ -402,18 +402,18 @@ namespace Dissonance.Engine
 				return 0f;
 			}
 
-			return Mathf.Atan2(-m20, m22);
+			return -Mathf.Atan2(-m20, m22) * Mathf.Rad2Deg;
 		}
 
 		public float ExtractEulerZ()
 		{
 			if(m21 < -1f) {
-				return Mathf.Atan2(m02, m00);
+				return -Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
 			} else if(m21 > 1f) {
-				return -Mathf.Atan2(m02, m00);
+				return Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
 			}
 
-			return Mathf.Atan2(-m01, m11);
+			return -Mathf.Atan2(-m01, m11) * Mathf.Rad2Deg;
 		}
 
 		public Quaternion ExtractQuaternion()
