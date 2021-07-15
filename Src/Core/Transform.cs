@@ -154,6 +154,14 @@ namespace Dissonance.Engine
 			}
 		}
 
+		public Vector2 LocalScale2D {
+			get => matrix.ExtractScale2D();
+			set {
+				matrix.SetScale2D(value);
+				OnModified?.Invoke(this, UpdateFlags.Scale);
+			}
+		}
+
 		public Quaternion Rotation {
 			get => WorldMatrix.ExtractQuaternion();
 			set {
@@ -192,6 +200,21 @@ namespace Dissonance.Engine
 				var tempScale = matrix.ExtractScale();
 
 				matrix = Parent == null ? Matrix4x4.CreateRotation(value) : ToLocalSpace(Matrix4x4.CreateRotation(value));
+
+				matrix.SetTranslation(tempPos);
+				matrix.SetScale(tempScale);
+
+				OnModified?.Invoke(this, UpdateFlags.Rotation);
+			}
+		}
+
+		public float EulerRot2D {
+			get => WorldMatrix.ExtractEulerZ();
+			set {
+				var tempPos = matrix.ExtractTranslation();
+				var tempScale = matrix.ExtractScale();
+
+				matrix = Parent == null ? Matrix4x4.CreateRotationZ(value) : ToLocalSpace(Matrix4x4.CreateRotationZ(value));
 
 				matrix.SetTranslation(tempPos);
 				matrix.SetScale(tempScale);
