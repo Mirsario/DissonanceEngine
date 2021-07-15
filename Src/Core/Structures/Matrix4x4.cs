@@ -339,6 +339,12 @@ namespace Dissonance.Engine
 			Row2 = new Vector4(((Vector3)Row2).Normalized, m23);
 		}
 
+		public void ClearScale2D()
+		{
+			Row0 = new Vector4(((Vector3)Row0).Normalized, m03);
+			Row1 = new Vector4(((Vector3)Row1).Normalized, m13);
+		}
+
 		public void ClearRotation()
 		{
 			float mag0 = ((Vector3)Row0).Magnitude;
@@ -360,6 +366,16 @@ namespace Dissonance.Engine
 			result.x = Mathf.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
 			result.y = Mathf.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
 			result.z = Mathf.Sqrt(m20 * m20 + m21 * m21 + m22 * m22);
+
+			return result;
+		}
+
+		public Vector2 ExtractScale2D()
+		{
+			Vector2 result;
+
+			result.x = Mathf.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
+			result.y = Mathf.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
 
 			return result;
 		}
@@ -487,6 +503,19 @@ namespace Dissonance.Engine
 			m20 *= scale.z;
 			m21 *= scale.z;
 			m22 *= scale.z;
+		}
+
+		public void SetScale2D(Vector2 scale)
+		{
+			ClearScale2D();
+
+			m00 *= scale.x;
+			m01 *= scale.x;
+			m02 *= scale.x;
+
+			m10 *= scale.y;
+			m11 *= scale.y;
+			m12 *= scale.y;
 		}
 
 		public void SetRotation(Quaternion q)
