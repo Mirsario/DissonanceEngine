@@ -63,6 +63,7 @@ namespace Dissonance.Engine
 				}
 			}
 		}
+
 		public Vector4(float X, float Y, float Z, float W)
 		{
 			x = X;
@@ -70,6 +71,7 @@ namespace Dissonance.Engine
 			z = Z;
 			w = W;
 		}
+
 		public Vector4(float X, float Y, float Z)
 		{
 			x = X;
@@ -77,6 +79,7 @@ namespace Dissonance.Engine
 			z = Z;
 			w = 0f;
 		}
+
 		public Vector4(float X, float Y)
 		{
 			x = X;
@@ -84,12 +87,21 @@ namespace Dissonance.Engine
 			z = 0f;
 			w = 0f;
 		}
+
 		public Vector4(Vector3 vec3, float W)
 		{
 			x = vec3.x;
 			y = vec3.y;
 			z = vec3.z;
 			w = W;
+		}
+
+		public Vector4(Vector2 vecA, Vector2 vecB)
+		{
+			x = vecA.x;
+			y = vecA.y;
+			z = vecB.x;
+			w = vecB.y;
 		}
 
 		public float[] ToArray()
