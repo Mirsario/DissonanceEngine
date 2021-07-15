@@ -63,6 +63,7 @@ namespace Dissonance.Engine.Graphics
 					ref var sprite = ref entity.Get<Sprite>();
 					var transform = entity.Get<Transform>();
 					var mesh = PrimitiveMeshes.Quad;
+					var worldMatrix = transform.WorldMatrix;
 
 					var sourceRect = sprite.SourceRectangle;
 					var sourceUV = new Vector4(
@@ -82,13 +83,10 @@ namespace Dissonance.Engine.Graphics
 						RecalculateVertices(ref sprite);
 					}
 
-					var vertexPoints = sprite.vertices;
-					var position = transform.Position;
-
-					vertices[vertex] = position + new Vector3(sprite.vertices.x, sprite.vertices.y, 0f);
-					vertices[vertex + 1] = position + new Vector3(sprite.vertices.z, sprite.vertices.y, 0f);
-					vertices[vertex + 2] = position + new Vector3(sprite.vertices.z, sprite.vertices.w, 0f);
-					vertices[vertex + 3] = position + new Vector3(sprite.vertices.x, sprite.vertices.w, 0f);
+					vertices[vertex] = worldMatrix * new Vector3(sprite.vertices.x, sprite.vertices.y, 0f);
+					vertices[vertex + 1] = worldMatrix * new Vector3(sprite.vertices.z, sprite.vertices.y, 0f);
+					vertices[vertex + 2] = worldMatrix * new Vector3(sprite.vertices.z, sprite.vertices.w, 0f);
+					vertices[vertex + 3] = worldMatrix * new Vector3(sprite.vertices.x, sprite.vertices.w, 0f);
 
 					uv0[vertex] = new Vector2(uvPoints.x, uvPoints.w);
 					uv0[vertex + 1] = new Vector2(uvPoints.z, uvPoints.w);
