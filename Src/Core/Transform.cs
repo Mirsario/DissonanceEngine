@@ -260,13 +260,42 @@ namespace Dissonance.Engine
 
 		public event Action<Transform, UpdateFlags> OnModified;
 
-		public Transform(Vector3 position)
+		public Transform(Vector3? position = null, Vector3? eulerRotation = null, Vector3? localScale = null)
 		{
 			matrix = Matrix4x4.Identity;
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 			OnModified = null;
 
-			Position = position;
+			if(position.HasValue && position.Value != default) {
+				Position = position.Value;
+			}
+
+			if(eulerRotation.HasValue && eulerRotation.Value != default) {
+				EulerRot = eulerRotation.Value;
+			}
+
+			if(localScale.HasValue && localScale.Value != Vector3.One) {
+				LocalScale = localScale.Value;
+			}
+		}
+
+		public Transform(Vector2? position = null, float? eulerRotation = null, Vector2? localScale = null)
+		{
+			matrix = Matrix4x4.Identity;
+			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
+			OnModified = null;
+
+			if(position.HasValue && position.Value != default) {
+				Position2D = position.Value;
+			}
+
+			if(eulerRotation.HasValue && eulerRotation.Value != 0f) {
+				EulerRot2D = eulerRotation.Value;
+			}
+
+			if(localScale.HasValue && localScale.Value != Vector2.One) {
+				LocalScale2D = localScale.Value;
+			}
 		}
 
 		public IEnumerable<Transform> EnumerateParents()
