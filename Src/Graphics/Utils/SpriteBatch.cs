@@ -7,8 +7,8 @@ namespace Dissonance.Engine.Graphics
 		protected static readonly Vector4 DefaultUvPoints = new Vector4(0f, 1f, 1f, 0f);
 
 		protected Mesh bufferMesh;
-		protected uint vertexIndex;
-		protected uint triangleIndex;
+		protected int vertexCount;
+		protected int indexCount;
 		protected bool began;
 
 		public SpriteBatch()
@@ -16,23 +16,26 @@ namespace Dissonance.Engine.Graphics
 			bufferMesh = new Mesh();
 		}
 
-		public void Begin(int bufferSize)
+		public void Begin(int initialBufferCapacity = 4)
 		{
 			if(began) {
 				throw new InvalidOperationException($"Cannot call {nameof(Begin)} before {nameof(End)} has been called after the previous {nameof(Begin)} call.");
 			}
 
-			int vertexCount = bufferSize * 4;
-			int triangleCount = bufferSize * 6;
+			initialBufferCapacity = Math.Max(initialBufferCapacity, 1);
+
+			int vertexCount = initialBufferCapacity * 4;
+			int triangleCount = initialBufferCapacity * 6;
 
 			bufferMesh.Vertices = new Vector3[vertexCount];
 			bufferMesh.Uv0 = new Vector2[vertexCount];
 			bufferMesh.Indices = new uint[triangleCount];
 
-			vertexIndex = triangleIndex = 0;
+			this.vertexCount = indexCount = 0;
 
 			began = true;
 		}
+
 		public void End()
 		{
 			if(!began) {
@@ -48,40 +51,68 @@ namespace Dissonance.Engine.Graphics
 
 			began = false;
 		}
-		public void Draw(RectFloat dstRect, float depth = 0f) => Draw(dstRect.Points, DefaultUvPoints, depth);
-		public void Draw(RectFloat dstRect, RectFloat srcRect, float depth = 0f) => Draw(dstRect.Points, srcRect.Points, depth);
+
+		public void Draw(RectFloat dstRect, float depth = 0f)
+			=> Draw(dstRect.Points, DefaultUvPoints, depth);
+
+		public void Draw(RectFloat dstRect, RectFloat srcRect, float depth = 0f)
+			=> Draw(dstRect.Points, srcRect.Points, depth);
+
 		public void Draw(Vector4 vertexPoints, Vector4 uvPoints, float depth = 0f)
 		{
 			if(!began) {
 				throw new InvalidOperationException($"Cannot call draw functions before {nameof(Begin)} has been called.");
 			}
 
+			int nextVertexCount = vertexCount + 4;
+			int nextIndexCount = indexCount + 6;
+
+			EnsureCapacity(nextVertexCount, nextIndexCount);
+
 			var vertices = bufferMesh.Vertices;
 			var uv0 = bufferMesh.Uv0;
-			var indices = bufferMesh.Indices;
+			uint[] indices = bufferMesh.Indices;
 
-			vertices[vertexIndex] = new Vector3(vertexPoints.x, vertexPoints.y, depth);
-			vertices[vertexIndex + 1] = new Vector3(vertexPoints.x, vertexPoints.w, depth);
-			vertices[vertexIndex + 2] = new Vector3(vertexPoints.z, vertexPoints.w, depth);
-			vertices[vertexIndex + 3] = new Vector3(vertexPoints.z, vertexPoints.y, depth);
+			vertices[vertexCount] = new Vector3(vertexPoints.x, vertexPoints.y, depth);
+			vertices[vertexCount + 1] = new Vector3(vertexPoints.x, vertexPoints.w, depth);
+			vertices[vertexCount + 2] = new Vector3(vertexPoints.z, vertexPoints.w, depth);
+			vertices[vertexCount + 3] = new Vector3(vertexPoints.z, vertexPoints.y, depth);
 
-			uv0[vertexIndex] = new Vector2(uvPoints.x, uvPoints.y);
-			uv0[vertexIndex + 1] = new Vector2(uvPoints.x, uvPoints.w);
-			uv0[vertexIndex + 2] = new Vector2(uvPoints.z, uvPoints.w);
-			uv0[vertexIndex + 3] = new Vector2(uvPoints.z, uvPoints.y);
+			uv0[vertexCount] = new Vector2(uvPoints.x, uvPoints.y);
+			uv0[vertexCount + 1] = new Vector2(uvPoints.x, uvPoints.w);
+			uv0[vertexCount + 2] = new Vector2(uvPoints.z, uvPoints.w);
+			uv0[vertexCount + 3] = new Vector2(uvPoints.z, uvPoints.y);
 
-			indices[triangleIndex++] = vertexIndex;
-			indices[triangleIndex++] = vertexIndex + 1;
-			indices[triangleIndex++] = vertexIndex + 2;
-			indices[triangleIndex++] = vertexIndex;
-			indices[triangleIndex++] = vertexIndex + 2;
-			indices[triangleIndex++] = vertexIndex + 3;
+			uint unsignedVertexCount = (uint)vertexCount;
 
-			vertexIndex += 4;
+			indices[indexCount] = unsignedVertexCount;
+			indices[indexCount + 1] = unsignedVertexCount + 1;
+			indices[indexCount + 2] = unsignedVertexCount + 2;
+			indices[indexCount + 3] = unsignedVertexCount;
+			indices[indexCount + 4] = unsignedVertexCount + 2;
+			indices[indexCount + 5] = unsignedVertexCount + 3;
+
+			vertexCount = nextVertexCount;
+			indexCount = nextIndexCount;
 		}
+
 		public void Dispose()
 		{
 			bufferMesh.Dispose();
+		}
+
+		private void EnsureCapacity(int minVertexCount, int minIndexCount)
+		{
+			if(bufferMesh.Vertices.Length < minVertexCount) {
+				int newSize = bufferMesh.Vertices.Length * 2;
+
+				Array.Resize(ref bufferMesh.Vertices, newSize);
+				Array.Resize(ref bufferMesh.Uv0, newSize);
+			}
+
+			if(bufferMesh.Indices.Length < minIndexCount) {
+				Array.Resize(ref bufferMesh.Indices, bufferMesh.Indices.Length * 2);
+			}
 		}
 	}
 }
