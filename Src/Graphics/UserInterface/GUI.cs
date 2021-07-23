@@ -5,7 +5,7 @@ using Dissonance.Engine.Input;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Resources), typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
