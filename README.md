@@ -1,5 +1,5 @@
 # Dissonance Engine
-A Work-In-Progress ECS (Entity-Component-System) based cross-platform OpenGL game engine, written in pure C#.
+A Work-In-Progress ECS (Entity-Component-System) based cross-platform game engine, written in pure C#.
 
 ## State
 
