@@ -5,7 +5,7 @@ using System;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
+	[ModuleAutoload(DisablingGameFlags = GameFlags.NoWindow)]
 	public class GlfwWindowing : Windowing
 	{
 		private static readonly object GlfwLock = new object();

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	public class AutoloadAttribute : Attribute
+	public class ModuleAutoloadAttribute : Attribute
 	{
-		private static readonly AutoloadAttribute Default = new AutoloadAttribute();
+		private static readonly ModuleAutoloadAttribute Default = new ModuleAutoloadAttribute();
 
 		public readonly bool Enabled;
 
@@ -15,12 +16,14 @@ namespace Dissonance.Engine
 
 		public bool NeedsAutoloading => Enabled && (Game.Instance.Flags & RequiredGameFlags) >= RequiredGameFlags && (Game.Instance.Flags & DisablingGameFlags) == 0;
 
-		public AutoloadAttribute(bool enabled = true)
+		public ModuleAutoloadAttribute(bool enabled = true)
 		{
 			Enabled = enabled;
 		}
 
-		public static AutoloadAttribute Get(Type type)
-			=> (AutoloadAttribute)type.GetCustomAttributes(typeof(AutoloadAttribute), true).FirstOrDefault() ?? Default;
+		public static bool TypeNeedsAutoloading(Type type)
+		{
+			return (type.GetCustomAttribute<ModuleAutoloadAttribute>(true) ?? Default).NeedsAutoloading;
+		}
 	}
 }
