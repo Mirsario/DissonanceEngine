@@ -113,20 +113,11 @@ namespace Dissonance.Engine
 		{
 			var worldData = worldDataById[worldId];
 
-			if(!worldData.EntitySetsQuery.TryGetValue(type, out var setsByExpressions)) {
-				worldData.EntitySetsQuery[type] = setsByExpressions = new();
+			//TODO: When this fails, check if there are other expressions which are basically the same
+			if(worldData.EntitySetsQuery.TryGetValue(type, out var setsByExpressions) && setsByExpressions.TryGetValue(predicate, out var result)) {
+				return result;
 			} else {
-				//TODO: It seems like Expression.ToString() doesn't at all care about method type parameters.
-				/*string expressionString = predicate.ToString();
-
-				foreach(var pair in setsByExpressions) {
-					var expression = pair.Key;
-
-					//TODO: Make a more elaborate comparer for expressions. This check has a lot of issues, like variable names mattering.
-					if(expression.ToString() == expressionString) {
-						return pair.Value;
-					}
-				}*/
+				worldData.EntitySetsQuery[type] = setsByExpressions = new();
 			}
 
 			var entitySet = new EntitySet(type, predicate.Compile());
