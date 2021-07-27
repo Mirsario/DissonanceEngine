@@ -9,6 +9,7 @@ namespace Dissonance.Engine
 		public readonly DependencyInfo[] Dependencies;
 
 		public SystemDependencyAttribute(params Type[] dependencies) : this(false, dependencies) { }
+
 		public SystemDependencyAttribute(bool optional, params Type[] dependencies)
 		{
 			foreach(var type in dependencies) {
