@@ -18,10 +18,7 @@ namespace Dissonance.Engine
 			=> EntityManager.CreateEntity(Id);
 
 		public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
-			=> GetEntitySet(EntitySetType.Default, expression);
-
-		public EntitySet GetEntitySet(EntitySetType type, Expression<Predicate<Entity>> expression)
-			=> EntityManager.GetEntitySet(Id, type, expression);
+			=> EntityManager.GetEntitySet(Id, expression);
 
 		public ReadOnlySpan<Entity> ReadEntities(bool? active = true)
 			=> EntityManager.ReadEntities(Id, active);

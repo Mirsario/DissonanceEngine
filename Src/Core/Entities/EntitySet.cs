@@ -8,13 +8,11 @@ namespace Dissonance.Engine
 	{
 		private readonly List<Entity> Entities = new List<Entity>();
 
-		internal readonly EntitySetType Type;
 		internal readonly Predicate<Entity> Predicate;
 		internal readonly bool? EntityIsActiveFilter;
 
-		internal EntitySet(EntitySetType type, Predicate<Entity> predicate, bool? entityIsActiveFilter = true)
+		internal EntitySet(Predicate<Entity> predicate, bool? entityIsActiveFilter = true)
 		{
-			Type = type;
 			Predicate = predicate;
 			EntityIsActiveFilter = entityIsActiveFilter;
 		}
