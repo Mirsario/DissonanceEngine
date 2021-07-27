@@ -12,33 +12,29 @@ namespace Dissonance.Engine
 			Id = id;
 		}
 
+		// Entities
+
 		public Entity CreateEntity()
 			=> EntityManager.CreateEntity(Id);
 
 		public bool RemoveEntity(Entity entity)
 			=> EntityManager.RemoveEntity(entity);
 
-		public EntitySet GetEntitySet(Expression<Predicate<Entity>> predicate)
-			=> GetEntitySet(EntitySetType.Default, predicate);
+		public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
+			=> GetEntitySet(EntitySetType.Default, expression);
 
-		public EntitySet GetEntitySet(EntitySetType type, Expression<Predicate<Entity>> predicate)
-			=> EntityManager.GetEntitySet(Id, type, predicate);
+		public EntitySet GetEntitySet(EntitySetType type, Expression<Predicate<Entity>> expression)
+			=> EntityManager.GetEntitySet(Id, type, expression);
+
+		internal ReadOnlySpan<Entity> ReadEntities(bool? active = true)
+			=> EntityManager.ReadEntities(Id, active);
+
+		// Systems
 
 		public void AddSystem(GameSystem system)
 			=> SystemManager.AddSystemToWorld(this, system);
 
-		/*public void AddRenderer(Renderer renderer)
-		{
-			var type = renderer.GetType();
-
-			Renderers.Add(renderer);
-
-			if(!RenderersByType.TryGetValue(type, out var renderersOfThisType)) {
-				RenderersByType[type] = renderersOfThisType = new();
-			}
-
-			renderersOfThisType.Add(renderer);
-		}*/
+		// Components
 
 		internal bool Has<T>() where T : struct
 			=> ComponentManager.HasComponent<T>(Id);
@@ -49,13 +45,12 @@ namespace Dissonance.Engine
 		internal void Set<T>(T value) where T : struct
 			=> ComponentManager.SetComponent(Id, value);
 
-		internal ReadOnlySpan<Entity> ReadEntities(bool? active = true)
-			=> EntityManager.ReadEntities(Id, active);
-
-		internal void SendMessage<T>(in T message) where T : struct
-			=> MessageManager.SendMessage(Id, message);
+		// Messages
 
 		internal ReadOnlySpan<T> ReadMessages<T>() where T : struct
 			=> MessageManager.ReadMessages<T>(Id);
+
+		internal void SendMessage<T>(in T message) where T : struct
+			=> MessageManager.SendMessage(Id, message);
 	}
 }
