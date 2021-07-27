@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 			public readonly List<bool> EntityIsActive = new(); //TODO: Replace with BitArray, or a wrapping type.
 			//Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
-			public readonly Dictionary<EntitySetType, Dictionary<Expression<Predicate<Entity>>, EntitySet>> EntitySetsQuery = new();
+			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetsQuery = new();
 		}
 
 		private static WorldData[] worldDataById = Array.Empty<WorldData>();
@@ -114,10 +114,8 @@ namespace Dissonance.Engine
 			var worldData = worldDataById[worldId];
 
 			//TODO: When this fails, check if there are other expressions which are basically the same
-			if(worldData.EntitySetsQuery.TryGetValue(type, out var setsByExpressions) && setsByExpressions.TryGetValue(predicate, out var result)) {
+			if(worldData.EntitySetsQuery.TryGetValue(predicate, out var result)) {
 				return result;
-			} else {
-				worldData.EntitySetsQuery[type] = setsByExpressions = new();
 			}
 
 			var entitySet = new EntitySet(type, predicate.Compile());
@@ -126,7 +124,7 @@ namespace Dissonance.Engine
 				entitySet.OnEntityUpdated(entity);
 			}
 
-			setsByExpressions[predicate] = entitySet;
+			worldData.EntitySetsQuery[predicate] = entitySet;
 
 			worldData.EntitySets.Add(entitySet);
 
