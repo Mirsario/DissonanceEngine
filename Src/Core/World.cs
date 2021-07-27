@@ -17,9 +17,6 @@ namespace Dissonance.Engine
 		public Entity CreateEntity()
 			=> EntityManager.CreateEntity(Id);
 
-		public bool RemoveEntity(Entity entity)
-			=> EntityManager.RemoveEntity(entity);
-
 		public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
 			=> GetEntitySet(EntitySetType.Default, expression);
 
