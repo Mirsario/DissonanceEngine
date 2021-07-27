@@ -109,7 +109,7 @@ namespace Dissonance.Engine
 			return CollectionsMarshal.AsSpan(active.HasValue ? (active.Value ? worldData.ActiveEntities : worldData.InactiveEntities) : worldData.Entities);
 		}
 
-		internal static EntitySet GetEntitySet(int worldId, EntitySetType type, Expression<Predicate<Entity>> predicate)
+		internal static EntitySet GetEntitySet(int worldId, Expression<Predicate<Entity>> predicate)
 		{
 			var worldData = worldDataById[worldId];
 
@@ -118,7 +118,7 @@ namespace Dissonance.Engine
 				return result;
 			}
 
-			var entitySet = new EntitySet(type, predicate.Compile());
+			var entitySet = new EntitySet(predicate.Compile());
 
 			foreach(var entity in worldData.Entities) {
 				entitySet.OnEntityUpdated(entity);
