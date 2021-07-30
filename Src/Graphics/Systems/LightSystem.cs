@@ -34,7 +34,6 @@ namespace Dissonance.Engine.Graphics
 						break;
 				}
 
-
 				lightingPassData.Lights.Add(lightData);
 			}
 		}

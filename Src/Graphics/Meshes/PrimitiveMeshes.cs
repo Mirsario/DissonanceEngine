@@ -18,17 +18,24 @@ namespace Dissonance.Engine.Graphics
 		{
 			float half = size * 0.5f;
 
+			Vector4 uv = new Vector4(
+				flipUVHorizontally ? 1f : 0f,
+				flipUVVertically ? 1f : 0f,
+				flipUVHorizontally ? 0f : 1f,
+				flipUVVertically ? 0f : 1f
+			);
+
 			var newMesh = new Mesh {
 				//Vertices
-				Vertices = new[] {
-					new Vector3(-half,-half, 0f),    new Vector3( half,-half, 0f),
-					new Vector3(-half, half, 0f),    new Vector3( half, half, 0f),
+				Vertices = new Vector3[] {
+					new(-half,-half, 0f), new( half,-half, 0f),
+					new(-half, half, 0f), new( half, half, 0f),
 				},
 
 				//UVs
-				Uv0 = addUVs ? new[] {
-					new Vector2(flipUVHorizontally ? 1f : 0f,flipUVVertically ? 1f : 0f),new Vector2(flipUVHorizontally ? 0f : 1f,flipUVVertically ? 1f : 0f),
-					new Vector2(flipUVHorizontally ? 1f : 0f,flipUVVertically ? 0f : 1f),new Vector2(flipUVHorizontally ? 0f : 1f,flipUVVertically ? 0f : 1f),
+				Uv0 = addUVs ? new Vector2[] {
+					new(uv.x, uv.y), new(uv.z, uv.y),
+					new(uv.x, uv.w), new(uv.z, uv.w),
 				} : null,
 
 				//Triangles
@@ -70,7 +77,7 @@ namespace Dissonance.Engine.Graphics
 				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
-			var vertexMap = new uint[realResolution.x, realResolution.y];
+			uint[,] vertexMap = new uint[realResolution.x, realResolution.y];
 
 			uint vertex = 0;
 			uint triangle = 0;
@@ -118,23 +125,23 @@ namespace Dissonance.Engine.Graphics
 			return newMesh;
 		}
 		
-		public static Mesh GenerateCube(float cubeSize = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
+		public static Mesh GenerateBox(Vector3 size, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
-			Vector3 size = Vector3.One * cubeSize;
-			Vector3 offset = -size * 0.5f;
+			Vector3 max = size * 0.5f;
+			Vector3 min = size * -0.5f
 
 			var newMesh = new Mesh {
-				//Vertices
-				Vertices = new[] {
-					offset+new Vector3(0f    ,size.y,size.z),   offset+new Vector3(size.x,size.y,size.z),   offset+new Vector3(0f    , 0f    ,size.z),   offset+new Vector3(size.x, 0f    ,size.z),
-					offset+new Vector3(size.x,size.y, 0f    ),   offset+new Vector3(0f    ,size.y, 0f    ),   offset+new Vector3(size.x, 0f    , 0f    ),   offset+new Vector3(0f    , 0f    , 0f    ),
-					offset+new Vector3(0f    ,size.y,size.z),   offset+new Vector3(size.x,size.y,size.z),   offset+new Vector3(0f    ,size.y, 0f    ),   offset+new Vector3(size.x,size.y, 0f    ),
-					offset+new Vector3(0f    , 0f    ,size.z),   offset+new Vector3(size.x, 0f    ,size.z),   offset+new Vector3(0f    , 0f    , 0f    ),   offset+new Vector3(size.x, 0f    , 0f    ),
-					offset+new Vector3(0f    ,size.y, 0f    ),   offset+new Vector3(0f    ,size.y,size.z),   offset+new Vector3(0f    , 0f    , 0f    ),   offset+new Vector3(0f    , 0f    ,size.z),
-					offset+new Vector3(size.x,size.y, 0f    ),   offset+new Vector3(size.x,size.y,size.z),   offset+new Vector3(size.x, 0f    , 0f    ),   offset+new Vector3(size.x, 0f    ,size.z)
+				// Vertices
+				Vertices = new Vector3[] {
+					new(min.x, max.y, max.z), new(max.x, max.y, max.z), new(min.x, min.y, max.z), new(max.x, min.y, max.z),
+					new(max.x, max.y, min.z), new(min.x, max.y, min.z), new(max.x, min.y, min.z), new(min.x, min.y, min.z),
+					new(min.x, max.y, max.z), new(max.x, max.y, max.z), new(min.x, max.y, min.z), new(max.x, max.y, min.z),
+					new(min.x, min.y, max.z), new(max.x, min.y, max.z), new(min.x, min.y, min.z), new(max.x, min.y, min.z),
+					new(min.x, max.y, min.z), new(min.x, max.y, max.z), new(min.x, min.y, min.z), new(min.x, min.y, max.z),
+					new(max.x, max.y, min.z), new(max.x, max.y, max.z), new(max.x, min.y, min.z), new(max.x, min.y, max.z)
 				},
 
-				//Normals
+				// Normals
 				Normals = addNormals ? new[] {
 					Vector3.Forward,    Vector3.Forward,    Vector3.Forward,    Vector3.Forward,
 					Vector3.Backward,   Vector3.Backward,   Vector3.Backward,   Vector3.Backward,
@@ -144,19 +151,20 @@ namespace Dissonance.Engine.Graphics
 					Vector3.Right,      Vector3.Right,      Vector3.Right,      Vector3.Right,
 				} : null,
 
-				//UVs
-				Uv0 = addUVs ? new[] {
-					new Vector2(0f, 0f),new Vector2(1f, 0f),new Vector2(0f, 1f),new Vector2(1f, 1f),
-					new Vector2(0f, 0f),new Vector2(1f, 0f),new Vector2(0f, 1f),new Vector2(1f, 1f),
-					new Vector2(1f, 0f),new Vector2(0f, 0f),new Vector2(1f, 1f),new Vector2(0f, 1f),
-					new Vector2(0f, 0f),new Vector2(1f, 0f),new Vector2(0f, 1f),new Vector2(1f, 1f),
-					new Vector2(0f, 0f),new Vector2(1f, 0f),new Vector2(0f, 1f),new Vector2(1f, 1f),
-					new Vector2(1f, 0f),new Vector2(0f, 0f),new Vector2(1f, 1f),new Vector2(0f, 1f)
+				// UVs
+				Uv0 = addUVs ? new Vector2[] {
+					new(0f, 0f), new(1f, 0f), new(0f, 1f), new(1f, 1f),
+					new(0f, 0f), new(1f, 0f), new(0f, 1f), new(1f, 1f),
+					new(1f, 0f), new(0f, 0f), new(1f, 1f), new(0f, 1f),
+					new(0f, 0f), new(1f, 0f), new(0f, 1f), new(1f, 1f),
+					new(0f, 0f), new(1f, 0f), new(0f, 1f), new(1f, 1f),
+					new(1f, 0f), new(0f, 0f), new(1f, 1f), new(0f, 1f)
 				} : null,
 
-				//Triangles
-				Indices = inverted ? new uint[] {
-					1, 2, 0, //Inverted
+				// Triangles
+				Indices = !inverted ? new uint[] {
+					// Inverted
+					1, 2, 0,
 					3, 2, 1,
 					5, 6, 4,
 					7, 6, 5,
@@ -169,7 +177,8 @@ namespace Dissonance.Engine.Graphics
 					21, 20, 22,
 					23, 21, 22
 				} : new uint[] {
-					2, 1, 0, //Normal
+					// Normal
+					2, 1, 0,
 					2, 3, 1,
 					6, 5, 4,
 					6, 7, 5,
@@ -183,10 +192,6 @@ namespace Dissonance.Engine.Graphics
 					21, 23, 22
 				}
 			};
-
-			//if(addNormals) {
-			//	newMesh.RecalculateNormals();
-			//}
 
 			if(addTangents) {
 				newMesh.TangentBuffer.Recalculate();
@@ -341,8 +346,8 @@ namespace Dissonance.Engine.Graphics
 			QuadYFlipped = GenerateQuad(flipUVVertically: true);
 			QuadXYFlipped = GenerateQuad(flipUVHorizontally: true, flipUVVertically: true);
 			ScreenQuad = GenerateQuad(2f);
-			Cube = GenerateCube();
-			InvertedCube = GenerateCube(inverted: true);
+			Cube = GenerateBox(Vector3.One);
+			InvertedCube = GenerateBox(Vector3.One, inverted: true);
 			Sphere = GenerateSphere();
 			IcoSphere = GenerateIcoSphere();
 		}
