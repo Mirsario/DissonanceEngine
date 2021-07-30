@@ -69,7 +69,7 @@ void main()
 				specular /= distance;
 			#endif
 			
-			oSpecular = lightColor * specular * specularIntensity * lightIntensity;
+			oSpecular = clamp(lightColor * specular * specularIntensity * lightIntensity, 0f, 1f);
 		}
 	}
 
