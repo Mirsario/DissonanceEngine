@@ -128,7 +128,7 @@ namespace Dissonance.Engine.Graphics
 		public static Mesh GenerateBox(Vector3 size, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
 			Vector3 max = size * 0.5f;
-			Vector3 min = size * -0.5f
+			Vector3 min = size * -0.5f;
 
 			var newMesh = new Mesh {
 				// Vertices
