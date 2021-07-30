@@ -37,6 +37,7 @@ namespace Dissonance.Engine.Graphics
 
 			GL.Enable(EnableCap.Blend);
 			GL.Enable(EnableCap.CullFace);
+			GL.CullFace(CullFaceMode.Back);
 			GL.DepthMask(false);
 
 			//test if it equals 1
