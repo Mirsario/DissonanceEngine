@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 			public readonly List<bool> EntityIsActive = new(); //TODO: Replace with BitArray, or a wrapping type.
 			//Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
-			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetsQuery = new();
+			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
 		}
 
 		private static WorldData[] worldDataById = Array.Empty<WorldData>();
@@ -112,19 +112,21 @@ namespace Dissonance.Engine
 		internal static EntitySet GetEntitySet(int worldId, Expression<Predicate<Entity>> predicate)
 		{
 			var worldData = worldDataById[worldId];
+			var entitySetByExpression = worldData.EntitySetByExpression;
 
 			//TODO: When this fails, check if there are other expressions which are basically the same
-			if(worldData.EntitySetsQuery.TryGetValue(predicate, out var result)) {
+			if(entitySetByExpression.TryGetValue(predicate, out var result)) {
 				return result;
 			}
 
 			var entitySet = new EntitySet(predicate.Compile());
 
+			//TODO: Be smarter about this. Deconstruct expressions, enumerate only entities that contain the least-common component.
 			foreach(var entity in worldData.Entities) {
 				entitySet.OnEntityUpdated(entity);
 			}
 
-			worldData.EntitySetsQuery[predicate] = entitySet;
+			entitySetByExpression[predicate] = entitySet;
 
 			worldData.EntitySets.Add(entitySet);
 
