@@ -102,12 +102,16 @@ namespace Dissonance.Engine
 				if(!dependenciesBySystem.TryGetValue(system, out var dependencies)) {
 					dependenciesBySystem[system] = dependencies = new();
 
-					if(system.TypeData.ReadTypes != null) {
-						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, system.TypeData.ReadTypes, ComponentTypeToWritingSystemTypes));
+					var typeData = system.TypeData;
+
+					if(typeData.ReadTypes?.Count > 0) {
+						// Add systems that write/modify component values as dependencies of systems that read them.
+						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReadTypes, ComponentTypeToWritingSystemTypes));
 					}
 
-					if(system.TypeData.ReceiveTypes != null) {
-						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, system.TypeData.ReceiveTypes, MessageTypeToSendingSystemTypes));
+					if(typeData.ReceiveTypes?.Count > 0) {
+						// Add systems that send messages as dependencies of systems that receive them.
+						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReceiveTypes, MessageTypeToSendingSystemTypes));
 					}
 				}
 
