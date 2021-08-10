@@ -118,5 +118,28 @@ namespace Dissonance.Engine
 				worldData.Data[dataId] = value;
 			}
 		}
+
+		internal static void RemoveComponent<T>(in Entity entity) where T : struct
+		{
+			if(entity.WorldId < 0 || entity.WorldId >= ComponentData<T>.DataByWorld.Length) {
+				return;
+			}
+
+			ref var worldData = ref ComponentData<T>.DataByWorld[entity.WorldId];
+
+			if(entity.Id < 0 || entity.Id >= worldData.IndicesByEntity.Length) {
+				return;
+			}
+
+			int dataIndex = worldData.IndicesByEntity[entity.Id];
+
+			if(dataIndex < 0) {
+				return;
+			}
+
+			worldData.IndicesByEntity[entity.Id] = -1;
+
+			OnComponentRemoved?.Invoke(entity, typeof(T));
+		}
 	}
 }

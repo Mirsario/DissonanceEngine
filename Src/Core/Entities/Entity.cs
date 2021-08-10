@@ -27,6 +27,9 @@
 		public void Set<T>(in T value) where T : struct
 			=> ComponentManager.SetComponent(this, value);
 
+		public void Remove<T>() where T : struct
+			=> ComponentManager.RemoveComponent<T>(this);
+
 		public void Destroy()
 			=> EntityManager.RemoveEntity(this);
 	}

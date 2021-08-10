@@ -26,14 +26,16 @@ namespace Dissonance.Engine
 		{
 			WorldManager.OnWorldCreated += OnWorldCreated;
 			WorldManager.OnWorldDestroyed += OnWorldDestroyed;
-			ComponentManager.OnComponentAdded += OnComponentAdded;
+			ComponentManager.OnComponentAdded += OnComponentPresenceModified;
+			ComponentManager.OnComponentRemoved += OnComponentPresenceModified;
 		}
 
 		protected override void OnDispose()
 		{
 			WorldManager.OnWorldCreated -= OnWorldCreated;
 			WorldManager.OnWorldDestroyed -= OnWorldDestroyed;
-			ComponentManager.OnComponentAdded -= OnComponentAdded;
+			ComponentManager.OnComponentAdded -= OnComponentPresenceModified;
+			ComponentManager.OnComponentRemoved -= OnComponentPresenceModified;
 		}
 
 		internal static Entity CreateEntity(int worldId)
@@ -147,7 +149,7 @@ namespace Dissonance.Engine
 			worldDataById[world.Id] = null;
 		}
 
-		private static void OnComponentAdded(Entity entity, Type componentType)
+		private static void OnComponentPresenceModified(Entity entity, Type componentType)
 			=> UpdateEntitySets(entity);
 
 		private static void UpdateEntitySets(in Entity entity)
