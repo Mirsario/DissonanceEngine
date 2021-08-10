@@ -2,6 +2,7 @@
 {
 	[Reads(typeof(MeshCollider))]
 	[Writes(typeof(MeshCollider))]
+	[Receives(typeof(ComponentRemovedMessage<MeshCollider>))]
 	[Sends(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage))]
 	public sealed class MeshColliderSystem : GameSystem
 	{
@@ -14,6 +15,15 @@
 
 		protected internal override void FixedUpdate()
 		{
+			// Unregister colliders when their component is removed
+			foreach(var message in ReadMessages<ComponentRemovedMessage<MeshCollider>>()) {
+				var collisionShape = message.Value.CollisionMesh?.collisionShape;
+
+				if(collisionShape != null) {
+					SendMessage(new RemoveCollisionShapeMessage(message.Entity, collisionShape));
+				}
+			}
+
 			foreach(var entity in entities.ReadEntities()) {
 				ref var collider = ref entity.Get<MeshCollider>();
 

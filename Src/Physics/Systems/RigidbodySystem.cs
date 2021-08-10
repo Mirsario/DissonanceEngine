@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dissonance.Engine.Physics
+﻿namespace Dissonance.Engine.Physics
 {
 	[Reads(typeof(Rigidbody))]
 	[Writes(typeof(Rigidbody), typeof(RigidbodyInternal))]
+	[Sends(typeof(CreateInternalRigidbodyMessage), typeof(SetRigidbodyMassMessage))]
 	public sealed class RigidbodySystem : GameSystem
 	{
 		private EntitySet entities;
@@ -23,8 +18,14 @@ namespace Dissonance.Engine.Physics
 				ref var rigidbody = ref entity.Get<Rigidbody>();
 
 				if(!entity.Has<RigidbodyInternal>()) {
-					;
-					//entity.Set(new RigidbodyInternal(1f));
+					entity.Set(RigidbodyInternal.Create());
+					SendMessage(new CreateInternalRigidbodyMessage(entity));
+				}
+
+				if(rigidbody.Mass != rigidbody.lastMass) {
+					SendMessage(new SetRigidbodyMassMessage(entity, rigidbody.Mass));
+
+					rigidbody.lastMass = rigidbody.Mass;
 				}
 			}
 		}

@@ -4,7 +4,8 @@
 	{
 		Dynamic,
 		Kinematic,
-		Static
+		Static,
+		Trigger
 	}
 }
 
