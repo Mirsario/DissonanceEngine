@@ -74,7 +74,7 @@ namespace Dissonance.Engine
 
 		internal static void SortSystems(List<GameSystem> systems, Dictionary<Type, List<GameSystem>> systemsByType)
 		{
-			IEnumerable<GameSystem> GetDependenciesBasedOnReadTypes(GameSystem system, IEnumerable<Type> readTypes, Dictionary<Type, List<Type>> typeToWritingSystemTypes)
+			IEnumerable<GameSystem> GatherDependenciesBasedOnReadTypes(GameSystem system, IEnumerable<Type> readTypes, Dictionary<Type, List<Type>> typeToWritingSystemTypes)
 			{
 				foreach(var componentType in readTypes) {
 					if(!typeToWritingSystemTypes.TryGetValue(componentType, out var writingTypes)) {
@@ -95,19 +95,23 @@ namespace Dissonance.Engine
 				}
 			}
 
+			var dependenciesBySystem = new Dictionary<GameSystem, List<GameSystem>>();
+
 			IEnumerable<GameSystem> GetGameSystemDependencies(GameSystem system)
 			{
-				if(system.TypeData.ReadTypes != null) {
-					foreach(var result in GetDependenciesBasedOnReadTypes(system, system.TypeData.ReadTypes, ComponentTypeToWritingSystemTypes)) {
-						yield return result;
+				if(!dependenciesBySystem.TryGetValue(system, out var dependencies)) {
+					dependenciesBySystem[system] = dependencies = new();
+
+					if(system.TypeData.ReadTypes != null) {
+						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, system.TypeData.ReadTypes, ComponentTypeToWritingSystemTypes));
+					}
+
+					if(system.TypeData.ReceiveTypes != null) {
+						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, system.TypeData.ReceiveTypes, MessageTypeToSendingSystemTypes));
 					}
 				}
 
-				if(system.TypeData.ReceiveTypes != null) {
-					foreach(var result in GetDependenciesBasedOnReadTypes(system, system.TypeData.ReceiveTypes, MessageTypeToSendingSystemTypes)) {
-						yield return result;
-					}
-				}
+				return dependencies;
 			}
 
 			var sorted = systems.DependencySort(GetGameSystemDependencies, false).ToArray();
