@@ -12,16 +12,22 @@ namespace Dissonance.Engine.Physics
 			Entity = entity;
 		}
 
-		//Called by bullet whenever a rigidbody is created, and every frame for kinematic rigidbodies.
+		// Called by bullet whenever a rigidbody is created, and every frame for kinematic rigidbodies.
 		public override void GetWorldTransform(out Matrix matrix)
 		{
-			matrix = Entity.Get<Transform>().WorldMatrix;
+			if(Entity.Has<Transform>()) {
+				matrix = Entity.Get<Transform>().WorldMatrix;
+			} else {
+				matrix = Matrix.Identity;
+			}
 		}
 
-		//Called by bullet for every frame or update of an active rigidbody.
+		// Called by bullet for every frame or update of an active rigidbody.
 		public override void SetWorldTransform(ref Matrix matrix)
 		{
-			Entity.Get<Transform>().Matrix = matrix;
+			if(Entity.Has<Transform>()) {
+				Entity.Get<Transform>().Matrix = matrix;
+			}
 		}
 
 		protected override void Dispose(bool disposing)

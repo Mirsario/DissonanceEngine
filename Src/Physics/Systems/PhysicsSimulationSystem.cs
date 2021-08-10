@@ -2,6 +2,7 @@
 
 namespace Dissonance.Engine.Physics
 {
+	[Reads(typeof(RigidbodyInternal))]
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{
 		protected internal override void Initialize()

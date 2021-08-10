@@ -5,12 +5,10 @@ namespace Dissonance.Engine.Physics
 {
 	internal struct RigidbodyInternal //, IDisposable
 	{
-		internal bool updateShapes;
-		internal bool updateMass;
-		internal bool ownsCollisionShape;
-		internal RigidbodyType rigidbodyType;
+		public bool updateShapes;
+		public bool ownsCollisionShape;
+		public RigidbodyType rigidbodyType;
 
-		public float Mass { get; set; }
 		public RigidBody BulletRigidbody { get; set; }
 		public RigidbodyMotionState MotionState { get; set; }
 		public CollisionShape CollisionShape { get; set; }
@@ -20,7 +18,7 @@ namespace Dissonance.Engine.Physics
 		{
 			return new RigidbodyInternal {
 				CollisionShapes = new(),
-				rigidbodyType = RigidbodyType.Static,
+				rigidbodyType = RigidbodyType.Dynamic
 			};
 		}
 
