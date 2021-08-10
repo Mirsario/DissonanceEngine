@@ -10,18 +10,18 @@ namespace Dissonance.Engine
 			public struct WorldData
 			{
 				public static WorldData Default = new() {
-					data = Array.Empty<T>(),
-					indicesByEntity = Array.Empty<int>(),
-					globalDataIndex = -1
+					Data = Array.Empty<T>(),
+					IndicesByEntity = Array.Empty<int>(),
+					GlobalDataIndex = -1
 				};
 
-				public T[] data;
-				public int[] indicesByEntity;
-				public int globalDataIndex;
+				public T[] Data;
+				public int[] IndicesByEntity;
+				public int GlobalDataIndex;
 			}
 
-			public static T globalSingleton;
-			public static WorldData[] worldData = Array.Empty<WorldData>();
+			public static T GlobalSingleton;
+			public static WorldData[] DataByWorld = Array.Empty<WorldData>();
 		}
 
 		internal static Action<Entity, Type> OnComponentAdded;
@@ -29,20 +29,20 @@ namespace Dissonance.Engine
 
 		internal static bool HasComponent<T>(int worldId) where T : struct
 		{
-			if(worldId >= ComponentData<T>.worldData.Length) {
+			if(worldId >= ComponentData<T>.DataByWorld.Length) {
 				return false;
 			}
 
-			return ComponentData<T>.worldData[worldId].globalDataIndex >= 0;
+			return ComponentData<T>.DataByWorld[worldId].GlobalDataIndex >= 0;
 		}
 
 		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct
 		{
-			if(worldId >= ComponentData<T>.worldData.Length) {
+			if(worldId >= ComponentData<T>.DataByWorld.Length) {
 				return false;
 			}
 
-			int[] indicesByEntity = ComponentData<T>.worldData[worldId].indicesByEntity;
+			int[] indicesByEntity = ComponentData<T>.DataByWorld[worldId].IndicesByEntity;
 
 			if(entityId >= indicesByEntity.Length) {
 				return false;
@@ -52,70 +52,70 @@ namespace Dissonance.Engine
 		}
 
 		internal static ref T GetComponent<T>() where T : struct
-			=> ref ComponentData<T>.globalSingleton;
+			=> ref ComponentData<T>.GlobalSingleton;
 
 		internal static ref T GetComponent<T>(int worldId) where T : struct
 		{
-			ref var worldData = ref ComponentData<T>.worldData[worldId];
+			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
 
-			return ref worldData.data[worldData.globalDataIndex];
+			return ref worldData.Data[worldData.GlobalDataIndex];
 		}
 
 		internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct
 		{
-			ref var worldData = ref ComponentData<T>.worldData[worldId];
+			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
 
-			return ref worldData.data[worldData.indicesByEntity[entityId]];
+			return ref worldData.Data[worldData.IndicesByEntity[entityId]];
 		}
 
 		internal static void SetComponent<T>(T value) where T : struct
-			=> ComponentData<T>.globalSingleton = value;
+			=> ComponentData<T>.GlobalSingleton = value;
 
 		internal static void SetComponent<T>(int worldId, T value) where T : struct
 		{
-			if(ComponentData<T>.worldData.Length <= worldId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, worldId + 1, ComponentData<T>.WorldData.Default);
+			if(ComponentData<T>.DataByWorld.Length <= worldId) {
+				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.WorldData.Default);
 			}
 
-			ref var worldData = ref ComponentData<T>.worldData[worldId];
-			ref int dataId = ref worldData.globalDataIndex;
+			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
+			ref int dataId = ref worldData.GlobalDataIndex;
 
 			if(dataId <= 0) {
-				dataId = worldData.data.Length;
+				dataId = worldData.Data.Length;
 
-				Array.Resize(ref worldData.data, dataId + 1);
+				Array.Resize(ref worldData.Data, dataId + 1);
 			}
 
-			worldData.data[dataId] = value;
+			worldData.Data[dataId] = value;
 		}
 
 		internal static void SetComponent<T>(in Entity entity, T value) where T : struct
 		{
-			if(ComponentData<T>.worldData.Length <= entity.WorldId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.worldData, entity.WorldId + 1, ComponentData<T>.WorldData.Default);
+			if(ComponentData<T>.DataByWorld.Length <= entity.WorldId) {
+				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, entity.WorldId + 1, ComponentData<T>.WorldData.Default);
 			}
 
-			ref var worldData = ref ComponentData<T>.worldData[entity.WorldId];
+			ref var worldData = ref ComponentData<T>.DataByWorld[entity.WorldId];
 
 			int dataId = -1;
 
-			if(entity.Id >= worldData.indicesByEntity.Length) {
-				ArrayUtils.ResizeAndFillArray(ref worldData.indicesByEntity, entity.Id + 1, -1);
+			if(entity.Id >= worldData.IndicesByEntity.Length) {
+				ArrayUtils.ResizeAndFillArray(ref worldData.IndicesByEntity, entity.Id + 1, -1);
 			} else {
-				dataId = worldData.indicesByEntity[entity.Id];
+				dataId = worldData.IndicesByEntity[entity.Id];
 			}
 
 			if(dataId < 0) {
-				dataId = worldData.data.Length;
-				worldData.indicesByEntity[entity.Id] = dataId;
+				dataId = worldData.Data.Length;
+				worldData.IndicesByEntity[entity.Id] = dataId;
 
-				Array.Resize(ref worldData.data, dataId + 1);
+				Array.Resize(ref worldData.Data, dataId + 1);
 
-				worldData.data[dataId] = value;
+				worldData.Data[dataId] = value;
 
 				OnComponentAdded?.Invoke(entity, typeof(T));
 			} else {
-				worldData.data[dataId] = value;
+				worldData.Data[dataId] = value;
 			}
 		}
 	}
