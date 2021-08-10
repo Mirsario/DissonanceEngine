@@ -19,27 +19,63 @@ namespace Dissonance.Engine
 		protected internal virtual void RenderUpdate() { }
 
 		protected ref T GlobalGet<T>() where T : struct
-			=> ref ComponentManager.GetComponent<T>();
+		{
+			if(!TypeData.ReadTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared global component - '{typeof(T).Name}'.");
+			}
+
+			return ref ComponentManager.GetComponent<T>();
+		}
 
 		protected void GlobalSet<T>(T value) where T : struct
-			=> ComponentManager.SetComponent(value);
+		{
+			if(!TypeData.WriteTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to write an undeclared global component - '{typeof(T).Name}'.");
+			}
+
+			ComponentManager.SetComponent(value);
+		}
 
 		protected bool WorldHas<T>() where T : struct
 			=> World.Has<T>();
 
 		protected ref T WorldGet<T>() where T : struct
-			=> ref World.Get<T>();
+		{
+			if(!TypeData.ReadTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared world component - '{typeof(T).Name}'.");
+			}
+
+			return ref World.Get<T>();
+		}
 
 		protected void WorldSet<T>(T value) where T : struct
-			=> World.Set(value);
+		{
+			if(!TypeData.WriteTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to write an undeclared global component - '{typeof(T).Name}'.");
+			}
+
+			World.Set(value);
+		}
 
 		protected ReadOnlySpan<Entity> ReadEntities(bool? active = true)
 			=> World.ReadEntities();
 
 		protected void SendMessage<T>(in T message) where T : struct
-			=> World.SendMessage(message);
+		{
+			if(!TypeData.SendTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to send an undeclared message - '{typeof(T).Name}'.");
+			}
+
+			World.SendMessage(message);
+		}
 
 		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct
-			=> World.ReadMessages<T>();
+		{
+			if(!TypeData.ReceiveTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared message - '{typeof(T).Name}'.");
+			}
+
+			return World.ReadMessages<T>();
+		}
 	}
 }
