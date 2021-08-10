@@ -8,9 +8,16 @@ namespace Dissonance.Engine.Audio
 	{
 		private static readonly float[] OrientationArray = new float[6];
 
+		private EntitySet entities;
+
+		protected internal override void Initialize()
+		{
+			entities = World.GetEntitySet(e => e.Has<AudioListener>());
+		}
+
 		protected internal override void RenderUpdate()
 		{
-			var entitySpan = World.GetEntitySet(e => e.Has<AudioListener>()).ReadEntities();
+			var entitySpan = entities.ReadEntities();
 
 			if(entitySpan.Length == 0) {
 				return;
