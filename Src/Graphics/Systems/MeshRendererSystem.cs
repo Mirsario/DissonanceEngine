@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(Transform), typeof(MeshRenderer))]
+	[Reads(typeof(GeometryPassData), typeof(Transform), typeof(MeshRenderer))]
 	[Writes(typeof(GeometryPassData))]
 	public sealed class MeshRendererSystem : GameSystem
 	{

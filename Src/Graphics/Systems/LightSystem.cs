@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(Light), typeof(Transform))]
+	[Reads(typeof(LightingPassData), typeof(Light), typeof(Transform))]
 	[Writes(typeof(LightingPassData))]
 	public sealed class LightSystem : GameSystem
 	{

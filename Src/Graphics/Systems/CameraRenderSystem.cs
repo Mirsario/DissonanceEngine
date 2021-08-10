@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(Camera), typeof(Transform))]
+	[Reads(typeof(RenderViewData), typeof(Camera), typeof(Transform))]
 	[Writes(typeof(RenderViewData))]
 	public sealed class CameraRenderSystem : GameSystem
 	{
