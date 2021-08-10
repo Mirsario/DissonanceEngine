@@ -114,6 +114,7 @@ namespace Dissonance.Engine
 				worldData.Data[dataId] = value;
 
 				OnComponentAdded?.Invoke(entity, typeof(T));
+				MessageManager.SendMessage(entity.WorldId, new ComponentAddedMessage<T>(entity, value));
 			} else {
 				worldData.Data[dataId] = value;
 			}
@@ -137,9 +138,12 @@ namespace Dissonance.Engine
 				return;
 			}
 
+			var value = worldData.Data[dataIndex];
+
 			worldData.IndicesByEntity[entity.Id] = -1;
 
 			OnComponentRemoved?.Invoke(entity, typeof(T));
+			MessageManager.SendMessage(entity.WorldId, new ComponentRemovedMessage<T>(entity, value));
 		}
 	}
 }
