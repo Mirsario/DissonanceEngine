@@ -9,6 +9,7 @@ namespace Dissonance.Engine.Physics
 		internal bool updateShapes;
 		internal bool updateMass;
 		internal bool ownsCollisionShape;
+		internal bool? wasKinematic;
 		internal float lastMass;
 
 		public bool IsKinematic { get; set; }

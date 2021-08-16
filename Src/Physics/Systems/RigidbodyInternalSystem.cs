@@ -1,4 +1,5 @@
-﻿using BulletSharp;
+﻿using System.Linq;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -7,6 +8,7 @@ namespace Dissonance.Engine.Physics
 	[Sends(typeof(ActivateRigidbodyMessage))]
 	[Receives(
 		typeof(CreateInternalRigidbodyMessage),
+		typeof(SetRigidbodyTypeMessage),
 		typeof(SetRigidbodyMassMessage),
 		typeof(AddCollisionShapeMessage),
 		typeof(RemoveCollisionShapeMessage),
@@ -40,6 +42,15 @@ namespace Dissonance.Engine.Physics
 				EnsureInternalRigidbodyExists(message.Entity);
 			}
 
+			foreach(var message in ReadMessages<SetRigidbodyTypeMessage>()) {
+				EnsureInternalRigidbodyExists(message.Entity);
+
+				ref var rb = ref message.Entity.Get<RigidbodyInternal>();
+
+				rb.Type = message.RigidbodyType;
+				rb.UpdateFlags = true;
+			}
+
 			foreach(var message in ReadMessages<RemoveCollisionShapeMessage>()) {
 				if(!message.Entity.Has<RigidbodyInternal>()) {
 					continue;
@@ -49,7 +60,7 @@ namespace Dissonance.Engine.Physics
 
 				rb.CollisionShapes.Remove(message.CollisionShape);
 
-				rb.updateShapes = true;
+				rb.UpdateShapes = true;
 			}
 
 			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
@@ -77,12 +88,17 @@ namespace Dissonance.Engine.Physics
 						CollisionFlags = CollisionFlags.None
 					};
 
+					UpdateCollisionFlags(ref rb);
 					UpdateShapes(entity, ref rb);
 
 					physics.PhysicsWorld.AddRigidBody(rb.BulletRigidbody);
 				}
 
-				if(rb.updateShapes) {
+				if(rb.UpdateFlags) {
+					UpdateCollisionFlags(ref rb);
+				}
+
+				if(rb.UpdateShapes) {
 					physics.PhysicsWorld.RemoveRigidBody(rb.BulletRigidbody);
 
 					UpdateShapes(entity, ref rb);
@@ -100,7 +116,7 @@ namespace Dissonance.Engine.Physics
 			foreach(var message in ReadMessages<SetRigidbodyMassMessage>()) {
 				ref var rb = ref message.Entity.Get<RigidbodyInternal>();
 
-				float realMass = rb.rigidbodyType == RigidbodyType.Dynamic ? message.Mass : 0f;
+				float realMass = rb.Type == RigidbodyType.Dynamic ? message.Mass : 0f;
 				var localInertia = realMass > 0f ? rb.BulletRigidbody.CollisionShape.CalculateLocalInertia(message.Mass) : BulletSharp.Math.Vector3.Zero;
 
 				rb.BulletRigidbody.SetMassProps(realMass, localInertia);
@@ -109,7 +125,7 @@ namespace Dissonance.Engine.Physics
 
 		private void UpdateShapes(in Entity entity, ref RigidbodyInternal rb)
 		{
-			if(rb.ownsCollisionShape && rb.CollisionShape != null) {
+			if(rb.OwnsCollisionShape && rb.CollisionShape != null) {
 				rb.CollisionShape.Dispose();
 			}
 
@@ -131,11 +147,31 @@ namespace Dissonance.Engine.Physics
 				resultShape = compoundShape;
 			}
 
-			rb.ownsCollisionShape = true;
+			rb.OwnsCollisionShape = true;
 			rb.BulletRigidbody.CollisionShape = resultShape;
-			rb.updateShapes = false;
+			rb.UpdateShapes = false;
 
 			SendMessage(new ActivateRigidbodyMessage(entity));
+		}
+
+		private static void UpdateCollisionFlags(ref RigidbodyInternal rb)
+		{
+			var flags = rb.BulletRigidbody.CollisionFlags;
+
+			void SetFlag(CollisionFlags flag, bool value)
+			{
+				if(value) {
+					flags |= flag;
+				} else {
+					flags &= ~flag;
+				}
+			}
+
+			SetFlag(CollisionFlags.StaticObject, rb.Type == RigidbodyType.Static);
+			SetFlag(CollisionFlags.KinematicObject, rb.Type == RigidbodyType.Kinematic);
+
+			rb.BulletRigidbody.CollisionFlags = flags;
+			rb.UpdateShapes = false;
 		}
 	}
 }
