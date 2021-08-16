@@ -9,13 +9,9 @@ namespace Dissonance.Engine.Physics
 		internal static DbvtBroadphase broadphase;
 		internal static CollisionDispatcher dispatcher;
 		internal static CollisionConfiguration collisionConf;
-		internal static List<ICollider> collidersToUpdate;
-		internal static List<CollisionShape> collisionShapes;
 
 		protected override void Init()
 		{
-			collisionShapes = new List<CollisionShape>();
-			collidersToUpdate = new List<ICollider>();
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
 			dispatcher = new CollisionDispatcher(collisionConf);
@@ -28,13 +24,6 @@ namespace Dissonance.Engine.Physics
 		{
 			dispatcher?.Dispose();
 			broadphase?.Dispose();
-			collidersToUpdate?.Clear();
-
-			if(collisionShapes != null) {
-				for(int i = 0; i < collisionShapes.Count; i++) {
-					collisionShapes[i].Dispose();
-				}
-			}
 
 			/*if(rigidbodies != null) {
 				for(int i = 0; i < rigidbodies.Count; i++) {
