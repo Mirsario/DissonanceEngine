@@ -39,10 +39,9 @@ namespace Dissonance.Engine.Physics
 					}
 
 					collider.boxShape = new BoxShape(collider.Size * 0.5f);
+					collider.needsUpdate = false;
 
 					SendMessage(new AddCollisionShapeMessage(entity, collider.boxShape));
-
-					collider.needsUpdate = false;
 				}
 			}
 		}

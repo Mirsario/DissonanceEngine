@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Physics
 {
 	public struct BoxCollider
 	{
-		public static readonly BoxCollider Default = new BoxCollider(Vector3.One);
+		public static readonly BoxCollider Default = new(Vector3.One);
 
 		internal BoxShape boxShape;
 		internal bool needsUpdate;
@@ -23,7 +23,8 @@ namespace Dissonance.Engine.Physics
 
 		public BoxCollider(Vector3 size) : this()
 		{
-			Size = size;
+			this.size = size;
+			needsUpdate = true;
 		}
 	}
 }
