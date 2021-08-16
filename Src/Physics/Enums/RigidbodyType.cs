@@ -2,10 +2,9 @@
 {
 	public enum RigidbodyType
 	{
-		Dynamic,
-		Kinematic,
 		Static,
-		Trigger
+		Dynamic,
+		Kinematic
 	}
 }
 
