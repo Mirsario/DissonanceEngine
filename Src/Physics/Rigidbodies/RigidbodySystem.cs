@@ -28,13 +28,13 @@ namespace Dissonance.Engine.Physics
 
 			foreach(var message in ReadMessages<RemoveCollisionShapeMessage>()) {
 				if(message.Entity.Has<Rigidbody>()) {
-					message.Entity.Get<Rigidbody>().updateShapes = true;
+					message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 				}
 			}
 
 			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
 				if(message.Entity.Has<Rigidbody>()) {
-					message.Entity.Get<Rigidbody>().updateShapes = true;
+					message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 				}
 			}
 
@@ -68,15 +68,15 @@ namespace Dissonance.Engine.Physics
 					physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 				}
 
-				if(rb.updateFlags) {
+				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.CollisionFlags)) {
 					UpdateCollisionFlags(ref rb);
 				}
 
-				if(rb.updateMass) {
+				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.Mass)) {
 					UpdateMass(ref rb);
 				}
 
-				if(rb.updateShapes) {
+				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.CollisionShapes)) {
 					physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
 
 					UpdateShapes(entity, ref rb, collisionShapeData);
@@ -84,6 +84,8 @@ namespace Dissonance.Engine.Physics
 					physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 				}
 			}
+
+			// Force-activate rigidbodies on demand
 
 			foreach(var message in ReadMessages<ActivateRigidbodyMessage>()) {
 				if(message.Entity.Has<Rigidbody>()) {
@@ -118,7 +120,7 @@ namespace Dissonance.Engine.Physics
 				previousShape.Dispose();
 			}
 
-			rb.updateShapes = false;
+			rb.updateFlags &= ~Rigidbody.UpdateFlags.CollisionShapes;
 			rb.ownsCollisionShape = true;
 
 			SendMessage(new ActivateRigidbodyMessage(entity));
@@ -141,7 +143,7 @@ namespace Dissonance.Engine.Physics
 			SetFlag(CollisionFlags.KinematicObject, rb.Type == RigidbodyType.Kinematic);
 
 			rb.bulletRigidbody.CollisionFlags = flags;
-			rb.updateShapes = false;
+			rb.updateFlags &= ~Rigidbody.UpdateFlags.CollisionFlags;
 		}
 
 		private static void UpdateMass(ref Rigidbody rb)
@@ -151,7 +153,7 @@ namespace Dissonance.Engine.Physics
 
 			rb.bulletRigidbody.SetMassProps(realMass, localInertia);
 
-			rb.updateMass = false;
+			rb.updateFlags &= ~Rigidbody.UpdateFlags.Mass;
 		}
 	}
 }
