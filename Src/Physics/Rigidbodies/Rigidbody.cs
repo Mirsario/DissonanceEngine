@@ -1,3 +1,5 @@
+using BulletSharp;
+
 namespace Dissonance.Engine.Physics
 {
 	public struct Rigidbody
@@ -7,15 +9,22 @@ namespace Dissonance.Engine.Physics
 		};
 
 		internal bool updateShapes;
-		internal bool updateMass;
+		internal bool updateFlags;
 		internal bool ownsCollisionShape;
 		internal bool? wasKinematic;
 		internal float lastMass;
+		internal RigidbodyMotionState motionState;
+		internal RigidBody bulletRigidbody;
 
-		public bool IsKinematic { get; set; }
 		public float Mass { get; set; }
 		public Vector3 Velocity { get; set; }
 		public Vector3 AngularVelocity { get; set; }
 		public Vector3 AngularFactor { get; set; }
+		public RigidbodyType Type { get; set; }
+
+		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic) : this()
+		{
+			Type = type;
+		}
 	}
 }
