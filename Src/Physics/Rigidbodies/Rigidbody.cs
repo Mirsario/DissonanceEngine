@@ -23,9 +23,15 @@ namespace Dissonance.Engine.Physics
 		internal RigidBody bulletRigidbody;
 
 		private float mass;
+		private RigidbodyType type;
 
-		public RigidbodyType Type { get; set; }
-
+		public RigidbodyType Type {
+			get => type;
+			set {
+				type = value;
+				updateFlags |= UpdateFlags.CollisionFlags;
+			}
+		}
 		public float Mass {
 			get => mass;
 			set {
