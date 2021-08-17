@@ -1,17 +1,24 @@
+using System;
 using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
 	public struct Rigidbody
 	{
+		[Flags]
+		internal enum UpdateFlags : byte
+		{
+			CollisionFlags = 1,
+			CollisionShapes = 2,
+			Mass = 4,
+		}
+
 		public static readonly Rigidbody Default = new() {
 			Mass = 1f
 		};
 
-		internal bool updateShapes;
-		internal bool updateFlags;
-		internal bool updateMass;
 		internal bool ownsCollisionShape;
+		internal UpdateFlags updateFlags;
 		internal RigidbodyMotionState motionState;
 		internal RigidBody bulletRigidbody;
 
@@ -23,7 +30,7 @@ namespace Dissonance.Engine.Physics
 			get => mass;
 			set {
 				mass = value;
-				updateMass = true;
+				updateFlags |= UpdateFlags.Mass;
 			}
 		}
 		public Vector3 Velocity {
