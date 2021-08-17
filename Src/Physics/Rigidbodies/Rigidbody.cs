@@ -13,9 +13,7 @@ namespace Dissonance.Engine.Physics
 			Mass = 4,
 		}
 
-		public static readonly Rigidbody Default = new() {
-			Mass = 1f
-		};
+		public static readonly Rigidbody Default = new(RigidbodyType.Dynamic);
 
 		internal bool ownsCollisionShape;
 		internal UpdateFlags updateFlags;
