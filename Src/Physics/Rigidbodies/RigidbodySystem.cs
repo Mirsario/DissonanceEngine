@@ -72,7 +72,7 @@ namespace Dissonance.Engine.Physics
 					UpdateCollisionFlags(ref rb);
 				}
 
-				if(rb.Mass != rb.lastMass) {
+				if(rb.updateMass) {
 					UpdateMass(ref rb);
 				}
 
@@ -151,7 +151,7 @@ namespace Dissonance.Engine.Physics
 
 			rb.bulletRigidbody.SetMassProps(realMass, localInertia);
 
-			rb.lastMass = rb.Mass;
+			rb.updateMass = false;
 		}
 	}
 }
