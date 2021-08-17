@@ -62,7 +62,7 @@ namespace Dissonance.Engine.Physics
 						CollisionFlags = CollisionFlags.None,
 						LinearVelocity = rb.pendingVelocity ?? default,
 						AngularVelocity = rb.pendingAngularVelocity ?? default,
-						AngularFactor = rb.pendingAngularFactor ?? default,
+						AngularFactor = rb.pendingAngularFactor ?? Vector3.One,
 					};
 
 					rb.pendingVelocity = null;
