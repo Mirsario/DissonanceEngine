@@ -21,6 +21,9 @@ namespace Dissonance.Engine.Physics
 		internal UpdateFlags updateFlags;
 		internal RigidbodyMotionState motionState;
 		internal RigidBody bulletRigidbody;
+		internal Vector3? pendingVelocity;
+		internal Vector3? pendingAngularVelocity;
+		internal Vector3? pendingAngularFactor;
 
 		private float mass;
 		private RigidbodyType type;
@@ -40,21 +43,40 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 		public Vector3 Velocity {
-			get => bulletRigidbody.LinearVelocity;
-			set => bulletRigidbody.LinearVelocity = value;
+			get => bulletRigidbody?.LinearVelocity ?? pendingVelocity ?? default;
+			set {
+				if(bulletRigidbody != null) {
+					bulletRigidbody.LinearVelocity = value;
+				} else {
+					pendingVelocity = value;
+				}
+			}
 		}
 		public Vector3 AngularVelocity {
-			get => bulletRigidbody.AngularVelocity;
-			set => bulletRigidbody.AngularVelocity = value;
+			get => bulletRigidbody?.AngularVelocity ?? pendingAngularVelocity ?? default;
+			set {
+				if(bulletRigidbody != null) {
+					bulletRigidbody.AngularVelocity = value;
+				} else {
+					pendingAngularVelocity = value;
+				}
+			}
 		}
 		public Vector3 AngularFactor {
-			get => bulletRigidbody.AngularFactor;
-			set => bulletRigidbody.AngularFactor = value;
+			get => bulletRigidbody?.AngularFactor ?? pendingAngularFactor ?? default;
+			set {
+				if(bulletRigidbody != null) {
+					bulletRigidbody.AngularFactor = value;
+				} else {
+					pendingAngularFactor = value;
+				}
+			}
 		}
 
-		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic) : this()
+		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic, float mass = 1f) : this()
 		{
 			Type = type;
+			Mass = mass;
 		}
 	}
 }

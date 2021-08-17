@@ -59,8 +59,15 @@ namespace Dissonance.Engine.Physics
 
 					rb.bulletRigidbody = new RigidBody(rbInfo) {
 						UserObject = entity,
-						CollisionFlags = CollisionFlags.None
+						CollisionFlags = CollisionFlags.None,
+						LinearVelocity = rb.pendingVelocity ?? default,
+						AngularVelocity = rb.pendingAngularVelocity ?? default,
+						AngularFactor = rb.pendingAngularFactor ?? default,
 					};
+
+					rb.pendingVelocity = null;
+					rb.pendingAngularVelocity = null;
+					rb.pendingAngularFactor = null;
 
 					UpdateCollisionFlags(ref rb);
 					UpdateShapes(entity, ref rb, collisionShapeData);
