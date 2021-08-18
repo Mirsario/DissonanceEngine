@@ -120,6 +120,10 @@ namespace Dissonance.Engine
 
 			var sorted = systems.DependencySort(GetGameSystemDependencies, false).ToArray();
 
+#if DEBUG
+			Debug.Log($"System order: \r\n{string.Join("\r\n", sorted.Select(s => s.GetType().Name))}");
+#endif
+
 			systems.Clear();
 			systems.AddRange(sorted);
 		}
