@@ -75,15 +75,19 @@ namespace Dissonance.Engine.Physics
 					physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 				}
 
-				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.CollisionFlags)) {
+				if(rb.updateFlags == 0) {
+					continue;
+				}
+
+				if((rb.updateFlags & Rigidbody.UpdateFlags.CollisionFlags) != 0) {
 					UpdateCollisionFlags(ref rb);
 				}
 
-				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.Mass)) {
+				if((rb.updateFlags & Rigidbody.UpdateFlags.Mass) != 0) {
 					UpdateMass(ref rb);
 				}
 
-				if(rb.updateFlags.HasFlag(Rigidbody.UpdateFlags.CollisionShapes)) {
+				if((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
 					physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
 
 					UpdateShapes(entity, ref rb, collisionShapeData);
