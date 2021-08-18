@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Physics
 			var physics = WorldPhysics.Default;
 
 			physics.PhysicsWorld = new DiscreteDynamicsWorld(PhysicsEngine.dispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
-				Gravity = new Vector3(0f, -9.807f, 0f)
+				Gravity = physics.Gravity
 			};
 
 			World.Set(physics);
@@ -23,6 +23,8 @@ namespace Dissonance.Engine.Physics
 			}
 
 			ref var physics = ref World.Get<WorldPhysics>();
+
+			physics.PhysicsWorld.Gravity = physics.Gravity;
 
 			physics.PhysicsWorld.StepSimulation(Time.FixedDeltaTime);
 		}
