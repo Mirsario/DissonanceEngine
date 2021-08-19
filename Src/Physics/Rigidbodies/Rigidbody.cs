@@ -17,7 +17,6 @@ namespace Dissonance.Engine.Physics
 
 		internal bool ownsCollisionShape;
 		internal UpdateFlags updateFlags;
-		internal RigidbodyMotionState motionState;
 		internal RigidBody bulletRigidbody;
 		internal Vector3? pendingVelocity;
 		internal Vector3? pendingAngularVelocity;

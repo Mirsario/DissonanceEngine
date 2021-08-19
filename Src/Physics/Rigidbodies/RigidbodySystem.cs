@@ -3,7 +3,7 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads(typeof(Rigidbody))]
+	[Reads(typeof(Rigidbody), typeof(WorldPhysics))]
 	[Writes(typeof(Rigidbody))]
 	[Sends(typeof(ActivateRigidbodyMessage))]
 	[Receives(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage), typeof(ActivateRigidbodyMessage))]
@@ -42,14 +42,13 @@ namespace Dissonance.Engine.Physics
 
 			foreach(var entity in entities.ReadEntities()) {
 				ref var rb = ref entity.Get<Rigidbody>();
+				ref var transform = ref entity.Get<Transform>();
 				var collisionShapeData = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
-
-				rb.motionState ??= new RigidbodyMotionState(entity);
 
 				if(rb.bulletRigidbody == null) {
 					var collisionShape = new EmptyShape();
 
-					using var rbInfo = new RigidBodyConstructionInfo(0f, rb.motionState, collisionShape, Vector3.Zero) {
+					using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
 						LinearSleepingThreshold = 0.1f,
 						AngularSleepingThreshold = 1f,
 						Friction = 0.6f,
@@ -74,6 +73,8 @@ namespace Dissonance.Engine.Physics
 
 					physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 				}
+
+				rb.bulletRigidbody.WorldTransform = transform.WorldMatrix;
 
 				if(rb.updateFlags == 0) {
 					continue;
