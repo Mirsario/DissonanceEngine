@@ -1,4 +1,5 @@
-﻿using BulletSharp;
+﻿using System.Collections.Generic;
+using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
@@ -12,9 +13,10 @@ namespace Dissonance.Engine.Physics
 		{
 			rigidbodyEntities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 
-			var physics = WorldPhysics.Default;
+			var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
 
-			physics.PhysicsWorld = new DiscreteDynamicsWorld(PhysicsEngine.dispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
+			physics.CollisionDispatcher ??= new CollisionDispatcher(PhysicsEngine.collisionConf);
+			physics.PhysicsWorld ??= new DiscreteDynamicsWorld(physics.CollisionDispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
 				Gravity = physics.Gravity
 			};
 
@@ -33,13 +35,70 @@ namespace Dissonance.Engine.Physics
 
 			physics.PhysicsWorld.StepSimulation(Time.FixedDeltaTime);
 
-			// Update transforms based on rigidbody positions
+			// Update collisions
+
+			var collisionDispatcher = physics.CollisionDispatcher;
+			int numManifolds = collisionDispatcher.NumManifolds;
+
+			for(int i = 0; i < numManifolds; i++) {
+				var contactManifold = collisionDispatcher.GetManifoldByIndexInternal(i);
+				int numContacts = contactManifold.NumContacts;
+
+				if(numContacts == 0) {
+					continue;
+				}
+
+				var objA = contactManifold.Body0;
+				var objB = contactManifold.Body1;
+
+				if(objA.UserObject is not Entity entityA || objB.UserObject is not Entity entityB) {
+					continue;
+				}
+
+				if(!entityA.Has<Rigidbody>() || !entityB.Has<Rigidbody>()) {
+					continue;
+				}
+
+				ref var rigidbodyA = ref entityA.Get<Rigidbody>();
+				ref var rigidbodyB = ref entityB.Get<Rigidbody>();
+
+				for(int j = 0; j < 2; j++) {
+					bool processingA = j == 0;
+					var otherEntity = processingA ? entityA : entityB;
+					ref var thisRigidbody = ref (processingA ? ref rigidbodyA : ref rigidbodyB);
+
+					var contacts = new ContactPoint[numContacts];
+
+					for(int k = 0; k < numContacts; k++) {
+						var cPoint = contactManifold.GetContactPoint(k);
+
+						contacts[k] = new ContactPoint(
+							processingA ? cPoint.PositionWorldOnB : cPoint.PositionWorldOnA,
+							cPoint.NormalWorldOnB,
+							cPoint.Distance
+						);
+					}
+
+					thisRigidbody.collisionsHaveBeenModified = true;
+					thisRigidbody.collisions ??= new List<Collision>();
+
+					thisRigidbody.collisions.Add(new Collision(otherEntity, contacts));
+				}
+			}
 
 			foreach(var entity in rigidbodyEntities.ReadEntities()) {
 				ref var rigidbody = ref entity.Get<Rigidbody>();
 				ref var transform = ref entity.Get<Transform>();
 
+				// Update transforms based on rigidbody positions
 				transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
+
+				// And also clear collisions if needed
+				if(!rigidbody.collisionsHaveBeenModified) {
+					rigidbody.collisions?.Clear();
+				} else {
+					rigidbody.collisionsHaveBeenModified = false;
+				}
 			}
 		}
 	}

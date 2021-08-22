@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using BulletSharp;
 
 namespace Dissonance.Engine.Physics
@@ -16,14 +18,18 @@ namespace Dissonance.Engine.Physics
 		public static readonly Rigidbody Default = new(RigidbodyType.Dynamic);
 
 		internal bool ownsCollisionShape;
+		internal bool collisionsHaveBeenModified;
 		internal UpdateFlags updateFlags;
 		internal RigidBody bulletRigidbody;
 		internal Vector3? pendingVelocity;
 		internal Vector3? pendingAngularVelocity;
 		internal Vector3? pendingAngularFactor;
+		internal List<Collision> collisions;
 
 		private float mass;
 		private RigidbodyType type;
+
+		public ReadOnlySpan<Collision> Collisions => CollectionsMarshal.AsSpan(collisions);
 
 		public RigidbodyType Type {
 			get => type;
