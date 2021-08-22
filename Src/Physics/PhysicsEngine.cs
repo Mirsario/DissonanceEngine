@@ -7,14 +7,12 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class PhysicsEngine : EngineModule
 	{
 		internal static DbvtBroadphase broadphase;
-		internal static CollisionDispatcher dispatcher;
 		internal static CollisionConfiguration collisionConf;
 
 		protected override void Init()
 		{
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
-			dispatcher = new CollisionDispatcher(collisionConf);
 
 			//ManifoldPoint.ContactAdded += Callback_ContactAdded;
 			//PersistentManifold.ContactProcessed += Callback_ContactProcessed;
@@ -22,7 +20,6 @@ namespace Dissonance.Engine.Physics
 		}
 		protected override void OnDispose()
 		{
-			dispatcher?.Dispose();
 			broadphase?.Dispose();
 
 			/*if(rigidbodies != null) {

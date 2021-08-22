@@ -11,5 +11,6 @@ namespace Dissonance.Engine.Physics
 		public Vector3 Gravity { get; set; }
 
 		internal DiscreteDynamicsWorld PhysicsWorld { get; set; }
+		internal CollisionDispatcher CollisionDispatcher { get; set; }
 	}
 }
