@@ -51,9 +51,9 @@ namespace Dissonance.Engine.Physics
 					using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
 						LinearSleepingThreshold = 0.1f,
 						AngularSleepingThreshold = 1f,
-						Friction = 0.6f,
+						Friction = rb.Friction,
 						RollingFriction = 0f,
-						Restitution = 0.1f
+						Restitution = 0.1f,
 					};
 
 					rb.bulletRigidbody = new RigidBody(rbInfo) {

@@ -29,6 +29,8 @@ namespace Dissonance.Engine.Physics
 		private float mass;
 		private RigidbodyType type;
 
+		public float Friction { get; set; }
+
 		public ReadOnlySpan<Collision> Collisions => CollectionsMarshal.AsSpan(collisions);
 
 		public RigidbodyType Type {
@@ -76,10 +78,11 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 
-		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic, float mass = 1f) : this()
+		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic, float mass = 1f, float friction = 0.5f) : this()
 		{
 			Type = type;
 			Mass = mass;
+			Friction = friction;
 		}
 	}
 }
