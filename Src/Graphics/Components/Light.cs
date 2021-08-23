@@ -6,7 +6,6 @@ namespace Dissonance.Engine.Graphics
 		{
 			Point,
 			Directional,
-			Spot
 		}
 
 		public float Range { get; set; }
