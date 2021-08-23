@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Graphics
 		public static Mesh Sphere { get; private set; }
 		public static Mesh IcoSphere { get; private set; }
 
-		public static Mesh GenerateQuad(float size = 1f, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool flipUVHorizontally = false, bool flipUVVertically = false, bool apply = true)
+		public static Mesh GenerateQuad(float size = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool flipUVHorizontally = false, bool flipUVVertically = false, bool apply = true)
 		{
 			float half = size * 0.5f;
 
@@ -39,7 +39,10 @@ namespace Dissonance.Engine.Graphics
 				} : null,
 
 				//Triangles
-				Indices = new uint[] {
+				Indices = !inverted ? new uint[] {
+					0, 1, 2,
+					1, 3, 2,
+				} : new uint[] {
 					2, 1, 0,
 					2, 3, 1,
 				}
