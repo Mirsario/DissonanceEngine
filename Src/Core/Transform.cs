@@ -24,29 +24,12 @@ namespace Dissonance.Engine
 		private readonly List<Transform> ChildrenInternal;
 
 		private Matrix4x4 matrix;
-		//private Transform parent;
 
-		public Transform Root => Parent != null ? EnumerateParents().Last() : this;
-		
-		public Transform? Parent {
-			get => null; //parent;
-			set {
-				/*if(parent == value) {
-					return;
-				}
+		public Entity? Parent { get; set; }
 
-				if(parent != null) {
-					parent.ChildrenInternal.Remove(this);
-				}
+		public Transform Root => Parent.HasValue ? EnumerateParents().Last() : this;
 
-				if(value != null) {
-					value.ChildrenInternal.Add(this);
-				}
-
-				parent = value;
-				GameObject.EnabledInHierarchy = parent?.Enabled ?? true;*/
-			}
-		}
+		public ref Transform ParentTransform => ref Parent.Value.Get<Transform>();
 
 		public Vector3 Forward {
 			get {
@@ -260,7 +243,7 @@ namespace Dissonance.Engine
 
 		public event Action<Transform, UpdateFlags> OnModified;
 
-		public Transform(Vector3? position = null, Vector3? eulerRotation = null, Vector3? localScale = null)
+		public Transform(Vector3? position = null, Vector3? eulerRotation = null, Vector3? localScale = null) : this()
 		{
 			matrix = Matrix4x4.Identity;
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
@@ -279,7 +262,7 @@ namespace Dissonance.Engine
 			}
 		}
 
-		public Transform(Vector2? position = null, float? eulerRotation = null, Vector2? localScale = null)
+		public Transform(Vector2? position = null, float? eulerRotation = null, Vector2? localScale = null) : this()
 		{
 			matrix = Matrix4x4.Identity;
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
@@ -303,11 +286,12 @@ namespace Dissonance.Engine
 			Transform transform = this;
 
 			while(transform.Parent.HasValue) {
-				transform = transform.Parent.Value;
+				transform = transform.ParentTransform;
 
 				yield return transform;
 			}
 		}
+
 		public IEnumerable<Transform> EnumerateChildren()
 		{
 			for(int i = 0; i < ChildrenInternal.Count; i++) {
@@ -327,7 +311,7 @@ namespace Dissonance.Engine
 			Transform transform = this;
 
 			while(transform.Parent.HasValue) {
-				transform = transform.Parent.Value;
+				transform = transform.ParentTransform;
 				matrix *= transform.Matrix.Inverted;
 			}
 
@@ -340,7 +324,7 @@ namespace Dissonance.Engine
 			Transform transform = this;
 
 			while(transform.Parent.HasValue) {
-				transform = transform.Parent.Value;
+				transform = transform.ParentTransform;
 				matrix *= transform.Matrix;
 			}
 
