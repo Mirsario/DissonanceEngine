@@ -69,6 +69,8 @@ namespace Dissonance.Engine
 			InitializeModules();
 
 			Debug.Log("Loading engine...");
+			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
+			Debug.Log($"Assets directory is '{assetsPath}'.");
 
 			//TODO: Move this.
 			assetsPath = "Assets" + Path.DirectorySeparatorChar;
@@ -163,9 +165,6 @@ namespace Dissonance.Engine
 
 		internal void Init()
 		{
-			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
-			Debug.Log($"Assets directory is '{assetsPath}'.");
-
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
