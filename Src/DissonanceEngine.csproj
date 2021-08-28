@@ -47,5 +47,11 @@
 			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Update="DissonanceEngine.dll.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
 </Project>

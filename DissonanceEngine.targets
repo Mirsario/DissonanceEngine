@@ -1,0 +1,33 @@
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<EnginePath>$(MSBuildThisFileDirectory)</EnginePath>
+		<AssetsPath>$(MSBuildProjectDirectory)</AssetsPath>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<Assets Include="$(AssetsPath)\**" Exclude="@(Compile)" />
+
+		<Assets Remove="$(MSBuildProjectDirectory)\obj\**" />
+		<Assets Remove="$(MSBuildProjectDirectory)\.vs\**" />
+		<Assets Remove="$(MSBuildProjectDirectory)\Properties\launchSettings.json" />
+		<Assets Remove="**\*.csproj" />
+	</ItemGroup>
+	
+	<Target Name="CopyNatives" AfterTargets="Build">
+		<ItemGroup>
+			<NativeFiles Include="$(EnginePath)\References\Native\**" />
+		</ItemGroup>
+	
+		<Copy SourceFiles="@(NativeFiles)" DestinationFolder="$(TargetDir)\Libraries\Native\%(RecursiveDir)" SkipUnchangedFiles="False" />
+	</Target>
+	
+	<Target Name="CopyAssets" AfterTargets="Build">
+		<PropertyGroup>
+			<TargetAssetsPath>$(TargetDir)\Assets</TargetAssetsPath>
+		</PropertyGroup>
+		
+		<RemoveDir Directories="$(TargetDir)\Assets" />
+		<MakeDir Directories="$(TargetDir)\Assets" />
+		<Copy SourceFiles="@(Assets)" DestinationFolder="$(TargetAssetsPath)\%(RecursiveDir)" SkipUnchangedFiles="False" />
+	</Target>
+</Project>
