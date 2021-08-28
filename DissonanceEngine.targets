@@ -8,6 +8,7 @@
 		<Assets Include="$(AssetsPath)\**" Exclude="@(Compile)" />
 
 		<Assets Remove="$(MSBuildProjectDirectory)\obj\**" />
+		<Assets Remove="$(TargetDir)\**" />
 		<Assets Remove="$(MSBuildProjectDirectory)\.vs\**" />
 		<Assets Remove="$(MSBuildProjectDirectory)\Properties\launchSettings.json" />
 		<Assets Remove="**\*.csproj" />
