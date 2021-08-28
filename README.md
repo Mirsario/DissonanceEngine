@@ -1,9 +1,7 @@
 # Dissonance Engine
 A Work-In-Progress ECS (Entity-Component-System) based cross-platform game engine, written in pure C#.
-
-## State
-
-Not currently recommended for any serious use, at least in 3D.
+The engine is still in early stages (especially due to the recent rewrite to ECS), but anyone is welcome to try it out and provide feedback.
+Just note that documentation is nearly non-existent.
 
 
 ## Used libraries
