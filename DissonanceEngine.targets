@@ -5,12 +5,19 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<Assets Include="$(AssetsPath)\**" Exclude="@(Compile)" />
+		<ProjectReference Include="$(EnginePath)\Src\DissonanceEngine.csproj" />
+		<ProjectReference Include="$(EnginePath)\Framework\Src\DissonanceFramework.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Assets Include="$(AssetsPath)\**" />
 
-		<Assets Remove="$(MSBuildProjectDirectory)\obj\**" />
+		<Assets Remove="**\bin\**" />
+		<Assets Remove="**\obj\**" />
 		<Assets Remove="$(TargetDir)\**" />
-		<Assets Remove="$(MSBuildProjectDirectory)\.vs\**" />
-		<Assets Remove="$(MSBuildProjectDirectory)\Properties\launchSettings.json" />
+		<Assets Remove="$(AssetsPath)\.vs\**" />
+		<Assets Remove="$(AssetsPath)\Properties\launchSettings.json" />
+		<Assets Remove="**\*.cs" />
 		<Assets Remove="**\*.csproj" />
 	</ItemGroup>
 	
