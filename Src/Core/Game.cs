@@ -12,12 +12,6 @@ namespace Dissonance.Engine
 	//TODO: Add proper toggling between fullscreen, windowed fullscreen and normal windowed modes
 	public partial class Game : IDisposable
 	{
-		//Debug
-		private const bool BigScreen = true;
-
-		internal const int DefaultWidth = BigScreen ? 1600 : 960; //1600;
-		internal const int DefaultHeight = BigScreen ? 900 : 540; //960;
-
 		private static volatile Game instance;
 
 		public static bool HasFocus { get; internal set; } = true;
