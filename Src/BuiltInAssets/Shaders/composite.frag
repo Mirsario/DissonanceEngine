@@ -9,7 +9,7 @@ uniform vec3 ambientColor;
 
 in vec2 screenPos;
 
-out vec4 oColor;
+layout(location = 0) out vec4 oColor;
 
 void main()
 {

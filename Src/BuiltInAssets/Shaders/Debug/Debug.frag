@@ -1,7 +1,8 @@
 #version 330
 
 in vec4 vColor;
-out vec4 oColor;
+
+layout(location = 0) out vec4 oColor;
 
 void main (void)  
 {

@@ -14,7 +14,7 @@
 	in vec4 vColor;
 #endif
 
-out vec4 oDiffuse;
+layout(location = 0) out vec4 oDiffuse;
 
 void main (void)  
 {

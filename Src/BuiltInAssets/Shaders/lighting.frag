@@ -16,8 +16,8 @@ uniform vec3 cameraPosition;
 	uniform vec3 lightDirection;
 #endif
 
-out vec3 oLightingDiffuse;
-out vec3 oLightingSpecular;
+layout(location = 0) out vec3 oLightingDiffuse;
+layout(location = 1) out vec3 oLightingSpecular;
 
 void main()
 {
