@@ -1,6 +1,6 @@
 #version 330
 
-out vec4 oDiffuse;
+layout(location = 0) out vec4 oDiffuse;
 
 void main (void)
 {

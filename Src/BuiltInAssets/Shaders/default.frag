@@ -34,11 +34,11 @@ in vec3 worldPos;
 	in vec3 N;
 #endif
 
-out vec4 oDiffuse;
-out vec3 oNormal;
-out vec3 oPosition;
-out vec3 oEmission;
-out float oSpecular;
+layout(location = 0) out vec4 oDiffuse;
+layout(location = 1) out vec3 oNormal;
+layout(location = 2) out vec3 oPosition;
+layout(location = 3) out vec3 oEmission;
+layout(location = 4) out float oSpecular;
 
 void main(void)
 {
