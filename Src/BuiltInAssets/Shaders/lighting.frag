@@ -16,8 +16,8 @@ uniform vec3 cameraPosition;
 	uniform vec3 lightDirection;
 #endif
 
-out vec3 oDiffuse;
-out vec3 oSpecular;
+out vec3 oLightingDiffuse;
+out vec3 oLightingSpecular;
 
 void main()
 {
@@ -44,6 +44,7 @@ void main()
 	#endif
 	
 	float diffuse;
+	float specularIntensity;
 	
 	if(normal.x == 0.0 && normal.y == 0.0 && normal.z == 0.0) {
 		#ifdef DIRECTIONAL
@@ -51,6 +52,8 @@ void main()
 		#else
 			diffuse = clamp(1.0 - (distance / lightRange), 0.0, 1.0);
 		#endif
+		
+		specularIntensity = 0.0;
 	} else {
 		diffuse = clamp(dot(normal, -lightDir), 0f, 1f);
 		
@@ -58,20 +61,20 @@ void main()
 			diffuse *= clamp(1f - (distance / lightRange), 0f, 1f);
 		#endif
 		
-		float specularIntensity = texture(specularBuffer, screenPos).r;
+		specularIntensity = texture(specularBuffer, screenPos).r;
 
 		if(specularIntensity > 0.0f) {
 			vec3 eyeDirection = normalize(cameraPosition - surfacePosition);
 			vec3 reflection = reflect(lightDir, normal);
-			float specular = pow(max(dot(eyeDirection, reflection), 0f), 16f);
+			
+			specularIntensity *= pow(max(dot(eyeDirection, reflection), 0f), 16f);
 			
 			#ifdef POINT
-				specular /= distance;
+				specularIntensity /= distance;
 			#endif
-			
-			oSpecular = clamp(lightColor * specular * specularIntensity * lightIntensity, 0f, 1f);
 		}
 	}
 
-	oDiffuse = lightColor * diffuse * lightIntensity;
+	oLightingDiffuse = lightColor * diffuse * lightIntensity;
+	oLightingSpecular = clamp(lightColor * specularIntensity * lightIntensity, 0f, 1f);
 }
