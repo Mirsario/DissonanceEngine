@@ -25,6 +25,8 @@
 		<ItemGroup>
 			<NativeFiles Include="$(EnginePath)\References\Native\**" />
 		</ItemGroup>
+		
+		<Message Text="Copying natives from '$(EnginePath)\References\Native' to '$(TargetDir)\Libraries\Native'" Importance="High" />
 	
 		<Copy SourceFiles="@(NativeFiles)" DestinationFolder="$(TargetDir)\Libraries\Native\%(RecursiveDir)" SkipUnchangedFiles="False" />
 	</Target>
@@ -33,6 +35,8 @@
 		<PropertyGroup>
 			<TargetAssetsPath>$(TargetDir)\Assets</TargetAssetsPath>
 		</PropertyGroup>
+		
+		<Message Text="Copying assets from '$(AssetsPath)' to '$(TargetAssetsPath)'" Importance="High"/>
 		
 		<RemoveDir Directories="$(TargetDir)\Assets" />
 		<MakeDir Directories="$(TargetDir)\Assets" />
