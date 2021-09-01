@@ -3,7 +3,6 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	//TODO: It's currently quite impossible to make format return, for example, an array of meshes.
 	public abstract class AssetManager
 	{
 		public virtual string[] Extensions => throw new NotImplementedException();
