@@ -6,8 +6,6 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	//TODO: Add submeshes to Mesh.cs
-	//TODO: Add some way to sort objects in a way that'd let the engine skip BoxInFrustum checks for objects which are in non-visible chunks.
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Resources), typeof(ComponentManager))]
 	public sealed partial class Rendering : EngineModule
