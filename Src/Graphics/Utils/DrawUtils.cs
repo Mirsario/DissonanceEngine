@@ -10,6 +10,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			PrimitiveMeshes.ScreenQuad.Render();
 		}
+
 		public static void DrawQuadUv0(Vector4 vertices, Vector4 uv0)
 		{
 			bufferMesh.Vertices[0] = new Vector3(vertices.x, vertices.y, 0f);

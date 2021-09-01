@@ -12,7 +12,7 @@ namespace Dissonance.Engine.IO
 		[JsonObject]
 		private class JsonShaderProgram
 		{
-			//Shaders
+			// Shaders
 			[JsonRequired]
 			public string vertexShader;
 
@@ -21,13 +21,13 @@ namespace Dissonance.Engine.IO
 
 			public string geometryShader;
 			public string[] shaderDefines;
-			//Parameters
+			// Parameters
 			public int queue;
 			public CullMode cullMode = CullMode.Front;
 			public PolygonMode polygonMode = PolygonMode.Fill;
 			public BlendingFactor blendFactorSrc = BlendingFactor.One;
 			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
-			//Uniforms
+			// Uniforms
 			public Dictionary<string, float> floats;
 			public Dictionary<string, float[]> vectors;
 			public Dictionary<string, string> textures;

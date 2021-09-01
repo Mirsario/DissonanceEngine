@@ -53,7 +53,7 @@ namespace Dissonance.Engine.Graphics
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 
@@ -64,13 +64,17 @@ namespace Dissonance.Engine.Graphics
 
 			Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 		}
-		public void AttachRenderTextures(params RenderTexture[] textures) => AttachRenderTextures((IEnumerable<RenderTexture>)textures);
+
+		public void AttachRenderTextures(params RenderTexture[] textures)
+			=> AttachRenderTextures((IEnumerable<RenderTexture>)textures);
+
 		public void AttachRenderTextures(IEnumerable<RenderTexture> textures)
 		{
-			foreach(var texture in textures) {
+			foreach (var texture in textures) {
 				AttachRenderTexture(texture);
 			}
 		}
+
 		public void AttachRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
 		{
 			Bind(this);
@@ -85,14 +89,14 @@ namespace Dissonance.Engine.Graphics
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 		}
 
 		public void DetachRenderTexture(RenderTexture texture)
 		{
-			if(!textureToAttachment.TryGetValue(texture, out var attachment)) {
+			if (!textureToAttachment.TryGetValue(texture, out var attachment)) {
 				return;
 			}
 
@@ -105,10 +109,10 @@ namespace Dissonance.Engine.Graphics
 
 			var drawBuffersEnum = (DrawBuffersEnum)attachment;
 
-			if(Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
 				int index = Array.IndexOf(drawBuffers, drawBuffersEnum);
 
-				if(index >= 0) {
+				if (index >= 0) {
 					ArrayUtils.Remove(ref drawBuffers, index);
 				}
 			}
@@ -120,8 +124,8 @@ namespace Dissonance.Engine.Graphics
 
 		public void PrepareAttachments()
 		{
-			if(renderTextures != null) {
-				for(int i = 0; i < renderTextures.Count; i++) {
+			if (renderTextures != null) {
+				for (int i = 0; i < renderTextures.Count; i++) {
 					renderTextures[i].UpdateSize();
 				}
 			}
@@ -133,12 +137,14 @@ namespace Dissonance.Engine.Graphics
 
 			return this;
 		}
+
 		public Framebuffer WithRenderTextures(params RenderTexture[] textures)
 		{
 			AttachRenderTextures(textures);
 
 			return this;
 		}
+
 		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
 		{
 			AttachRenderbuffer(renderbuffer, attachmentType);
@@ -153,6 +159,8 @@ namespace Dissonance.Engine.Graphics
 			renderTextures = null;
 			renderbuffers = null;
 			drawBuffers = null;
+
+			GC.SuppressFinalize(this);
 		}
 
 		public static Framebuffer Create(string name, Action<Framebuffer> initializer = null)
@@ -163,21 +171,23 @@ namespace Dissonance.Engine.Graphics
 
 			return fb;
 		}
+
 		public static void Bind(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
 			fb ??= DefaultFramebuffer;
 
 			GL.BindFramebuffer(target, fb?.Id ?? 0);
 
-			if(target == FramebufferTarget.Framebuffer) {
+			if (target == FramebufferTarget.Framebuffer) {
 				ActiveBuffer = fb;
 			}
 		}
+
 		public static void BindWithDrawBuffers(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
 		{
 			Bind(fb, target);
 
-			if(fb != null) {
+			if (fb != null) {
 				GL.DrawBuffers(fb.drawBuffers.Length, fb.drawBuffers);
 			}
 		}

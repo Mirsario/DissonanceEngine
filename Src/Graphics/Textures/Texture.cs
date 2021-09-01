@@ -13,12 +13,11 @@ namespace Dissonance.Engine.Graphics
 		public static FilterMode DefaultFilterMode { get; set; } = FilterMode.Trilinear;
 		public static TextureWrapMode DefaultWrapMode { get; set; } = TextureWrapMode.Repeat;
 
-		public string Name { get; set; } = string.Empty;
-
 		protected FilterMode filterMode;
 		protected TextureWrapMode wrapMode;
 		protected bool useMipmaps;
 
+		public string Name { get; set; } = string.Empty;
 		public uint Id { get; protected set; }
 		public int Width { get; protected set; }
 		public int Height { get; protected set; }
@@ -26,15 +25,16 @@ namespace Dissonance.Engine.Graphics
 		public PixelFormat PixelFormat { get; protected set; }
 		public PixelInternalFormat PixelInternalFormat { get; protected set; }
 
-		public Vector2Int Size => new Vector2Int(Width, Height);
+		public Vector2Int Size => new(Width, Height);
 
 		protected Texture() { }
 
 		public Texture(string name, int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
 			: this(width, height, filterMode, wrapMode, useMipmaps, format)
 		{
-			this.Name = name;
+			Name = name;
 		}
+
 		public Texture(int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat format = TextureFormat.RGBA8)
 		{
 			Id = GL.GenTexture();
@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 
 			var pixels = new Pixel[length];
 
-			for(int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) {
 				pixels[i] = fillColor;
 			}
 
@@ -65,9 +65,13 @@ namespace Dissonance.Engine.Graphics
 			Height = height;
 		}
 
-		public override void Dispose() => GL.DeleteTexture(Id);
+		public override void Dispose()
+		{
+			GL.DeleteTexture(Id);
+			GC.SuppressFinalize(this);
+		}
 
-		public T[,] GetPixels<T>() where T : unmanaged
+		public unsafe T[,] GetPixels<T>() where T : unmanaged
 		{
 			var pixels = new T[Width, Height];
 
@@ -75,10 +79,8 @@ namespace Dissonance.Engine.Graphics
 			GL.BindTexture(TextureTarget.Texture2D, Id);
 
 			//TODO: Ensure that this works.
-			unsafe {
-				fixed(T* ptr = &(pixels != null && pixels.Length != 0 ? ref pixels[0, 0] : ref *(T*)null)) {
-					GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat, PixelType, (IntPtr)ptr);
-				}
+			fixed(T* ptr = &(pixels != null && pixels.Length != 0 ? ref pixels[0, 0] : ref *(T*)null)) {
+				GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat, PixelType, (IntPtr)ptr);
 			}
 
 			GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -131,7 +133,7 @@ namespace Dissonance.Engine.Graphics
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, wrapModeInt);
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, wrapModeInt);
 
-			if(useMipmaps) {
+			if (useMipmaps) {
 				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 			}
 		}

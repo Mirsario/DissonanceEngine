@@ -48,7 +48,7 @@ void main(void)
 	#endif
 	
 	#ifdef SKINNED
-		//Mesh skinning is totally unfinished.
+		// Mesh skinning is totally unfinished.
 		vec4 pos = vec4(0, 0, 0, 0);
 		mat4 matrix =
 			boneMatrices[int(boneIndices.x)] * boneWeights.x +

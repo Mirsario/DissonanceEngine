@@ -19,11 +19,11 @@ namespace Dissonance.Engine.Audio
 		{
 			var entitySpan = entities.ReadEntities();
 
-			if(entitySpan.Length == 0) {
+			if (entitySpan.Length == 0) {
 				return;
 			}
 
-			if(entitySpan.Length > 1) {
+			if (entitySpan.Length > 1) {
 				throw new InvalidOperationException($"Only a single {nameof(AudioListener)} is allowed to exist in a world.");
 			}
 
@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Audio
 
 			Vector3 position;
 
-			if(entity.Has<Transform>()) {
+			if (entity.Has<Transform>()) {
 				var transform = entity.Get<Transform>();
 				var up = transform.Up;
 				var lookAt = -transform.Forward;
@@ -47,7 +47,7 @@ namespace Dissonance.Engine.Audio
 			} else {
 				position = Vector3.Zero;
 
-				for(int i = 0; i < OrientationArray.Length; i++) {
+				for (int i = 0; i < OrientationArray.Length; i++) {
 					OrientationArray[i] = 0f;
 				}
 			}

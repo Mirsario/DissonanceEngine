@@ -21,10 +21,10 @@ namespace Dissonance.Engine
 
 			ready = true;
 
-			for(int i = 0; i < Assemblies.Count; i++) {
+			for (int i = 0; i < Assemblies.Count; i++) {
 				var weakRef = Assemblies[i];
 
-				if(!weakRef.TryGetTarget(out var assembly)) {
+				if (!weakRef.TryGetTarget(out var assembly)) {
 					Assemblies.RemoveAt(i--);
 					continue;
 				}
@@ -35,7 +35,7 @@ namespace Dissonance.Engine
 
 		public static void RegisterAssembly(Assembly assembly)
 		{
-			if(ready) {
+			if (ready) {
 				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
 			} else {
 				Assemblies.Add(new WeakReference<Assembly>(assembly));

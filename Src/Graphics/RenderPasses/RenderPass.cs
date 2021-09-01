@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 		public bool Enabled { get; set; } = true;
 		public Framebuffer Framebuffer { get; set; }
 		public Renderbuffer[] Renderbuffers { get; set; }
-		public Shader PassShader { get; set; } //Remove this?
+		public Shader PassShader { get; set; } // Remove this?
 
 		public Func<Camera, RectInt> ViewportFunc {
 			get => viewportFunc;
@@ -29,7 +29,7 @@ namespace Dissonance.Engine.Graphics
 		public Shader[] Shaders {
 			get => shaders;
 			set {
-				if(value == null || value.Length == 0) {
+				if (value == null || value.Length == 0) {
 					shaders = null;
 					PassShader = null;
 					return;
@@ -40,7 +40,7 @@ namespace Dissonance.Engine.Graphics
 
 				Array.Copy(value, shaders, length);
 
-				PassShader = length == 0 ? null : value[0]; //Temp?
+				PassShader = length == 0 ? null : value[0]; // Temp?
 			}
 		}
 		public Shader Shader {
@@ -50,13 +50,13 @@ namespace Dissonance.Engine.Graphics
 		public RenderTexture[] PassedTextures {
 			get => passedTextures;
 			set {
-				if(value == null || value.Length == 0) {
+				if (value == null || value.Length == 0) {
 					passedTextures = null;
 					return;
 				}
 
 				int length = value.Length;
-				if(passedTextures == null || passedTextures.Length != length) {
+				if (passedTextures == null || passedTextures.Length != length) {
 					passedTextures = new RenderTexture[length];
 				}
 
@@ -74,15 +74,15 @@ namespace Dissonance.Engine.Graphics
 
 		protected virtual RectInt GetViewport(Camera? camera)
 		{
-			if(camera.HasValue) {
-				if(viewportFunc != null) {
+			if (camera.HasValue) {
+				if (viewportFunc != null) {
 					return viewportFunc(camera.Value);
 				}
 
 				return camera.Value.ViewPixel;
 			}
 
-			if(Framebuffer != null) {
+			if (Framebuffer != null) {
 				return new RectInt(0, 0, Framebuffer.maxTextureWidth, Framebuffer.maxTextureHeight);
 			}
 
@@ -125,8 +125,8 @@ namespace Dissonance.Engine.Graphics
 			fullNameToType = new Dictionary<string, Type>();
 			fullNameToInfo = new Dictionary<string, RenderPassInfoAttribute>();
 
-			foreach(var type in AssemblyCache.EngineTypes) {
-				if(!type.IsAbstract && typeof(RenderPass).IsAssignableFrom(type)) {
+			foreach (var type in AssemblyCache.EngineTypes) {
+				if (!type.IsAbstract && typeof(RenderPass).IsAssignableFrom(type)) {
 					string fullName = type.FullName;
 					fullNameToType[fullName] = type;
 					fullNameToInfo[fullName] = type.GetCustomAttribute<RenderPassInfoAttribute>();

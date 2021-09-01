@@ -47,7 +47,7 @@ namespace Dissonance.Engine
 
 		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
 		{
-			if(instance != null) {
+			if (instance != null) {
 				throw new InvalidOperationException("Cannot run a game while one instance is already running. If you wish to run multiple game instances - use AssemblyLoadContexts to isolate engine & same game assemblies from each other.");
 			}
 
@@ -69,16 +69,16 @@ namespace Dissonance.Engine
 			//TODO: Move this.
 			assetsPath = "Assets" + Path.DirectorySeparatorChar;
 
-			if(args != null) {
+			if (args != null) {
 				string joinedArgs = string.Join(" ", args);
-				var matches = RegexCache.commandArguments.Matches(joinedArgs);
+				var matches = RegexCache.CommandArguments.Matches(joinedArgs);
 				var dict = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
-				foreach(Match match in matches) {
+				foreach (Match match in matches) {
 					dict[match.Groups[1].Value] = match.Groups[2].Value;
 				}
 
-				if(dict.TryGetValue("assetspath", out string path)) {
+				if (dict.TryGetValue("assetspath", out string path)) {
 					assetsPath = path ?? throw new ArgumentException("Expected a directory path after command line argument 'assetspath'.");
 				}
 			}
@@ -94,7 +94,7 @@ namespace Dissonance.Engine
 
 			Init();
 
-			if(!Flags.HasFlag(GameFlags.ManualUpdate)) {
+			if (!Flags.HasFlag(GameFlags.ManualUpdate)) {
 				UpdateLoop();
 				Dispose();
 			}
@@ -104,29 +104,31 @@ namespace Dissonance.Engine
 		{
 			OnDispose();
 
-			if(modules != null) {
-				for(int i = 0; i < modules.Count; i++) {
+			if (modules != null) {
+				for (int i = 0; i < modules.Count; i++) {
 					modules[i]?.Dispose();
 				}
 
 				modules = null;
 			}
 
-			if(instance == this) {
+			if (instance == this) {
 				instance = null;
 			}
+
+			GC.SuppressFinalize(this);
 		}
 
 		public void Update()
 		{
-			if(updateStopwatch == null) {
+			if (updateStopwatch == null) {
 				updateStopwatch = new Stopwatch();
 
 				updateStopwatch.Start();
 			}
 
-			while(numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
-				if(!NoWindow) {
+			while (numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
+				if (!NoWindow) {
 					GLFW.PollEvents();
 				}
 
@@ -135,7 +137,7 @@ namespace Dissonance.Engine
 				numFixedUpdates++;
 			}
 
-			if(NoGraphics) {
+			if (NoGraphics) {
 				Thread.Sleep(1);
 				return;
 			}
@@ -144,12 +146,12 @@ namespace Dissonance.Engine
 
 			RenderUpdateInternal();
 
-			if(Time.TargetRenderFrequency > 0) {
+			if (Time.TargetRenderFrequency > 0) {
 				double targetMs = 1000.0 / Time.TargetRenderFrequency;
 
 				TimeSpan timeToSleep = TimeSpan.FromMilliseconds(targetMs) - renderStopwatch.Elapsed;
 
-				if(timeToSleep > TimeSpan.Zero) {
+				if (timeToSleep > TimeSpan.Zero) {
 					Thread.Sleep(timeToSleep);
 				}
 			}
@@ -163,7 +165,7 @@ namespace Dissonance.Engine
 
 			RenderPass.Init();
 
-			if(!Directory.Exists(assetsPath)) {
+			if (!Directory.Exists(assetsPath)) {
 				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
 			}
 
@@ -187,7 +189,7 @@ namespace Dissonance.Engine
 
 			/*bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
-			if(Screen.lockCursor && isFocused) {
+			if (Screen.lockCursor && isFocused) {
 				var center = Screen.Center;
 
 				GLFW.SetCursorPos(window,center.x,center.y);
@@ -218,7 +220,7 @@ namespace Dissonance.Engine
 		{
 			var windowing = GetModule<Windowing>(false);
 
-			while(!shouldQuit && (NoWindow || !windowing.ShouldClose)) {
+			while (!shouldQuit && (NoWindow || !windowing.ShouldClose)) {
 				Update();
 			}
 		}
@@ -227,7 +229,7 @@ namespace Dissonance.Engine
 		{
 			var instance = Instance;
 
-			if(instance.shouldQuit) {
+			if (instance.shouldQuit) {
 				return;
 			}
 
@@ -238,7 +240,7 @@ namespace Dissonance.Engine
 
 		private static void OnFocusChange(IntPtr _, int isFocused) => HasFocus = isFocused != 0;
 
-		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) //Move this somewhere
+		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) // Move this somewhere
 		{
 #if WINDOWS
 			var exception = (Exception)e.ExceptionObject;

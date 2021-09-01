@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 
 			passShader.SetupCommonUniforms();
 
-			foreach(var camera in ComponentManager.EnumerateComponents<Camera>()) {
+			foreach (var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewport = GetViewport(camera);
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
@@ -28,8 +28,8 @@ namespace Dissonance.Engine.Graphics
 
 				passShader.SetupCameraUniforms(camera, cameraPos);
 
-				if(passedTextures != null) {
-					for(int j = 0; j < passedTextures.Length; j++) {
+				if (passedTextures != null) {
+					for (int j = 0; j < passedTextures.Length; j++) {
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, passedTextures[j].Id);
 
@@ -42,7 +42,7 @@ namespace Dissonance.Engine.Graphics
 				int uniformLightIntensity = GL.GetUniformLocation(passShader.Id, "lightIntensity");
 				int uniformLightColor = GL.GetUniformLocation(passShader.Id, "lightColor");
 
-				foreach(var light in ComponentManager.EnumerateComponents<Light2D>()) {
+				foreach (var light in ComponentManager.EnumerateComponents<Light2D>()) {
 					var lightPos = light.Transform.Position;
 					var world = Matrix4x4.CreateScale(light.range + 1f) * Matrix4x4.CreateTranslation(lightPos);
 

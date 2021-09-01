@@ -20,7 +20,7 @@ namespace Dissonance.Engine
 
 		protected ref T GlobalGet<T>() where T : struct
 		{
-			if(!TypeData.ReadTypes.Contains(typeof(T))) {
+			if (!TypeData.ReadTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared global component - '{typeof(T).Name}'.");
 			}
 
@@ -29,7 +29,7 @@ namespace Dissonance.Engine
 
 		protected void GlobalSet<T>(T value) where T : struct
 		{
-			if(!TypeData.WriteTypes.Contains(typeof(T))) {
+			if (!TypeData.WriteTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to write an undeclared global component - '{typeof(T).Name}'.");
 			}
 
@@ -41,7 +41,7 @@ namespace Dissonance.Engine
 
 		protected ref T WorldGet<T>() where T : struct
 		{
-			if(!TypeData.ReadTypes.Contains(typeof(T))) {
+			if (!TypeData.ReadTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared world component - '{typeof(T).Name}'.");
 			}
 
@@ -50,7 +50,7 @@ namespace Dissonance.Engine
 
 		protected void WorldSet<T>(T value) where T : struct
 		{
-			if(!TypeData.WriteTypes.Contains(typeof(T))) {
+			if (!TypeData.WriteTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to write an undeclared global component - '{typeof(T).Name}'.");
 			}
 
@@ -62,7 +62,7 @@ namespace Dissonance.Engine
 
 		protected void SendMessage<T>(in T message) where T : struct
 		{
-			if(!TypeData.SendTypes.Contains(typeof(T))) {
+			if (!TypeData.SendTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to send an undeclared message - '{typeof(T).Name}'.");
 			}
 
@@ -71,7 +71,7 @@ namespace Dissonance.Engine
 
 		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct
 		{
-			if(!TypeData.ReceiveTypes.Contains(typeof(T))) {
+			if (!TypeData.ReceiveTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared message - '{typeof(T).Name}'.");
 			}
 

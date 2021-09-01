@@ -32,8 +32,8 @@ namespace Dissonance.Engine.Graphics
 
 		private static void ParseJsonFramebuffers(Json jsonSettings, List<Framebuffer> framebuffers)
 		{
-			//Framebuffers
-			foreach(var fbPair in jsonSettings.framebuffers) {
+			// Framebuffers
+			foreach (var fbPair in jsonSettings.framebuffers) {
 				string fbName = fbPair.Key;
 				var fb = fbPair.Value;
 
@@ -41,16 +41,16 @@ namespace Dissonance.Engine.Graphics
 
 				Framebuffer.Bind(framebuffer);
 
-				foreach(var texPair in fb.textures) {
-					//bool noWrite = false;
+				foreach (var texPair in fb.textures) {
+					// bool noWrite = false;
 					string texName = texPair.Key;
 					var tex = texPair.Value;
 
-					switch(tex.type) {
+					switch (tex.type) {
 						case TextureAttachmentType.Color:
 							break;
 						case TextureAttachmentType.Depth:
-							//noWrite = true;
+							// noWrite = true;
 							break;
 						case TextureAttachmentType.DepthStencil: {
 								framebuffer.AttachRenderbuffer(new Renderbuffer(texName, RenderbufferStorage.Depth24Stencil8), FramebufferAttachment.DepthStencilAttachment);
@@ -68,6 +68,7 @@ namespace Dissonance.Engine.Graphics
 				framebuffers.Add(framebuffer);
 			}
 		}
+
 		private static void ParseJsonRenderPasses(Json jsonSettings, List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			//TODO: Ignore case
@@ -75,25 +76,25 @@ namespace Dissonance.Engine.Graphics
 			Framebuffer FindFramebuffer(string name, bool throwException = true)
 			{
 				Framebuffer framebuffer = null;
-				for(int i = 0; i < framebuffers.Count; i++) {
-					if(framebuffers[i].Name == name) {
+				for (int i = 0; i < framebuffers.Count; i++) {
+					if (framebuffers[i].Name == name) {
 						framebuffer = framebuffers[i];
 					}
 				}
 
-				if(framebuffer == null && throwException) {
+				if (framebuffer == null && throwException) {
 					throw new Exception("Couldn't find framebuffer named " + name);
 				}
 
 				return framebuffer;
 			}
 
-			//RenderPasses
-			foreach(var passPair in jsonSettings.pipeline) {
+			// RenderPasses
+			foreach (var passPair in jsonSettings.pipeline) {
 				string passName = passPair.Key;
 				var pass = passPair.Value;
 
-				if(!RenderPass.fullNameToType.TryGetValue(pass.type, out Type passType)) {
+				if (!RenderPass.fullNameToType.TryGetValue(pass.type, out Type passType)) {
 					throw new Exception($"Couldn't find type {pass.type}, or it does not derive from RenderPass.");
 				}
 
@@ -101,40 +102,40 @@ namespace Dissonance.Engine.Graphics
 				var textureList = new List<RenderTexture>();
 				var bufferList = new List<Renderbuffer>();
 
-				foreach(var texPair in pass.passedTextures) {
+				foreach (var texPair in pass.passedTextures) {
 					string fbName = texPair.Key;
 					var texArray = texPair.Value;
 					var texFB = FindFramebuffer(fbName);
 
-					for(int i = 0; i < texArray.Length; i++) {
+					for (int i = 0; i < texArray.Length; i++) {
 						string texName = texArray[i];
 						bool callContinue = false;
 
-						for(int j = 0; j < texFB.renderTextures.Count; j++) {
+						for (int j = 0; j < texFB.renderTextures.Count; j++) {
 							var fb = texFB.renderTextures[j];
 
-							if(fb.Name == texName) {
+							if (fb.Name == texName) {
 								textureList.Add(fb);
 								callContinue = true;
 								break;
 							}
 						}
 
-						if(callContinue) {
+						if (callContinue) {
 							continue;
 						}
 
-						for(int j = 0; j < texFB.renderbuffers.Length; j++) {
+						for (int j = 0; j < texFB.renderbuffers.Length; j++) {
 							var rb = texFB.renderbuffers[j];
 
-							if(rb.Name == texName) {
+							if (rb.Name == texName) {
 								bufferList.Add(rb);
 								callContinue = true;
 								break;
 							}
 						}
 
-						if(callContinue) {
+						if (callContinue) {
 							continue;
 						}
 
@@ -148,43 +149,43 @@ namespace Dissonance.Engine.Graphics
 				Shader passShader = null;
 				Shader[] passShaders = null;
 
-				if(shadersArr == null) {
-					//Single shader
-					if(pass.shaders != null) {
+				if (shadersArr == null) {
+					// Single shader
+					if (pass.shaders != null) {
 						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shaders'' field -- only ''shader'' field is allowed.");
 					}
 
 					string shaderName = pass.shader;
 					passShader = shaderName == null ? null : Resources.Find<Shader>(shaderName);
 
-					if(passShader == null) {
-						if(shaderName != null) {
+					if (passShader == null) {
+						if (shaderName != null) {
 							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
-						if(shaderRequired) {
+						if (shaderRequired) {
 							throw new GraphicsException("Render pass type always requires a valid shader, provided in a ''shader'' field.");
 						}
 					}
 				} else {
-					//Multiple shaders
-					if(pass.shader != null) {
+					// Multiple shaders
+					if (pass.shader != null) {
 						throw new GraphicsException($"Render pass type ''{pass.type}'' cannot have a ''shader'' field--only ''shaders'' field is allowed.");
 					}
 
 					passShaders = new Shader[shadersArr.Length];
 
-					foreach(var pair in pass.shaders) {
+					foreach (var pair in pass.shaders) {
 						int index = Array.IndexOf(shadersArr, pair.Key);
-						if(index < 0) {
+						if (index < 0) {
 							throw new GraphicsException($"Unknown shader type ''{pair.Key}'' for render pass {passName} ({pass.type}).");
 						}
 
 						string shaderName = pair.Value;
-						if(shaderName == null) {
+						if (shaderName == null) {
 							continue;
 						}
 
-						if((passShaders[index] = Resources.Find<Shader>(shaderName)) == null && shaderName != null) {
+						if ((passShaders[index] = Resources.Find<Shader>(shaderName)) == null && shaderName != null) {
 							throw new GraphicsException($"Couldn't find shader named ''{shaderName}''.");
 						}
 					}
@@ -195,9 +196,9 @@ namespace Dissonance.Engine.Graphics
 					p.PassedTextures = textureList.ToArray();
 					p.Renderbuffers = bufferList.ToArray();
 
-					if(passShaders != null) {
+					if (passShaders != null) {
 						p.Shaders = passShaders;
-					} else if(passShader != null) {
+					} else if (passShader != null) {
 						p.Shader = passShader;
 					}
 				}));

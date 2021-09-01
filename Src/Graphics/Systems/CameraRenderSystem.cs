@@ -15,7 +15,7 @@
 		{
 			ref var renderViewData = ref GlobalGet<RenderViewData>();
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				var camera = entity.Get<Camera>();
 				var transform = entity.Get<Transform>();
 

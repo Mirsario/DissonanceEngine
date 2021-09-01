@@ -26,8 +26,8 @@ namespace Dissonance.Engine
 		{
 			bool result = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && Predicate(entity);
 
-			if(Entities.Contains(entity) != result) {
-				if(result) {
+			if (Entities.Contains(entity) != result) {
+				if (result) {
 					Entities.Add(entity);
 				} else {
 					Entities.Remove(entity);

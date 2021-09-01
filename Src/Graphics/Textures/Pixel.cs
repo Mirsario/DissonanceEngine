@@ -39,7 +39,7 @@ namespace Dissonance.Engine.Graphics
 				};
 			}
 			set {
-				switch(index) {
+				switch (index) {
 					case 0:
 						r = value;
 						return;
@@ -65,6 +65,7 @@ namespace Dissonance.Engine.Graphics
 			this.b = b;
 			this.a = a;
 		}
+
 		public Pixel(float r, float g, float b, float a)
 		{
 			this.r = (byte)(r / 255);
@@ -73,11 +74,15 @@ namespace Dissonance.Engine.Graphics
 			this.a = (byte)(a / 255);
 		}
 
-		public override string ToString() => $"[{R}, {G}, {B}, {A}]";
+		public override string ToString()
+			=> $"[{R}, {G}, {B}, {A}]";
 
 		public static implicit operator Color(Pixel value) => Color.FromArgb(value.a, value.r, value.g, value.b);
-		public static implicit operator Pixel(Color value) => new Pixel(value.R, value.G, value.B, value.A);
-		public static implicit operator Vector4(Pixel value) => new Vector4(value.R, value.G, value.B, value.A);
-		public static implicit operator Pixel(Vector4 value) => new Pixel(value.x, value.y, value.z, value.w);
+
+		public static implicit operator Pixel(Color value) => new(value.R, value.G, value.B, value.A);
+
+		public static implicit operator Vector4(Pixel value) => new(value.R, value.G, value.B, value.A);
+
+		public static implicit operator Pixel(Vector4 value) => new(value.x, value.y, value.z, value.w);
 	}
 }

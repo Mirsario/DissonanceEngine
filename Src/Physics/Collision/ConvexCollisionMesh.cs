@@ -3,7 +3,7 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.Physics
 {
-	//Convex shapes can be used for anything
+	// Convex shapes can be used for anything
 	public class ConvexCollisionMesh : CollisionMesh
 	{
 		public override void SetupFromMesh(Mesh mesh)
@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Physics
 
 			var vertices = mesh.Vertices;
 
-			while(i < mesh.Indices.Length) {
+			while (i < mesh.Indices.Length) {
 				triMesh.AddTriangle(
 					vertices[mesh.Indices[i++]],
 					vertices[mesh.Indices[i++]],

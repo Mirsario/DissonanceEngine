@@ -33,7 +33,7 @@ namespace Dissonance.Engine
 
 		public static bool TryGetWorld(int id, out World result)
 		{
-			if(id >= 0 && id < Worlds.Count) {
+			if (id >= 0 && id < Worlds.Count) {
 				result = Worlds[id];
 
 				return result != null;

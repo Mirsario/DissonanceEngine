@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Utilities
 			var sorted = new List<T>();
 			var visited = new HashSet<T>();
 
-			foreach(var item in source) {
+			foreach (var item in source) {
 				DependencySortRecursion(item, visited, sorted, dependencies, throwOnRecursion);
 			}
 
@@ -19,8 +19,8 @@ namespace Dissonance.Engine.Utilities
 
 		private static void DependencySortRecursion<T>(T item, HashSet<T> visited, List<T> sorted, Func<T, IEnumerable<T>> dependencies, bool throwOnRecursion)
 		{
-			if(visited.Contains(item)) {
-				if(throwOnRecursion && !sorted.Contains(item)) {
+			if (visited.Contains(item)) {
+				if (throwOnRecursion && !sorted.Contains(item)) {
 					throw new Exception($"Recursive dependency found in type '{item.GetType().Name}'");
 				}
 
@@ -31,9 +31,9 @@ namespace Dissonance.Engine.Utilities
 
 			var dependenciesList = dependencies(item);
 
-			if(dependenciesList != null) {
-				foreach(var dep in dependenciesList) {
-					if(dep != null) {
+			if (dependenciesList != null) {
+				foreach (var dep in dependenciesList) {
+					if (dep != null) {
 						DependencySortRecursion(dep, visited, sorted, dependencies, throwOnRecursion);
 					}
 				}

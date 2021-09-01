@@ -16,22 +16,23 @@ namespace Dissonance.Engine
 		{
 			modules.Add(module);
 
-			foreach(var type in ReflectionUtils.EnumerateBaseTypes(module.GetType(), true, typeof(EngineModule))) {
-				if(!modulesByType.TryGetValue(type, out var list)) {
+			foreach (var type in ReflectionUtils.EnumerateBaseTypes(module.GetType(), true, typeof(EngineModule))) {
+				if (!modulesByType.TryGetValue(type, out var list)) {
 					modulesByType[type] = list = new List<EngineModule>();
 				}
 
 				list.Add(module);
 			}
 
-			if(modulesReady) {
+			if (modulesReady) {
 				RefreshModules();
 			}
 		}
+
 		public bool TryGetModule<T>(out T result) where T : EngineModule
 		{
-			for(int i = 0; i < modules.Count; i++) {
-				if(modules[i] is T t) {
+			for (int i = 0; i < modules.Count; i++) {
+				if (modules[i] is T t) {
 					result = t;
 
 					return true;
@@ -42,9 +43,10 @@ namespace Dissonance.Engine
 
 			return false;
 		}
+
 		public bool TryGetModule(Type type, out EngineModule result)
 		{
-			if(modulesByType == null || !modulesByType.TryGetValue(type, out var list)) {
+			if (modulesByType == null || !modulesByType.TryGetValue(type, out var list)) {
 				result = default;
 
 				return false;
@@ -54,25 +56,27 @@ namespace Dissonance.Engine
 
 			return true;
 		}
+
 		public T GetModule<T>(bool throwOnFailure = true) where T : EngineModule
 		{
-			if(TryGetModule<T>(out var result)) {
+			if (TryGetModule<T>(out var result)) {
 				return result;
 			}
 
-			if(!throwOnFailure) {
+			if (!throwOnFailure) {
 				return null;
 			}
 
 			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{typeof(T).Name}' engine module.");
 		}
+
 		public EngineModule GetModule(Type type, bool throwOnFailure = true)
 		{
-			if(TryGetModule(type, out var result)) {
+			if (TryGetModule(type, out var result)) {
 				return result;
 			}
 
-			if(!throwOnFailure) {
+			if (!throwOnFailure) {
 				return null;
 			}
 
@@ -82,8 +86,8 @@ namespace Dissonance.Engine
 		private void InitializeModules()
 		{
 			lock(AssemblyCache.EngineTypes) {
-				foreach(var type in AssemblyCache.EngineTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
-					if(ModuleAutoloadAttribute.TypeNeedsAutoloading(type)) {
+				foreach (var type in AssemblyCache.EngineTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
+					if (ModuleAutoloadAttribute.TypeNeedsAutoloading(type)) {
 						AddModule((EngineModule)Activator.CreateInstance(type));
 					}
 				}
@@ -93,16 +97,18 @@ namespace Dissonance.Engine
 
 			modulesReady = true;
 		}
+
 		private void RefreshModules()
 		{
 			SortModules();
 			RebuildModuleHooks();
 		}
+
 		private void SortModules()
 		{
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
 				=> module.Dependencies?.Select(dependency => {
-					if(!TryGetModule(dependency.type, out var result) && !dependency.optional) {
+					if (!TryGetModule(dependency.type, out var result) && !dependency.optional) {
 						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{module.GetType().Name}'.");
 					}
 
@@ -111,10 +117,11 @@ namespace Dissonance.Engine
 
 			modules = modules.DependencySort(GetDirectDependencies, true).ToList();
 
-			for(int i = 0; i < modules.Count; i++) {
+			for (int i = 0; i < modules.Count; i++) {
 				modules[i].DependencyIndex = i;
 			}
 		}
+
 		private void RebuildModuleHooks()
 		{
 			static int CustomSorting((EngineModule module, Delegate method, int position) tupleA, (EngineModule module, Delegate method, int position) tupleB)

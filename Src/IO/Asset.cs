@@ -13,10 +13,10 @@ namespace Dissonance.Engine.IO
 		{
 			string name = AssetName;
 
-			if(name != null) {
+			if (name != null) {
 				var type = GetType();
 
-				if(!Resources.cacheByName.TryGetValue(type, out var dict)) {
+				if (!Resources.cacheByName.TryGetValue(type, out var dict)) {
 					Resources.cacheByName[type] = dict = new Dictionary<string, object>();
 				}
 

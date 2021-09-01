@@ -42,12 +42,12 @@ layout(location = 4) out float oSpecular;
 
 void main(void)
 {
-	//Color
+	// Color
 	
 	oDiffuse = texture(mainTex, uv);
 	
 	#ifdef ALPHATEST
-		if(oDiffuse.a < cutoff) {
+		if (oDiffuse.a < cutoff) {
 			discard;
 		}
 	#endif
@@ -60,7 +60,7 @@ void main(void)
 		oDiffuse *= color;
 	#endif
 
-	//Normals
+	// Normals
 	
 	#ifdef NORMALMAP
 		oNormal = normalize(TBN * (texture(normalMap, uv).rgb * 2f - 1f)) * 0.5f + 0.5f;
@@ -68,7 +68,7 @@ void main(void)
 		oNormal = N;
 	#endif
 
-	//Emission
+	// Emission
 	
 	#ifdef EMISSIONMAP
 		oEmission = texture(emissionMap, uv).rgb;
@@ -79,7 +79,7 @@ void main(void)
 	#endif
 	
 
-	//Specular
+	// Specular
 	
 	#ifdef SPECULARMAP
 		oSpecular = texture(specularMap, uv).r;
@@ -95,7 +95,7 @@ void main(void)
 		#endif
 	#endif
 
-	//Position
+	// Position
 	
 	oPosition = worldPos;
 }

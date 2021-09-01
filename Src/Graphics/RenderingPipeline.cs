@@ -20,16 +20,18 @@ namespace Dissonance.Engine.Graphics
 		public abstract void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses);
 
 		public virtual void PreRender() { }
+
 		public virtual void PostRender() { }
+
 		public virtual void Dispose()
 		{
-			if(framebuffers != null) {
-				for(int i = 0; i < framebuffers.Length; i++) {
+			if (framebuffers != null) {
+				for (int i = 0; i < framebuffers.Length; i++) {
 					framebuffers[i].Dispose();
 				}
 			}
 
-			for(int i = 0; i < renderPasses.Length; i++) {
+			for (int i = 0; i < renderPasses.Length; i++) {
 				renderPasses[i].Dispose();
 			}
 		}
@@ -45,8 +47,8 @@ namespace Dissonance.Engine.Graphics
 
 			Rendering.CheckGLErrors($"Setting up rendering pipeline {GetType().Name}");
 
-			if(framebuffersList != null) {
-				foreach(var framebuffer in framebuffersList) {
+			if (framebuffersList != null) {
+				foreach (var framebuffer in framebuffersList) {
 					Framebuffer.Bind(framebuffer);
 					Rendering.CheckFramebufferStatus();
 				}
@@ -55,7 +57,7 @@ namespace Dissonance.Engine.Graphics
 			Framebuffers = framebuffersList.ToArray();
 			RenderPasses = renderPassesList.ToArray();
 
-			/*if(renderPasses==null || renderPasses.Length==0) {
+			/*if (renderPasses==null || renderPasses.Length==0) {
 				throw new Exception($"Cannot initialize rendering pipeline {GetType().Name}: Pipeline must have 1 or more rendering passes.");
 			}*/
 		}

@@ -41,17 +41,17 @@ namespace Dissonance.Engine
 
 		public Gradient(float[] positions, T[] values)
 		{
-			if(LerpFunc == null) {
+			if (LerpFunc == null) {
 				throw new NotSupportedException($"Gradient<{typeof(T).Name}>.lerpFunc is not defined.");
 			}
 
-			if(positions.Length != values.Length || positions.Length == 0) {
+			if (positions.Length != values.Length || positions.Length == 0) {
 				throw new ArgumentException("Array lengths must be equal and not be zero.");
 			}
 
 			keys = new GradientKey[positions.Length];
 
-			for(int i = 0; i < keys.Length; i++) {
+			for (int i = 0; i < keys.Length; i++) {
 				keys[i] = new GradientKey(positions[i], values[i]);
 			}
 		}
@@ -61,14 +61,14 @@ namespace Dissonance.Engine
 			GradientKey left = null;
 			GradientKey right = null;
 
-			for(int i = 0; i < keys.Length; i++) {
-				if(left == null || keys[i].time > left.time && keys[i].time <= time) {
+			for (int i = 0; i < keys.Length; i++) {
+				if (left == null || keys[i].time > left.time && keys[i].time <= time) {
 					left = keys[i];
 				}
 			}
 
-			for(int i = keys.Length - 1; i >= 0; i--) {
-				if(right == null || keys[i].time < right.time && keys[i].time >= time) {
+			for (int i = keys.Length - 1; i >= 0; i--) {
+				if (right == null || keys[i].time < right.time && keys[i].time >= time) {
 					right = keys[i];
 				}
 			}

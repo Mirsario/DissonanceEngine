@@ -1,3 +1,4 @@
+using System;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing.Input;
 
@@ -15,11 +16,11 @@ namespace Dissonance.Engine.Input
 
 		private static Windowing windowing;
 
-		//Mouse
+		// Mouse
 		public static Vector2 MouseDelta => PrevInput.mousePosition - CurrentInput.mousePosition;
 		public static Vector2 MousePosition => CurrentInput.mousePosition;
 		public static int MouseWheel => CurrentInput.mouseWheel;
-		//Keyboard
+		// Keyboard
 		public static string InputString => CurrentInput.inputString;
 
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
@@ -40,15 +41,27 @@ namespace Dissonance.Engine.Input
 
 			SingletonInputTrigger.StaticInit();
 		}
-		protected override void PreFixedUpdate() => PreUpdate();
-		protected override void PostFixedUpdate() => PostUpdate();
-		protected override void PreRenderUpdate() => PreUpdate();
-		protected override void PostRenderUpdate() => PostUpdate();
-		protected override void OnDispose() => windowing = null;
+
+		protected override void PreFixedUpdate()
+			=> PreUpdate();
+
+		protected override void PostFixedUpdate()
+			=> PostUpdate();
+
+		protected override void PreRenderUpdate()
+			=> PreUpdate();
+
+		protected override void PostRenderUpdate()
+			=> PostUpdate();
+
+		protected override void OnDispose()
+		{
+			windowing = null;
+		}
 
 		private void PreUpdate()
 		{
-			if(windowing == null) {
+			if (windowing == null) {
 				return;
 			}
 
@@ -58,9 +71,10 @@ namespace Dissonance.Engine.Input
 
 			CheckSpecialCombinations();
 		}
+
 		private void PostUpdate()
 		{
-			if(windowing == null) {
+			if (windowing == null) {
 				return;
 			}
 
@@ -72,11 +86,11 @@ namespace Dissonance.Engine.Input
 
 		private static void CheckSpecialCombinations()
 		{
-			if(GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
+			if (GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
 				Game.Quit();
 			}
 
-			/*if(GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
+			/*if (GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
 				Screen.Fullscreen = !Screen.Fullscreen;
 			}*/
 		}

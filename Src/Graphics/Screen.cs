@@ -10,13 +10,13 @@ namespace Dissonance.Engine.Graphics
 
 		private static CursorState cursorState;
 
-		//Framebuffer
+		// Framebuffer
 		public static int Width { get; private set; }
 		public static int Height { get; private set; }
 		public static Vector2Int Size { get; private set; }
 		public static RectInt Rectangle { get; private set; }
 		public static Vector2 Center { get; private set; }
-		//Window
+		// Window
 		public static int WindowX { get; internal set; }
 		public static int WindowY { get; internal set; }
 		public static int WindowWidth { get; internal set; }
@@ -31,11 +31,11 @@ namespace Dissonance.Engine.Graphics
 				var monitor = GLFW.GetWindowMonitor(Rendering.window);
 				bool isFullscreen = monitor!=IntPtr.Zero;
 
-				if(value!=isFullscreen) {
+				if (value!=isFullscreen) {
 					return;
 				}
 
-				if(value) {
+				if (value) {
 					GLFW.SetWindowMonitor(Rendering.window,GLFW.GetPrimaryMonitor(),0,0,800,600,144);
 				} else {
 					var videoMode = GLFW.GetVideoMode(monitor);
@@ -61,6 +61,7 @@ namespace Dissonance.Engine.Graphics
 
 			UpdateValues();
 		}
+
 		protected override void OnDispose()
 		{
 			windowing = null;
@@ -68,11 +69,11 @@ namespace Dissonance.Engine.Graphics
 
 		private void UpdateValues()
 		{
-			if(windowing == null) {
+			if (windowing == null) {
 				return;
 			}
 
-			//Framebuffer
+			// Framebuffer
 			Width = windowing.FramebufferSize.x;
 			Height = windowing.FramebufferSize.y;
 
@@ -80,7 +81,7 @@ namespace Dissonance.Engine.Graphics
 			Center = Size * 0.5f;
 			Rectangle = new RectInt(0, 0, Width, Height);
 
-			//Window
+			// Window
 			WindowX = windowing.WindowLocation.x;
 			WindowY = windowing.WindowLocation.y;
 			WindowWidth = windowing.WindowSize.x;

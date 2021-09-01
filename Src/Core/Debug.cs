@@ -34,11 +34,11 @@ namespace Dissonance.Engine
 
 				Console.Write("[");
 
-				if(logThread) {
+				if (logThread) {
 					Console.Write($"{Thread.CurrentThread.Name} - ");
 				}
 
-				if(LogAssembly) {
+				if (LogAssembly) {
 					Console.Write($"{(stackFrameMethod != null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
 				}
 
@@ -48,11 +48,11 @@ namespace Dissonance.Engine
 
 				Console.WriteLine(message);
 
-				if(showTrace) {
+				if (showTrace) {
 					var stringBuilder = new StringBuilder();
 
-					for(int i = 1; i < stackFrames.Length; i++) {
-						if(stackFrames[i].GetFileName() == null) {
+					for (int i = 1; i < stackFrames.Length; i++) {
+						if (stackFrames[i].GetFileName() == null) {
 							break;
 						}
 
@@ -61,7 +61,7 @@ namespace Dissonance.Engine
 
 						stringBuilder.Append($"  {Path.GetFileName(stackFrames[i].GetFileName())}:{method.Name}(");
 
-						for(int j = 0; j < parameters.Length; j++) {
+						for (int j = 0; j < parameters.Length; j++) {
 							stringBuilder.Append($"{(j > 0 ? "," : "")}{parameters[j].ParameterType.Name}");
 						}
 
@@ -72,6 +72,7 @@ namespace Dissonance.Engine
 				}
 			}
 		}
+
 		public static void RemoveLine(int line)
 		{
 			int currentLine = Console.CursorTop - 1;

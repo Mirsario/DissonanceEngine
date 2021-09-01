@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Physics
 
 		protected internal override void FixedUpdate()
 		{
-			if(!World.Has<WorldPhysics>()) {
+			if (!World.Has<WorldPhysics>()) {
 				return;
 			}
 
@@ -40,36 +40,36 @@ namespace Dissonance.Engine.Physics
 			var collisionDispatcher = physics.CollisionDispatcher;
 			int numManifolds = collisionDispatcher.NumManifolds;
 
-			for(int i = 0; i < numManifolds; i++) {
+			for (int i = 0; i < numManifolds; i++) {
 				var contactManifold = collisionDispatcher.GetManifoldByIndexInternal(i);
 				int numContacts = contactManifold.NumContacts;
 
-				if(numContacts == 0) {
+				if (numContacts == 0) {
 					continue;
 				}
 
 				var objA = contactManifold.Body0;
 				var objB = contactManifold.Body1;
 
-				if(objA.UserObject is not Entity entityA || objB.UserObject is not Entity entityB) {
+				if (objA.UserObject is not Entity entityA || objB.UserObject is not Entity entityB) {
 					continue;
 				}
 
-				if(!entityA.Has<Rigidbody>() || !entityB.Has<Rigidbody>()) {
+				if (!entityA.Has<Rigidbody>() || !entityB.Has<Rigidbody>()) {
 					continue;
 				}
 
 				ref var rigidbodyA = ref entityA.Get<Rigidbody>();
 				ref var rigidbodyB = ref entityB.Get<Rigidbody>();
 
-				for(int j = 0; j < 2; j++) {
+				for (int j = 0; j < 2; j++) {
 					bool processingA = j == 0;
 					var otherEntity = processingA ? entityA : entityB;
 					ref var thisRigidbody = ref (processingA ? ref rigidbodyA : ref rigidbodyB);
 
 					var contacts = new ContactPoint[numContacts];
 
-					for(int k = 0; k < numContacts; k++) {
+					for (int k = 0; k < numContacts; k++) {
 						var cPoint = contactManifold.GetContactPoint(k);
 
 						contacts[k] = new ContactPoint(
@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Physics
 				}
 			}
 
-			foreach(var entity in rigidbodyEntities.ReadEntities()) {
+			foreach (var entity in rigidbodyEntities.ReadEntities()) {
 				ref var rigidbody = ref entity.Get<Rigidbody>();
 				ref var transform = ref entity.Get<Transform>();
 
@@ -94,7 +94,7 @@ namespace Dissonance.Engine.Physics
 				transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
 
 				// And also clear collisions if needed
-				if(!rigidbody.collisionsHaveBeenModified) {
+				if (!rigidbody.collisionsHaveBeenModified) {
 					rigidbody.collisions?.Clear();
 				} else {
 					rigidbody.collisionsHaveBeenModified = false;

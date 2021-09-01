@@ -9,12 +9,12 @@ namespace Dissonance.Engine.Graphics
 	[ModuleDependency(typeof(Resources), typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
-		public static Font font;
-		public static GUISkin skin;
-		public static Texture texDefaultInactive;
-		public static Texture texDefault;
-		public static Texture texDefaultHover;
-		public static Texture texDefaultActive;
+		public static Font Font { get; set; }
+		public static GUISkin Skin { get; set; }
+		public static Texture TexDefaultInactive { get; set; }
+		public static Texture TexDefault { get; set; }
+		public static Texture TexDefaultHover { get; set; }
+		public static Texture TexDefaultActive { get; set; }
 
 		internal static bool canDraw;
 
@@ -22,18 +22,18 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
-			texDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
-			texDefault = Resources.Import<Texture>("BuiltInAssets/GUI/Default.png");
-			texDefaultHover = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultHover.png");
-			texDefaultActive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultActive.png");
-			skin = new GUISkin();
+			TexDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
+			TexDefault = Resources.Import<Texture>("BuiltInAssets/GUI/Default.png");
+			TexDefaultHover = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultHover.png");
+			TexDefaultActive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultActive.png");
+			Skin = new GUISkin();
 
 			textBufferMesh = new Mesh();
 		}
 
 		public static void Box(RectFloat rect, Vector4? color)
 		{
-			Draw(rect, skin.boxStyle.texNormal, color, skin.boxStyle);
+			Draw(rect, Skin.BoxStyle.TexNormal, color, Skin.BoxStyle);
 		}
 
 		public static bool Button(RectFloat rect, string text = null, bool active = true, Vector4? color = null)
@@ -41,20 +41,20 @@ namespace Dissonance.Engine.Graphics
 			bool hover = rect.Contains(InputEngine.MousePosition, true);
 			bool anyPress = InputEngine.GetMouseButton(0);
 
-			var style = skin.buttonStyle;
-			var tex = active ? hover ? anyPress ? style.texActive : style.texHover : style.texNormal : style.texInactive;
+			var style = Skin.ButtonStyle;
+			var tex = active ? hover ? anyPress ? style.TexActive : style.TexHover : style.TexNormal : style.TexInactive;
 
 			Draw(rect, tex, color, style);
 
-			if(!string.IsNullOrEmpty(text)) {
+			if (!string.IsNullOrEmpty(text)) {
 				var textRect = new RectFloat(
-					rect.x + style.border.left,
-					rect.y + style.border.top,
-					rect.width - style.border.left - style.border.right,
-					rect.height - style.border.top - style.border.bottom
+					rect.x + style.Border.left,
+					rect.y + style.Border.top,
+					rect.width - style.Border.left - style.Border.right,
+					rect.height - style.Border.top - style.Border.bottom
 				);
 
-				DrawString(font, style.fontSize, textRect, text, alignment: style.textAlignment);
+				DrawString(Font, style.FontSize, textRect, text, alignment: style.TextAlignment);
 			}
 
 			return active && hover && InputEngine.GetMouseButtonUp(0) && rect.Contains(InputEngine.MousePosition, true);
@@ -62,11 +62,11 @@ namespace Dissonance.Engine.Graphics
 
 		public static void DrawText(RectFloat rect, string text, Vector4? color = null, TextAlignment alignment = TextAlignment.UpperLeft, float fontSize = -1)
 		{
-			if(fontSize == -1) {
-				fontSize = font.size;
+			if (fontSize == -1) {
+				fontSize = Font.Size;
 			}
 
-			DrawString(font, fontSize, rect, text, color, alignment);
+			DrawString(Font, fontSize, rect, text, color, alignment);
 		}
 
 		public static void DrawTexture(RectFloat rect, Texture texture, Vector4? color = null)
@@ -83,7 +83,7 @@ namespace Dissonance.Engine.Graphics
 				(rect.y + rect.height) / Screen.Height
 			);
 
-			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
 				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
@@ -92,7 +92,7 @@ namespace Dissonance.Engine.Graphics
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
-			if(style == null || style.border.left == 0) {
+			if (style == null || style.Border.left == 0) {
 				DrawUtils.DrawQuadUv0(
 					new Vector4(vector.x, 1f - vector.w, vector.z, 1f - vector.y),
 					new Vector4(0f, 0f, 1f, 1f)
@@ -103,19 +103,19 @@ namespace Dissonance.Engine.Graphics
 
 			var textureSize = new Vector2(texture.Width, texture.Height);
 			var center = new Vector4(
-				vector.x + style.border.left / Screen.Width, vector.y + style.border.top / Screen.Height,
-				vector.z - style.border.right / Screen.Width, vector.w - style.border.bottom / Screen.Height
+				vector.x + style.Border.left / Screen.Width, vector.y + style.Border.top / Screen.Height,
+				vector.z - style.Border.right / Screen.Width, vector.w - style.Border.bottom / Screen.Height
 			);
 			var centerUV = new Vector4(
-				style.border.left / textureSize.x, style.border.top / textureSize.y,
-				1f - style.border.right / textureSize.x, 1f - style.border.bottom / textureSize.y
+				style.Border.left / textureSize.x, style.Border.top / textureSize.y,
+				1f - style.Border.right / textureSize.x, 1f - style.Border.bottom / textureSize.y
 			);
 
-			for(int y = 0; y < 3; y++) {
-				for(int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				for (int x = 0; x < 3; x++) {
 					Vector4 vertices, uv;
 
-					switch(x) {
+					switch (x) {
 						default:
 							vertices.x = vector.x;
 							vertices.z = center.x;
@@ -136,7 +136,7 @@ namespace Dissonance.Engine.Graphics
 							break;
 					}
 
-					switch(y) {
+					switch (y) {
 						default:
 							vertices.y = 1f - vector.y;
 							vertices.w = 1f - center.y;
@@ -165,37 +165,37 @@ namespace Dissonance.Engine.Graphics
 		//TODO: Move this
 		internal static void DrawString(Font font, float fontSize, RectFloat rect, string text, Vector4? color = null, TextAlignment alignment = TextAlignment.UpperLeft)
 		{
-			if(string.IsNullOrEmpty(text)) {
+			if (string.IsNullOrEmpty(text)) {
 				return;
 			}
 
-			if(Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
 				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, font.texture.Id);
+			GL.BindTexture(TextureTarget.Texture2D, font.Texture.Id);
 			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
 
-			float scale = fontSize / font.charSize.y;
+			float scale = fontSize / font.CharSize.y;
 			var position = new Vector2(rect.x, rect.y);
 			
-			if(alignment == TextAlignment.UpperCenter || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.LowerCenter) {
-				position.x += rect.width / 2f - font.charSize.x * scale * text.Length / 2f;
+			if (alignment == TextAlignment.UpperCenter || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.LowerCenter) {
+				position.x += rect.width / 2f - font.CharSize.x * scale * text.Length / 2f;
 			}
 
-			if(alignment == TextAlignment.MiddleLeft || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.MiddleRight) {
+			if (alignment == TextAlignment.MiddleLeft || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.MiddleRight) {
 				position.y += rect.height / 2f - fontSize / 2f;
 			}
 
 			float xPos = position.x / Screen.Width;
 			float yPos = position.y / Screen.Height;
-			float width = font.charSize.x / Screen.Width * scale;
-			float height = font.charSize.y / Screen.Height * scale;
+			float width = font.CharSize.x / Screen.Width * scale;
+			float height = font.CharSize.y / Screen.Height * scale;
 
-			int numCharacters = text.Count(c => !char.IsWhiteSpace(c) && font.charToUv.ContainsKey(c));
+			int numCharacters = text.Count(c => !char.IsWhiteSpace(c) && font.CharToUv.ContainsKey(c));
 
 			textBufferMesh.Vertices = new Vector3[numCharacters * 4];
 			textBufferMesh.Uv0 = new Vector2[numCharacters * 4];
@@ -204,10 +204,10 @@ namespace Dissonance.Engine.Graphics
 			uint vertex = 0;
 			uint triangle = 0;
 
-			for(int i = 0; i < text.Length; i++) {
+			for (int i = 0; i < text.Length; i++) {
 				char c = text[i];
 
-				if(!char.IsWhiteSpace(c) && font.charToUv.TryGetValue(c, out var uvs)) {
+				if (!char.IsWhiteSpace(c) && font.CharToUv.TryGetValue(c, out var uvs)) {
 					textBufferMesh.Vertices[vertex] = new Vector3(xPos, 1f - yPos, 0f);
 					textBufferMesh.Vertices[vertex + 1] = new Vector3(xPos + width, 1f - yPos, 0f);
 					textBufferMesh.Vertices[vertex + 2] = new Vector3(xPos + width, 1f - yPos - height, 0f);

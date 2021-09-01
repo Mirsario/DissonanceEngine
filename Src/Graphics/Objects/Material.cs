@@ -13,8 +13,6 @@ namespace Dissonance.Engine.Graphics
 		private static readonly List<Material> ById = new List<Material>();
 		private static readonly Dictionary<string, Material> ByName = new Dictionary<string, Material>();
 
-		public static Material defaultMat;
-
 		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat;
 		private readonly List<KeyValuePair<string, Texture>> Textures;
 
@@ -29,7 +27,7 @@ namespace Dissonance.Engine.Graphics
 		public Shader Shader {
 			get => shader;
 			set {
-				if(shader == value) {
+				if (shader == value) {
 					return;
 				}
 
@@ -56,6 +54,7 @@ namespace Dissonance.Engine.Graphics
 			UniformsFloat = new Dictionary<string, (byte, float[])>();
 			Textures = new List<KeyValuePair<string, Texture>>();
 		}
+
 		public Material Clone()
 		{
 			var clone = new Material(name, Shader);
@@ -71,12 +70,12 @@ namespace Dissonance.Engine.Graphics
 		{
 			ShaderUniform uniform;
 
-			if(Textures.Count > 0) {
-				for(int i = 0; i < Textures.Count && i < 32; i++) {
+			if (Textures.Count > 0) {
+				for (int i = 0; i < Textures.Count && i < 32; i++) {
 					string textureName = Textures[i].Key;
 					var texture = Textures[i].Value;
 
-					if(texture == null || !shader.uniforms.TryGetValue(textureName, out uniform)) {
+					if (texture == null || !shader.uniforms.TryGetValue(textureName, out uniform)) {
 						continue;
 					}
 
@@ -84,20 +83,21 @@ namespace Dissonance.Engine.Graphics
 					GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 					GL.Uniform1(uniform.location, i);
 				}
-			} else if(shader.uniforms.TryGetValue("mainTex", out uniform)) {
+			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
 				GL.Uniform1(uniform.location, 0);
 			}
 		}
+
 		internal void ApplyUniforms(Shader shader)
 		{
-			foreach(var pair in UniformsFloat) {
+			foreach (var pair in UniformsFloat) {
 				(byte vecSize, var data) = pair.Value;
 
 				int location = shader.uniforms[pair.Key].location;
 
-				switch(vecSize) {
+				switch (vecSize) {
 					case 1:
 						GL.Uniform1(location, data.Length, data);
 						break;
@@ -118,49 +118,57 @@ namespace Dissonance.Engine.Graphics
 		{
 			Shader shader = Shader;
 
-			if(shader == null) {
+			if (shader == null) {
 				throw new Exception($"Material's Shader is null.");
 			}
 
-			if(!shader.uniforms.ContainsKey(name)) {
+			if (!shader.uniforms.ContainsKey(name)) {
 				throw new Exception($"Uniform {name} doesn't exist in shader ''{shader.Name}''.");
 			}
 		}
 
 		public unsafe void SetFloat<T>(string name, byte vectorSize, T[] data) where T : unmanaged
 		{
-			if(vectorSize < 1 || vectorSize > 4) {
+			if (vectorSize < 1 || vectorSize > 4) {
 				throw new ArgumentException($"{nameof(vectorSize)} must be in [1..4] range (inclusively.)");
 			}
 
 			CheckUniform(name);
 
-			var floatData = new float[data.Length * vectorSize];
+			float[] floatData = new float[data.Length * vectorSize];
 
 			fixed(T* tPtr = data) {
-				var floatPtr = (float*)tPtr;
+				float* floatPtr = (float*)tPtr;
 
-				for(int i = 0; i < floatData.Length; i++) {
+				for (int i = 0; i < floatData.Length; i++) {
 					floatData[i] = floatPtr[i];
 				}
 			}
 
 			UniformsFloat[name] = (vectorSize, floatData);
 		}
+
 		public void SetFloat(string name, params float[] values)
 		{
 			CheckUniform(name);
 
 			UniformsFloat[name] = (1, values);
 		}
-		public void SetVector2(string name, params Vector2[] values) => SetFloat(name, 2, values);
-		public void SetVector3(string name, params Vector3[] values) => SetFloat(name, 3, values);
-		public void SetVector4(string name, params Vector4[] values) => SetFloat(name, 4, values);
+
+		public void SetVector2(string name, params Vector2[] values)
+			=> SetFloat(name, 2, values);
+
+		public void SetVector3(string name, params Vector3[] values)
+			=> SetFloat(name, 3, values);
+
+		public void SetVector4(string name, params Vector4[] values)
+			=> SetFloat(name, 4, values);
+
 		public void SetVector(string name, float[] val)
 		{
 			CheckUniform(name);
 
-			switch(val.Length) {
+			switch (val.Length) {
 				case 2:
 					SetVector2(name, new Vector2(val[0], val[1]));
 					break;
@@ -174,12 +182,13 @@ namespace Dissonance.Engine.Graphics
 					throw new Exception("Array's length must be in range [2..4]");
 			}
 		}
+
 		public void SetTexture(string name, Texture texture)
 		{
 			CheckUniform(name);
 
-			for(int i = 0; i < Textures.Count; i++) {
-				if(Textures[i].Key == name) {
+			for (int i = 0; i < Textures.Count; i++) {
+				if (Textures[i].Key == name) {
 					Textures[i] = new KeyValuePair<string, Texture>(name, texture);
 					return;
 				}
@@ -188,8 +197,10 @@ namespace Dissonance.Engine.Graphics
 			Textures.Add(new KeyValuePair<string, Texture>(name, texture));
 		}
 
-		public bool GetTexture(string name, out Texture texture) => (texture = Textures.FirstOrDefault(pair => pair.Key == name).Value) != null;
+		public bool GetTexture(string name, out Texture texture)
+			=> (texture = Textures.FirstOrDefault(pair => pair.Key == name).Value) != null;
 
-		object ICloneable.Clone() => Clone();
+		object ICloneable.Clone()
+			=> Clone();
 	}
 }

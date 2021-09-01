@@ -59,7 +59,7 @@ namespace Dissonance.Engine.Graphics
 				material = value;
 
 				//TODO: Maybe move into a system?
-				if(material != null && material.GetTexture("mainTex", out var texture)) {
+				if (material != null && material.GetTexture("mainTex", out var texture)) {
 					sizeInPixels = (Vector2)texture.Size;
 					verticesNeedRecalculation = true;
 				}

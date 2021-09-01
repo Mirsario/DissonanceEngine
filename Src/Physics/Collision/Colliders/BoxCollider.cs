@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 Size {
 			get => size;
 			set {
-				if(value != size) {
+				if (value != size) {
 					size = value;
 					needsUpdate = true;
 				}

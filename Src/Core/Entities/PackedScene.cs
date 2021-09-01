@@ -24,7 +24,7 @@ namespace Dissonance.Engine
 
 		public IEnumerable<Entity> Unpack(World world)
 		{
-			foreach(var entity in Entities) {
+			foreach (var entity in Entities) {
 				yield return entity.Unpack(world);
 			}
 		}

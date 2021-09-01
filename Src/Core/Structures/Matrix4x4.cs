@@ -21,7 +21,7 @@ namespace Dissonance.Engine
 			m02 * m11 * m23 * m30 - m02 * m11 * m20 * m33 - m03 * m10 * m21 * m32 + m03 * m10 * m22 * m31 -
 			m03 * m11 * m22 * m30 + m03 * m11 * m20 * m32 - m03 * m12 * m20 * m31 + m03 * m12 * m21 * m30;
 
-		public Matrix4x4 Transpose => throw new NotImplementedException(); //Matrix4x4.Transpose(this);
+		public Matrix4x4 Transpose => throw new NotImplementedException(); // Matrix4x4.Transpose(this);
 		public Matrix4x4 Normalized {
 			get {
 				var matrix = this;
@@ -123,9 +123,9 @@ namespace Dissonance.Engine
 				_ => throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage, row, column)),
 			};
 			set {
-				switch(column) {
+				switch (column) {
 					case 0:
-						switch(row) {
+						switch (row) {
 							case 0:
 								m00 = value;
 								return;
@@ -143,7 +143,7 @@ namespace Dissonance.Engine
 						}
 
 					case 1:
-						switch(row) {
+						switch (row) {
 							case 0:
 								m10 = value;
 								return;
@@ -161,7 +161,7 @@ namespace Dissonance.Engine
 						}
 
 					case 2:
-						switch(row) {
+						switch (row) {
 							case 0:
 								m20 = value;
 								return;
@@ -178,7 +178,7 @@ namespace Dissonance.Engine
 								throw new IndexOutOfRangeException(string.Format(OutOfRangeMessage, row, column));
 						}
 					case 3:
-						switch(row) {
+						switch (row) {
 							case 0:
 								m30 = value;
 								return;
@@ -223,7 +223,7 @@ namespace Dissonance.Engine
 				_ => throw new IndexOutOfRangeException($"[{id}] single matrix index must be range of [0..15]."),
 			};
 			set {
-				switch(id) {
+				switch (id) {
 					case 0:
 						m00 = value;
 						break;
@@ -324,7 +324,7 @@ namespace Dissonance.Engine
 
 		public override bool Equals(object other) => other is Matrix4x4 matrix && Equals(matrix);
 
-		//Clear
+		// Clear
 		public void ClearTranslation()
 		{
 			m30 = 0f;
@@ -356,7 +356,7 @@ namespace Dissonance.Engine
 			Row2 = new Vector4(0f, 0f, mag2, m23);
 		}
 
-		//Extract
+		// Extract
 		public Vector3 ExtractTranslation() => new Vector3(m30, m31, m32);
 
 		public Vector3 ExtractScale()
@@ -384,11 +384,11 @@ namespace Dissonance.Engine
 		{
 			float v1, v2, v3;
 
-			if(m21 < -1f) { //up
+			if (m21 < -1f) { // up
 				v1 = -Mathf.HalfPI;
 				v2 = 0f;
 				v3 = Mathf.Atan2(m02, m00);
-			} else if(m21 > 1f) { //down
+			} else if (m21 > 1f) { // down
 				v1 = Mathf.HalfPI;
 				v2 = 0f;
 				v3 = -Mathf.Atan2(m02, m00);
@@ -403,9 +403,9 @@ namespace Dissonance.Engine
 
 		public float ExtractEulerX()
 		{
-			if(m21 < -1f) {
+			if (m21 < -1f) {
 				return Mathf.HalfPI * Mathf.Rad2Deg;
-			} else if(m21 > 1f) {
+			} else if (m21 > 1f) {
 				return -Mathf.HalfPI * Mathf.Rad2Deg;
 			}
 
@@ -414,7 +414,7 @@ namespace Dissonance.Engine
 
 		public float ExtractEulerY()
 		{
-			if(m21 < -1f || m21 > 1f) {
+			if (m21 < -1f || m21 > 1f) {
 				return 0f;
 			}
 
@@ -423,9 +423,9 @@ namespace Dissonance.Engine
 
 		public float ExtractEulerZ()
 		{
-			if(m21 < -1f) {
+			if (m21 < -1f) {
 				return -Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
-			} else if(m21 > 1f) {
+			} else if (m21 > 1f) {
 				return Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
 			}
 
@@ -441,7 +441,7 @@ namespace Dissonance.Engine
 			var q = new Quaternion();
 			float trace = 0.25f * (row0.x + row1.y + row2.z + 1f);
 
-			if(trace > 0) {
+			if (trace > 0) {
 				float sq = Mathf.Sqrt(trace);
 
 				q.w = sq;
@@ -449,7 +449,7 @@ namespace Dissonance.Engine
 				q.x = (row1.z - row2.y) * sq;
 				q.y = (row2.x - row0.z) * sq;
 				q.z = (row0.y - row1.x) * sq;
-			} else if(row0.x > row1.y && row0.x > row2.z) {
+			} else if (row0.x > row1.y && row0.x > row2.z) {
 				float sq = 2f * Mathf.Sqrt(1f + row0.x - row1.y - row2.z);
 
 				q.x = 0.25f * sq;
@@ -457,7 +457,7 @@ namespace Dissonance.Engine
 				q.w = (row2.y - row1.z) * sq;
 				q.y = (row1.x + row0.y) * sq;
 				q.z = (row2.x + row0.z) * sq;
-			} else if(row1.y > row2.z) {
+			} else if (row1.y > row2.z) {
 				float sq = 2f * Mathf.Sqrt(1f + row1.y - row0.x - row2.z);
 
 				q.y = 0.25f * sq;
@@ -480,7 +480,7 @@ namespace Dissonance.Engine
 			return q;
 		}
 
-		//Set
+		// Set
 		public void SetTranslation(Vector3 translation)
 		{
 			m30 = translation.x;
@@ -549,7 +549,7 @@ namespace Dissonance.Engine
 			m22 = (1f - (xx + yy)) * scale.z;
 		}
 
-		//Etc
+		// Etc
 		public bool Equals(Matrix4x4 o)
 			=> m00 == o.m00 && m01 == o.m01 && m02 == o.m02 && m03 == o.m03
 			&& m10 == o.m10 && m11 == o.m11 && m12 == o.m12 && m13 == o.m13
@@ -583,24 +583,24 @@ namespace Dissonance.Engine
 			int iColumn = 0;
 			int iRow = 0;
 
-			for(int i = 0; i < 4; i++) {
+			for (int i = 0; i < 4; i++) {
 				float maxPivot = 0f;
 
-				for(int j = 0; j < 4; j++) {
-					if(pivotIndices[j] == 0) {
+				for (int j = 0; j < 4; j++) {
+					if (pivotIndices[j] == 0) {
 						continue;
 					}
 
-					for(int k = 0; k < 4; ++k) {
-						if(pivotIndices[k] == -1) {
+					for (int k = 0; k < 4; ++k) {
+						if (pivotIndices[k] == -1) {
 							float absVal = Math.Abs(inverse[j, k]);
 
-							if(absVal > maxPivot) {
+							if (absVal > maxPivot) {
 								maxPivot = absVal;
 								iRow = j;
 								iColumn = k;
 							}
-						} else if(pivotIndices[k] > 0) {
+						} else if (pivotIndices[k] > 0) {
 							return;
 						}
 					}
@@ -608,8 +608,8 @@ namespace Dissonance.Engine
 
 				pivotIndices[iColumn]++;
 
-				if(iRow != iColumn) {
-					for(int k = 0; k < 4; ++k) {
+				if (iRow != iColumn) {
+					for (int k = 0; k < 4; ++k) {
 						float f = inverse[iRow, k];
 
 						inverse[iRow, k] = inverse[iColumn, k];
@@ -621,20 +621,20 @@ namespace Dissonance.Engine
 				columnIndices[i] = iColumn;
 
 				float pivot = inverse[iColumn, iColumn];
-				if(pivot == 0f) {
-					return; //Matrix is singular and cannot be inverted.
+				if (pivot == 0f) {
+					return; // Matrix is singular and cannot be inverted.
 				}
 
 				float oneOverPivot = 1f / pivot;
 
 				inverse[iColumn, iColumn] = 1f;
 
-				for(int k = 0; k < 4; ++k) {
+				for (int k = 0; k < 4; ++k) {
 					inverse[iColumn, k] *= oneOverPivot;
 				}
 
-				for(int j = 0; j < 4; ++j) {
-					if(iColumn == j) {
+				for (int j = 0; j < 4; ++j) {
+					if (iColumn == j) {
 						continue;
 					}
 
@@ -642,17 +642,17 @@ namespace Dissonance.Engine
 
 					inverse[j, iColumn] = 0f;
 
-					for(int k = 0; k < 4; ++k) {
+					for (int k = 0; k < 4; ++k) {
 						inverse[j, k] -= inverse[iColumn, k] * f;
 					}
 				}
 			}
 
-			for(int j = 3; j >= 0; --j) {
+			for (int j = 3; j >= 0; --j) {
 				int ir = rowIndices[j];
 				int ic = columnIndices[j];
 
-				for(int k = 0; k < 4; ++k) {
+				for (int k = 0; k < 4; ++k) {
 					float f = inverse[k, ir];
 
 					inverse[k, ir] = inverse[k, ic];

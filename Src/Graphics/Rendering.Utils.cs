@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Graphics
 
 			var match = RegexGLVersion.Match(versionStr);
 
-			if(!match.Success) {
+			if (!match.Success) {
 				throw new Exception("Unable to catch OpenGL version with Regex.");
 			}
 
@@ -22,18 +22,20 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		[Obsolete("This call of CheckGLErrors was meant to be temporary.")]
-		public static bool CheckGLErrorsTemp(string context = null, bool throwException = true) => CheckGLErrors(context, throwException);
+		public static bool CheckGLErrorsTemp(string context = null, bool throwException = true)
+			=> CheckGLErrors(context, throwException);
+
 		public static bool CheckGLErrors(string context = null, bool throwException = true)
 		{
 			GraphicsError error = GL.GetError();
 
-			switch(error) {
+			switch (error) {
 				case GraphicsError.NoError:
 					return false;
 				default:
 					string message = $"Error: '{error}'. Context: '{context ?? "Not provided"}'.";
 
-					if(throwException) {
+					if (throwException) {
 						throw new GraphicsException(message);
 					} else {
 						Debug.Log(message, stackframeOffset: 2);
@@ -45,7 +47,7 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void CheckFramebufferStatus()
 		{
-			switch(GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) {
+			switch (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) {
 				case FramebufferStatus.FramebufferComplete:
 					return;
 
@@ -83,13 +85,14 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void SetStencilMask(uint stencilMask)
 		{
-			if(stencilMask != currentStencilMask) {
+			if (stencilMask != currentStencilMask) {
 				GL.StencilMask(currentStencilMask = stencilMask);
 			}
 		}
+
 		internal static void SetBlendFunc(BlendingFactor blendFactorSrc, BlendingFactor blendFactorDst)
 		{
-			if(blendFactorSrc != currentBlendFactorSrc || blendFactorDst != currentBlendFactorDst) {
+			if (blendFactorSrc != currentBlendFactorSrc || blendFactorDst != currentBlendFactorDst) {
 				currentBlendFactorSrc = blendFactorSrc;
 				currentBlendFactorDst = blendFactorDst;
 

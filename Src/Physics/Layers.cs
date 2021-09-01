@@ -18,20 +18,22 @@ namespace Dissonance.Engine.Physics
 			AddLayers("Default");
 		}
 
-		public static void AddLayers<T>() where T : Enum => AddLayers(Enum.GetNames(typeof(T)));
+		public static void AddLayers<T>() where T : Enum
+			=> AddLayers(Enum.GetNames(typeof(T)));
+
 		public static void AddLayers(params string[] layerNames)
 		{
-			if(Game.Instance?.preInitDone != false) {
+			if (Game.Instance?.preInitDone != false) {
 				throw new Exception("Cannot add layers after Game.PreInit() call has finished.");
 			}
 
 			int newLength = layerCount + layerNames.Length;
 
-			if(newLength >= 64) {
+			if (newLength >= 64) {
 				throw new Exception("Cannot add more than 64 layers.");
 			}
 
-			for(int i = 0, j = layerCount; i < layerNames.Length; i++, j++) {
+			for (int i = 0, j = layerCount; i < layerNames.Length; i++, j++) {
 				indexToMask[j] = (ulong)1 << j;
 				indexToName[j] = layerNames[i];
 			}
@@ -41,16 +43,17 @@ namespace Dissonance.Engine.Physics
 
 		public static ulong GetLayerMask(int index)
 		{
-			if(index < 0 || index >= layerCount) {
+			if (index < 0 || index >= layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
 			return indexToMask[index];
 		}
+
 		public static ulong GetLayerMask(string name)
 		{
-			for(int i = 0; i < layerCount; i++) {
-				if(indexToName[i] == name) {
+			for (int i = 0; i < layerCount; i++) {
+				if (indexToName[i] == name) {
 					return indexToMask[i];
 				}
 			}
@@ -60,16 +63,17 @@ namespace Dissonance.Engine.Physics
 
 		public static string GetLayerName(int index)
 		{
-			if(index < 0 || index >= layerCount) {
+			if (index < 0 || index >= layerCount) {
 				throw new IndexOutOfRangeException();
 			}
 
 			return indexToName[index];
 		}
+
 		public static string GetLayerName(ulong flag)
 		{
-			for(int i = 0; i < layerCount; i++) {
-				if(indexToMask[i] == flag) {
+			for (int i = 0; i < layerCount; i++) {
+				if (indexToMask[i] == flag) {
 					return indexToName[i];
 				}
 			}
@@ -79,18 +83,19 @@ namespace Dissonance.Engine.Physics
 
 		public static byte GetLayerIndex(string name)
 		{
-			for(int i = 0; i < layerCount; i++) {
-				if(indexToName[i] == name) {
+			for (int i = 0; i < layerCount; i++) {
+				if (indexToName[i] == name) {
 					return (byte)i;
 				}
 			}
 
 			throw new Exception($"Could not find any layers named '{name}'.");
 		}
+
 		public static byte GetLayerIndex(ulong flag)
 		{
-			for(int i = 0; i < layerCount; i++) {
-				if(indexToMask[i] == flag) {
+			for (int i = 0; i < layerCount; i++) {
+				if (indexToMask[i] == flag) {
 					return (byte)i;
 				}
 			}

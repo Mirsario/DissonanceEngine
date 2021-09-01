@@ -4,7 +4,7 @@ namespace Dissonance.Engine.IO
 {
 	public class TextManager : AssetManager<string>
 	{
-		public override string[] Extensions => new[] { ".txt" };
+		public override string[] Extensions { get; } = new[] { ".txt" };
 
 		public override string Import(Stream stream, string filePath)
 		{
@@ -12,6 +12,7 @@ namespace Dissonance.Engine.IO
 
 			return reader.ReadToEnd();
 		}
+
 		public override void Export(string text, Stream stream)
 		{
 			using var writer = new StreamWriter(stream);

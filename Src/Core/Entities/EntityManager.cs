@@ -9,13 +9,13 @@ namespace Dissonance.Engine
 	{
 		private class WorldData
 		{
-			//Entities
+			// Entities
 			public readonly List<Entity> Entities = new();
 			public readonly List<Entity> ActiveEntities = new();
 			public readonly List<Entity> InactiveEntities = new();
 			public readonly List<int> FreeEntityIndices = new();
 			public readonly List<bool> EntityIsActive = new(); //TODO: Replace with BitArray, or a wrapping type.
-			//Entity Sets
+			// Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
 			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
 		}
@@ -44,7 +44,7 @@ namespace Dissonance.Engine
 
 			int id;
 
-			if(worldData.FreeEntityIndices.Count > 0) {
+			if (worldData.FreeEntityIndices.Count > 0) {
 				id = worldData.FreeEntityIndices[0];
 				worldData.FreeEntityIndices.RemoveAt(0);
 			} else {
@@ -53,7 +53,7 @@ namespace Dissonance.Engine
 
 			var entity = new Entity(id, worldId);
 
-			if(id >= worldData.Entities.Count) {
+			if (id >= worldData.Entities.Count) {
 				worldData.Entities.Add(entity);
 				worldData.EntityIsActive.Add(true);
 			} else {
@@ -68,10 +68,10 @@ namespace Dissonance.Engine
 
 		internal static bool RemoveEntity(in Entity entity)
 		{
-			if(entity.WorldId >= 0 && entity.WorldId < worldDataById.Length) {
+			if (entity.WorldId >= 0 && entity.WorldId < worldDataById.Length) {
 				var worldData = worldDataById[entity.WorldId];
 
-				if(worldData != null) {
+				if (worldData != null) {
 					worldData.Entities.Remove(entity);
 
 					return true;
@@ -89,8 +89,8 @@ namespace Dissonance.Engine
 			var worldData = worldDataById[entity.WorldId];
 			bool isActive = worldData.EntityIsActive[entity.Id];
 
-			if(value != isActive) {
-				if(value) {
+			if (value != isActive) {
+				if (value) {
 					worldData.InactiveEntities.Remove(entity);
 					worldData.ActiveEntities.Add(entity);
 				} else {
@@ -117,14 +117,14 @@ namespace Dissonance.Engine
 			var entitySetByExpression = worldData.EntitySetByExpression;
 
 			//TODO: When this fails, check if there are other expressions which are basically the same
-			if(entitySetByExpression.TryGetValue(predicate, out var result)) {
+			if (entitySetByExpression.TryGetValue(predicate, out var result)) {
 				return result;
 			}
 
 			var entitySet = new EntitySet(predicate.Compile());
 
 			//TODO: Be smarter about this. Deconstruct expressions, enumerate only entities that contain the least-common component.
-			foreach(var entity in worldData.Entities) {
+			foreach (var entity in worldData.Entities) {
 				entitySet.OnEntityUpdated(entity);
 			}
 
@@ -137,7 +137,7 @@ namespace Dissonance.Engine
 
 		private static void OnWorldCreated(World world)
 		{
-			if(worldDataById.Length <= world.Id) {
+			if (worldDataById.Length <= world.Id) {
 				Array.Resize(ref worldDataById, world.Id + 1);
 			}
 
@@ -156,7 +156,7 @@ namespace Dissonance.Engine
 		{
 			var worldData = worldDataById[entity.WorldId];
 
-			foreach(var entitySet in worldData.EntitySets) {
+			foreach (var entitySet in worldData.EntitySets) {
 				entitySet.OnEntityUpdated(entity);
 			}
 		}

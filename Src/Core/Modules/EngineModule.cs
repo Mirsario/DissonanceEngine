@@ -22,7 +22,7 @@ namespace Dissonance.Engine
 
 		public void Dispose() => OnDispose();
 
-		//Init
+		// Init
 
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PreInit), false, true)]
 		protected virtual void PreInit() { }
@@ -30,7 +30,7 @@ namespace Dissonance.Engine
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.Init), false, true)]
 		protected virtual void Init() { }
 
-		//Fixed Update
+		// Fixed Update
 
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PreFixedUpdate), false, true)]
 		protected virtual void PreFixedUpdate() { }
@@ -41,7 +41,7 @@ namespace Dissonance.Engine
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PostFixedUpdate), false, true)]
 		protected virtual void PostFixedUpdate() { }
 
-		//Render Update
+		// Render Update
 
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PreRenderUpdate), false, true)]
 		protected virtual void PreRenderUpdate() { }
@@ -52,7 +52,7 @@ namespace Dissonance.Engine
 		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PostRenderUpdate), false, true)]
 		protected virtual void PostRenderUpdate() { }
 
-		//Etc
+		// Etc
 
 		protected virtual void OnDispose() { }
 	}

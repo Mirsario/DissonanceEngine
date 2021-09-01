@@ -21,7 +21,7 @@ namespace Dissonance.Engine
 
 		public static void Init()
 		{
-			if(initCalled) {
+			if (initCalled) {
 				return;
 			}
 
@@ -31,7 +31,7 @@ namespace Dissonance.Engine
 
 			static bool TryGetAssembly(string assemblyName, string argsName, out Assembly assembly)
 			{
-				if(assemblyName == argsName || argsName.StartsWith(assemblyName + ",")) {
+				if (assemblyName == argsName || argsName.StartsWith(assemblyName + ",")) {
 					try {
 						using var stream = AssemblyCache.EngineAssembly.GetManifestResourceStream($"{nameof(Dissonance)}.{nameof(Engine)}.References.{assemblyName}.dll");
 						byte[] data = new byte[stream.Length];
@@ -58,14 +58,14 @@ namespace Dissonance.Engine
 			AppDomain.CurrentDomain.AssemblyResolve += (obj, args) => {
 				string argsName = args.Name;
 
-				if(assemblyCache.TryGetValue(argsName, out var assembly)) {
+				if (assemblyCache.TryGetValue(argsName, out var assembly)) {
 					return assembly;
 				}
 
-				for(int i = 0; i < EmbeddedAssemblies.Length; i++) {
-					if(TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
+				for (int i = 0; i < EmbeddedAssemblies.Length; i++) {
+					if (TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
 						//TODO: Unhardcode somehow..?
-						if(assembly.FullName.StartsWith("BulletSharp,")) {
+						if (assembly.FullName.StartsWith("BulletSharp,")) {
 							DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().GetName().Name}.dll.config");
 						}
 

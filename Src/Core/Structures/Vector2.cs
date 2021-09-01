@@ -24,14 +24,13 @@ namespace Dissonance.Engine
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y);
 
 		public float this[int index] {
-			get => index switch
-			{
+			get => index switch {
 				0 => x,
 				1 => y,
 				_ => throw new IndexOutOfRangeException("Indices for Vector2 run from 0 to 1, inclusively."),
 			};
 			set {
-				switch(index) {
+				switch (index) {
 					case 0:
 						x = value;
 						return;
@@ -50,26 +49,34 @@ namespace Dissonance.Engine
 			y = Y;
 		}
 
-		public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode() << 2;
-		public override bool Equals(object other) => other is Vector2 vector && x == vector.x && y == vector.y;
-		public override string ToString() => "X: " + x + ",Y: " + y;
+		public override int GetHashCode()
+			=> x.GetHashCode() ^ y.GetHashCode() << 2;
 
-		public float[] ToArray() => new[] { x, y };
+		public override bool Equals(object other)
+			=> other is Vector2 vector && x == vector.x && y == vector.y;
+
+		public override string ToString()
+			=> $"[{x}, {y}]";
+
+		public float[] ToArray()
+			=> new[] { x, y };
+
 		public void Normalize()
 		{
 			float magnitude = Magnitude;
 
-			if(magnitude != 0f) {
+			if (magnitude != 0f) {
 				float num = 1f / magnitude;
 				x *= num;
 				y *= num;
 			}
 		}
+
 		public void Normalize(out float magnitude)
 		{
 			magnitude = Magnitude;
 
-			if(magnitude != 0f) {
+			if (magnitude != 0f) {
 				float num = 1f / magnitude;
 				x *= num;
 				y *= num;
@@ -77,13 +84,16 @@ namespace Dissonance.Engine
 		}
 
 		public static float Dot(Vector2 a, Vector2 b) => a.x * b.x + a.y * b.y;
+
 		public static float Distance(Vector2 a, Vector2 b) => (a - b).Magnitude;
+
 		public static float SqrDistance(Vector2 a, Vector2 b) => (a - b).SqrMagnitude;
+
 		public static Vector2 Normalize(Vector2 vec)
 		{
 			float magnitude = vec.Magnitude;
 
-			if(magnitude != 0f) {
+			if (magnitude != 0f) {
 				float num = 1f / magnitude;
 				vec.x *= num;
 				vec.y *= num;
@@ -91,11 +101,12 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Normalize(Vector2 vec, out float magnitude)
 		{
 			magnitude = vec.Magnitude;
 
-			if(magnitude != 0f) {
+			if (magnitude != 0f) {
 				float num = 1f / magnitude;
 				vec.x *= num;
 				vec.y *= num;
@@ -103,6 +114,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 StepTowards(Vector2 vec, Vector2 goal, float step)
 		{
 			vec.x = Mathf.StepTowards(vec.x, goal.x, step);
@@ -110,6 +122,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 SnapToGrid(Vector2 vec, float step)
 		{
 			vec.x = Mathf.SnapToGrid(vec.x, step);
@@ -117,6 +130,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Floor(Vector2 vec)
 		{
 			vec.x = Mathf.Floor(vec.x);
@@ -124,6 +138,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Ceil(Vector2 vec)
 		{
 			vec.x = Mathf.Ceil(vec.x);
@@ -131,6 +146,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Round(Vector2 vec)
 		{
 			vec.x = Mathf.Round(vec.x);
@@ -138,6 +154,7 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Rotate(Vector2 vec, float angle)
 		{
 			float sin = Mathf.Sin(angle * Mathf.Deg2Rad);
@@ -148,11 +165,12 @@ namespace Dissonance.Engine
 
 			return vec;
 		}
+
 		public static Vector2 Lerp(Vector2 from, Vector2 to, float t)
 		{
-			if(t < 0f) {
+			if (t < 0f) {
 				t = 0f;
-			} else if(t > 1f) {
+			} else if (t > 1f) {
 				t = 1f;
 			}
 
@@ -162,54 +180,92 @@ namespace Dissonance.Engine
 			return result;
 		}
 
-		//Operations
+		// Operations
 
-		//Int
+		// Int
 		public static Vector2 operator *(Vector2 a, int d) => new Vector2(a.x * d, a.y * d);
+
 		public static Vector2 operator *(int d, Vector2 a) => new Vector2(a.x * d, a.y * d);
+
 		public static Vector2 operator /(Vector2 a, int d) => new Vector2(a.x / d, a.y / d);
-		//Float
+
+		// Float
+
 		public static Vector2 operator *(Vector2 a, float d) => new Vector2(a.x * d, a.y * d);
+
 		public static Vector2 operator *(float d, Vector2 a) => new Vector2(a.x * d, a.y * d);
+
 		public static Vector2 operator /(Vector2 a, float d) => new Vector2(a.x / d, a.y / d);
-		//Vector2
+
+		// Vector2
 		public static bool operator ==(Vector2 a, Vector2 b) => (a - b).SqrMagnitude < 9.99999944E-11f;
+
 		public static bool operator !=(Vector2 a, Vector2 b) => (a - b).SqrMagnitude >= 9.99999944E-11f;
-		public static Vector2 operator -(Vector2 a) => new Vector2(-a.x, -a.y);
-		public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.x + b.x, a.y + b.y);
-		public static Vector2 operator -(Vector2 a, Vector2 b) => new Vector2(a.x - b.x, a.y - b.y);
-		public static Vector2 operator *(Vector2 a, Vector2 b) => new Vector2(a.x * b.x, a.y * b.y);
-		public static Vector2 operator /(Vector2 a, Vector2 b) => new Vector2(a.x / b.x, a.y / b.y);
-		//Vector2Int
-		public static Vector2 operator +(Vector2Int a, Vector2 b) => new Vector2(a.x + b.x, a.y + b.y);
-		public static Vector2 operator +(Vector2 a, Vector2Int b) => new Vector2(a.x + b.x, a.y + b.y);
-		public static Vector2 operator -(Vector2Int a, Vector2 b) => new Vector2(a.x - b.x, a.y - b.y);
-		public static Vector2 operator -(Vector2 a, Vector2Int b) => new Vector2(a.x - b.x, a.y - b.y);
-		public static Vector2 operator *(Vector2Int a, Vector2 b) => new Vector2(a.x * b.x, a.y * b.y);
-		public static Vector2 operator *(Vector2 a, Vector2Int b) => new Vector2(a.x * b.x, a.y * b.y);
-		public static Vector2 operator /(Vector2Int a, Vector2 b) => new Vector2(a.x / b.x, a.y / b.y);
-		public static Vector2 operator /(Vector2 a, Vector2Int b) => new Vector2(a.x / b.x, a.y / b.y);
-		//Vector2UShort
-		public static Vector2 operator +(Vector2UShort a, Vector2 b) => new Vector2(a.x + b.x, a.y + b.y);
-		public static Vector2 operator +(Vector2 a, Vector2UShort b) => new Vector2(a.x + b.x, a.y + b.y);
-		public static Vector2 operator -(Vector2UShort a, Vector2 b) => new Vector2(a.x - b.x, a.y - b.y);
-		public static Vector2 operator -(Vector2 a, Vector2UShort b) => new Vector2(a.x - b.x, a.y - b.y);
-		public static Vector2 operator *(Vector2UShort a, Vector2 b) => new Vector2(a.x * b.x, a.y * b.y);
-		public static Vector2 operator *(Vector2 a, Vector2UShort b) => new Vector2(a.x * b.x, a.y * b.y);
-		public static Vector2 operator /(Vector2UShort a, Vector2 b) => new Vector2(a.x / b.x, a.y / b.y);
-		public static Vector2 operator /(Vector2 a, Vector2UShort b) => new Vector2(a.x / b.x, a.y / b.y);
 
-		//Casts
+		public static Vector2 operator -(Vector2 a) => new(-a.x, -a.y);
 
-		//float*
+		public static Vector2 operator +(Vector2 a, Vector2 b) => new(a.x + b.x, a.y + b.y);
+
+		public static Vector2 operator -(Vector2 a, Vector2 b) => new(a.x - b.x, a.y - b.y);
+
+		public static Vector2 operator *(Vector2 a, Vector2 b) => new(a.x * b.x, a.y * b.y);
+
+		public static Vector2 operator /(Vector2 a, Vector2 b) => new(a.x / b.x, a.y / b.y);
+
+		// Vector2Int
+
+		public static Vector2 operator +(Vector2Int a, Vector2 b) => new(a.x + b.x, a.y + b.y);
+
+		public static Vector2 operator +(Vector2 a, Vector2Int b) => new(a.x + b.x, a.y + b.y);
+
+		public static Vector2 operator -(Vector2Int a, Vector2 b) => new(a.x - b.x, a.y - b.y);
+
+		public static Vector2 operator -(Vector2 a, Vector2Int b) => new(a.x - b.x, a.y - b.y);
+
+		public static Vector2 operator *(Vector2Int a, Vector2 b) => new(a.x * b.x, a.y * b.y);
+
+		public static Vector2 operator *(Vector2 a, Vector2Int b) => new(a.x * b.x, a.y * b.y);
+
+		public static Vector2 operator /(Vector2Int a, Vector2 b) => new(a.x / b.x, a.y / b.y);
+
+		public static Vector2 operator /(Vector2 a, Vector2Int b) => new(a.x / b.x, a.y / b.y);
+
+		// Vector2UShort
+
+		public static Vector2 operator +(Vector2UShort a, Vector2 b) => new(a.x + b.x, a.y + b.y);
+
+		public static Vector2 operator +(Vector2 a, Vector2UShort b) => new(a.x + b.x, a.y + b.y);
+
+		public static Vector2 operator -(Vector2UShort a, Vector2 b) => new(a.x - b.x, a.y - b.y);
+
+		public static Vector2 operator -(Vector2 a, Vector2UShort b) => new(a.x - b.x, a.y - b.y);
+
+		public static Vector2 operator *(Vector2UShort a, Vector2 b) => new(a.x * b.x, a.y * b.y);
+
+		public static Vector2 operator *(Vector2 a, Vector2UShort b) => new(a.x * b.x, a.y * b.y);
+
+		public static Vector2 operator /(Vector2UShort a, Vector2 b) => new(a.x / b.x, a.y / b.y);
+
+		public static Vector2 operator /(Vector2 a, Vector2UShort b) => new(a.x / b.x, a.y / b.y);
+
+		// Casts
+
+		// float*
+
 		public static unsafe implicit operator float*(Vector2 vec) => (float*)&vec;
-		//System.Numerics.Vector2
+
+		// System.Numerics.Vector2
+
 		public static implicit operator Vector2(System.Numerics.Vector2 value) => new Vector2(value.X, value.Y);
+
 		public static implicit operator System.Numerics.Vector2(Vector2 value) => new System.Numerics.Vector2(value.x, value.y);
 
-		//Vector2Int
+		// Vector2Int
+
 		public static explicit operator Vector2(Vector2Int value) => new Vector2(value.x, value.y);
-		//Vector2UShort
+
+		// Vector2UShort
+
 		public static explicit operator Vector2(Vector2UShort value) => new Vector2(value.x, value.y);
 	}
 }

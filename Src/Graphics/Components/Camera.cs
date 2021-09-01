@@ -50,7 +50,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			Frustum ??= new float[6, 4];
 
-			//Right
+			// Right
 			Frustum[0, 0] = clip[3] - clip[0];
 			Frustum[0, 1] = clip[7] - clip[4];
 			Frustum[0, 2] = clip[11] - clip[8];
@@ -58,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(0);
 
-			//Left
+			// Left
 			Frustum[1, 0] = clip[3] + clip[0];
 			Frustum[1, 1] = clip[7] + clip[4];
 			Frustum[1, 2] = clip[11] + clip[8];
@@ -66,7 +66,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(1);
 
-			//Bottom
+			// Bottom
 			Frustum[2, 0] = clip[3] + clip[1];
 			Frustum[2, 1] = clip[7] + clip[5];
 			Frustum[2, 2] = clip[11] + clip[9];
@@ -74,7 +74,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(2);
 
-			//Top
+			// Top
 			Frustum[3, 0] = clip[3] - clip[1];
 			Frustum[3, 1] = clip[7] - clip[5];
 			Frustum[3, 2] = clip[11] - clip[9];
@@ -82,7 +82,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(3);
 
-			//Back
+			// Back
 			Frustum[4, 0] = clip[3] - clip[2];
 			Frustum[4, 1] = clip[7] - clip[6];
 			Frustum[4, 2] = clip[11] - clip[10];
@@ -90,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 
 			NormalizePlane(4);
 
-			//Front
+			// Front
 			Frustum[5, 0] = clip[3] + clip[2];
 			Frustum[5, 1] = clip[7] + clip[6];
 			Frustum[5, 2] = clip[11] + clip[10];
@@ -101,8 +101,8 @@ namespace Dissonance.Engine.Graphics
 
 		public bool PointInFrustum(Vector3 point)
 		{
-			for(int i = 0; i < 6; i++) {
-				if(Frustum[i, 0] * point.x + Frustum[i, 1] * point.y + Frustum[i, 2] * point.z + Frustum[i, 3] <= 0) {
+			for (int i = 0; i < 6; i++) {
+				if (Frustum[i, 0] * point.x + Frustum[i, 1] * point.y + Frustum[i, 2] * point.z + Frustum[i, 3] <= 0) {
 					return false;
 				}
 			}
@@ -119,7 +119,7 @@ namespace Dissonance.Engine.Graphics
 			float z1 = box.min.z;
 			float z2 = box.max.z;
 
-			for(int i = 0; i < 6; i++) {
+			for (int i = 0; i < 6; i++) {
 				float f0 = Frustum[i, 0];
 				float f1 = Frustum[i, 1];
 				float f2 = Frustum[i, 2];
@@ -132,7 +132,7 @@ namespace Dissonance.Engine.Graphics
 				float f2z1 = f2 * z1;
 				float f2z2 = f2 * z2;
 
-				if(f0x1 + f1y1 + f2z1 + f3 > 0
+				if (f0x1 + f1y1 + f2z1 + f3 > 0
 				|| f0x2 + f1y1 + f2z1 + f3 > 0
 				|| f0x1 + f1y2 + f2z1 + f3 > 0
 				|| f0x2 + f1y2 + f2z1 + f3 > 0

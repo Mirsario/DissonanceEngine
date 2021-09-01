@@ -17,15 +17,14 @@ namespace Dissonance.Engine.Input
 
 		public static int Count { get; internal set; }
 
-		public string name = "InputTrigger";
-		public float minValue = DefaultMinValue;
-		public float maxValue = DefaultMaxValue;
-
 		internal int bindingCount;
 		internal InputBinding[] bindings;
 		internal SummInput fixedInput;
 		internal SummInput renderInput;
 
+		public string Name { get; set; } = "InputTrigger";
+		public float MinValue { get; set; } = DefaultMinValue;
+		public float MaxValue { get; set; } = DefaultMaxValue;
 		public int Id { get; internal set; }
 
 		public bool IsPressed => CurrentInput.isPressed;
@@ -36,20 +35,20 @@ namespace Dissonance.Engine.Input
 		public float Value {
 			get => CurrentInput.analogInput;
 			internal set {
-				CurrentInput.analogInput = Mathf.Clamp(value, minValue, maxValue);
+				CurrentInput.analogInput = Mathf.Clamp(value, MinValue, MaxValue);
 				CurrentInput.isPressed = value != 0f;
 			}
 		}
 		public InputBinding[] Bindings {
 			set {
-				if(value == null) {
-					throw new ArgumentNullException();
+				if (value == null) {
+					throw new ArgumentNullException(nameof(value));
 				}
 
 				bindingCount = value.Length;
 				bindings = new InputBinding[bindingCount];
 
-				for(int i = 0; i < bindingCount; i++) {
+				for (int i = 0; i < bindingCount; i++) {
 					bindings[i] = value[i];
 				}
 			}
@@ -63,9 +62,9 @@ namespace Dissonance.Engine.Input
 		{
 			Id = id;
 
-			this.name = name;
-			this.minValue = minValue;
-			this.maxValue = maxValue;
+			Name = name;
+			MinValue = minValue;
+			MaxValue = maxValue;
 
 			Bindings = bindings;
 		}

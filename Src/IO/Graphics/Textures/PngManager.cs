@@ -8,7 +8,7 @@ namespace Dissonance.Engine.IO
 {
 	public class PngManager : AssetManager<Texture>
 	{
-		public override string[] Extensions => new[] { ".png" };
+		public override string[] Extensions { get; } = new[] { ".png" };
 
 		public override Texture Import(Stream stream, string filePath)
 		{
@@ -21,7 +21,7 @@ namespace Dissonance.Engine.IO
 
 				stream.CopyTo(unmanagedStream, length);
 
-				if(!IL.Load(LoadImageTypeLumps.Png, ptr, length)) {
+				if (!IL.Load(LoadImageTypeLumps.Png, ptr, length)) {
 					throw new FileLoadException($"Unable to load image '{filePath}'.");
 				}
 			}
@@ -34,6 +34,7 @@ namespace Dissonance.Engine.IO
 
 			return texture;
 		}
+
 		public override void Export(Texture asset, Stream stream)
 		{
 			throw new NotImplementedException();

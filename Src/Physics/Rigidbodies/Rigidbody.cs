@@ -50,7 +50,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 Velocity {
 			get => bulletRigidbody?.LinearVelocity ?? pendingVelocity ?? default;
 			set {
-				if(bulletRigidbody != null) {
+				if (bulletRigidbody != null) {
 					bulletRigidbody.LinearVelocity = value;
 				} else {
 					pendingVelocity = value;
@@ -60,7 +60,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 AngularVelocity {
 			get => bulletRigidbody?.AngularVelocity ?? pendingAngularVelocity ?? default;
 			set {
-				if(bulletRigidbody != null) {
+				if (bulletRigidbody != null) {
 					bulletRigidbody.AngularVelocity = value;
 				} else {
 					pendingAngularVelocity = value;
@@ -70,7 +70,7 @@ namespace Dissonance.Engine.Physics
 		public Vector3 AngularFactor {
 			get => bulletRigidbody?.AngularFactor ?? pendingAngularFactor ?? default;
 			set {
-				if(bulletRigidbody != null) {
+				if (bulletRigidbody != null) {
 					bulletRigidbody.AngularFactor = value;
 				} else {
 					pendingAngularFactor = value;

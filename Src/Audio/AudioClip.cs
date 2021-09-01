@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Audio
 
 		public override void Dispose()
 		{
-			if(bufferId > 0) {
+			if (bufferId > 0) {
 				AL.DeleteBuffer(bufferId);
 
 				bufferId = 0;
@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Audio
 
 		public unsafe void SetData<T>(T[] data, int channelsNum, int bytesPerSample, int sampleRate) where T : unmanaged
 		{
-			if(data == null) {
+			if (data == null) {
 				throw new ArgumentNullException(nameof(data));
 			}
 

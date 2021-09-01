@@ -10,14 +10,15 @@ namespace Dissonance.Engine.Input
 
 		public static InputTrigger[] Triggers => triggers;
 
-		private void InitTriggers()
+		private static void InitTriggers()
 		{
 			triggers = new InputTrigger[0];
 			triggersByName = new Dictionary<string, InputTrigger>();
 		}
-		private void UpdateTriggers()
+
+		private static void UpdateTriggers()
 		{
-			for(int i = 0; i < triggers.Length; i++) {
+			for (int i = 0; i < triggers.Length; i++) {
 				var trigger = triggers[i];
 				ref var input = ref trigger.CurrentInput;
 
@@ -26,7 +27,7 @@ namespace Dissonance.Engine.Input
 
 				trigger.Value = 0f;
 
-				for(int j = 0; j < trigger.bindingCount; j++) {
+				for (int j = 0; j < trigger.bindingCount; j++) {
 					trigger.Value += trigger.bindings[j].Value;
 				}
 			}
@@ -34,19 +35,20 @@ namespace Dissonance.Engine.Input
 
 		public static InputTrigger RegisterTrigger(string name, InputBinding[] bindings, float? minValue = null, float? maxValue = null)
 			=> RegisterTrigger(typeof(InputTrigger), name, bindings, minValue, maxValue);
+
 		public static T GetTrigger<T>() where T : SingletonInputTrigger
 			=> (T)triggers[SingletonInputTrigger.Info<T>.id];
 
 		internal static InputTrigger RegisterTrigger(Type type, string name, InputBinding[] bindings, float? minValue = null, float? maxValue = null)
 		{
-			if(triggersByName.TryGetValue(name, out var trigger)) {
+			if (triggersByName.TryGetValue(name, out var trigger)) {
 				trigger.Bindings = bindings;
 				return trigger;
 			}
 
 			int id = triggers.Length;
 
-			trigger = (InputTrigger)Activator.CreateInstance(type, true); //new InputTrigger();
+			trigger = (InputTrigger)Activator.CreateInstance(type, true); // new InputTrigger();
 
 			trigger.Init(id, name, bindings, minValue ?? InputTrigger.DefaultMinValue, maxValue ?? InputTrigger.DefaultMaxValue);
 

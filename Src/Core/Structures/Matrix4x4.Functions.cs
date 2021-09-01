@@ -4,8 +4,10 @@ namespace Dissonance.Engine
 {
 	partial struct Matrix4x4
 	{
-		//Translation
+		// Translation
+		
 		public static Matrix4x4 CreateTranslation(Vector3 vec) => CreateTranslation(vec.x, vec.y, vec.z);
+		
 		public static Matrix4x4 CreateTranslation(float x, float y, float z)
 		{
 			var result = Identity;
@@ -16,7 +18,9 @@ namespace Dissonance.Engine
 
 			return result;
 		}
-		//Rotation
+		
+		// Rotation
+		
 		public static Matrix4x4 CreateRotationX(float eulerAngle)
 		{
 			float angle = eulerAngle * Mathf.Deg2Rad;
@@ -32,6 +36,7 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+		
 		public static Matrix4x4 CreateRotationY(float eulerAngle)
 		{
 			float angle = eulerAngle * Mathf.Deg2Rad;
@@ -47,6 +52,7 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+		
 		public static Matrix4x4 CreateRotationZ(float eulerAngle)
 		{
 			float angle = eulerAngle * Mathf.Deg2Rad;
@@ -62,8 +68,10 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+		
 		public static Matrix4x4 CreateRotation(Vector3 vec)
 			=> CreateRotation(vec.x, vec.y, vec.z);
+		
 		public static Matrix4x4 CreateRotation(float eulerRotX, float eulerRotY, float eulerRotZ)
 		{
 			eulerRotX *= Mathf.Deg2Rad;
@@ -77,7 +85,7 @@ namespace Dissonance.Engine
 			float cZ = Mathf.Cos(eulerRotZ);
 			float sZ = Mathf.Sin(eulerRotZ);
 
-			//ZXY
+			// ZXY
 			return new Matrix4x4(
 				cY * cZ - sX * sY * sZ, -cX * sZ, cZ * sY + cY * sX * sZ, 0f,
 				cZ * sX * sY + cY * sZ, cX * cZ, -cY * cZ * sX + sY * sZ, 0f,
@@ -85,6 +93,7 @@ namespace Dissonance.Engine
 				0f, 0f, 0f, 1f
 			);
 		}
+		
 		public static Matrix4x4 CreateRotation(Quaternion q)
 		{
 			float x = q.x * 2f;
@@ -110,6 +119,7 @@ namespace Dissonance.Engine
 				0f, 0f, 0f, 1f
 			);
 		}
+		
 		public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, float angle)
 		{
 			var result = Identity;
@@ -155,9 +165,13 @@ namespace Dissonance.Engine
 
 			return result;
 		}
-		//Scale
+		
+		// Scale
+		
 		public static Matrix4x4 CreateScale(float xyz) => CreateScale(xyz, xyz, xyz);
+		
 		public static Matrix4x4 CreateScale(Vector3 vec) => CreateScale(vec.x, vec.y, vec.z);
+		
 		public static Matrix4x4 CreateScale(float x, float y, float z)
 		{
 			var result = Identity;
@@ -168,8 +182,11 @@ namespace Dissonance.Engine
 
 			return result;
 		}
-		//Projection
+		
+		// Projection
+		
 		public static Matrix4x4 CreateOrthographic(float width, float height, float zNear, float zFar) => CreateOrthographicOffCenter(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
+		
 		public static Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNear, float zFar)
 		{
 			Matrix4x4 result;
@@ -196,21 +213,22 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+		
 		public static Matrix4x4 CreatePerspectiveFOV(float fovY, float aspect, float zNear, float zFar)
 		{
-			if(fovY <= 0 || fovY > Math.PI) {
+			if (fovY <= 0 || fovY > Math.PI) {
 				throw new ArgumentOutOfRangeException(nameof(fovY));
 			}
 
-			if(aspect <= 0) {
+			if (aspect <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(aspect));
 			}
 
-			if(zNear <= 0) {
+			if (zNear <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 
-			if(zFar <= 0) {
+			if (zFar <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(zFar));
 			}
 
@@ -221,17 +239,18 @@ namespace Dissonance.Engine
 
 			return CreatePerspective(xMin, xMax, yMin, yMax, zNear, zFar);
 		}
+		
 		public static Matrix4x4 CreatePerspective(float left, float right, float bottom, float top, float zNear, float zFar)
 		{
-			if(zNear <= 0) {
+			if (zNear <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 
-			if(zFar <= 0) {
+			if (zFar <= 0) {
 				throw new ArgumentOutOfRangeException(nameof(zFar));
 			}
 
-			if(zNear >= zFar) {
+			if (zNear >= zFar) {
 				throw new ArgumentOutOfRangeException(nameof(zNear));
 			}
 
@@ -266,6 +285,7 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+		
 		public static Matrix4x4 LookAt(Vector3 eye, Vector3 target, Vector3 up)
 		{
 			var z = Vector3.Normalize(target - eye);
@@ -296,13 +316,16 @@ namespace Dissonance.Engine
 
 			return result;
 		}
-		//Etc
+		
+		// Etc
+
 		public static Matrix4x4 Normalize(Matrix4x4 matrix)
 		{
 			matrix.Normalize();
 
 			return matrix;
 		}
+
 		public static Matrix4x4 Invert(Matrix4x4 matrix)
 		{
 			matrix.Invert();

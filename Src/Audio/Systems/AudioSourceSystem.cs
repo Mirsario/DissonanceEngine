@@ -20,37 +20,37 @@ namespace Dissonance.Engine.Audio
 
 		private void Update()
 		{
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				ref var audioSource = ref entity.Get<AudioSource>();
 
-				//Create source if needed.
-				if(audioSource.sourceId == 0) {
+				// Create source if needed.
+				if (audioSource.sourceId == 0) {
 					AL.GenSource(out audioSource.sourceId);
 				}
 
-				//Update buffer.
+				// Update buffer.
 				uint newBufferId = audioSource.Clip?.bufferId ?? 0;
 
-				if(audioSource.bufferId != newBufferId) {
+				if (audioSource.bufferId != newBufferId) {
 					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
 
 					audioSource.bufferId = newBufferId;
 				}
 
-				//Update volume.
+				// Update volume.
 				AL.Source(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
 
 				// Update pitch.
 				AL.Source(audioSource.sourceId, SourceFloat.Pitch, audioSource.Pitch);
 
-				//Update 3D position.
-				if(!audioSource.Is2D && entity.Has<Transform>()) {
+				// Update 3D position.
+				if (!audioSource.Is2D && entity.Has<Transform>()) {
 					audioSource.was2D = false;
 
 					var transform = entity.Get<Transform>();
 					var position = transform.Position;
 
-					if(position == default) {
+					if (position == default) {
 						position.x = float.Epsilon;
 					}
 
@@ -58,14 +58,14 @@ namespace Dissonance.Engine.Audio
 
 					AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
 					AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
-				} else if(!audioSource.was2D) {
+				} else if (!audioSource.was2D) {
 					audioSource.was2D = true;
 
 					AL.Source(audioSource.sourceId, SourceFloat3.Position, 0f, 0f, 0f);
 				}
 
-				//Update looping.
-				if(audioSource.Loop != audioSource.wasLooped) {
+				// Update looping.
+				if (audioSource.Loop != audioSource.wasLooped) {
 					AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
 
 					audioSource.wasLooped = audioSource.Loop;
@@ -79,24 +79,24 @@ namespace Dissonance.Engine.Audio
 
 		private void ReadMessages()
 		{
-			foreach(var stopMessage in ReadMessages<StopAudioSourceMessage>()) {
-				if(stopMessage.Entity.Has<AudioSource>()) {
+			foreach (var stopMessage in ReadMessages<StopAudioSourceMessage>()) {
+				if (stopMessage.Entity.Has<AudioSource>()) {
 					var audioSource = stopMessage.Entity.Get<AudioSource>();
 
 					AL.SourceStop(audioSource.sourceId);
 				}
 			}
 
-			foreach(var pauseMessage in ReadMessages<PauseAudioSourceMessage>()) {
-				if(pauseMessage.Entity.Has<AudioSource>()) {
+			foreach (var pauseMessage in ReadMessages<PauseAudioSourceMessage>()) {
+				if (pauseMessage.Entity.Has<AudioSource>()) {
 					var audioSource = pauseMessage.Entity.Get<AudioSource>();
 
 					AL.SourcePause(audioSource.sourceId);
 				}
 			}
 
-			foreach(var playMessage in ReadMessages<PlayAudioSourceMessage>()) {
-				if(playMessage.Entity.Has<AudioSource>()) {
+			foreach (var playMessage in ReadMessages<PlayAudioSourceMessage>()) {
+				if (playMessage.Entity.Has<AudioSource>()) {
 					var audioSource = playMessage.Entity.Get<AudioSource>();
 
 					AL.SourcePlay(audioSource.sourceId);

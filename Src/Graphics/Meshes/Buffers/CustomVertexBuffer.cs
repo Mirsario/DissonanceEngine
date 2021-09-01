@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-#pragma warning disable CS0649 //Value is never assigned to.
+#pragma warning disable CS0649 // Value is never assigned to.
 
 namespace Dissonance.Engine.Graphics
 {
@@ -42,7 +42,7 @@ namespace Dissonance.Engine.Graphics
 
 			var typeList = new List<Type>();
 
-			foreach(var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexBuffer).IsAssignableFrom(t))) {
+			foreach (var type in AssemblyCache.AllTypes.Where(t => !t.IsAbstract && typeof(CustomVertexBuffer).IsAssignableFrom(t))) {
 				typeof(IDs<>)
 					.MakeGenericType(type)
 					.GetField(nameof(IDs<CustomVertexBuffer>.id), BindingFlags.Public | BindingFlags.Static)
@@ -66,21 +66,21 @@ namespace Dissonance.Engine.Graphics
 		{
 			var attributes = AttributeAttachmentsById[TypeId];
 
-			if(data == null) {
-				if(BufferId != 0) {
+			if (data == null) {
+				if (BufferId != 0) {
 					GL.DeleteBuffer(BufferId);
 
 					BufferId = 0;
 				}
 
-				foreach(uint attributeId in attributes) {
+				foreach (uint attributeId in attributes) {
 					GL.DisableVertexAttribArray(attributeId);
 				}
 
 				return;
 			}
 
-			if(BufferId == 0) {
+			if (BufferId == 0) {
 				BufferId = GL.GenBuffer();
 			}
 
@@ -92,7 +92,7 @@ namespace Dissonance.Engine.Graphics
 
 			GL.BufferData(Target, (int)(DataLength * tSize), data, mesh.bufferUsage);
 
-			foreach(uint attributeId in attributes) {
+			foreach (uint attributeId in attributes) {
 				GL.EnableVertexAttribArray(attributeId);
 
 				var attribute = CustomVertexAttribute.GetInstance((int)attributeId);
@@ -100,16 +100,22 @@ namespace Dissonance.Engine.Graphics
 				GL.VertexAttribPointer(attributeId, attribute.Size, attribute.PointerType, attribute.IsNormalized, attribute.Stride, (IntPtr)attribute.Offset);
 			}
 		}
+
 		public override void Dispose()
 		{
-			if(BufferId != 0) {
+			if (BufferId != 0) {
 				GL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}
-		}
-		public override void SetData(byte[] data) => SetDataHelper(ref this.data, data);
 
-		public void SetData<TProvidedData>(byte[] byteData, Func<TProvidedData, T> cast) where TProvidedData : unmanaged => SetDataHelper(ref data, byteData, cast);
+			GC.SuppressFinalize(this);
+		}
+
+		public override void SetData(byte[] data)
+			=> SetDataHelper(ref this.data, data);
+
+		public void SetData<TProvidedData>(byte[] byteData, Func<TProvidedData, T> cast) where TProvidedData : unmanaged
+			=> SetDataHelper(ref data, byteData, cast);
 	}
 }

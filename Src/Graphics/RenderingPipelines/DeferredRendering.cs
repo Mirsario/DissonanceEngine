@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Graphics
 			var lightingDiffuseBuffer = new RenderTexture("lightingDiffuseBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGB32f);
 			var lightingSpecularBuffer = new RenderTexture("lightingSpecularBuffer", ScreenSize, useMipmaps: false, textureFormat: TextureFormat.RGB32f);
 
-			//Framebuffers
+			// Framebuffers
 			framebuffers.AddRange(new[] {
 				gFramebuffer = Framebuffer.Create("G-Buffer", fb => {
 					fb.AttachRenderTextures(
@@ -45,12 +45,12 @@ namespace Dissonance.Engine.Graphics
 				))
 			});
 
-			//RenderPasses
+			// RenderPasses
 			renderPasses.AddRange(new RenderPass[] {
-				//Geometry
+				// Geometry
 				RenderPass.Create<GeometryPass>("Geometry", p => p.Framebuffer = gFramebuffer),
 				
-				//Lighting
+				// Lighting
 				RenderPass.Create<DeferredLightingPass>("Lighting", p => {
 					p.Framebuffer = lightingFramebuffer;
 					p.Shaders = new[] {
@@ -65,22 +65,22 @@ namespace Dissonance.Engine.Graphics
 					};
 				}),
 				
-				//Composite
+				// Composite
 				RenderPass.Create<PostProcessPass>("Composite", p => {
 					p.Shader = Resources.Find<Shader>("Composite");
 					p.PassedTextures = new[] {
 						colorBuffer,
-						normalBuffer, //temp.
+						normalBuffer, // temp.
 						emissionBuffer,
 						lightingDiffuseBuffer,
 						lightingSpecularBuffer
 					};
 				}),
 
-				//Debug
+				// Debug
 				RenderPass.Create<DebugPass>("Debug"),
 
-				//GUI
+				// GUI
 				RenderPass.Create<GUIPass>("GUI"),
 			});
 

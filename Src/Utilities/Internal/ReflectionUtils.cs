@@ -7,11 +7,11 @@ namespace Dissonance.Engine.Utilities
 	{
 		public static IEnumerable<Type> EnumerateBaseTypes(Type type, bool includingOriginal = false, Type stopAt = null)
 		{
-			if(!includingOriginal) {
+			if (!includingOriginal) {
 				type = type.BaseType;
 			}
 
-			while(type != stopAt) {
+			while (type != stopAt) {
 				yield return type;
 
 				type = type.BaseType;
