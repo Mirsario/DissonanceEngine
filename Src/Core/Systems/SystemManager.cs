@@ -28,7 +28,7 @@ namespace Dissonance.Engine
 			AssemblyRegistrationModule.OnAssemblyRegistered += OnAssemblyRegistered;
 
 			WorldManager.OnWorldCreated += world => {
-				if(worldDataById.Length <= world.Id) {
+				if (worldDataById.Length <= world.Id) {
 					Array.Resize(ref worldDataById, world.Id + 1);
 				}
 
@@ -46,11 +46,11 @@ namespace Dissonance.Engine
 
 		protected override void FixedUpdate()
 		{
-			foreach(var world in WorldManager.ReadWorlds()) {
+			foreach (var world in WorldManager.ReadWorlds()) {
 				var worldData = worldDataById[world.Id];
 
-				foreach(var system in worldData.Systems) {
-					if(!system.Initialized) {
+				foreach (var system in worldData.Systems) {
+					if (!system.Initialized) {
 						system.Initialize();
 
 						system.Initialized = true;
@@ -63,10 +63,10 @@ namespace Dissonance.Engine
 
 		protected override void RenderUpdate()
 		{
-			foreach(var world in WorldManager.ReadWorlds()) {
+			foreach (var world in WorldManager.ReadWorlds()) {
 				var worldData = worldDataById[world.Id];
 
-				foreach(var system in worldData.Systems) {
+				foreach (var system in worldData.Systems) {
 					system.RenderUpdate();
 				}
 			}
@@ -76,18 +76,18 @@ namespace Dissonance.Engine
 		{
 			IEnumerable<GameSystem> GatherDependenciesBasedOnReadTypes(GameSystem system, IEnumerable<Type> readTypes, Dictionary<Type, List<Type>> typeToWritingSystemTypes)
 			{
-				foreach(var componentType in readTypes) {
-					if(!typeToWritingSystemTypes.TryGetValue(componentType, out var writingTypes)) {
+				foreach (var componentType in readTypes) {
+					if (!typeToWritingSystemTypes.TryGetValue(componentType, out var writingTypes)) {
 						continue;
 					}
 
-					foreach(var writingType in writingTypes) {
-						if(!systemsByType.TryGetValue(writingType, out var writingSystems)) {
+					foreach (var writingType in writingTypes) {
+						if (!systemsByType.TryGetValue(writingType, out var writingSystems)) {
 							continue;
 						}
 
-						foreach(var writingSystem in writingSystems) {
-							if(writingSystem != system) {
+						foreach (var writingSystem in writingSystems) {
+							if (writingSystem != system) {
 								yield return writingSystem;
 							}
 						}
@@ -99,17 +99,17 @@ namespace Dissonance.Engine
 
 			IEnumerable<GameSystem> GetGameSystemDependencies(GameSystem system)
 			{
-				if(!dependenciesBySystem.TryGetValue(system, out var dependencies)) {
+				if (!dependenciesBySystem.TryGetValue(system, out var dependencies)) {
 					dependenciesBySystem[system] = dependencies = new();
 
 					var typeData = system.TypeData;
 
-					if(typeData.ReadTypes?.Count > 0) {
+					if (typeData.ReadTypes?.Count > 0) {
 						// Add systems that write/modify component values as dependencies of systems that read them.
 						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReadTypes, ComponentTypeToWritingSystemTypes));
 					}
 
-					if(typeData.ReceiveTypes?.Count > 0) {
+					if (typeData.ReceiveTypes?.Count > 0) {
 						// Add systems that send messages as dependencies of systems that receive them.
 						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReceiveTypes, MessageTypeToSendingSystemTypes));
 					}
@@ -133,21 +133,21 @@ namespace Dissonance.Engine
 			var worldData = worldDataById[world.Id];
 			var systemType = system.GetType();
 
-			if(!worldData.SystemsByType.TryGetValue(systemType, out var systemsOfThisType)) {
+			if (!worldData.SystemsByType.TryGetValue(systemType, out var systemsOfThisType)) {
 				worldData.SystemsByType[systemType] = systemsOfThisType = new();
 			}
 
 			worldData.Systems.Add(system);
 			systemsOfThisType.Add(system);
 
-			if(sortSystems) {
+			if (sortSystems) {
 				SortSystems(worldData.Systems, worldData.SystemsByType);
 			}
 		}
 
 		private static void AddDefaultSystemsToWorld(World world)
 		{
-			for(int i = 0; i < SystemTypes.Count; i++) {
+			for (int i = 0; i < SystemTypes.Count; i++) {
 				var type = SystemTypes[i];
 				var system = (GameSystem)Activator.CreateInstance(type);
 
@@ -159,8 +159,8 @@ namespace Dissonance.Engine
 
 		private static void OnAssemblyRegistered(Assembly assembly, Type[] types)
 		{
-			foreach(var type in types) {
-				if(type.IsAbstract || !typeof(GameSystem).IsAssignableFrom(type)) {
+			foreach (var type in types) {
+				if (type.IsAbstract || !typeof(GameSystem).IsAssignableFrom(type)) {
 					continue;
 				}
 
@@ -168,18 +168,18 @@ namespace Dissonance.Engine
 
 				var systemTypeInfo = new SystemTypeData(type);
 
-				//Fill a dictionary that stores, by component type, lists of system types that write that component.
-				foreach(var writeType in systemTypeInfo.WriteTypes) {
-					if(!ComponentTypeToWritingSystemTypes.TryGetValue(writeType, out var writingSystems)) {
+				// Fill a dictionary that stores, by component type, lists of system types that write that component.
+				foreach (var writeType in systemTypeInfo.WriteTypes) {
+					if (!ComponentTypeToWritingSystemTypes.TryGetValue(writeType, out var writingSystems)) {
 						ComponentTypeToWritingSystemTypes[writeType] = writingSystems = new List<Type>();
 					}
 
 					writingSystems.Add(type);
 				}
 
-				//Fill a dictionary that stores, by message type, lists of system types that send that message type.
-				foreach(var sendType in systemTypeInfo.SendTypes) {
-					if(!MessageTypeToSendingSystemTypes.TryGetValue(sendType, out var sendingSystems)) {
+				// Fill a dictionary that stores, by message type, lists of system types that send that message type.
+				foreach (var sendType in systemTypeInfo.SendTypes) {
+					if (!MessageTypeToSendingSystemTypes.TryGetValue(sendType, out var sendingSystems)) {
 						MessageTypeToSendingSystemTypes[sendType] = sendingSystems = new List<Type>();
 					}
 

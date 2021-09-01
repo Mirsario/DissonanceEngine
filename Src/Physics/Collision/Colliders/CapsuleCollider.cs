@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Physics
 		public float Radius {
 			get => radius;
 			set {
-				if(value != radius) {
+				if (value != radius) {
 					radius = value;
 					needsUpdate = true;
 				}
@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Physics
 		public float Height {
 			get => height;
 			set {
-				if(value != height) {
+				if (value != height) {
 					height = value;
 					needsUpdate = true;
 				}

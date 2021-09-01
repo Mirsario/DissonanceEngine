@@ -2,9 +2,9 @@ namespace Dissonance.Engine.Graphics
 {
 	internal class DefaultShaderUniforms
 	{
-		//Awful looking internal code, all for the sake of performance
+		// Awful looking internal code, all for the sake of performance
 		public static string[] names = {
-			//Matrices
+			// Matrices
 			"world",
 			"worldInverse",
 			"worldView",
@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Graphics
 			"viewInverse",
 			"proj",
 			"projInverse",
-			//Camera
+			// Camera
 			"nearClip",
 			"farClip",
 			"screenWidth",
@@ -23,14 +23,14 @@ namespace Dissonance.Engine.Graphics
 			"screenResolution",
 			"cameraPosition",
 			"cameraDirection",
-			//Other
+			// Other
 			"time",
 			"color",
 			"mainTex",
 			"ambientColor"
 		};
 
-		//Matrices
+		// Matrices
 		public const int World = 0;
 		public const int WorldInverse = 1;
 		public const int WorldView = 2;
@@ -41,7 +41,7 @@ namespace Dissonance.Engine.Graphics
 		public const int ViewInverse = 7;
 		public const int Proj = 8;
 		public const int ProjInverse = 9;
-		//Camera
+		// Camera
 		public const int NearClip = 10;
 		public const int FarClip = 11;
 		public const int ScreenWidth = 12;
@@ -49,12 +49,12 @@ namespace Dissonance.Engine.Graphics
 		public const int ScreenResolution = 14;
 		public const int CameraPosition = 15;
 		public const int CameraDirection = 16;
-		//Other
+		// Other
 		public const int Time = 17;
 		public const int Color = 18;
 		public const int MainTex = 19;
 		public const int AmbientColor = 20;
-		//Count, important
+		// Count, important
 		public const int Count = 21;
 	}
 }

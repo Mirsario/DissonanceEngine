@@ -26,19 +26,19 @@ namespace Dissonance.Engine.Graphics
 			);
 
 			var newMesh = new Mesh {
-				//Vertices
+				// Vertices
 				Vertices = new Vector3[] {
 					new(-half,-half, 0f), new( half,-half, 0f),
 					new(-half, half, 0f), new( half, half, 0f),
 				},
 
-				//UVs
+				// UVs
 				Uv0 = addUVs ? new Vector2[] {
 					new(uv.x, uv.y), new(uv.z, uv.y),
 					new(uv.x, uv.w), new(uv.z, uv.w),
 				} : null,
 
-				//Triangles
+				// Triangles
 				Indices = !inverted ? new uint[] {
 					0, 1, 2,
 					1, 3, 2,
@@ -48,15 +48,15 @@ namespace Dissonance.Engine.Graphics
 				}
 			};
 
-			if(addNormals) {
+			if (addNormals) {
 				newMesh.NormalBuffer.Recalculate();
 			}
 
-			if(addTangents) {
+			if (addTangents) {
 				newMesh.TangentBuffer.Recalculate();
 			}
 
-			if(apply) {
+			if (apply) {
 				newMesh.Apply();
 			}
 
@@ -85,11 +85,11 @@ namespace Dissonance.Engine.Graphics
 			uint vertex = 0;
 			uint triangle = 0;
 
-			for(int y = 0; y < realResolution.y; y++) {
-				for(int x = 0; x < realResolution.x; x++) {
+			for (int y = 0; y < realResolution.y; y++) {
+				for (int x = 0; x < realResolution.x; x++) {
 					newMesh.Vertices[vertex] = new Vector3(x * stepSize.x + offset.x, 0f, y * stepSize.y + offset.y);
 
-					if(addUVs) {
+					if (addUVs) {
 						newMesh.Uv0[vertex] = new Vector2(x, y) * to01 * realUvSize;
 					}
 
@@ -97,8 +97,8 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			for(int y = 0; y < resolution.y; y++) {
-				for(int x = 0; x < resolution.x; x++) {
+			for (int y = 0; y < resolution.y; y++) {
+				for (int x = 0; x < resolution.x; x++) {
 					uint topLeft = vertexMap[x, y];
 					uint topRight = vertexMap[x + 1, y];
 					uint bottomLeft = vertexMap[x, y + 1];
@@ -113,15 +113,15 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			if(addNormals) {
+			if (addNormals) {
 				newMesh.NormalBuffer.Recalculate();
 			}
 
-			if(addTangents) {
+			if (addTangents) {
 				newMesh.TangentBuffer.Recalculate();
 			}
 
-			if(apply) {
+			if (apply) {
 				newMesh.Apply();
 			}
 
@@ -196,11 +196,11 @@ namespace Dissonance.Engine.Graphics
 				}
 			};
 
-			if(addTangents) {
+			if (addTangents) {
 				newMesh.TangentBuffer.Recalculate();
 			}
 
-			if(apply) {
+			if (apply) {
 				newMesh.Apply();
 			}
 
@@ -222,11 +222,11 @@ namespace Dissonance.Engine.Graphics
 				Indices = new uint[xRes * yRes * 6]
 			};
 
-			if(addNormals) {
+			if (addNormals) {
 				newMesh.Normals = new Vector3[verticeAmount];
 			}
 
-			if(addUVs) {
+			if (addUVs) {
 				newMesh.Uv0 = new Vector2[verticeAmount];
 			}
 
@@ -239,11 +239,11 @@ namespace Dissonance.Engine.Graphics
 
 				newMesh.Vertices[index] = normal * radius;
 
-				if(addNormals) {
+				if (addNormals) {
 					newMesh.Normals[index] = normal;
 				}
 
-				if(addUVs) {
+				if (addUVs) {
 					newMesh.Uv0[index] = new Vector2(x * xResMultiplier, y * yResMultiplier);
 				}
 			}
@@ -251,8 +251,8 @@ namespace Dissonance.Engine.Graphics
 			uint vertexIndex = 0;
 			uint triangleIndex = 0;
 
-			for(int y = 0; y < yRes; y++) {
-				for(int x = 0; x < xRes; x++) {
+			for (int y = 0; y < yRes; y++) {
+				for (int x = 0; x < xRes; x++) {
 					SphereVertex(x, y, vertexIndex);
 					SphereVertex(x, y + 1, vertexIndex + 1);
 					SphereVertex(x + 1, y, vertexIndex + 2);
@@ -269,11 +269,11 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			if(addTangents) {
+			if (addTangents) {
 				newMesh.TangentBuffer.Recalculate();
 			}
 
-			if(apply) {
+			if (apply) {
 				newMesh.Apply();
 			}
 
@@ -306,19 +306,19 @@ namespace Dissonance.Engine.Graphics
 				},
 			};
 
-			//Array.Resize(ref newMesh.Vertices, numVertices + numDuplicates);
+			// Array.Resize(ref newMesh.Vertices, numVertices + numDuplicates);
 
 			var vertices = newMesh.Vertices;
 
 			// Normalize vertices.
-			for(int i = 0; i < vertices.Length; i++) {
+			for (int i = 0; i < vertices.Length; i++) {
 				vertices[i].Normalize();
 			}
 
 			// Generate UV maps.
 			var uv = newMesh.Uv0 = new Vector2[vertices.Length];
 			
-			for(int i = 0; i < vertices.Length; i++) {
+			for (int i = 0; i < vertices.Length; i++) {
 				var vertex = vertices[i];
 			
 				uv[i] = new Vector2(
@@ -327,15 +327,15 @@ namespace Dissonance.Engine.Graphics
 				);
 			}
 
-			if(addNormals) {
+			if (addNormals) {
 				newMesh.NormalBuffer.Recalculate();
 			}
 
-			if(addTangents) {
+			if (addTangents) {
 				newMesh.TangentBuffer.Recalculate();
 			}
 
-			if(apply) {
+			if (apply) {
 				newMesh.Apply();
 			}
 

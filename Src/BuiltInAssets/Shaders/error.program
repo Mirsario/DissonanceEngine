@@ -1,5 +1,5 @@
 {
-	"Error": { //Used for when other shaders fail to compile
+	"Error": { // Used for when other shaders fail to compile
 		"vertexShader": "Shaders/error.vert",
 		"fragmentShader": "Shaders/error.frag"
 	}

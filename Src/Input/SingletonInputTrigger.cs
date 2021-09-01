@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Input
 {
 	public abstract class SingletonInputTrigger : InputTrigger
 	{
-		public static class Info<T> where T : SingletonInputTrigger
+		internal static class Info<T> where T : SingletonInputTrigger
 		{
 			public static int id;
 		}
@@ -22,8 +22,8 @@ namespace Dissonance.Engine.Input
 
 		internal static void StaticInit()
 		{
-			foreach(var type in AssemblyCache.AllTypes) {
-				if(type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
+			foreach (var type in AssemblyCache.AllTypes) {
+				if (type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
 					continue;
 				}
 

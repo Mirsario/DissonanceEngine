@@ -23,7 +23,7 @@ namespace Dissonance.Engine
 		{
 			var entity = world.CreateEntity();
 
-			foreach(var pair in PackedComponents) {
+			foreach (var pair in PackedComponents) {
 				//TODO: Very temporary implementation.
 				EntitySetComponentMethod
 					.MakeGenericMethod(pair.Key)

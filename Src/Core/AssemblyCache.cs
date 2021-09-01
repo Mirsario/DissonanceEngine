@@ -21,12 +21,12 @@ namespace Dissonance.Engine
 			/*
 			var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-			//Attempt to load assemblies that are referenced, but weren't loaded yet.
-			foreach(var assembly in loadedAssemblies) {
+			// Attempt to load assemblies that are referenced, but weren't loaded yet.
+			foreach (var assembly in loadedAssemblies) {
 				var references = assembly.GetReferencedAssemblies();
 
-				foreach(var reference in references) {
-					if(!loadedAssemblies.Any(a => a.GetName() == reference)) {
+				foreach (var reference in references) {
+					if (!loadedAssemblies.Any(a => a.GetName() == reference)) {
 						try {
 							Assembly.Load(reference);
 						}

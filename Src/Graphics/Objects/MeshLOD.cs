@@ -21,6 +21,7 @@
 			this.mesh = mesh;
 			this.material = material;
 		}
+
 		public MeshLOD(Mesh mesh, Material material, float maxDistance) : this(mesh, material)
 		{
 			MaxDistance = maxDistance;

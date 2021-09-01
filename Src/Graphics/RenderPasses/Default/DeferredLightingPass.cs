@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Reset()
 		{
-			if(Lights == null) {
+			if (Lights == null) {
 				Lights = new List<LightData>();
 			} else {
 				Lights.Clear();
@@ -40,9 +40,9 @@ namespace Dissonance.Engine.Graphics
 			GL.CullFace(CullFaceMode.Back);
 			GL.DepthMask(false);
 
-			//test if it equals 1
-			//GL.StencilFunc(StencilFunction.Notequal, 0x01, 0x01);
-			//GL.StencilMask(0);
+			// test if it equals 1
+			// GL.StencilFunc(StencilFunction.Notequal, 0x01, 0x01);
+			// GL.StencilMask(0);
 
 			Matrix4x4 worldMatrix, inverseWorldMatrix = default,
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
@@ -51,7 +51,7 @@ namespace Dissonance.Engine.Graphics
 			var renderViewData = GlobalGet<RenderViewData>();
 			var lightingData = GlobalGet<LightingPassData>();
 
-			foreach(var renderView in renderViewData.RenderViews) {
+			foreach (var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
 				var cameraTransform = renderView.transform;
 				var viewRect = camera.ViewPixel;
@@ -60,10 +60,10 @@ namespace Dissonance.Engine.Graphics
 
 				var cameraPos = cameraTransform.Position;
 
-				for(int i = 0; i < shaders.Length; i++) {
+				for (int i = 0; i < shaders.Length; i++) {
 					var activeShader = shaders[i];
 
-					if(activeShader == null) {
+					if (activeShader == null) {
 						continue;
 					}
 
@@ -75,12 +75,12 @@ namespace Dissonance.Engine.Graphics
 					var lightType = (Light.LightType)i;
 
 					//TODO: Update & optimize this
-					for(int j = 0; j < passedTextures.Length; j++) {
+					for (int j = 0; j < passedTextures.Length; j++) {
 						var tex = passedTextures[j];
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, tex.Id);
 
-						if(activeShader.TryGetUniformLocation(tex.Name, out int location)) {
+						if (activeShader.TryGetUniformLocation(tex.Name, out int location)) {
 							GL.Uniform1(location, j);
 						}
 					}
@@ -92,8 +92,8 @@ namespace Dissonance.Engine.Graphics
 					activeShader.TryGetUniformLocation("lightIntensity", out int uniformLightIntensity);
 					activeShader.TryGetUniformLocation("lightColor", out int uniformLightColor);
 
-					foreach(var light in lightingData.Lights) {
-						if(light.Type != lightType) {
+					foreach (var light in lightingData.Lights) {
+						if (light.Type != lightType) {
 							continue;
 						}
 
@@ -107,31 +107,31 @@ namespace Dissonance.Engine.Graphics
 							camera.ProjectionMatrix, camera.InverseProjectionMatrix
 						);
 
-						if(uniformLightRange != -1 && light.Range.HasValue) {
+						if (uniformLightRange != -1 && light.Range.HasValue) {
 							GL.Uniform1(uniformLightRange, light.Range.Value);
 						}
 
-						if(uniformLightPosition != -1 && light.Position.HasValue) {
+						if (uniformLightPosition != -1 && light.Position.HasValue) {
 							var position = light.Position.Value;
 
 							GL.Uniform3(uniformLightPosition, position.x, position.y, position.z);
 						}
 
-						if(uniformLightDirection != -1 && light.Direction.HasValue) {
+						if (uniformLightDirection != -1 && light.Direction.HasValue) {
 							var direction = light.Direction.Value;
 
 							GL.Uniform3(uniformLightDirection, direction.x, direction.y, direction.z);
 						}
 
-						if(uniformLightIntensity != -1) {
+						if (uniformLightIntensity != -1) {
 							GL.Uniform1(uniformLightIntensity, light.Intensity);
 						}
 
-						if(uniformLightColor != -1) {
+						if (uniformLightColor != -1) {
 							GL.Uniform3(uniformLightColor, light.Color.x, light.Color.y, light.Color.z);
 						}
 
-						switch(lightType) {
+						switch (lightType) {
 							case Light.LightType.Point:
 								PrimitiveMeshes.IcoSphere.Render();
 								break;

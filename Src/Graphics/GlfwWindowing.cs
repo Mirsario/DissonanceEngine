@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoWindow)]
 	public class GlfwWindowing : Windowing
 	{
-		private static readonly object GlfwLock = new object();
+		private static readonly object GlfwLock = new();
 
 		private Vector2Int windowSize;
 		private Vector2Int windowLocation;
@@ -20,6 +20,7 @@ namespace Dissonance.Engine.Graphics
 		public override Vector2Int WindowSize => windowSize;
 		public override Vector2Int WindowLocation => windowLocation;
 		public override Vector2Int FramebufferSize => framebufferSize;
+
 		public override bool ShouldClose {
 			get => GLFW.WindowShouldClose(WindowHandle) == 1;
 			set => GLFW.SetWindowShouldClose(WindowHandle, value ? 1 : 0);
@@ -39,10 +40,12 @@ namespace Dissonance.Engine.Graphics
 		public override event KeyCallback OnKeyCallback;
 		public override event CharCallback OnCharCallback;
 
-		public override void SwapBuffers() => GLFW.SwapBuffers(WindowHandle);
+		public override void SwapBuffers()
+			=> GLFW.SwapBuffers(WindowHandle);
+
 		public override bool SetVideoMode(int width, int height)
 		{
-			if(width <= 0 || height <= 0) {
+			if (width <= 0 || height <= 0) {
 				throw new ArgumentException($"'{nameof(width)}' and '{nameof(height)}' cannot be less than or equal to zero.");
 			}
 
@@ -60,12 +63,12 @@ namespace Dissonance.Engine.Graphics
 					_ => $"GLFW Error {code}: {description}"
 				}));
 
-				if(GLFW.Init() == 0) {
+				if (GLFW.Init() == 0) {
 					throw new Exception("Unable to initialize GLFW!");
 				}
 
-				GLFW.WindowHint(WindowHint.ContextVersionMajor, Rendering.OpenGLVersion.Major); //Targeted major version
-				GLFW.WindowHint(WindowHint.ContextVersionMinor, Rendering.OpenGLVersion.Minor); //Targeted minor version
+				GLFW.WindowHint(WindowHint.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
+				GLFW.WindowHint(WindowHint.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
 				GLFW.WindowHint(WindowHint.OpenGLForwardCompat, 1);
 				GLFW.WindowHint(WindowHint.OpenGLProfile, GLFW.OPENGL_CORE_PROFILE);
 
@@ -75,7 +78,7 @@ namespace Dissonance.Engine.Graphics
 
 				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, monitor, IntPtr.Zero);
 
-				if(WindowHandle == IntPtr.Zero) {
+				if (WindowHandle == IntPtr.Zero) {
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
@@ -86,26 +89,30 @@ namespace Dissonance.Engine.Graphics
 				UpdateValues();
 			}
 		}
+
 		protected override void OnDispose()
 		{
-			if(WindowHandle != IntPtr.Zero) {
+			if (WindowHandle != IntPtr.Zero) {
 				GLFW.DestroyWindow(WindowHandle);
 				GLFW.Terminate();
 			}
 
 			OnKeyCallback = null;
 		}
-		protected override void PreRenderUpdate() => UpdateValues();
+
+		protected override void PreRenderUpdate()
+			=> UpdateValues();
 
 		private void UpdateValues()
 		{
-			//Framebuffer
+			// Framebuffer
 			GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.x, out framebufferSize.y);
 
-			//Window
+			// Window
 			GLFW.GetWindowSize(WindowHandle, out windowSize.x, out windowSize.y);
 			GLFW.GetWindowPos(WindowHandle, out windowLocation.x, out windowLocation.y);
 		}
+
 		private void InitCallbacks()
 		{
 			GLFW.SetCursorPosCallback(WindowHandle, InternalCursorPositionCallback);

@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Reset()
 		{
-			if(RenderEntries != null) {
+			if (RenderEntries != null) {
 				RenderEntries.Clear();
 			} else {
 				RenderEntries = new();
@@ -49,7 +49,7 @@ namespace Dissonance.Engine.Graphics
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
 			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
 
-			//Render cache
+			// Render cache
 			Shader lastShader = null;
 			Material lastMaterial = null;
 			var lastCullMode = CullMode.Back;
@@ -58,8 +58,8 @@ namespace Dissonance.Engine.Graphics
 			var renderViewData = GlobalGet<RenderViewData>();
 			var geometryPassData = GlobalGet<GeometryPassData>();
 
-			//CameraLoop
-			foreach(var renderView in renderViewData.RenderViews) {
+			// CameraLoop
+			foreach (var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
 				var cameraTransform = renderView.transform;
 				var viewport = GetViewport(camera);
@@ -68,26 +68,26 @@ namespace Dissonance.Engine.Graphics
 
 				var cameraPos = cameraTransform.Position;
 
-				//Render
-				for(int i = 0; i < geometryPassData.RenderEntries.Count; i++) {
+				// Render
+				for (int i = 0; i < geometryPassData.RenderEntries.Count; i++) {
 					var entry = geometryPassData.RenderEntries[i];
 					var material = entry.material;
 					var shader = material.Shader;
 					var rendererTransform = entry.transform;
 
-					//Update Shader
-					if(lastShader != shader) {
+					// Update Shader
+					if (lastShader != shader) {
 						Shader.SetShader(shader);
 
 						shader.SetupCommonUniforms();
 						shader.SetupCameraUniforms(camera, cameraPos);
 
-						//Update CullMode
-						if(lastCullMode != shader.cullMode) {
-							if(shader.cullMode == CullMode.Off) {
+						// Update CullMode
+						if (lastCullMode != shader.cullMode) {
+							if (shader.cullMode == CullMode.Off) {
 								GL.Disable(EnableCap.CullFace);
 							} else {
-								if(lastCullMode == CullMode.Off) {
+								if (lastCullMode == CullMode.Off) {
 									GL.Enable(EnableCap.CullFace);
 								}
 
@@ -97,26 +97,26 @@ namespace Dissonance.Engine.Graphics
 							lastCullMode = shader.cullMode;
 						}
 
-						//Update PolygonMode
-						if(lastPolygonMode != shader.polygonMode) {
+						// Update PolygonMode
+						if (lastPolygonMode != shader.polygonMode) {
 							GL.PolygonMode(MaterialFace.FrontAndBack, lastPolygonMode = shader.polygonMode);
 						}
 
 						lastShader = shader;
 					}
 
-					//Update Material
-					if(lastMaterial != material) {
+					// Update Material
+					if (lastMaterial != material) {
 						material.ApplyTextures(shader);
 						material.ApplyUniforms(shader);
 
 						lastMaterial = material;
 					}
 
-					//Render mesh
+					// Render mesh
 
-					//Mark matrices for recalculation
-					for(int k = DefaultShaderUniforms.World; k <= DefaultShaderUniforms.ProjInverse; k++) {
+					// Mark matrices for recalculation
+					for (int k = DefaultShaderUniforms.World; k <= DefaultShaderUniforms.ProjInverse; k++) {
 						uniformComputed[k] = false;
 					}
 

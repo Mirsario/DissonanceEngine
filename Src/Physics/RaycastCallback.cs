@@ -21,14 +21,14 @@ namespace Dissonance.Engine.Physics
 			var rb = rayResult.CollisionObject;
 			var shapeInfo = rayResult.LocalShapeInfo;
 
-			if(rb != null && shapeInfo.HasValue) {
+			if (rb != null && shapeInfo.HasValue) {
 				var shapeInfoValue = shapeInfo.Value;
 				var collShape = PhysicsEngine.GetSubShape(rb.CollisionShape, shapeInfoValue.ShapePart);
 
-				if(collShape != null) {
+				if (collShape != null) {
 					var userObject = collShape.UserObject;
 
-					if(userObject != null && userObject is ICollider coll) {
+					if (userObject != null && userObject is ICollider coll) {
 						collider = coll;
 					}
 
@@ -40,18 +40,18 @@ namespace Dissonance.Engine.Physics
 		}
 		public override bool NeedsCollision(BroadphaseProxy proxy)
 		{
-			if(proxy.ClientObject is RigidBody bulletBody) {
+			if (proxy.ClientObject is RigidBody bulletBody) {
 				var rbInternal = bulletBody.UserObject as RigidbodyInternal;
 				ulong objLayerMask = Layers.GetLayerMask(rbInternal.gameObject.Layer);
 
-				if(rbInternal != null) {
+				if (rbInternal != null) {
 					var resultOverride = customFilter?.Invoke(rbInternal.gameObject);
 
-					if(resultOverride != null) {
+					if (resultOverride != null) {
 						return resultOverride.Value;
 					}
 
-					if((objLayerMask & layerMask) == 0) {
+					if ((objLayerMask & layerMask) == 0) {
 						return false;
 					}
 				}

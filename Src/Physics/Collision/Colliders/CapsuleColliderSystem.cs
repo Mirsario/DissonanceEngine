@@ -18,19 +18,19 @@ namespace Dissonance.Engine.Physics
 		protected internal override void FixedUpdate()
 		{
 			// Unregister colliders when their component is removed
-			foreach(var message in ReadMessages<ComponentRemovedMessage<CapsuleCollider>>()) {
-				if(message.Value.capsuleShape != null) {
+			foreach (var message in ReadMessages<ComponentRemovedMessage<CapsuleCollider>>()) {
+				if (message.Value.capsuleShape != null) {
 					SendMessage(new RemoveCollisionShapeMessage(message.Entity, message.Value.capsuleShape));
 					message.Value.capsuleShape.Dispose();
 				}
 			}
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				ref var collider = ref entity.Get<CapsuleCollider>();
 				bool noShape = collider.capsuleShape == null;
 
-				if(noShape || collider.needsUpdate) {
-					if(!noShape) {
+				if (noShape || collider.needsUpdate) {
+					if (!noShape) {
 						SendMessage(new RemoveCollisionShapeMessage(entity, collider.capsuleShape));
 						collider.capsuleShape.Dispose();
 					}

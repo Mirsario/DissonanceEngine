@@ -23,15 +23,15 @@ namespace Dissonance.Engine.Graphics
 
 			var entitiesByMaterial = new Dictionary<Material, List<Entity>>();
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				var sprite = entity.Get<Sprite>();
 				var material = sprite.Material;
 
-				if(material == null) {
+				if (material == null) {
 					continue;
 				}
 
-				if(!entitiesByMaterial.TryGetValue(material, out var entityList)) {
+				if (!entitiesByMaterial.TryGetValue(material, out var entityList)) {
 					entitiesByMaterial[material] = entityList = new();
 				}
 
@@ -40,11 +40,11 @@ namespace Dissonance.Engine.Graphics
 
 			var meshKeysToRemove = meshesByMaterial.Keys.ToList();
 
-			foreach(var pair in entitiesByMaterial) {
+			foreach (var pair in entitiesByMaterial) {
 				var material = pair.Key;
 				var entities = pair.Value;
 
-				if(!meshesByMaterial.TryGetValue(material, out var compoundMesh)) {
+				if (!meshesByMaterial.TryGetValue(material, out var compoundMesh)) {
 					meshesByMaterial[material] = compoundMesh = new();
 
 					compoundMesh.bufferUsage = BufferUsageHint.DynamicDraw;
@@ -59,7 +59,7 @@ namespace Dissonance.Engine.Graphics
 				uint vertex = 0;
 				uint index = 0;
 
-				foreach(var entity in entities) {
+				foreach (var entity in entities) {
 					ref var sprite = ref entity.Get<Sprite>();
 					var transform = entity.Get<Transform>();
 					var mesh = PrimitiveMeshes.Quad;
@@ -79,7 +79,7 @@ namespace Dissonance.Engine.Graphics
 						_ => sourceUV
 					};
 
-					if(sprite.verticesNeedRecalculation) {
+					if (sprite.verticesNeedRecalculation) {
 						RecalculateVertices(ref sprite);
 					}
 
@@ -111,8 +111,8 @@ namespace Dissonance.Engine.Graphics
 
 			// Cleanup temporary meshes if they weren't used this frame.
 
-			foreach(var key in meshKeysToRemove) {
-				if(meshesByMaterial.Remove(key, out var mesh)) {
+			foreach (var key in meshKeysToRemove) {
+				if (meshesByMaterial.Remove(key, out var mesh)) {
 					mesh.Dispose();
 				}
 			}

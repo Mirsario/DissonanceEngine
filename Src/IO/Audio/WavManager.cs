@@ -6,30 +6,30 @@ namespace Dissonance.Engine.IO
 {
 	public class WavManager : AssetManager<AudioClip>
 	{
-		public override string[] Extensions => new[] { ".wav", ".wave" };
+		public override string[] Extensions { get; } = new[] { ".wav", ".wave" };
 
 		public override AudioClip Import(Stream stream, string filePath)
 		{
 			using var reader = new BinaryReader(stream);
 
-			//RIFF header
-			string signature = new string(reader.ReadChars(4));
+			// RIFF header
+			string signature = new(reader.ReadChars(4));
 
-			if(signature != "RIFF") {
+			if (signature != "RIFF") {
 				throw new NotSupportedException("Specified stream is not a wave file.");
 			}
 
 			int riffChunckSize = reader.ReadInt32();
-			string format = new string(reader.ReadChars(4));
+			string format = new(reader.ReadChars(4));
 
-			if(format != "WAVE") {
+			if (format != "WAVE") {
 				throw new NotSupportedException("Specified stream is not a wave file.");
 			}
 
-			//WAVE header
-			string formatSignature = new string(reader.ReadChars(4));
+			// WAVE header
+			string formatSignature = new(reader.ReadChars(4));
 
-			if(formatSignature != "fmt ") {
+			if (formatSignature != "fmt ") {
 				throw new NotSupportedException("Specified wave file is not supported.");
 			}
 
@@ -41,15 +41,15 @@ namespace Dissonance.Engine.IO
 			int blockAlign = reader.ReadInt16();
 			int bitsPerSample = reader.ReadInt16();
 
-			string dataSignature = new string(reader.ReadChars(4));
+			string dataSignature = new(reader.ReadChars(4));
 
-			if(dataSignature != "data") {
+			if (dataSignature != "data") {
 				throw new NotSupportedException("Specified wave file is not supported.");
 			}
 
 			int dataChunkSize = reader.ReadInt32();
 
-			var data = reader.ReadBytes(dataChunkSize);
+			byte[] data = reader.ReadBytes(dataChunkSize);
 			var clip = new AudioClip();
 
 			clip.SetData(data, channelsNum, bitsPerSample / 8, sampleRate);

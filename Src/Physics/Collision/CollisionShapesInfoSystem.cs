@@ -11,23 +11,23 @@ namespace Dissonance.Engine.Physics
 		protected internal override void FixedUpdate()
 		{
 			// Remove collision shapes
-			foreach(var message in ReadMessages<RemoveCollisionShapeMessage>()) {
-				if(message.Entity.Has<CollisionShapesInfo>()) {
+			foreach (var message in ReadMessages<RemoveCollisionShapeMessage>()) {
+				if (message.Entity.Has<CollisionShapesInfo>()) {
 					var shapes = message.Entity.Get<CollisionShapesInfo>().collisionShapes;
 
 					shapes.Remove(message.CollisionShape);
 
-					if(shapes.Count == 0) {
+					if (shapes.Count == 0) {
 						message.Entity.Remove<CollisionShapesInfo>();
 					}
 				}
 			}
 
 			// Register collision shapes
-			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
+			foreach (var message in ReadMessages<AddCollisionShapeMessage>()) {
 				List<CollisionShape> shapes;
 
-				if(!message.Entity.Has<CollisionShapesInfo>()) {
+				if (!message.Entity.Has<CollisionShapesInfo>()) {
 					shapes = new();
 
 					message.Entity.Set(new CollisionShapesInfo {

@@ -15,14 +15,14 @@
 		{
 			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				var renderer = entity.Get<MeshRenderer>();
 				var transform = entity.Get<Transform>();
 
 				var mesh = renderer.Mesh;
 				var material = renderer.Material;
 
-				if(mesh == null || material == null) {
+				if (mesh == null || material == null) {
 					continue;
 				}
 

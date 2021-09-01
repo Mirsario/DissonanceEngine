@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Physics
 
 		protected internal override void FixedUpdate()
 		{
-			if(!World.Has<WorldPhysics>()) {
+			if (!World.Has<WorldPhysics>()) {
 				return;
 			}
 
@@ -26,26 +26,26 @@ namespace Dissonance.Engine.Physics
 
 			// Set UpdateShapes to true whenever collision shapes have been modified.
 
-			foreach(var message in ReadMessages<RemoveCollisionShapeMessage>()) {
-				if(message.Entity.Has<Rigidbody>()) {
+			foreach (var message in ReadMessages<RemoveCollisionShapeMessage>()) {
+				if (message.Entity.Has<Rigidbody>()) {
 					message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 				}
 			}
 
-			foreach(var message in ReadMessages<AddCollisionShapeMessage>()) {
-				if(message.Entity.Has<Rigidbody>()) {
+			foreach (var message in ReadMessages<AddCollisionShapeMessage>()) {
+				if (message.Entity.Has<Rigidbody>()) {
 					message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 				}
 			}
 
 			// Update rigidbodies
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				ref var rb = ref entity.Get<Rigidbody>();
 				ref var transform = ref entity.Get<Transform>();
 				var collisionShapeData = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
 
-				if(rb.bulletRigidbody == null) {
+				if (rb.bulletRigidbody == null) {
 					var collisionShape = new EmptyShape();
 
 					using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
@@ -76,19 +76,19 @@ namespace Dissonance.Engine.Physics
 
 				rb.bulletRigidbody.WorldTransform = transform.WorldMatrix;
 
-				if(rb.updateFlags == 0) {
+				if (rb.updateFlags == 0) {
 					continue;
 				}
 
-				if((rb.updateFlags & Rigidbody.UpdateFlags.CollisionFlags) != 0) {
+				if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionFlags) != 0) {
 					UpdateCollisionFlags(ref rb);
 				}
 
-				if((rb.updateFlags & Rigidbody.UpdateFlags.Mass) != 0) {
+				if ((rb.updateFlags & Rigidbody.UpdateFlags.Mass) != 0) {
 					UpdateMass(ref rb);
 				}
 
-				if((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
+				if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
 					physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
 
 					UpdateShapes(entity, ref rb, collisionShapeData);
@@ -99,8 +99,8 @@ namespace Dissonance.Engine.Physics
 
 			// Force-activate rigidbodies on demand
 
-			foreach(var message in ReadMessages<ActivateRigidbodyMessage>()) {
-				if(message.Entity.Has<Rigidbody>()) {
+			foreach (var message in ReadMessages<ActivateRigidbodyMessage>()) {
+				if (message.Entity.Has<Rigidbody>()) {
 					message.Entity.Get<Rigidbody>().bulletRigidbody.Activate();
 				}
 			}
@@ -112,14 +112,14 @@ namespace Dissonance.Engine.Physics
 
 			CollisionShape resultShape;
 
-			if(collisionShapes.Length == 0) {
-				//EmptyShape
+			if (collisionShapes.Length == 0) {
+				// EmptyShape
 				resultShape = new EmptyShape();
 			} else {
-				//CompoundShape
+				// CompoundShape
 				var compoundShape = new CompoundShape();
 
-				for(int i = 0; i < collisionShapes.Length; i++) {
+				for (int i = 0; i < collisionShapes.Length; i++) {
 					compoundShape.AddChildShape(Matrix4x4.Identity, collisionShapes[i]);
 				}
 
@@ -128,7 +128,7 @@ namespace Dissonance.Engine.Physics
 
 			rb.bulletRigidbody.CollisionShape = resultShape;
 
-			if(rb.ownsCollisionShape && previousShape != null) {
+			if (rb.ownsCollisionShape && previousShape != null) {
 				previousShape.Dispose();
 			}
 
@@ -144,7 +144,7 @@ namespace Dissonance.Engine.Physics
 
 			void SetFlag(CollisionFlags flag, bool value)
 			{
-				if(value) {
+				if (value) {
 					flags |= flag;
 				} else {
 					flags &= ~flag;

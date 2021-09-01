@@ -29,7 +29,7 @@ namespace Dissonance.Engine
 
 		internal static bool HasComponent<T>(int worldId) where T : struct
 		{
-			if(worldId >= ComponentData<T>.DataByWorld.Length) {
+			if (worldId >= ComponentData<T>.DataByWorld.Length) {
 				return false;
 			}
 
@@ -38,13 +38,13 @@ namespace Dissonance.Engine
 
 		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct
 		{
-			if(worldId >= ComponentData<T>.DataByWorld.Length) {
+			if (worldId >= ComponentData<T>.DataByWorld.Length) {
 				return false;
 			}
 
 			int[] indicesByEntity = ComponentData<T>.DataByWorld[worldId].IndicesByEntity;
 
-			if(entityId >= indicesByEntity.Length) {
+			if (entityId >= indicesByEntity.Length) {
 				return false;
 			}
 
@@ -73,14 +73,14 @@ namespace Dissonance.Engine
 
 		internal static void SetComponent<T>(int worldId, T value) where T : struct
 		{
-			if(ComponentData<T>.DataByWorld.Length <= worldId) {
+			if (ComponentData<T>.DataByWorld.Length <= worldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.WorldData.Default);
 			}
 
 			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
 			ref int dataId = ref worldData.GlobalDataIndex;
 
-			if(dataId <= 0) {
+			if (dataId <= 0) {
 				dataId = worldData.Data.Length;
 
 				Array.Resize(ref worldData.Data, dataId + 1);
@@ -91,7 +91,7 @@ namespace Dissonance.Engine
 
 		internal static void SetComponent<T>(in Entity entity, T value) where T : struct
 		{
-			if(ComponentData<T>.DataByWorld.Length <= entity.WorldId) {
+			if (ComponentData<T>.DataByWorld.Length <= entity.WorldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, entity.WorldId + 1, ComponentData<T>.WorldData.Default);
 			}
 
@@ -99,13 +99,13 @@ namespace Dissonance.Engine
 
 			int dataId = -1;
 
-			if(entity.Id >= worldData.IndicesByEntity.Length) {
+			if (entity.Id >= worldData.IndicesByEntity.Length) {
 				ArrayUtils.ResizeAndFillArray(ref worldData.IndicesByEntity, entity.Id + 1, -1);
 			} else {
 				dataId = worldData.IndicesByEntity[entity.Id];
 			}
 
-			if(dataId < 0) {
+			if (dataId < 0) {
 				dataId = worldData.Data.Length;
 				worldData.IndicesByEntity[entity.Id] = dataId;
 
@@ -122,19 +122,19 @@ namespace Dissonance.Engine
 
 		internal static void RemoveComponent<T>(in Entity entity) where T : struct
 		{
-			if(entity.WorldId < 0 || entity.WorldId >= ComponentData<T>.DataByWorld.Length) {
+			if (entity.WorldId < 0 || entity.WorldId >= ComponentData<T>.DataByWorld.Length) {
 				return;
 			}
 
 			ref var worldData = ref ComponentData<T>.DataByWorld[entity.WorldId];
 
-			if(entity.Id < 0 || entity.Id >= worldData.IndicesByEntity.Length) {
+			if (entity.Id < 0 || entity.Id >= worldData.IndicesByEntity.Length) {
 				return;
 			}
 
 			int dataIndex = worldData.IndicesByEntity[entity.Id];
 
-			if(dataIndex < 0) {
+			if (dataIndex < 0) {
 				return;
 			}
 

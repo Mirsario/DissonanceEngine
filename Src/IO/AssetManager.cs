@@ -5,7 +5,7 @@ namespace Dissonance.Engine.IO
 {
 	public abstract class AssetManager
 	{
-		public virtual string[] Extensions => throw new NotImplementedException();
+		public abstract string[] Extensions { get; }
 
 		public virtual void Init() { }
 		public virtual bool Autoload(string file) => false;
@@ -13,7 +13,10 @@ namespace Dissonance.Engine.IO
 
 	public abstract class AssetManager<T> : AssetManager
 	{
-		public virtual T Import(Stream stream, string filePath) => throw new NotImplementedException();
-		public virtual void Export(T asset, Stream stream) => throw new NotImplementedException();
+		public virtual T Import(Stream stream, string filePath)
+			=> throw new NotImplementedException();
+
+		public virtual void Export(T asset, Stream stream)
+			=> throw new NotImplementedException();
 	}
 }

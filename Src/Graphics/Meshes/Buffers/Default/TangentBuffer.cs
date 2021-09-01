@@ -19,7 +19,7 @@ namespace Dissonance.Engine.Graphics
 
 			data = new Vector4[vertexCount];
 
-			for(int i = 0; i < indices.Length; i += 3) {
+			for (int i = 0; i < indices.Length; i += 3) {
 				uint i1 = indices[i];
 				uint i2 = indices[i + 1];
 				uint i3 = indices[i + 2];
@@ -57,11 +57,11 @@ namespace Dissonance.Engine.Graphics
 				tan2[i3] += tdir;
 			}
 
-			for(int i = 0; i < vertexCount; i++) {
+			for (int i = 0; i < vertexCount; i++) {
 				var n = normals[i];
 				var t = tan1[i];
 
-				//Gram-Schmidt orthogonalization
+				// Gram-Schmidt orthogonalization
 				float w = Vector3.Dot(Vector3.Cross(n, t), tan2[i]) < 0f ? -1f : 1f;
 
 				data[i] = new Vector4((t - n * Vector3.Dot(n, t)).Normalized, w);

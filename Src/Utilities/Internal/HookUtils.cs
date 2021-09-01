@@ -12,9 +12,9 @@ namespace Dissonance.Engine.Utilities
 			where THookHolder : class
 			where TMethodHolder : class
 		{
-			//Check the objects array before proceeding.
-			foreach(var obj in objects) {
-				if(obj == null) {
+			// Check the objects array before proceeding.
+			foreach (var obj in objects) {
+				if (obj == null) {
 					throw new ArgumentException($"'{nameof(objects)}' cannot contain null values.");
 				}
 			}
@@ -22,25 +22,25 @@ namespace Dissonance.Engine.Utilities
 			var hookHolderType = typeof(THookHolder);
 			var methodHolderType = typeof(TMethodHolder);
 
-			//Enumerate virtual method definitions
-			foreach(var method in methodHolderType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+			// Enumerate virtual method definitions
+			foreach (var method in methodHolderType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
 				var attribute = method.GetCustomAttribute<VirtualMethodHookAttribute>();
 
-				if(attribute == null || attribute.HookHolder != hookHolderType) {
+				if (attribute == null || attribute.HookHolder != hookHolderType) {
 					continue;
 				}
 
-				if(!method.IsVirtual) {
+				if (!method.IsVirtual) {
 					throw new InvalidOperationException($"Method '{methodHolderType.Name}.{method.Name}' is expected to be virtual because of the '{nameof(VirtualMethodHookAttribute)}' attribute on it.");
 				}
 
 				var hookFlags = BindingFlags.Public | BindingFlags.NonPublic | (attribute.IsStatic ? BindingFlags.Static : BindingFlags.Instance);
 
 				MemberInfo hookMember = attribute.IsProperty
-					? (MemberInfo)attribute.HookHolder.GetProperty(attribute.HookName)
+					? attribute.HookHolder.GetProperty(attribute.HookName)
 					: attribute.HookHolder.GetField(attribute.HookName);
 
-				if(hookMember == null) {
+				if (hookMember == null) {
 					throw new ArgumentException($"Could not find a hook {(attribute.IsProperty ? "property" : "field")} on type {attribute.HookHolder.Name}");
 				}
 
@@ -48,23 +48,23 @@ namespace Dissonance.Engine.Utilities
 					? ((PropertyInfo)hookMember).PropertyType
 					: ((FieldInfo)hookMember).FieldType;
 
-				if(!typeof(Delegate).IsAssignableFrom(hookMemberValueType)) {
+				if (!typeof(Delegate).IsAssignableFrom(hookMemberValueType)) {
 					throw new ArgumentException($"{(attribute.IsProperty ? "Property" : "Field")} '{attribute.HookName}' on type '{attribute.HookHolder.Name}' does not derive from type '{nameof(Delegate)}'.");
 				}
 
 				var methodFlags = BindingFlags.Instance | (method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic);
 				var delegates = new List<(TMethodHolder methodHolder, Delegate method, int hookPosition)>();
 
-				//Enumerate objects to search for overrides of the current virtual method.
-				foreach(var obj in objects) {
+				// Enumerate objects to search for overrides of the current virtual method.
+				foreach (var obj in objects) {
 					var objType = obj.GetType();
 					var objMethod = objType.GetMethod(method.Name, methodFlags);
 
-					if(objMethod == null) {
+					if (objMethod == null) {
 						throw new Exception($"Couldn't find method '{objMethod.Name}' on type '{objType.Name}'. This shouldn't happen.");
 					}
 
-					if(objMethod.DeclaringType == methodHolderType) {
+					if (objMethod.DeclaringType == methodHolderType) {
 						continue;
 					}
 
@@ -81,7 +81,7 @@ namespace Dissonance.Engine.Utilities
 					.ToArray()
 				);
 
-				if(attribute.IsProperty) {
+				if (attribute.IsProperty) {
 					((PropertyInfo)hookMember).SetValue(hookHolderInstance, combinedDelegate);
 				} else {
 					((FieldInfo)hookMember).SetValue(hookHolderInstance, combinedDelegate);

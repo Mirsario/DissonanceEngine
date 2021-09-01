@@ -3,7 +3,7 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.Physics
 {
-	//Concave shapes should only be used for static meshes or kinematic rigidbodies
+	// Concave shapes should only be used for static meshes or kinematic rigidbodies
 	public class ConcaveCollisionMesh : CollisionMesh
 	{
 		public override void SetupFromMesh(Mesh mesh)
@@ -14,7 +14,7 @@ namespace Dissonance.Engine.Physics
 
 			var vertices = mesh.Vertices;
 
-			while(i < mesh.Indices.Length) {
+			while (i < mesh.Indices.Length) {
 				triMesh.AddTriangle(
 					vertices[mesh.Indices[i++]],
 					vertices[mesh.Indices[i++]],

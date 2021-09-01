@@ -19,21 +19,21 @@ namespace Dissonance.Engine.Graphics
 
 			var renderViewData = GlobalGet<RenderViewData>();
 
-			foreach(var renderView in renderViewData.RenderViews) {
+			foreach (var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
 				var transform = renderView.transform;
 				var viewport = GetViewport(camera);
 
 				PassShader.SetupCameraUniforms(camera, transform.Position);
 
-				if(passedTextures != null) {
-					for(int j = 0; j < passedTextures.Length; j++) {
+				if (passedTextures != null) {
+					for (int j = 0; j < passedTextures.Length; j++) {
 						var texture = passedTextures[j];
 
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
-						if(PassShader != null) {
+						if (PassShader != null) {
 							GL.Uniform1(GL.GetUniformLocation(PassShader.Id, texture.Name), j);
 						}
 					}

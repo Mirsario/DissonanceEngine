@@ -36,10 +36,10 @@ namespace Dissonance.Engine.IO
 			{ "NORMAL",         typeof(NormalAttribute) },
 			{ "TANGENT",        typeof(TangentAttribute) },
 			{ "TEXCOORD_0",     typeof(Uv0Attribute) },
-			//{ "TEXCOORD_1",	typeof(Uv1Attribute) },
+			// { "TEXCOORD_1",	typeof(Uv1Attribute) },
 			{ "COLOR_0",        typeof(ColorAttribute) },
-			//{ "JOINTS_0",		typeof(BoneIndicesAttribute) },
-			//{ "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
+			// { "JOINTS_0",		typeof(BoneIndicesAttribute) },
+			// { "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
 		};
 
 		public override string[] Extensions => new[] { ".gltf", ".glb" };
@@ -48,7 +48,7 @@ namespace Dissonance.Engine.IO
 		{
 			var info = new GltfInfo(filePath);
 
-			if(filePath.EndsWith(".gltf")) {
+			if (filePath.EndsWith(".gltf")) {
 				byte[] textBytes = new byte[stream.Length - stream.Position];
 
 				stream.Read(textBytes, 0, textBytes.Length);
@@ -59,8 +59,8 @@ namespace Dissonance.Engine.IO
 			}
 
 			//TODO: Add extension support.
-			if(info.json.extensionsRequired != null) {
-				foreach(string requiredExtension in info.json.extensionsRequired) {
+			if (info.json.extensionsRequired != null) {
+				foreach (string requiredExtension in info.json.extensionsRequired) {
 					throw new FileLoadException($"glTF Error: Required extension '{requiredExtension}' is not supported.");
 				}
 			}
@@ -92,19 +92,19 @@ namespace Dissonance.Engine.IO
 
 			int chunkId = 0;
 
-			while(reader.BaseStream.Position < length) {
-				//Read Chunk
+			while (reader.BaseStream.Position < length) {
+				// Read Chunk
 				uint chunkLength = reader.ReadUInt32();
 				uint chunkType = reader.ReadUInt32();
 				byte[] chunkData = reader.ReadBytes((int)chunkLength);
 
-				if(chunkId == 0 && chunkType != ChunkJson) {
+				if (chunkId == 0 && chunkType != ChunkJson) {
 					static string ToAscii(uint value) => Encoding.ASCII.GetString(BitConverter.GetBytes(value));
 
 					throw new FileLoadException($"glTF Error: First chunk was expected to be '{ToAscii(ChunkJson)}', but is '{ToAscii(chunkType)}'.");
 				}
 
-				switch(chunkType) {
+				switch (chunkType) {
 					case ChunkJson:
 						HandleGltf(info, chunkData);
 						break;
@@ -121,13 +121,14 @@ namespace Dissonance.Engine.IO
 		{
 			uint magic = reader.ReadUInt32();
 
-			if(magic != FormatHeader) {
+			if (magic != FormatHeader) {
 				throw new FileLoadException("glTF Error: File is not of 'Binary glTF' format.");
 			}
 
 			version = reader.ReadUInt32();
 			length = reader.ReadUInt32();
 		}
+
 		protected static byte[] GetAccessorData(GltfInfo info, GltfJson.Accessor accessor)
 		{
 			var json = info.json;
@@ -139,56 +140,56 @@ namespace Dissonance.Engine.IO
 
 			byte[] data = new byte[fullSize];
 
-			if(bufferView != null) {
+			if (bufferView != null) {
 				uint bufferId = bufferView.buffer;
 				var buffer = json.buffers[bufferId];
 
 				Stream stream;
 
-				if(buffer.uri == null) {
-					//Read from blob.
+				if (buffer.uri == null) {
+					// Read from blob.
 
-					if(info.blobStream == null) {
+					if (info.blobStream == null) {
 						throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property, with no binary buffer present.");
 					}
 
-					if(bufferId != 0) {
+					if (bufferId != 0) {
 						throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property. Only the first buffer in a .glb file is allowed to not have one.");
 					}
 
 					stream = info.blobStream;
 				} else {
-					//Read from uri.
+					// Read from uri.
 
 					string path = buffer.uri;
 
-					//If uri/path is not absolute, we make it relative to the .gltf file's location.
-					if(!buffer.uri.Contains(":/") && !buffer.uri.Contains(":\\") && !buffer.uri.StartsWith("/")) {
+					// If uri/path is not absolute, we make it relative to the .gltf file's location.
+					if (!buffer.uri.Contains(":/") && !buffer.uri.Contains(":\\") && !buffer.uri.StartsWith("/")) {
 						path = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.GetDirectoryName(info.FilePath)) + Path.DirectorySeparatorChar + buffer.uri;
 					}
 
 					stream = File.OpenRead(path);
 				}
 
-				if(!stream.CanSeek) {
+				if (!stream.CanSeek) {
 					throw new FileLoadException("glTF Error: Stream is not seekable. This shouldn't happen.");
 				}
 
 				stream.Seek(bufferView.byteOffset + accessor.byteOffset, SeekOrigin.Begin);
 
-				//if(bufferView.byteStride==0) {
+				// if (bufferView.byteStride==0) {
 				stream.Read(data, 0, (int)bufferView.byteLength);
-				//} else {
+				// } else {
 				//	int bytesRead = 0;
 				//
-				//	while(bytesRead<bufferView.byteLength) {
+				//	while (bytesRead<bufferView.byteLength) {
 				//		stream.Read(data,bytesRead,elementSize);
 				//
 				//		bytesRead += elementSize;
 				//
 				//		stream.Seek(bufferView.byteStride,SeekOrigin.Current);
 				//	}
-				//}
+				// }
 			}
 
 			return data;
@@ -198,21 +199,21 @@ namespace Dissonance.Engine.IO
 		{
 			var json = info.json;
 
-			if(json.meshes == null || json.meshes.Length == 0) {
+			if (json.meshes == null || json.meshes.Length == 0) {
 				return;
 			}
 
-			foreach(var jsonMesh in json.meshes) {
+			foreach (var jsonMesh in json.meshes) {
 				var meshes = new List<Mesh>();
 
-				foreach(var jsonPrimitive in jsonMesh.primitives) {
+				foreach (var jsonPrimitive in jsonMesh.primitives) {
 					var mesh = new Mesh();
 
-					if(jsonPrimitive.mode.HasValue) {
+					if (jsonPrimitive.mode.HasValue) {
 						mesh.PrimitiveType = jsonPrimitive.mode.Value;
 					}
 
-					if(jsonPrimitive.indices.HasValue) {
+					if (jsonPrimitive.indices.HasValue) {
 						var jsonAccessor = json.accessors[jsonPrimitive.indices.Value];
 
 						byte[] data = GetAccessorData(info, jsonAccessor);
@@ -220,11 +221,11 @@ namespace Dissonance.Engine.IO
 						mesh.IndexBuffer.SetData<ushort>(data, value => value);
 					}
 
-					foreach(var pair in jsonPrimitive.attributes) {
+					foreach (var pair in jsonPrimitive.attributes) {
 						string attributeName = pair.Key;
 						var jsonAccessor = json.accessors[pair.Value];
 
-						if(!AttributeToType.TryGetValue(attributeName, out var attributeType)) {
+						if (!AttributeToType.TryGetValue(attributeName, out var attributeType)) {
 							continue;
 						}
 
@@ -243,14 +244,14 @@ namespace Dissonance.Engine.IO
 
 				var material = new Material("DefaultMaterial", Resources.Find<Shader>("Diffuse"));
 
-				for(int i = 0; i < meshes.Count; i++) {
+				for (int i = 0; i < meshes.Count; i++) {
 					var entity = info.Scene.CreateEntity();
 
 					entity.SetComponent(new Transform(Vector3.Zero));
 					entity.SetComponent(new MeshRenderer(meshes[i], material));
 				}
 
-				//info.result.Add(model, jsonMesh.name);
+				// info.result.Add(model, jsonMesh.name);
 			}
 		}
 	}

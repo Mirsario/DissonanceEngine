@@ -2,9 +2,12 @@ namespace Dissonance.Engine
 {
 	partial struct Matrix4x4
 	{
-		//Matrix4x4
+		// Matrix4x4
+
 		public static bool operator ==(Matrix4x4 left, Matrix4x4 right) => left.Equals(right);
+
 		public static bool operator !=(Matrix4x4 left, Matrix4x4 right) => !left.Equals(right);
+
 		public static Matrix4x4 operator *(Matrix4x4 lhs, Matrix4x4 rhs)
 		{
 			Matrix4x4 result;
@@ -28,8 +31,12 @@ namespace Dissonance.Engine
 
 			return result;
 		}
-		//Vector2
-		public static Vector2 operator *(Vector2 vec, Matrix4x4 matrix) => new Vector2(vec.x * matrix.m00 + vec.y * matrix.m10 + matrix.m30, vec.x * matrix.m01 + vec.y * matrix.m11 + matrix.m31);
+
+		// Vector2
+
+		public static Vector2 operator *(Vector2 vec, Matrix4x4 matrix)
+			=> new(vec.x * matrix.m00 + vec.y * matrix.m10 + matrix.m30, vec.x * matrix.m01 + vec.y * matrix.m11 + matrix.m31);
+		
 		public static Vector3 operator *(Matrix4x4 m, Vector3 v)
 		{
 			Vector3 result;
@@ -40,6 +47,7 @@ namespace Dissonance.Engine
 
 			return result;
 		}
+
 		public static Vector4 operator *(Matrix4x4 lhs, Vector4 v)
 		{
 			Vector4 result;
@@ -52,15 +60,15 @@ namespace Dissonance.Engine
 			return result;
 		}
 
-		//Casts
+		// Casts
 
-		//BulletSharp.Math.Matrix
 		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new Matrix4x4(
 			v.M11, v.M12, v.M13, v.M14,
 			v.M21, v.M22, v.M23, v.M24,
 			v.M31, v.M32, v.M33, v.M34,
 			v.M41, v.M42, v.M43, v.M44
 		);
+
 		public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new BulletSharp.Math.Matrix {
 			M11 = v.m00,
 			M12 = v.m01,
@@ -79,12 +87,12 @@ namespace Dissonance.Engine
 			M43 = v.m32,
 			M44 = v.m33
 		};
-		//double[]
+
 		public static implicit operator double[](Matrix4x4 value)
 		{
 			var output = new double[16];
 
-			for(int i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {
 				output[i] = value[i];
 			}
 

@@ -17,6 +17,7 @@ namespace Dissonance.Engine
 			AllocateSpace(vertexIndex + 2);
 			AddLine(bufferMesh, ref vertexIndex, start, end, color);
 		}
+
 		public static void DrawBox(Vector3 start, Vector3 end, Vector4 color)
 		{
 			AllocateSpace(vertexIndex + 24);
@@ -24,17 +25,17 @@ namespace Dissonance.Engine
 			var a = start;
 			var b = end;
 
-			//Ceiling
+			// Ceiling
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(b.x, a.y, a.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(a.x, a.y, b.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, a.z), new Vector3(b.x, a.y, b.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, b.z), new Vector3(b.x, a.y, b.z), color);
-			//Walls
+			// Walls
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(a.x, b.y, a.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, a.z), new Vector3(b.x, b.y, a.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, b.z), new Vector3(a.x, b.y, b.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, b.z), new Vector3(b.x, b.y, b.z), color);
-			//Floor
+			// Floor
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, b.y, a.z), new Vector3(b.x, b.y, a.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, b.y, a.z), new Vector3(a.x, b.y, b.z), color);
 			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, b.y, a.z), new Vector3(b.x, b.y, b.z), color);
@@ -53,6 +54,7 @@ namespace Dissonance.Engine
 			Array.Resize(ref bufferMesh.Vertices, verticesSize);
 			Array.Resize(ref bufferMesh.Colors, verticesSize);
 		}
+
 		internal static void FlushRendering()
 		{
 			bufferMesh.Apply();
@@ -61,18 +63,19 @@ namespace Dissonance.Engine
 
 		private static void AllocateSpace(int requiredLength)
 		{
-			if(verticesSize >= requiredLength) {
+			if (verticesSize >= requiredLength) {
 				return;
 			}
 
 			do {
 				verticesSize *= 2;
 			}
-			while(verticesSize < requiredLength);
+			while (verticesSize < requiredLength);
 
 			Array.Resize(ref bufferMesh.Vertices, verticesSize);
 			Array.Resize(ref bufferMesh.Colors, verticesSize);
 		}
+
 		private static void AddLine(Mesh mesh, ref int index, Vector3 start, Vector3 end, Vector4 color)
 		{
 			mesh.Vertices[index] = start;

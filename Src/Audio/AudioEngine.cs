@@ -21,7 +21,7 @@ namespace Dissonance.Engine.Audio
 				throw new AudioException("An issue occured during Audio initialization.", e);
 			}
 
-			if(!ALC.MakeContextCurrent(audioContext)) {
+			if (!ALC.MakeContextCurrent(audioContext)) {
 				throw new AudioException("An issue occured during Audio initialization: Unable to make the audio context current.");
 			}
 
@@ -31,15 +31,17 @@ namespace Dissonance.Engine.Audio
 
 			CheckALErrors();
 		}
+
 		protected override void FixedUpdate() => CheckALErrors();
 
 		[Obsolete("This call is supposed to be temporary.")]
 		public static void CheckALErrorsTemp() => CheckALErrors();
+
 		public static void CheckALErrors()
 		{
 			var error = AL.GetError();
 
-			if(error != AudioError.NoError) {
+			if (error != AudioError.NoError) {
 				throw new Exception("AudioError: " + error);
 			}
 		}

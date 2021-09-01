@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Graphics
 		public MeshLOD[] LODMeshes {
 			get => lodMeshes;
 			set {
-				if(value == null) {
+				if (value == null) {
 					lodMeshes = value;
 
 					return;
@@ -20,17 +20,17 @@ namespace Dissonance.Engine.Graphics
 
 				bool hadNull = false;
 
-				if(value.Length == 0) {
+				if (value.Length == 0) {
 					throw new Exception("Value cannot be an empty array. Set it to null instead.");
 				}
 
-				if(value.Any(l1 => l1 == null ? hadNull = true : value.Count(l2 => l1.maxDistance == l2.maxDistance) > 1)) { //TODO: dumb check
+				if (value.Any(l1 => l1 == null ? hadNull = true : value.Count(l2 => l1.maxDistance == l2.maxDistance) > 1)) { //TODO: dumb check
 					throw new Exception(hadNull ? "Array cannot contain null values" : "All maxDistance values must be unique.");
 				}
 
 				var list = value.OrderBy(q => q.maxDistance).ToList();
 
-				if(list[0].maxDistance == 0f) {
+				if (list[0].maxDistance == 0f) {
 					var val = list[0];
 					list.RemoveAt(0);
 					list.Add(val);
@@ -42,7 +42,7 @@ namespace Dissonance.Engine.Graphics
 		public MeshLOD LODMesh {
 			get => lodMeshes?[0];
 			set {
-				if(lodMeshes != null) {
+				if (lodMeshes != null) {
 					lodMeshes[0] = value;
 				} else {
 					LODMeshes = new[] { value };
@@ -71,10 +71,10 @@ namespace Dissonance.Engine.Graphics
 			var matrix = transform.WorldMatrix;
 			var translation = matrix.ExtractTranslation();
 
-			matrix.m30 = matrix.m31 = matrix.m32 = 0f; //Remove translation
-			matrix.m03 = matrix.m13 = matrix.m23 = matrix.m33 = 0f; //Remove projection
+			matrix.m30 = matrix.m31 = matrix.m32 = 0f; // Remove translation
+			matrix.m03 = matrix.m13 = matrix.m23 = matrix.m33 = 0f; // Remove projection
 
-			if(matrix == aabbLastMatrix) {
+			if (matrix == aabbLastMatrix) {
 				return new Bounds(aabb.min + translation, aabb.max + translation);
 			}
 
@@ -96,7 +96,7 @@ namespace Dissonance.Engine.Graphics
 			var newMin = Vector3.One * float.PositiveInfinity;
 			var newMax = Vector3.One * float.NegativeInfinity;
 
-			for(int i = 0; i < corners.Length; i++) {
+			for (int i = 0; i < corners.Length; i++) {
 				Vector3 transformed = matrix * corners[i];
 
 				newMin = Vector3.Min(newMin, transformed);

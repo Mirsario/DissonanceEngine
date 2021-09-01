@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Graphics
 				CheckGLErrors("After attempting to enable debugging.");
 
 				debugCallback = (uint source, uint type, uint id, uint severity, int length, string message, IntPtr userParameter) => {
-					if(severity == GLConstants.DEBUG_SEVERITY_NOTIFICATION) {
+					if (severity == GLConstants.DEBUG_SEVERITY_NOTIFICATION) {
 						return;
 					}
 
@@ -49,7 +49,7 @@ namespace Dissonance.Engine.Graphics
 						_ => "UNKNOWN",
 					};
 
-					if(severity == GLConstants.DEBUG_SEVERITY_HIGH) {
+					if (severity == GLConstants.DEBUG_SEVERITY_HIGH) {
 						throw new GraphicsException($"GL Error - ID: {id}; Type: {typeName}; Severity: {severityName}; From: {sourceName};\r\n{message}");
 					}
 

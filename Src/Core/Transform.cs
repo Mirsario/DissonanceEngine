@@ -68,7 +68,7 @@ namespace Dissonance.Engine
 
 				m.SetTranslation(value);
 
-				if(Parent != null) {
+				if (Parent != null) {
 					m = ToLocalSpace(m);
 				}
 
@@ -249,15 +249,15 @@ namespace Dissonance.Engine
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 			OnModified = null;
 
-			if(position.HasValue && position.Value != default) {
+			if (position.HasValue && position.Value != default) {
 				Position = position.Value;
 			}
 
-			if(eulerRotation.HasValue && eulerRotation.Value != default) {
+			if (eulerRotation.HasValue && eulerRotation.Value != default) {
 				EulerRot = eulerRotation.Value;
 			}
 
-			if(localScale.HasValue && localScale.Value != Vector3.One) {
+			if (localScale.HasValue && localScale.Value != Vector3.One) {
 				LocalScale = localScale.Value;
 			}
 		}
@@ -268,15 +268,15 @@ namespace Dissonance.Engine
 			Children = (ChildrenInternal = new List<Transform>()).AsReadOnly();
 			OnModified = null;
 
-			if(position.HasValue && position.Value != default) {
+			if (position.HasValue && position.Value != default) {
 				Position2D = position.Value;
 			}
 
-			if(eulerRotation.HasValue && eulerRotation.Value != 0f) {
+			if (eulerRotation.HasValue && eulerRotation.Value != 0f) {
 				EulerRot2D = eulerRotation.Value;
 			}
 
-			if(localScale.HasValue && localScale.Value != Vector2.One) {
+			if (localScale.HasValue && localScale.Value != Vector2.One) {
 				LocalScale2D = localScale.Value;
 			}
 		}
@@ -285,7 +285,7 @@ namespace Dissonance.Engine
 		{
 			Transform transform = this;
 
-			while(transform.Parent.HasValue) {
+			while (transform.Parent.HasValue) {
 				transform = transform.ParentTransform;
 
 				yield return transform;
@@ -294,12 +294,12 @@ namespace Dissonance.Engine
 
 		public IEnumerable<Transform> EnumerateChildren()
 		{
-			for(int i = 0; i < ChildrenInternal.Count; i++) {
+			for (int i = 0; i < ChildrenInternal.Count; i++) {
 				var child = ChildrenInternal[i];
 
 				yield return child;
 
-				foreach(var transform in child.EnumerateChildren()) {
+				foreach (var transform in child.EnumerateChildren()) {
 					yield return transform;
 				}
 			}
@@ -310,7 +310,7 @@ namespace Dissonance.Engine
 		{
 			Transform transform = this;
 
-			while(transform.Parent.HasValue) {
+			while (transform.Parent.HasValue) {
 				transform = transform.ParentTransform;
 				matrix *= transform.Matrix.Inverted;
 			}
@@ -323,7 +323,7 @@ namespace Dissonance.Engine
 		{
 			Transform transform = this;
 
-			while(transform.Parent.HasValue) {
+			while (transform.Parent.HasValue) {
 				transform = transform.ParentTransform;
 				matrix *= transform.Matrix;
 			}

@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Physics
 		public CollisionMesh CollisionMesh {
 			get => collisionMesh;
 			set {
-				if(value != collisionMesh) {
+				if (value != collisionMesh) {
 					collisionMesh = value;
 					needsUpdate = true;
 				}

@@ -6,12 +6,12 @@ namespace Dissonance.Engine.Graphics
 	{
 		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
-			//RenderPasses
+			// RenderPasses
 			renderPasses.AddRange(new RenderPass[] {
-				//Geometry, our everything
+				// Geometry, our everything
 				RenderPass.Create<GeometryPass>("Geometry"),
 
-				//GUI
+				// GUI
 				RenderPass.Create<GUIPass>("GUI")
 			});
 		}

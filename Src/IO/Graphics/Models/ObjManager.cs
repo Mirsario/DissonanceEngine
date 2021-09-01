@@ -17,7 +17,7 @@ namespace Dissonance.Engine.IO
 			public Vector2[] uv;
 		}
 
-		public override string[] Extensions => new[] { ".obj" };
+		public override string[] Extensions { get; } = new[] { ".obj" };
 
 		public override Mesh Import(Stream stream, string filePath)
 		{
@@ -36,16 +36,16 @@ namespace Dissonance.Engine.IO
 			var newUVs = new Vector2[meshInfo.faceData.Length];
 			var newNormals = new Vector3[meshInfo.faceData.Length];
 
-			for(int i = 0; i < meshInfo.faceData.Length; i++) {
+			for (int i = 0; i < meshInfo.faceData.Length; i++) {
 				Vector3 v = meshInfo.faceData[i];
 
 				newVerts[i] = meshInfo.vertices[(int)v.x - 1];
 
-				if(v.y >= 1) {
+				if (v.y >= 1) {
 					newUVs[i] = meshInfo.uv[(int)v.y - 1];
 				}
 
-				if(v.z >= 1) {
+				if (v.z >= 1) {
 					newNormals[i] = meshInfo.normals[(int)v.z - 1];
 				}
 			}
@@ -62,6 +62,7 @@ namespace Dissonance.Engine.IO
 
 			return mesh;
 		}
+
 		internal static MeshInfo CreateOBJInfo(string objText)
 		{
 			int triangles = 0;
@@ -75,18 +76,18 @@ namespace Dissonance.Engine.IO
 			char[] splitIdentifier = { ' ' };
 			string[] brokenString;
 
-			while(thisLine != null) {
-				if(!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ") && !thisLine.StartsWith("vt ") && !thisLine.StartsWith("vn ")) {
+			while (thisLine != null) {
+				if (!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ") && !thisLine.StartsWith("vt ") && !thisLine.StartsWith("vn ")) {
 					thisLine = reader.ReadLine();
 
-					if(thisLine != null) {
+					if (thisLine != null) {
 						thisLine = thisLine.Replace("  ", " ");
 					}
 				} else {
-					thisLine = thisLine.Trim(); //Trim the current line
-					brokenString = thisLine.Split(splitIdentifier, 50); //Split the line into an array, separating the original line by blank spaces
+					thisLine = thisLine.Trim(); // Trim the current line
+					brokenString = thisLine.Split(splitIdentifier, 50); // Split the line into an array, separating the original line by blank spaces
 
-					switch(brokenString[0]) {
+					switch (brokenString[0]) {
 						case "v":
 							vertices++;
 							break;
@@ -104,7 +105,7 @@ namespace Dissonance.Engine.IO
 
 					thisLine = reader.ReadLine();
 
-					if(thisLine != null) {
+					if (thisLine != null) {
 						thisLine = thisLine.Replace("  ", " ");
 					}
 				}
@@ -120,20 +121,21 @@ namespace Dissonance.Engine.IO
 
 			return meshInfo;
 		}
+
 		internal static void PopulateOBJInfo(ref MeshInfo meshInfo, string objText, float sizeFactor)
 		{
-			while(objText.Contains("\t")) {
+			while (objText.Contains("\t")) {
 				objText = objText.Replace("\t", " ");
 			}
 
-			while(objText.Contains("  ")) {
+			while (objText.Contains("  ")) {
 				objText = objText.Replace("  ", " ");
 			}
 
 			var reader = new StringReader(objText);
 			string thisLine = reader.ReadLine();
-
 			var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+
 			ci.NumberFormat.CurrencyDecimalSeparator = ".";
 
 			char[] splitIdentifier = { ' ' };
@@ -150,14 +152,14 @@ namespace Dissonance.Engine.IO
 			string[] brokenBrokenString;
 			string[] brokenString;
 
-			while(thisLine != null) {
-				if(!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ") && !thisLine.StartsWith("vt ")
+			while (thisLine != null) {
+				if (!thisLine.StartsWith("f ") && !thisLine.StartsWith("v ") && !thisLine.StartsWith("vt ")
 				&& !thisLine.StartsWith("vn ") && !thisLine.StartsWith("g ") && !thisLine.StartsWith("usemtl ")
 				&& !thisLine.StartsWith("mtllib ") && !thisLine.StartsWith("vt1 ") && !thisLine.StartsWith("vt2 ")
 				&& !thisLine.StartsWith("vc ") && !thisLine.StartsWith("usemap ")) {
 					thisLine = reader.ReadLine();
 
-					if(thisLine != null) {
+					if (thisLine != null) {
 						thisLine = thisLine.Replace("  ", " ");
 					}
 
@@ -167,7 +169,7 @@ namespace Dissonance.Engine.IO
 				thisLine = thisLine.Trim();
 				brokenString = thisLine.Split(splitIdentifier, 50);
 
-				switch(brokenString[0]) {
+				switch (brokenString[0]) {
 					case "v":
 						meshInfo.vertices[v++] = new Vector3(
 							float.Parse(brokenString[1], CultureInfo.InvariantCulture),
@@ -204,19 +206,19 @@ namespace Dissonance.Engine.IO
 						int j = 1;
 						var indexList = new List<uint>();
 
-						while(j < brokenString.Length && ("" + brokenString[j]).Length > 0) {
+						while (j < brokenString.Length && ("" + brokenString[j]).Length > 0) {
 							var temp = new Vector3();
 
-							brokenBrokenString = brokenString[j].Split(splitIdentifier2, 3); //Separate the face into individual components(vert,uv,normal)
+							brokenBrokenString = brokenString[j].Split(splitIdentifier2, 3); // Separate the face into individual components(vert,uv,normal)
 
 							temp.x = Convert.ToInt32(brokenBrokenString[0]);
 
-							if(brokenBrokenString.Length == 2) {  //Some .obj files skip UV and normal
+							if (brokenBrokenString.Length == 2) {  // Some .obj files skip UV and normal
 								temp.y = Convert.ToInt32(brokenBrokenString[1]);
 							}
 
-							if(brokenBrokenString.Length == 3) {  //Some .obj files skip UV and normal
-								if(brokenBrokenString[1] != "") { //Some .obj files skip the uv and not the normal
+							if (brokenBrokenString.Length == 3) {  // Some .obj files skip UV and normal
+								if (brokenBrokenString[1] != "") { // Some .obj files skip the uv and not the normal
 									temp.y = Convert.ToInt32(brokenBrokenString[1]);
 								}
 
@@ -234,8 +236,8 @@ namespace Dissonance.Engine.IO
 
 						j = 1;
 
-						//Create triangles out of the face data. There will generally be more than 1 triangle per face.
-						while(j + 2 < brokenString.Length) {
+						// Create triangles out of the face data. There will generally be more than 1 triangle per face.
+						while (j + 2 < brokenString.Length) {
 							meshInfo.triangles[f++] = indexList[0];
 							meshInfo.triangles[f++] = indexList[j];
 							meshInfo.triangles[f++] = indexList[++j];
@@ -246,8 +248,8 @@ namespace Dissonance.Engine.IO
 
 				thisLine = reader.ReadLine();
 
-				if(thisLine != null) {
-					//Some .obj files insert double spaces, this removes them.
+				if (thisLine != null) {
+					// Some .obj files insert double spaces, this removes them.
 					thisLine = thisLine.Replace("  ", " ");
 				}
 			}

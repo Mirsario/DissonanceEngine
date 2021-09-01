@@ -15,9 +15,9 @@ namespace Dissonance.Engine.Graphics
 
 			Shader.SetShader(shader);
 
-			//CameraLoop
-			/*foreach(var cameraEntity in renderFrame.World.ReadEntities()) {
-				if(!cameraEntity.Has<Camera>()) {
+			// CameraLoop
+			/*foreach (var cameraEntity in renderFrame.World.ReadEntities()) {
+				if (!cameraEntity.Has<Camera>()) {
 					continue;
 				}
 

@@ -30,14 +30,17 @@ namespace Dissonance.Engine.Graphics
 		public static Vector3 AmbientColor { get; set; } = new Vector3(0.1f, 0.1f, 0.1f);
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
+
+		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
+
 		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
-				if(Game.Instance?.preInitDone != false) {
+				if (Game.Instance?.preInitDone != false) {
 					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
 				}
 
-				if(!GL.SupportedVersions.Contains(value)) {
+				if (!GL.SupportedVersions.Contains(value)) {
 					throw new ArgumentException($"OpenGL version '{value}' is unknown or not supported. The following versions are supported:\r\n{string.Join("\r\n", SupportedOpenGLVersions.Select(v => $"{v};"))}.");
 				}
 
@@ -45,22 +48,20 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
-
 		protected override void PreInit()
 		{
 			Game.TryGetModule(out windowing);
 
 			renderingPipelineType = typeof(ForwardRendering);
 
-			if(!Game.Flags.HasFlag(GameFlags.NoWindow)) {
+			if (!Game.Flags.HasFlag(GameFlags.NoWindow)) {
 				PrepareOpenGL();
 			}
 
-			//Prepare the delegate for resetting render components. Could be moved somewhere else...
+			// Prepare the delegate for resetting render components. Could be moved somewhere else...
 			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
-				foreach(var type in types) {
-					if(type.IsClass || type.IsInterface || !typeof(IRenderComponent).IsAssignableFrom(type)) {
+				foreach (var type in types) {
+					if (type.IsClass || type.IsInterface || !typeof(IRenderComponent).IsAssignableFrom(type)) {
 						continue;
 					}
 
@@ -89,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			var glVersion = GetOpenGLVersion();
 
-			if(glVersion < openGLVersion) {
+			if (glVersion < openGLVersion) {
 				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {openGLVersion}\r\nYour OpenGL version is: {glVersion}");
 			}
 
@@ -99,10 +100,10 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"After trying to enable debugging.");
 
-			//FontImport
+			// FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
 			var tex = Resources.Import<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
-			GUI.font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", tex, new Vector2(12f, 16f), 0) { size = 16 };
+			GUI.Font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", tex, new Vector2(12f, 16f), 0) { Size = 16 };
 
 			CheckGLErrors($"After initializing a default font.");
 
@@ -126,16 +127,16 @@ namespace Dissonance.Engine.Graphics
 		[HookPosition(10000)]
 		protected override void RenderUpdate()
 		{
-			//Clear the screen
+			// Clear the screen
 			ClearScreen();
 
-			//RenderPasses
+			// RenderPasses
 			var pipeline = RenderingPipeline;
 
-			for(int i = 0; i < pipeline.RenderPasses.Length; i++) {
+			for (int i = 0; i < pipeline.RenderPasses.Length; i++) {
 				var pass = pipeline.RenderPasses[i];
 
-				if(pass.Enabled) {
+				if (pass.Enabled) {
 					pass.Render();
 
 					CheckGLErrors($"Rendering pass {pass.Name} ({pass.GetType().Name})");
@@ -144,12 +145,12 @@ namespace Dissonance.Engine.Graphics
 
 			Framebuffer.Bind(null);
 
-			//Blit buffers
-			if(DebugFramebuffers) {
+			// Blit buffers
+			if (DebugFramebuffers) {
 				BlitFramebuffers();
 			}
 
-			//Swap buffers
+			// Swap buffers
 			windowing.SwapBuffers();
 			CheckGLErrors("After swapping buffers");
 
@@ -169,7 +170,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			renderingPipelineType = typeof(T);
 
-			if(RenderingPipeline != null && Game.Instance?.NoGraphics == false) {
+			if (RenderingPipeline != null && Game.Instance?.NoGraphics == false) {
 				InstantiateRenderingPipeline();
 			}
 		}
@@ -189,7 +190,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			RenderingPipeline?.Dispose();
 
-			if(renderingPipelineType != null) {
+			if (renderingPipelineType != null) {
 				RenderingPipeline = (RenderingPipeline)Activator.CreateInstance(renderingPipelineType);
 
 				RenderingPipeline.Init();
@@ -203,10 +204,10 @@ namespace Dissonance.Engine.Graphics
 			var pipeline = RenderingPipeline;
 			var clearColor = ClearColor;
 
-			if(pipeline.Framebuffers != null) {
+			if (pipeline.Framebuffers != null) {
 				int length = pipeline.Framebuffers.Length;
 
-				for(int i = 0; i <= length; i++) {
+				for (int i = 0; i <= length; i++) {
 					var framebuffer = i == length ? null : pipeline.Framebuffers[i];
 
 					framebuffer?.PrepareAttachments();
@@ -214,7 +215,7 @@ namespace Dissonance.Engine.Graphics
 					Framebuffer.BindWithDrawBuffers(framebuffer);
 
 					GL.ClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-					//GL.StencilMask(~0);
+					// GL.StencilMask(~0);
 					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 				}
 			}
@@ -231,13 +232,13 @@ namespace Dissonance.Engine.Graphics
 			var framebuffers = renderingPipeline.framebuffers;
 			int textureCount = 0;
 
-			for(int i = 0; i < framebuffers.Length; i++) {
+			for (int i = 0; i < framebuffers.Length; i++) {
 				var fb = framebuffers[i];
 
-				for(int j = 0; j < fb.renderTextures.Count; j++) {
+				for (int j = 0; j < fb.renderTextures.Count; j++) {
 					var tex = fb.renderTextures[j];
 
-					if(!IsDepthTexture(tex)) {
+					if (!IsDepthTexture(tex)) {
 						textureCount++;
 					}
 				}
@@ -245,22 +246,22 @@ namespace Dissonance.Engine.Graphics
 
 			int size = 1;
 
-			while(size * size < textureCount) {
+			while (size * size < textureCount) {
 				size++;
 			}
 
 			int x = 0;
 			int y = 0;
 
-			for(int i = 0; i < framebuffers.Length; i++) {
+			for (int i = 0; i < framebuffers.Length; i++) {
 				var framebuffer = framebuffers[i];
 
 				Framebuffer.Bind(framebuffer, FramebufferTarget.ReadFramebuffer);
 
-				for(int j = 0; j < framebuffer.renderTextures.Count; j++) {
+				for (int j = 0; j < framebuffer.renderTextures.Count; j++) {
 					var tex = framebuffer.renderTextures[j];
 
-					if(IsDepthTexture(tex)) {
+					if (IsDepthTexture(tex)) {
 						continue;
 					}
 
@@ -276,7 +277,7 @@ namespace Dissonance.Engine.Graphics
 						BlitFramebufferFilter.Nearest
 					);
 
-					if(++x >= size) {
+					if (++x >= size) {
 						x = 0;
 						y++;
 					}

@@ -14,6 +14,7 @@ namespace Dissonance.Engine.Input
 			fixedInput.mousePosition = value;
 			renderInput.mousePosition = value;
 		}
+
 		private static void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods)
 		{
 			bool value = action == MouseAction.Press;
@@ -21,11 +22,13 @@ namespace Dissonance.Engine.Input
 			fixedInput.mouseButtons[(int)button] = value;
 			renderInput.mouseButtons[(int)button] = value;
 		}
+
 		private static void ScrollCallback(double xOffset, double yOffset)
 		{
 			fixedInput.mouseWheel = (int)yOffset;
 			renderInput.mouseWheel = (int)yOffset;
 		}
+
 		private static void CharCallback(uint codePoint)
 		{
 			byte[] bytes = BitConverter.GetBytes(codePoint);
@@ -34,9 +37,10 @@ namespace Dissonance.Engine.Input
 			fixedInput.inputString += text;
 			renderInput.inputString += text;
 		}
+
 		private static void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods)
 		{
-			if(action == KeyAction.Repeat) {
+			if (action == KeyAction.Repeat) {
 				return;
 			}
 
@@ -46,13 +50,13 @@ namespace Dissonance.Engine.Input
 				action(renderInput);
 			}
 
-			switch(action) {
+			switch (action) {
 				case KeyAction.Press:
 					InputAction(inputs => inputs.pressedKeys[key] = 0);
 					break;
 				case KeyAction.Release:
 					InputAction(inputs => {
-						if(inputs.pressedKeys.TryGetValue(key, out byte release)) {
+						if (inputs.pressedKeys.TryGetValue(key, out byte release)) {
 							inputs.pressedKeys[key] = (byte)Math.Max(2, (int)release);
 						}
 					});
@@ -60,9 +64,9 @@ namespace Dissonance.Engine.Input
 			}
 		}
 
-		private void InitCallbacks()
+		private static void InitCallbacks()
 		{
-			if(windowing == null) {
+			if (windowing == null) {
 				return;
 			}
 
@@ -74,7 +78,7 @@ namespace Dissonance.Engine.Input
 
 			/*var windowHandle = windowing.WindowHandle;
 
-			if(windowHandle == IntPtr.Zero) {
+			if (windowHandle == IntPtr.Zero) {
 				return;
 			}
 

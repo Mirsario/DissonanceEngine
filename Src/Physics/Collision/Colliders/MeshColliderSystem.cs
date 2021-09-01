@@ -16,25 +16,25 @@
 		protected internal override void FixedUpdate()
 		{
 			// Unregister colliders when their component is removed
-			foreach(var message in ReadMessages<ComponentRemovedMessage<MeshCollider>>()) {
+			foreach (var message in ReadMessages<ComponentRemovedMessage<MeshCollider>>()) {
 				var collisionShape = message.Value.CollisionMesh?.collisionShape;
 
-				if(collisionShape != null) {
+				if (collisionShape != null) {
 					SendMessage(new RemoveCollisionShapeMessage(message.Entity, collisionShape));
 				}
 			}
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				ref var collider = ref entity.Get<MeshCollider>();
 
-				if(collider.needsUpdate) {
-					if(collider.lastCollisionShape != null) {
+				if (collider.needsUpdate) {
+					if (collider.lastCollisionShape != null) {
 						SendMessage(new RemoveCollisionShapeMessage(entity, collider.lastCollisionShape));
 					}
 
 					var collisionShape = collider.CollisionMesh?.collisionShape;
 
-					if(collisionShape != null) {
+					if (collisionShape != null) {
 						SendMessage(new AddCollisionShapeMessage(entity, collisionShape));
 					}
 

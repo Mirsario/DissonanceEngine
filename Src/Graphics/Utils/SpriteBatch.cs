@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Begin(int initialBufferCapacity = 4)
 		{
-			if(began) {
+			if (began) {
 				throw new InvalidOperationException($"Cannot call {nameof(Begin)} before {nameof(End)} has been called after the previous {nameof(Begin)} call.");
 			}
 
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void End()
 		{
-			if(!began) {
+			if (!began) {
 				throw new InvalidOperationException($"Cannot call {nameof(End)} before {nameof(Begin)} has been called.");
 			}
 
@@ -60,7 +60,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Draw(Vector4 vertexPoints, Vector4 uvPoints, float depth = 0f)
 		{
-			if(!began) {
+			if (!began) {
 				throw new InvalidOperationException($"Cannot call draw functions before {nameof(Begin)} has been called.");
 			}
 
@@ -99,18 +99,20 @@ namespace Dissonance.Engine.Graphics
 		public void Dispose()
 		{
 			bufferMesh.Dispose();
+
+			GC.SuppressFinalize(this);
 		}
 
 		private void EnsureCapacity(int minVertexCount, int minIndexCount)
 		{
-			if(bufferMesh.Vertices.Length < minVertexCount) {
+			if (bufferMesh.Vertices.Length < minVertexCount) {
 				int newSize = bufferMesh.Vertices.Length * 2;
 
 				Array.Resize(ref bufferMesh.Vertices, newSize);
 				Array.Resize(ref bufferMesh.Uv0, newSize);
 			}
 
-			if(bufferMesh.Indices.Length < minIndexCount) {
+			if (bufferMesh.Indices.Length < minIndexCount) {
 				Array.Resize(ref bufferMesh.Indices, bufferMesh.Indices.Length * 2);
 			}
 		}

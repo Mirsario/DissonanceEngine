@@ -52,7 +52,7 @@ namespace Dissonance.Engine
 
 		public bool Contains(Vector2 point, bool inclusive = false)
 		{
-			if(inclusive) {
+			if (inclusive) {
 				return point.x > x && point.x < x + width && point.y > y && point.y < y + height;
 			}
 
@@ -71,6 +71,7 @@ namespace Dissonance.Engine
 			return rect;
 		}
 
-		public static implicit operator RectFloat(RectInt rectI) => new RectFloat(rectI.x, rectI.y, rectI.width, rectI.height);
+		public static implicit operator RectFloat(RectInt rectI)
+			=> new(rectI.x, rectI.y, rectI.width, rectI.height);
 	}
 }

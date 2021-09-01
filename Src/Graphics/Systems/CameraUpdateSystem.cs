@@ -13,8 +13,8 @@
 
 		protected internal override void RenderUpdate()
 		{
-			//Calculate view and projection matrices, culling frustums
-			foreach(var entity in entities.ReadEntities()) {
+			// Calculate view and projection matrices, culling frustums
+			foreach (var entity in entities.ReadEntities()) {
 				ref var camera = ref entity.Get<Camera>();
 				var transform = entity.Get<Transform>();
 
@@ -23,7 +23,7 @@
 
 				camera.ViewMatrix = Matrix4x4.LookAt(transform.Position, transform.Position + transform.Forward, transform.Up);
 
-				if(camera.Orthographic) {
+				if (camera.Orthographic) {
 					float max = Mathf.Max(Screen.Width, Screen.Height);
 
 					camera.ProjectionMatrix = Matrix4x4.CreateOrthographic(Screen.Width / max * camera.OrthographicSize, Screen.Height / max * camera.OrthographicSize, camera.NearClip, camera.FarClip);

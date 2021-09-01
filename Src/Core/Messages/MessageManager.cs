@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 
 			private static void Clear()
 			{
-				for(int i = 0; i < messagesByWorld.Length; i++) {
+				for (int i = 0; i < messagesByWorld.Length; i++) {
 					messagesByWorld[i].Clear();
 				}
 			}
@@ -39,7 +39,7 @@ namespace Dissonance.Engine
 
 		internal static void SendMessage<T>(int worldId, in T message) where T : struct
 		{
-			if(worldId >= MessageData<T>.messagesByWorld.Length) {
+			if (worldId >= MessageData<T>.messagesByWorld.Length) {
 				Array.Resize(ref MessageData<T>.messagesByWorld, worldId + 1);
 
 				MessageData<T>.messagesByWorld[worldId] = new List<T>();
@@ -50,7 +50,7 @@ namespace Dissonance.Engine
 
 		internal static ReadOnlySpan<T> ReadMessages<T>(int worldId) where T : struct
 		{
-			if(worldId >= MessageData<T>.messagesByWorld.Length) {
+			if (worldId >= MessageData<T>.messagesByWorld.Length) {
 				return ReadOnlySpan<T>.Empty;
 			}
 

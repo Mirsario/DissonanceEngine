@@ -9,10 +9,11 @@ namespace Dissonance.Engine
 		public readonly DependencyInfo[] Dependencies;
 
 		public ModuleDependencyAttribute(params Type[] dependencies) : this(false, dependencies) { }
+
 		public ModuleDependencyAttribute(bool optional, params Type[] dependencies)
 		{
-			foreach(var type in dependencies) {
-				if(!typeof(EngineModule).IsAssignableFrom(type)) {
+			foreach (var type in dependencies) {
+				if (!typeof(EngineModule).IsAssignableFrom(type)) {
 					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it does not derive from '{nameof(EngineModule)}'.");
 				}
 			}

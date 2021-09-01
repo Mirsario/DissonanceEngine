@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Reset()
 		{
-			if(RenderViews != null) {
+			if (RenderViews != null) {
 				RenderViews.Clear();
 			} else {
 				RenderViews = new();

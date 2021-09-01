@@ -7,8 +7,10 @@ namespace Dissonance.Engine.IO
 {
 	public partial class ShaderManager : AssetManager<Shader[]>
 	{
-		public override string[] Extensions => new[] { ".program" };
-		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
+		public override string[] Extensions { get; } = new[] { ".program" };
+
+		public override bool Autoload(string file)
+			=> !Game.Instance.NoGraphics;
 
 		public override Shader[] Import(Stream stream, string filePath)
 		{
@@ -21,7 +23,7 @@ namespace Dissonance.Engine.IO
 			var shaders = new List<Shader>();
 			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string, JsonShaderProgram>>(jsonText);
 
-			foreach(var pair in jsonShaders) {
+			foreach (var pair in jsonShaders) {
 				string name = pair.Key;
 				var jsonShader = pair.Value;
 

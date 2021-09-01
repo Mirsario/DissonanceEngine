@@ -14,16 +14,17 @@ namespace Dissonance.Engine.Physics
 			collisionConf = new DefaultCollisionConfiguration();
 			broadphase = new DbvtBroadphase();
 
-			//ManifoldPoint.ContactAdded += Callback_ContactAdded;
-			//PersistentManifold.ContactProcessed += Callback_ContactProcessed;
-			//PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
+			// ManifoldPoint.ContactAdded += Callback_ContactAdded;
+			// PersistentManifold.ContactProcessed += Callback_ContactProcessed;
+			// PersistentManifold.ContactDestroyed += Callback_ContactDestroyed;
 		}
+
 		protected override void OnDispose()
 		{
 			broadphase?.Dispose();
 
-			/*if(rigidbodies != null) {
-				for(int i = 0; i < rigidbodies.Count; i++) {
+			/*if (rigidbodies != null) {
+				for (int i = 0; i < rigidbodies.Count; i++) {
 					rigidbodies[i].Dispose();
 				}
 
@@ -37,7 +38,7 @@ namespace Dissonance.Engine.Physics
 
 			ulong layerMask = ulong.MaxValue;
 
-			if(mask != null) {
+			if (mask != null) {
 				layerMask = mask(layerMask);
 			}
 
@@ -48,7 +49,7 @@ namespace Dissonance.Engine.Physics
 
 			world.RayTest(origin, rayEnd, callback);
 
-			if(!callback.HasHit) {
+			if (!callback.HasHit) {
 				hit = new RaycastHit {
 					triangleIndex = -1,
 				};
@@ -68,7 +69,7 @@ namespace Dissonance.Engine.Physics
 		
 		internal static CollisionShape GetSubShape(CollisionShape shape, int subIndex)
 		{
-			if(shape is CompoundShape compoundShape && compoundShape.NumChildShapes > 0) {
+			if (shape is CompoundShape compoundShape && compoundShape.NumChildShapes > 0) {
 				return compoundShape.GetChildShape(subIndex >= 0 ? subIndex : 0);
 			}
 

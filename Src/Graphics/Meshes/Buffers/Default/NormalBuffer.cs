@@ -7,7 +7,7 @@ namespace Dissonance.Engine.Graphics
 	{
 		public void Recalculate()
 		{
-			if(mesh.PrimitiveType != PrimitiveType.Triangles) {
+			if (mesh.PrimitiveType != PrimitiveType.Triangles) {
 				throw new InvalidOperationException($"{nameof(Recalculate)}() can only work on meshes with {nameof(PrimitiveType.Triangles)} {nameof(Mesh.PrimitiveType)}.");
 			}
 
@@ -16,16 +16,16 @@ namespace Dissonance.Engine.Graphics
 			bool isIndexed = indices != null;
 			int indexCount = isIndexed ? indices.Length : vertices.Length;
 
-			if(!isIndexed && indexCount % 3 != 0) {
+			if (!isIndexed && indexCount % 3 != 0) {
 				throw new InvalidOperationException($"{nameof(Recalculate)}() requires vertex count to be divisable by 3, if no indices are provided.");
 			}
 
 			var newNormals = new Vector3[vertices.Length];
 
-			for(uint i = 0; i < indexCount; i += 3) {
+			for (uint i = 0; i < indexCount; i += 3) {
 				uint i1, i2, i3;
 
-				if(isIndexed) {
+				if (isIndexed) {
 					i1 = indices[i];
 					i2 = indices[i + 1];
 					i3 = indices[i + 2];
@@ -48,8 +48,8 @@ namespace Dissonance.Engine.Graphics
 
 			var zero = Vector3.Zero;
 
-			for(int i = 0; i < vertices.Length; i++) {
-				if(newNormals[i] != zero) {
+			for (int i = 0; i < vertices.Length; i++) {
+				if (newNormals[i] != zero) {
 					newNormals[i].Normalize();
 				}
 			}

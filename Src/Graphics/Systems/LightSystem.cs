@@ -15,7 +15,7 @@
 		{
 			ref var lightingPassData = ref GlobalGet<LightingPassData>();
 
-			foreach(var entity in entities.ReadEntities()) {
+			foreach (var entity in entities.ReadEntities()) {
 				var light = entity.Get<Light>();
 				var transform = entity.Get<Transform>();
 				LightingPassData.LightData lightData = default;
@@ -25,7 +25,7 @@
 				lightData.Color = light.Color;
 				lightData.Matrix = Matrix4x4.Identity;
 
-				switch(lightData.Type) {
+				switch (lightData.Type) {
 					case Light.LightType.Point:
 						lightData.Range = light.Range;
 						lightData.Position = transform.Position;

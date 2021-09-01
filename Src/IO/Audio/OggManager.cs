@@ -6,7 +6,7 @@ namespace Dissonance.Engine.IO
 {
 	public class OggManager : AssetManager<AudioClip>
 	{
-		public override string[] Extensions => new[] { ".ogg" };
+		public override string[] Extensions { get; } = new[] { ".ogg" };
 
 		public override AudioClip Import(Stream stream, string filePath)
 		{

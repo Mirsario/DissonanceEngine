@@ -2,14 +2,14 @@
 {
 	public class GUISkin
 	{
-		public GUIStyle boxStyle;
-		public GUIStyle buttonStyle;
+		public GUIStyle BoxStyle { get; set; }
+		public GUIStyle ButtonStyle { get; set; }
 
 		public GUISkin()
 		{
-			boxStyle = new GUIStyle();
-			buttonStyle = new GUIStyle {
-				textAlignment = TextAlignment.MiddleCenter
+			BoxStyle = new GUIStyle();
+			ButtonStyle = new GUIStyle {
+				TextAlignment = TextAlignment.MiddleCenter
 			};
 		}
 	}

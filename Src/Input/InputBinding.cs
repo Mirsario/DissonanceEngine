@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Input
 			Unknown,
 			Keyboard,
 			Mouse,
-			//Gamepad
+			// Gamepad
 		}
 
 		public readonly string Binding;
@@ -19,6 +19,8 @@ namespace Dissonance.Engine.Input
 		public float sensitivity;
 		public bool inversed;
 
+		public float RawValue => InputEngine.GetSignal(Binding);
+
 		public float Value {
 			get {
 				float value = RawValue;
@@ -26,18 +28,17 @@ namespace Dissonance.Engine.Input
 				return value > deadZone || value < -deadZone ? (inversed ? -value : value) * sensitivity : 0f;
 			}
 		}
-		public float RawValue => InputEngine.GetSignal(Binding);
 
 		public InputBinding(string input, float sensitivity = 1f, float deadZone = 0.2f) : this(sensitivity, deadZone, false)
 		{
-			if(string.IsNullOrWhiteSpace(input)) {
+			if (string.IsNullOrWhiteSpace(input)) {
 				throw new Exception("Input name cannot be empty.");
 			}
 
 			bool minus = input[0] == '-';
 
-			if(minus || input[0] == '+') {
-				if(minus) {
+			if (minus || input[0] == '+') {
+				if (minus) {
 					inversed = true;
 				}
 
@@ -54,8 +55,13 @@ namespace Dissonance.Engine.Input
 			this.inversed = inversed;
 		}
 
-		public static implicit operator InputBinding(MouseButton button) => new InputBinding($"Mouse{button}");
-		public static implicit operator InputBinding(Keys key) => new InputBinding(key.ToString());
-		public static implicit operator InputBinding(string str) => new InputBinding(str);
+		public static implicit operator InputBinding(MouseButton button)
+			=> new($"Mouse{button}");
+
+		public static implicit operator InputBinding(Keys key)
+			=> new(key.ToString());
+
+		public static implicit operator InputBinding(string str)
+			=> new(str);
 	}
 }

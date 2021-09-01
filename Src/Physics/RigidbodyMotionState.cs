@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Physics
 		// Called by bullet whenever a rigidbody is created, and every frame for kinematic rigidbodies.
 		public override void GetWorldTransform(out Matrix matrix)
 		{
-			if(Entity.Has<Transform>()) {
+			if (Entity.Has<Transform>()) {
 				matrix = Entity.Get<Transform>().WorldMatrix;
 			} else {
 				matrix = Matrix.Identity;
@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Physics
 		// Called by bullet for every frame or update of an active rigidbody.
 		public override void SetWorldTransform(ref Matrix matrix)
 		{
-			if(Entity.Has<Transform>()) {
+			if (Entity.Has<Transform>()) {
 				Entity.Get<Transform>().Matrix = matrix;
 			}
 		}
@@ -35,25 +35,25 @@ namespace Dissonance.Engine.Physics
 			base.Dispose(disposing);
 		}
 
-		//Updates bullet's rigidbody's transformation with ours if it has been updated.
+		// Updates bullet's rigidbody's transformation with ours if it has been updated.
 		/*public void Update()
 		{
 			var btRigidbody = RBInternal.btRigidbody;
 
-			if(updateFlags == Transform.UpdateFlags.None) {
+			if (updateFlags == Transform.UpdateFlags.None) {
 				return;
 			}
 
-			if(updateFlags == Transform.UpdateFlags.All) {
+			if (updateFlags == Transform.UpdateFlags.All) {
 				btRigidbody.WorldTransform = Transform.WorldMatrix;
 			} else {
 				Matrix4x4 matrix = btRigidbody.WorldTransform;
 
-				if(updateFlags.HasFlag(Transform.UpdateFlags.Position)) {
+				if (updateFlags.HasFlag(Transform.UpdateFlags.Position)) {
 					matrix.SetTranslation(Transform.Position);
 				}
 
-				switch(updateFlags) {
+				switch (updateFlags) {
 					case Transform.UpdateFlags.Scale | Transform.UpdateFlags.Rotation:
 						matrix.SetRotationAndScale(Transform.Rotation, Transform.LocalScale);
 						break;
@@ -70,16 +70,16 @@ namespace Dissonance.Engine.Physics
 
 			updateFlags = Transform.UpdateFlags.None;
 
-			//Activate the rigidbody if it's sleeping
-			if(!btRigidbody.IsActive) {
+			// Activate the rigidbody if it's sleeping
+			if (!btRigidbody.IsActive) {
 				btRigidbody.Activate();
 			}
 		}
 
-		//This callback is used to keep track of transform updates.
+		// This callback is used to keep track of transform updates.
 		private void OnTransformModified(Transform transform, Transform.UpdateFlags updateFlags)
 		{
-			if(ignoreNextUpdate) {
+			if (ignoreNextUpdate) {
 				ignoreNextUpdate = false;
 				return;
 			}

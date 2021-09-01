@@ -35,7 +35,7 @@ void main()
 		vec3 lightDir = surfacePosition - lightPosition;
 		float distance = length(lightDir);
 		
-		if(distance > lightRange){
+		if (distance > lightRange){
 			discard;
 		}
 		
@@ -46,7 +46,7 @@ void main()
 	float diffuse;
 	float specularIntensity;
 	
-	if(normal.x == 0.0 && normal.y == 0.0 && normal.z == 0.0) {
+	if (normal.x == 0.0 && normal.y == 0.0 && normal.z == 0.0) {
 		#ifdef DIRECTIONAL
 			diffuse = 1.0;
 		#else
@@ -63,7 +63,7 @@ void main()
 		
 		specularIntensity = texture(specularBuffer, screenPos).r;
 
-		if(specularIntensity > 0.0f) {
+		if (specularIntensity > 0.0f) {
 			vec3 eyeDirection = normalize(cameraPosition - surfacePosition);
 			vec3 reflection = reflect(lightDir, normal);
 			

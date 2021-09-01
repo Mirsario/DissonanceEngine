@@ -26,8 +26,10 @@ namespace Dissonance.Engine.IO
 			public string shader;
 		}
 
-		public override string[] Extensions => new[] { ".material" };
-		public override bool Autoload(string file) => !Game.Instance.NoGraphics;
+		public override string[] Extensions { get; } = new[] { ".material" };
+
+		public override bool Autoload(string file)
+			=> !Game.Instance.NoGraphics;
 
 		public override Material Import(Stream stream, string filePath)
 		{
@@ -44,26 +46,26 @@ namespace Dissonance.Engine.IO
 
 			var shader = Resources.Find<Shader>(jsonMat.shader);
 
-			if(shader == null) {
+			if (shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
 			}
 
 			var material = new Material(jsonMat.name, shader);
 
-			if(jsonMat.textures != null) {
-				foreach(var pair in jsonMat.textures) {
+			if (jsonMat.textures != null) {
+				foreach (var pair in jsonMat.textures) {
 					material.SetTexture(FilterText(pair.Key, filePath), Resources.Import<Texture>(FilterText(pair.Value, filePath)));
 				}
 			}
 
-			if(jsonMat.floats != null) {
-				foreach(var pair in jsonMat.floats) {
+			if (jsonMat.floats != null) {
+				foreach (var pair in jsonMat.floats) {
 					material.SetFloat(FilterText(pair.Key, filePath), pair.Value);
 				}
 			}
 
-			if(jsonMat.vectors != null) {
-				foreach(var pair in jsonMat.vectors) {
+			if (jsonMat.vectors != null) {
+				foreach (var pair in jsonMat.vectors) {
 					material.SetVector(FilterText(pair.Key, filePath), pair.Value);
 				}
 			}
