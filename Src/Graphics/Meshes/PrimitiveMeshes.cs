@@ -213,8 +213,8 @@ namespace Dissonance.Engine.Graphics
 
 			float xResMultiplier = 1f / xRes;
 			float yResMultiplier = 1f / yRes;
-			float xOffset = Mathf.TwoPI * xResMultiplier;
-			float yOffset = Mathf.PI * yResMultiplier;
+			float xOffset = MathHelper.TwoPI * xResMultiplier;
+			float yOffset = MathHelper.PI * yResMultiplier;
 			int verticeAmount = xRes * yRes * 4;
 
 			var newMesh = new Mesh {
@@ -235,7 +235,7 @@ namespace Dissonance.Engine.Graphics
 				float hAngle = x * xOffset;
 				float vAngle = y * yOffset;
 
-				var normal = new Vector3(Mathf.Sin(hAngle) * Mathf.Sin(vAngle), Mathf.Cos(vAngle), Mathf.Cos(hAngle) * Mathf.Sin(vAngle));
+				var normal = new Vector3(MathF.Sin(hAngle) * MathF.Sin(vAngle), MathF.Cos(vAngle), MathF.Cos(hAngle) * MathF.Sin(vAngle));
 
 				newMesh.Vertices[index] = normal * radius;
 
@@ -282,7 +282,7 @@ namespace Dissonance.Engine.Graphics
 		
 		public static Mesh GenerateIcoSphere(float size = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool apply = true)
 		{
-			float a = (1f + Mathf.Sqrt(5)) * size * 0.5f;
+			float a = (1f + MathF.Sqrt(5)) * size * 0.5f;
 			float b = size;
 
 			var newMesh = new Mesh {

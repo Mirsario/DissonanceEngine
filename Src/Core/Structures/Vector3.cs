@@ -25,7 +25,7 @@ namespace Dissonance.Engine
 		public float y;
 		public float z;
 
-		public float Magnitude => Mathf.Sqrt(x * x + y * y + z * z);
+		public float Magnitude => MathF.Sqrt(x * x + y * y + z * z);
 		public float SqrMagnitude => x * x + y * y + z * z;
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
 
@@ -181,21 +181,21 @@ namespace Dissonance.Engine
 		public static Vector3 StepTowards(Vector3 val, Vector3 goal, float step)
 		{
 			return new Vector3(
-				Mathf.StepTowards(val.x, goal.x, step),
-				Mathf.StepTowards(val.y, goal.y, step),
-				Mathf.StepTowards(val.z, goal.z, step)
+				MathHelper.StepTowards(val.x, goal.x, step),
+				MathHelper.StepTowards(val.y, goal.y, step),
+				MathHelper.StepTowards(val.z, goal.z, step)
 			);
 		}
 
 		public static Vector3 EulerToDirection(Vector3 euler)
 		{
-			float pitch = euler.x * Mathf.Deg2Rad;
-			float yaw = euler.y * Mathf.Deg2Rad;
+			float pitch = euler.x * MathHelper.Deg2Rad;
+			float yaw = euler.y * MathHelper.Deg2Rad;
 
-			float cX = Mathf.Cos(pitch);
-			float sX = Mathf.Sin(pitch);
-			float cY = Mathf.Cos(yaw);
-			float sY = Mathf.Sin(yaw);
+			float cX = MathF.Cos(pitch);
+			float sX = MathF.Sin(pitch);
+			float cY = MathF.Cos(yaw);
+			float sY = MathF.Sin(yaw);
 
 			return new Vector3(
 				cX * sY,
@@ -206,21 +206,21 @@ namespace Dissonance.Engine
 
 		public static Vector3 DirectionToEuler(Vector3 direction)
 		{
-			float xzLength = Mathf.Sqrt(direction.x * direction.x + direction.z * direction.z);
-			float pitch = Mathf.Atan2(xzLength, direction.y) - Mathf.HalfPI;
-			float yaw = Mathf.Atan2(direction.x, direction.z);
+			float xzLength = MathF.Sqrt(direction.x * direction.x + direction.z * direction.z);
+			float pitch = MathF.Atan2(xzLength, direction.y) - MathHelper.HalfPI;
+			float yaw = MathF.Atan2(direction.x, direction.z);
 
 			return new Vector3(
-				pitch * Mathf.Rad2Deg,
-				yaw * Mathf.Rad2Deg,
+				pitch * MathHelper.Rad2Deg,
+				yaw * MathHelper.Rad2Deg,
 				0f
 			);
 		}
 
 		public static Vector3 Repeat(Vector3 vec, float length) => new(
-			vec.x - Mathf.Floor(vec.x / length) * length,
-			vec.y - Mathf.Floor(vec.y / length) * length,
-			vec.z - Mathf.Floor(vec.z / length) * length
+			vec.x - MathF.Floor(vec.x / length) * length,
+			vec.y - MathF.Floor(vec.y / length) * length,
+			vec.z - MathF.Floor(vec.z / length) * length
 		);
 
 		public static Vector3 Rotate(Vector3 vec, Vector3 rot)
@@ -239,34 +239,34 @@ namespace Dissonance.Engine
 
 		public static Vector3 Floor(Vector3 vec)
 		{
-			vec.x = Mathf.Floor(vec.x);
-			vec.y = Mathf.Floor(vec.y);
-			vec.z = Mathf.Floor(vec.z);
+			vec.x = MathF.Floor(vec.x);
+			vec.y = MathF.Floor(vec.y);
+			vec.z = MathF.Floor(vec.z);
 
 			return vec;
 		}
 
 		public static Vector3 Ceil(Vector3 vec)
 		{
-			vec.x = Mathf.Ceil(vec.x);
-			vec.y = Mathf.Ceil(vec.y);
-			vec.z = Mathf.Ceil(vec.z);
+			vec.x = MathF.Ceiling(vec.x);
+			vec.y = MathF.Ceiling(vec.y);
+			vec.z = MathF.Ceiling(vec.z);
 
 			return vec;
 		}
 
 		public static Vector3 Round(Vector3 vec)
 		{
-			vec.x = Mathf.Round(vec.x);
-			vec.y = Mathf.Round(vec.y);
-			vec.z = Mathf.Round(vec.z);
+			vec.x = MathF.Round(vec.x);
+			vec.y = MathF.Round(vec.y);
+			vec.z = MathF.Round(vec.z);
 
 			return vec;
 		}
 
 		public static Vector3 Lerp(Vector3 from, Vector3 to, float t)
 		{
-			t = Mathf.Clamp01(t);
+			t = MathHelper.Clamp01(t);
 
 			return new Vector3(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t, from.z + (to.z - from.z) * t);
 		}
@@ -276,9 +276,9 @@ namespace Dissonance.Engine
 			// Could be sped up.
 
 			return new Vector3(
-				Mathf.LerpAngle(from.x, to.x, t),
-				Mathf.LerpAngle(from.y, to.y, t),
-				Mathf.LerpAngle(from.z, to.z, t)
+				MathHelper.LerpAngle(from.x, to.x, t),
+				MathHelper.LerpAngle(from.y, to.y, t),
+				MathHelper.LerpAngle(from.z, to.z, t)
 			);
 		}
 
@@ -303,15 +303,15 @@ namespace Dissonance.Engine
 
 		public static float Angle(Vector3 from, Vector3 to)
 		{
-			float denominator = Mathf.Sqrt(from.SqrMagnitude * to.SqrMagnitude);
+			float denominator = MathF.Sqrt(from.SqrMagnitude * to.SqrMagnitude);
 
 			if (denominator < kEpsilonNormalSqrt) {
 				return 0f;
 			}
 
-			float dot = Mathf.Clamp(Dot(from, to) / denominator, -1F, 1F);
+			float dot = MathHelper.Clamp(Dot(from, to) / denominator, -1F, 1F);
 
-			return Mathf.Acos(dot) * Mathf.Rad2Deg;
+			return MathF.Acos(dot) * MathHelper.Rad2Deg;
 		}
 
 		public static float Distance(Vector3 a, Vector3 b)

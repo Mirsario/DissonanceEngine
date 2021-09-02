@@ -19,7 +19,7 @@ namespace Dissonance.Engine
 		public float y;
 
 		public Vector2 Normalized => Normalize(this);
-		public float Magnitude => Mathf.Sqrt(x * x + y * y);
+		public float Magnitude => MathF.Sqrt(x * x + y * y);
 		public float SqrMagnitude => x * x + y * y;
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y);
 
@@ -117,48 +117,48 @@ namespace Dissonance.Engine
 
 		public static Vector2 StepTowards(Vector2 vec, Vector2 goal, float step)
 		{
-			vec.x = Mathf.StepTowards(vec.x, goal.x, step);
-			vec.y = Mathf.StepTowards(vec.y, goal.y, step);
+			vec.x = MathHelper.StepTowards(vec.x, goal.x, step);
+			vec.y = MathHelper.StepTowards(vec.y, goal.y, step);
 
 			return vec;
 		}
 
 		public static Vector2 SnapToGrid(Vector2 vec, float step)
 		{
-			vec.x = Mathf.SnapToGrid(vec.x, step);
-			vec.y = Mathf.SnapToGrid(vec.y, step);
+			vec.x = MathHelper.SnapToGrid(vec.x, step);
+			vec.y = MathHelper.SnapToGrid(vec.y, step);
 
 			return vec;
 		}
 
 		public static Vector2 Floor(Vector2 vec)
 		{
-			vec.x = Mathf.Floor(vec.x);
-			vec.y = Mathf.Floor(vec.y);
+			vec.x = MathF.Floor(vec.x);
+			vec.y = MathF.Floor(vec.y);
 
 			return vec;
 		}
 
 		public static Vector2 Ceil(Vector2 vec)
 		{
-			vec.x = Mathf.Ceil(vec.x);
-			vec.y = Mathf.Ceil(vec.y);
+			vec.x = MathF.Ceiling(vec.x);
+			vec.y = MathF.Ceiling(vec.y);
 
 			return vec;
 		}
 
 		public static Vector2 Round(Vector2 vec)
 		{
-			vec.x = Mathf.Round(vec.x);
-			vec.y = Mathf.Round(vec.y);
+			vec.x = MathF.Round(vec.x);
+			vec.y = MathF.Round(vec.y);
 
 			return vec;
 		}
 
 		public static Vector2 Rotate(Vector2 vec, float angle)
 		{
-			float sin = Mathf.Sin(angle * Mathf.Deg2Rad);
-			float cos = Mathf.Cos(angle * Mathf.Deg2Rad);
+			float sin = MathF.Sin(angle * MathHelper.Deg2Rad);
+			float cos = MathF.Cos(angle * MathHelper.Deg2Rad);
 
 			vec.x = cos * vec.x - sin * vec.y;
 			vec.y = sin * vec.x + cos * vec.y;

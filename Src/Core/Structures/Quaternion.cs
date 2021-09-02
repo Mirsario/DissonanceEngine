@@ -13,7 +13,7 @@ namespace Dissonance.Engine
 		public float z;
 		public float w;
 
-		public float Magnitude => Mathf.Sqrt(w * w + x * x + y * y + z * z);
+		public float Magnitude => MathF.Sqrt(w * w + x * x + y * y + z * z);
 		public float SqrMagnitude => w * w + x * x + y * y + z * z;
 
 		public Quaternion Normalized {
@@ -87,10 +87,13 @@ namespace Dissonance.Engine
 		public void Normalize()
 		{
 			float n = x * x + y * y + z * z + w * w;
+
 			if (n == 1f) {
 				return;
 			}
-			float sqrtR = Mathf.SqrtReciprocal(n);
+
+			float sqrtR = MathF.Sqrt(n);
+
 			x *= sqrtR;
 			y *= sqrtR;
 			z *= sqrtR;
@@ -110,17 +113,17 @@ namespace Dissonance.Engine
 			Vector3 result;
 			if (checkValue > 0.4995f * sqrSumm) {
 				result.x = 180f;
-				result.y = Mathf.NormalizeEuler(2f * Mathf.Atan2(y, x) * Mathf.Rad2Deg);
+				result.y = MathHelper.NormalizeEuler(2f * MathF.Atan2(y, x) * MathHelper.Rad2Deg);
 				result.z = 0f;
 			} else if (checkValue < -0.4995f * sqrSumm) {
 				result.x = 270f;
-				result.y = Mathf.NormalizeEuler(-2f * Mathf.Atan2(y, x) * Mathf.Rad2Deg);
+				result.y = MathHelper.NormalizeEuler(-2f * MathF.Atan2(y, x) * MathHelper.Rad2Deg);
 				result.z = 0f;
 			} else {
 				float asinArg = 2f * (w * x - y * x); // NaN prevention
-				result.x = Mathf.NormalizeEuler((float)Math.Asin(asinArg < -1f ? -1f : asinArg > 1f ? 1f : asinArg) * Mathf.Rad2Deg); // Pitch
-				result.y = Mathf.NormalizeEuler((float)Math.Atan2(2f * w * y + 2f * x * x, 1 - 2f * (x * x + y * y)) * Mathf.Rad2Deg); // Yaw
-				result.z = Mathf.NormalizeEuler((float)Math.Atan2(2f * w * x + 2f * x * y, 1 - 2f * (x * x + x * x)) * Mathf.Rad2Deg); // Roll
+				result.x = MathHelper.NormalizeEuler((float)Math.Asin(asinArg < -1f ? -1f : asinArg > 1f ? 1f : asinArg) * MathHelper.Rad2Deg); // Pitch
+				result.y = MathHelper.NormalizeEuler((float)Math.Atan2(2f * w * y + 2f * x * x, 1 - 2f * (x * x + y * y)) * MathHelper.Rad2Deg); // Yaw
+				result.z = MathHelper.NormalizeEuler((float)Math.Atan2(2f * w * x + 2f * x * y, 1 - 2f * (x * x + x * x)) * MathHelper.Rad2Deg); // Roll
 			}
 			return result;
 		}
@@ -129,15 +132,15 @@ namespace Dissonance.Engine
 		{
 			//TODO: Not tested
 
-			if (Mathf.Abs(w) > 1f) {
+			if (MathF.Abs(w) > 1f) {
 				Normalize();
 			}
 
 			Vector4 result;
 
-			result.w = 2f * Mathf.Acos(w);
+			result.w = 2f * MathF.Acos(w);
 
-			float den = Mathf.Sqrt(1f - w * w);
+			float den = MathF.Sqrt(1f - w * w);
 
 			if (den > 0.0001f) {
 				result.x = x / den;
@@ -164,9 +167,9 @@ namespace Dissonance.Engine
 
 		public static Quaternion FromEuler(float x, float y, float z)
 		{
-			x *= Mathf.Deg2Rad * 0.5f;
-			y *= Mathf.Deg2Rad * 0.5f;
-			z *= Mathf.Deg2Rad * 0.5f;
+			x *= MathHelper.Deg2Rad * 0.5f;
+			y *= MathHelper.Deg2Rad * 0.5f;
+			z *= MathHelper.Deg2Rad * 0.5f;
 
 			float cX = (float)Math.Cos(x);
 			float cY = (float)Math.Cos(y);
@@ -197,14 +200,14 @@ namespace Dissonance.Engine
 			Quaternion result;
 
 			if (xyzSumm > 0f) {
-				float sqrt = Mathf.Sqrt(xyzSumm + 1f);
+				float sqrt = MathF.Sqrt(xyzSumm + 1f);
 				result.w = sqrt * 0.5f;
 				sqrt = 0.5f / sqrt;
 				result.x = (cross2.z - forward.y) * sqrt;
 				result.y = (forward.x - cross1.z) * sqrt;
 				result.z = (cross1.y - cross2.x) * sqrt;
 			} else if (cross1.x >= cross2.y && cross1.x >= forward.z) {
-				float sqrt = Mathf.Sqrt(1f + cross1.x - cross2.y - forward.z);
+				float sqrt = MathF.Sqrt(1f + cross1.x - cross2.y - forward.z);
 				float length = 0.5f / sqrt;
 
 				result.x = 0.5f * sqrt;
@@ -212,7 +215,7 @@ namespace Dissonance.Engine
 				result.z = (cross1.z + forward.x) * length;
 				result.w = (cross2.z - forward.y) * length;
 			} else if (cross2.y > forward.z) {
-				float sqrt = Mathf.Sqrt(1f + cross2.y - cross1.x - forward.z);
+				float sqrt = MathF.Sqrt(1f + cross2.y - cross1.x - forward.z);
 				float length = 0.5f / sqrt;
 
 				result.x = (cross2.x + cross1.y) * length;
@@ -220,7 +223,7 @@ namespace Dissonance.Engine
 				result.z = (forward.y + cross2.z) * length;
 				result.w = (forward.x - cross1.z) * length;
 			} else {
-				float sqrt = Mathf.Sqrt(1f + forward.z - cross1.x - cross2.y);
+				float sqrt = MathF.Sqrt(1f + forward.z - cross1.x - cross2.y);
 				float length = 0.5f / sqrt;
 
 				result.x = (forward.x + cross1.z) * length;

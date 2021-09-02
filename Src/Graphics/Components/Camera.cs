@@ -1,3 +1,5 @@
+using System;
+
 namespace Dissonance.Engine.Graphics
 {
 	public struct Camera
@@ -151,7 +153,7 @@ namespace Dissonance.Engine.Graphics
 
 		private void NormalizePlane(int side)
 		{
-			float magnitude = Mathf.Sqrt(
+			float magnitude = MathF.Sqrt(
 				Frustum[side, 0] * Frustum[side, 0] +
 				Frustum[side, 1] * Frustum[side, 1] +
 				Frustum[side, 2] * Frustum[side, 2]

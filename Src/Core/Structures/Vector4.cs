@@ -18,7 +18,7 @@ namespace Dissonance.Engine
 		public float z;
 		public float w;
 
-		public float Magnitude => Mathf.Sqrt(x * x + y * y + z * z + w * w);
+		public float Magnitude => MathF.Sqrt(x * x + y * y + z * z + w * w);
 		public float SqrMagnitude => x * x + y * y + z * z + w * w;
 		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
 		public Vector2 XY => new(x, y);
@@ -147,8 +147,14 @@ namespace Dissonance.Engine
 
 		public static Vector4 Lerp(Vector4 from, Vector4 to, float t)
 		{
-			t = Mathf.Clamp01(t);
-			return new Vector4(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t, from.z + (to.z - from.z) * t, from.w + (to.w - from.w) * t);
+			t = MathHelper.Clamp01(t);
+
+			return new Vector4(
+				from.x + (to.x - from.x) * t,
+				from.y + (to.y - from.y) * t,
+				from.z + (to.z - from.z) * t,
+				from.w + (to.w - from.w) * t
+			);
 		}
 
 		public static Vector4 BiLerp(Vector4 valueTopLeft, Vector4 valueTopRight, Vector4 valueBottomLeft, Vector4 valueBottomRight, Vector2 topLeft, Vector2 bottomRight, Vector2 point)
@@ -185,28 +191,28 @@ namespace Dissonance.Engine
 
 		public static Vector4 Floor(Vector4 vec)
 		{
-			vec.x = Mathf.Floor(vec.x);
-			vec.y = Mathf.Floor(vec.y);
-			vec.z = Mathf.Floor(vec.z);
-			vec.w = Mathf.Floor(vec.w);
+			vec.x = MathF.Floor(vec.x);
+			vec.y = MathF.Floor(vec.y);
+			vec.z = MathF.Floor(vec.z);
+			vec.w = MathF.Floor(vec.w);
 			return vec;
 		}
 
 		public static Vector4 Ceil(Vector4 vec)
 		{
-			vec.x = Mathf.Ceil(vec.x);
-			vec.y = Mathf.Ceil(vec.y);
-			vec.z = Mathf.Ceil(vec.z);
-			vec.w = Mathf.Ceil(vec.w);
+			vec.x = MathF.Ceiling(vec.x);
+			vec.y = MathF.Ceiling(vec.y);
+			vec.z = MathF.Ceiling(vec.z);
+			vec.w = MathF.Ceiling(vec.w);
 			return vec;
 		}
 
 		public static Vector4 Round(Vector4 vec)
 		{
-			vec.x = Mathf.Round(vec.x);
-			vec.y = Mathf.Round(vec.y);
-			vec.z = Mathf.Round(vec.z);
-			vec.w = Mathf.Round(vec.w);
+			vec.x = MathF.Round(vec.x);
+			vec.y = MathF.Round(vec.y);
+			vec.z = MathF.Round(vec.z);
+			vec.w = MathF.Round(vec.w);
 			return vec;
 		}
 

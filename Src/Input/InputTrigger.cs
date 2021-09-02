@@ -35,7 +35,7 @@ namespace Dissonance.Engine.Input
 		public float Value {
 			get => CurrentInput.analogInput;
 			internal set {
-				CurrentInput.analogInput = Mathf.Clamp(value, MinValue, MaxValue);
+				CurrentInput.analogInput = MathHelper.Clamp(value, MinValue, MaxValue);
 				CurrentInput.isPressed = value != 0f;
 			}
 		}
