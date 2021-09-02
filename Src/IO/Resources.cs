@@ -164,7 +164,7 @@ namespace Dissonance.Engine.IO
 					continue;
 				}
 
-				var manager = (AssetManager)FormatterServices.GetUninitializedObject(type);
+				var manager = (AssetManager)Activator.CreateInstance(type);
 
 				var generics = type?.BaseType.GetGenericArguments();
 				var returnType = generics?.Length == 1 ? generics[0] : null;
