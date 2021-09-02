@@ -151,7 +151,7 @@ namespace Dissonance.Engine
 			time.frameNum++;
 			time.msTemp += stopwatch.ElapsedMilliseconds;
 
-			if (Mathf.FloorToInt(time.global) > Mathf.FloorToInt(timePrev.global)) {
+			if (MathF.Floor(time.global) > MathF.Floor(timePrev.global)) {
 				time.framerate = time.frameNum;
 				time.frameNum = 0;
 				time.ms = time.msTemp / Math.Max(1, time.framerate);

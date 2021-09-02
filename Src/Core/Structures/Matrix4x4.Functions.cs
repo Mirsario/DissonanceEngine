@@ -23,9 +23,9 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateRotationX(float eulerAngle)
 		{
-			float angle = eulerAngle * Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
+			float angle = eulerAngle * MathHelper.Deg2Rad;
+			float cos = MathF.Cos(angle);
+			float sin = MathF.Sin(angle);
 
 			var result = Identity;
 
@@ -39,9 +39,9 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateRotationY(float eulerAngle)
 		{
-			float angle = eulerAngle * Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
+			float angle = eulerAngle * MathHelper.Deg2Rad;
+			float cos = MathF.Cos(angle);
+			float sin = MathF.Sin(angle);
 
 			var result = Identity;
 
@@ -55,9 +55,9 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateRotationZ(float eulerAngle)
 		{
-			float angle = eulerAngle * Mathf.Deg2Rad;
-			float cos = Mathf.Cos(angle);
-			float sin = Mathf.Sin(angle);
+			float angle = eulerAngle * MathHelper.Deg2Rad;
+			float cos = MathF.Cos(angle);
+			float sin = MathF.Sin(angle);
 
 			var result = Identity;
 
@@ -74,16 +74,16 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateRotation(float eulerRotX, float eulerRotY, float eulerRotZ)
 		{
-			eulerRotX *= Mathf.Deg2Rad;
-			eulerRotY *= Mathf.Deg2Rad;
-			eulerRotZ *= Mathf.Deg2Rad;
+			eulerRotX *= MathHelper.Deg2Rad;
+			eulerRotY *= MathHelper.Deg2Rad;
+			eulerRotZ *= MathHelper.Deg2Rad;
 
-			float cX = Mathf.Cos(-eulerRotX);
-			float sX = Mathf.Sin(-eulerRotX);
-			float cY = Mathf.Cos(-eulerRotY);
-			float sY = Mathf.Sin(-eulerRotY);
-			float cZ = Mathf.Cos(eulerRotZ);
-			float sZ = Mathf.Sin(eulerRotZ);
+			float cX = MathF.Cos(-eulerRotX);
+			float sX = MathF.Sin(-eulerRotX);
+			float cY = MathF.Cos(-eulerRotY);
+			float sY = MathF.Sin(-eulerRotY);
+			float cZ = MathF.Cos(eulerRotZ);
+			float sZ = MathF.Sin(eulerRotZ);
 
 			// ZXY
 			return new Matrix4x4(
@@ -130,8 +130,8 @@ namespace Dissonance.Engine
 			float axisY = axis.y;
 			float axisZ = axis.z;
 
-			float cos = Mathf.Cos(-angle);
-			float sin = Mathf.Sin(-angle);
+			float cos = MathF.Cos(-angle);
+			float sin = MathF.Sin(-angle);
 			float t = 1f - cos;
 
 			float tXX = t * axisX * axisX;

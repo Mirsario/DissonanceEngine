@@ -363,9 +363,9 @@ namespace Dissonance.Engine
 		{
 			Vector3 result;
 
-			result.x = Mathf.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
-			result.y = Mathf.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
-			result.z = Mathf.Sqrt(m20 * m20 + m21 * m21 + m22 * m22);
+			result.x = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
+			result.y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
+			result.z = MathF.Sqrt(m20 * m20 + m21 * m21 + m22 * m22);
 
 			return result;
 		}
@@ -374,8 +374,8 @@ namespace Dissonance.Engine
 		{
 			Vector2 result;
 
-			result.x = Mathf.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
-			result.y = Mathf.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
+			result.x = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
+			result.y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
 
 			return result;
 		}
@@ -385,31 +385,31 @@ namespace Dissonance.Engine
 			float v1, v2, v3;
 
 			if (m21 < -1f) { // up
-				v1 = -Mathf.HalfPI;
+				v1 = -MathHelper.HalfPI;
 				v2 = 0f;
-				v3 = Mathf.Atan2(m02, m00);
+				v3 = MathF.Atan2(m02, m00);
 			} else if (m21 > 1f) { // down
-				v1 = Mathf.HalfPI;
+				v1 = MathHelper.HalfPI;
 				v2 = 0f;
-				v3 = -Mathf.Atan2(m02, m00);
+				v3 = -MathF.Atan2(m02, m00);
 			} else {
-				v1 = Mathf.Asin(m21);
-				v2 = Mathf.Atan2(-m20, m22);
-				v3 = Mathf.Atan2(-m01, m11);
+				v1 = MathF.Asin(m21);
+				v2 = MathF.Atan2(-m20, m22);
+				v3 = MathF.Atan2(-m01, m11);
 			}
 
-			return new Vector3(-v1, -v2, v3) * Mathf.Rad2Deg;
+			return new Vector3(-v1, -v2, v3) * MathHelper.Rad2Deg;
 		}
 
 		public float ExtractEulerX()
 		{
 			if (m21 < -1f) {
-				return Mathf.HalfPI * Mathf.Rad2Deg;
+				return MathHelper.HalfPI * MathHelper.Rad2Deg;
 			} else if (m21 > 1f) {
-				return -Mathf.HalfPI * Mathf.Rad2Deg;
+				return -MathHelper.HalfPI * MathHelper.Rad2Deg;
 			}
 
-			return -Mathf.Asin(m21) * Mathf.Rad2Deg;
+			return -MathF.Asin(m21) * MathHelper.Rad2Deg;
 		}
 
 		public float ExtractEulerY()
@@ -418,18 +418,18 @@ namespace Dissonance.Engine
 				return 0f;
 			}
 
-			return -Mathf.Atan2(-m20, m22) * Mathf.Rad2Deg;
+			return -MathF.Atan2(-m20, m22) * MathHelper.Rad2Deg;
 		}
 
 		public float ExtractEulerZ()
 		{
 			if (m21 < -1f) {
-				return -Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
+				return -MathF.Atan2(m02, m00) * MathHelper.Rad2Deg;
 			} else if (m21 > 1f) {
-				return Mathf.Atan2(m02, m00) * Mathf.Rad2Deg;
+				return MathF.Atan2(m02, m00) * MathHelper.Rad2Deg;
 			}
 
-			return -Mathf.Atan2(-m01, m11) * Mathf.Rad2Deg;
+			return -MathF.Atan2(-m01, m11) * MathHelper.Rad2Deg;
 		}
 
 		public Quaternion ExtractQuaternion()
@@ -442,7 +442,7 @@ namespace Dissonance.Engine
 			float trace = 0.25f * (row0.x + row1.y + row2.z + 1f);
 
 			if (trace > 0) {
-				float sq = Mathf.Sqrt(trace);
+				float sq = MathF.Sqrt(trace);
 
 				q.w = sq;
 				sq = 1f / (4f * sq);
@@ -450,7 +450,7 @@ namespace Dissonance.Engine
 				q.y = (row2.x - row0.z) * sq;
 				q.z = (row0.y - row1.x) * sq;
 			} else if (row0.x > row1.y && row0.x > row2.z) {
-				float sq = 2f * Mathf.Sqrt(1f + row0.x - row1.y - row2.z);
+				float sq = 2f * MathF.Sqrt(1f + row0.x - row1.y - row2.z);
 
 				q.x = 0.25f * sq;
 				sq = 1f / sq;
@@ -458,7 +458,7 @@ namespace Dissonance.Engine
 				q.y = (row1.x + row0.y) * sq;
 				q.z = (row2.x + row0.z) * sq;
 			} else if (row1.y > row2.z) {
-				float sq = 2f * Mathf.Sqrt(1f + row1.y - row0.x - row2.z);
+				float sq = 2f * MathF.Sqrt(1f + row1.y - row0.x - row2.z);
 
 				q.y = 0.25f * sq;
 				sq = 1f / sq;
@@ -466,7 +466,7 @@ namespace Dissonance.Engine
 				q.x = (row1.x + row0.y) * sq;
 				q.z = (row2.y + row1.z) * sq;
 			} else {
-				float sq = 2f * Mathf.Sqrt(1f + row2.z - row0.x - row1.y);
+				float sq = 2f * MathF.Sqrt(1f + row2.z - row0.x - row1.y);
 
 				q.z = 0.25f * sq;
 				sq = 1f / sq;

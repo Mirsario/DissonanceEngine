@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
-
 namespace Dissonance.Engine
 {
-	partial class Mathf
+	public static partial class MathHelper
 	{
 		public static sbyte Clamp(sbyte value, sbyte min, sbyte max)
 			=> value < min ? min : value > max ? max : value;
