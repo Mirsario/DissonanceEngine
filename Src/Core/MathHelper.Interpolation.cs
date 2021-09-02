@@ -1,6 +1,6 @@
 namespace Dissonance.Engine
 {
-	public static partial class MathHelper
+	partial class MathHelper
 	{
 		public static float Lerp(float a, float b, float time)
 			=> a + (b - a) * Clamp01(time);
