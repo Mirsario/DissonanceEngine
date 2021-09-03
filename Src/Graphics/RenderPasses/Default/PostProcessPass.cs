@@ -4,6 +4,8 @@ namespace Dissonance.Engine.Graphics
 {
 	public class PostProcessPass : RenderPass
 	{
+		public Shader PassShader { get; set; }
+
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
@@ -26,9 +28,9 @@ namespace Dissonance.Engine.Graphics
 
 				PassShader.SetupCameraUniforms(camera, transform.Position);
 
-				if (passedTextures != null) {
-					for (int j = 0; j < passedTextures.Length; j++) {
-						var texture = passedTextures[j];
+				if (PassedTextures != null) {
+					for (int j = 0; j < PassedTextures.Length; j++) {
+						var texture = PassedTextures[j];
 
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, texture.Id);

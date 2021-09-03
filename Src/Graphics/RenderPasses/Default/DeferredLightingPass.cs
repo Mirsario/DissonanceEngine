@@ -28,9 +28,10 @@ namespace Dissonance.Engine.Graphics
 		}
 	}
 
-	[RenderPassInfo(AcceptedShaderNames = new[] { "point", "directional", "spot" })]
 	public class DeferredLightingPass : RenderPass
 	{
+		public readonly Shader[] ShadersByLightType = new Shader[2];
+
 		public override void Render()
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
@@ -60,8 +61,8 @@ namespace Dissonance.Engine.Graphics
 
 				var cameraPos = cameraTransform.Position;
 
-				for (int i = 0; i < shaders.Length; i++) {
-					var activeShader = shaders[i];
+				for (int i = 0; i < ShadersByLightType.Length; i++) {
+					var activeShader = ShadersByLightType[i];
 
 					if (activeShader == null) {
 						continue;
@@ -75,8 +76,9 @@ namespace Dissonance.Engine.Graphics
 					var lightType = (Light.LightType)i;
 
 					//TODO: Update & optimize this
-					for (int j = 0; j < passedTextures.Length; j++) {
-						var tex = passedTextures[j];
+					for (int j = 0; j < PassedTextures.Length; j++) {
+						var tex = PassedTextures[j];
+
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, tex.Id);
 
