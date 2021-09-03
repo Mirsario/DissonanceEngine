@@ -24,6 +24,7 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				int length = value.Length;
+
 				if (passedTextures == null || passedTextures.Length != length) {
 					passedTextures = new RenderTexture[length];
 				}
@@ -36,9 +37,9 @@ namespace Dissonance.Engine.Graphics
 
 		public abstract void Render();
 
-		public virtual void OnInit() { }
+		protected virtual void OnInit() { }
 
-		public virtual void Dispose() { }
+		protected virtual void OnDispose() { }
 
 		protected virtual RectInt GetViewport(Camera? camera)
 		{
@@ -55,6 +56,12 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			return new RectInt(0, 0, Screen.Width, Screen.Height);
+		}
+
+		public void Dispose()
+		{
+			OnDispose();
+			GC.SuppressFinalize(this);
 		}
 
 		public ref T GlobalGet<T>() where T : struct
