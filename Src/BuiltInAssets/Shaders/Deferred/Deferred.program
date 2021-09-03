@@ -1,0 +1,22 @@
+{
+	"Deferred/Lighting/Point": {
+		"vertexShader": "Shaders/Deferred/Lighting.vert",
+		"fragmentShader": "Shaders/Deferred/Lighting.frag",
+		"shaderDefines": [ "POINT" ],
+		"blendFactorSrc": "OneMinusDstColor",
+		"blendFactorDst": "One"
+	},
+	
+	"Deferred/Lighting/Directional": {
+		"vertexShader": "Shaders/Deferred/Lighting.vert",
+		"fragmentShader": "Shaders/Deferred/Lighting.frag",
+		"shaderDefines": [ "DIRECTIONAL" ],
+		"blendFactorSrc": "OneMinusDstColor",
+		"blendFactorDst": "One"
+	},
+	
+	"Deferred/Composite": {
+		"vertexShader": "Shaders/Common/PostProcess.vert",
+		"fragmentShader": "Shaders/Deferred/Composite.frag"
+	}
+}
