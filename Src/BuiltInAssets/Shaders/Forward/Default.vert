@@ -1,5 +1,7 @@
 #version 330
 
+uniform mat4 worldViewProj;
+
 in vec4 vertex;
 #ifdef TEXTURE
 	in vec2 uv0;
@@ -25,5 +27,5 @@ void main(void)
 		vColor = color;
 	#endif
 	
-	gl_Position = vertex;
+	gl_Position = worldViewProj * vertex;
 }
