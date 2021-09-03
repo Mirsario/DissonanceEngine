@@ -1,0 +1,25 @@
+{
+	"Forward/Unlit/Color": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "COLOR" ]
+	},
+	
+	"Forward/Unlit/VertexColor": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "VERTEXCOLOR" ]
+	},
+	
+	"Forward/Unlit/Texture": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "TEXTURE" ]
+	},
+	
+	"Forward/Unlit/TextureColor": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "TEXTURE", "COLOR" ]
+	},
+}

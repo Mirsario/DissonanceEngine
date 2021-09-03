@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
 
-		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("GUI"); //TODO: To be moved
+		public static Shader GUIShader => guiShader ??= Resources.Find<Shader>("Gui/Default"); //TODO: To be moved
 
 		public static Version OpenGLVersion {
 			get => openGLVersion;

@@ -1,0 +1,8 @@
+{
+	"Gui/Default": {
+		"vertexShader": "Shaders/Gui/Gui.vert",
+		"fragmentShader": "Shaders/Gui/Gui.frag",
+		"blendFactorSrc": "SrcAlpha",
+		"blendFactorDst": "OneMinusSrcAlpha"
+	}
+}

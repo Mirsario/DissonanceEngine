@@ -54,8 +54,8 @@ namespace Dissonance.Engine.Graphics
 				RenderPass.Create<DeferredLightingPass>("Lighting", p => {
 					p.Framebuffer = lightingFramebuffer;
 					p.Shaders = new[] {
-						Resources.Find<Shader>("LightingPoint"),
-						Resources.Find<Shader>("LightingDirectional"),
+						Resources.Find<Shader>("Deferred/Lighting/Point"),
+						Resources.Find<Shader>("Deferred/Lighting/Directional"),
 						null
 					};
 					p.PassedTextures = new[] {
@@ -67,7 +67,7 @@ namespace Dissonance.Engine.Graphics
 				
 				// Composite
 				RenderPass.Create<PostProcessPass>("Composite", p => {
-					p.Shader = Resources.Find<Shader>("Composite");
+					p.Shader = Resources.Find<Shader>("Deferred/Composite");
 					p.PassedTextures = new[] {
 						colorBuffer,
 						normalBuffer, // temp.
