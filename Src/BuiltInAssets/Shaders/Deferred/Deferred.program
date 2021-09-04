@@ -16,7 +16,7 @@
 	},
 	
 	"Deferred/Composite": {
-		"vertexShader": "Shaders/Common/PostProcess.vert",
+		"vertexShader": "Shaders/ScreenSpace/ScreenSpace.vert",
 		"fragmentShader": "Shaders/Deferred/Composite.frag"
 	}
 }
