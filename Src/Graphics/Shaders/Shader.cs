@@ -336,10 +336,10 @@ namespace Dissonance.Engine.Graphics
 				defines = defines
 			};
 
-			static void TryCompileShader(Shader shader, ShaderType shaderType, string code, Action<Shader, SubShader> setter)
+			void TryCompileShader(Shader shader, ShaderType shaderType, string code, Action<Shader, SubShader> setter)
 			{
 				if (!string.IsNullOrEmpty(code)) {
-					var subShader = new SubShader(shaderType);
+					var subShader = new SubShader(name, shaderType);
 
 					if (subShader.CompileShader(code)) {
 						setter(shader, subShader);
