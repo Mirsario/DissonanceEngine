@@ -17,7 +17,7 @@ namespace Dissonance.Engine.Graphics
 		public uint Id { get; private set; }
 		public string Name { get; private set; }
 
-		public SubShader(ShaderType type, string name = null)
+		public SubShader(string name, ShaderType type)
 		{
 			Type = type;
 			Id = GL.CreateShader(Type);
