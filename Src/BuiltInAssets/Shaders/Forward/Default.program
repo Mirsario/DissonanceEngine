@@ -22,4 +22,31 @@
 		"fragmentShader": "Shaders/Forward/Default.frag",
 		"shaderDefines": [ "TEXTURE", "COLOR" ]
 	},
+	
+	"Forward/Unlit/TransparentColor": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "COLOR" ],
+		"blendFactorSrc": "SrcAlpha",
+		"blendFactorDst": "OneMinusSrcAlpha",
+		"queue": 1000
+	},
+	
+	"Forward/Unlit/TransparentTexture": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "TEXTURE" ],
+		"blendFactorSrc": "SrcAlpha",
+		"blendFactorDst": "OneMinusSrcAlpha",
+		"queue": 1000
+	},
+	
+	"Forward/Unlit/TransparentTextureColor": {
+		"vertexShader": "Shaders/Forward/Default.vert",
+		"fragmentShader": "Shaders/Forward/Default.frag",
+		"shaderDefines": [ "TEXTURE", "COLOR" ],
+		"blendFactorSrc": "SrcAlpha",
+		"blendFactorDst": "OneMinusSrcAlpha",
+		"queue": 1000
+	},
 }
