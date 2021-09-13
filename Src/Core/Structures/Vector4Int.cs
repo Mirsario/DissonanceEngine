@@ -17,6 +17,9 @@ namespace Dissonance.Engine
 		public int z;
 		public int w;
 
+		public Vector2Int XY => new(x, y);
+		public Vector3Int XYZ => new(x, y, z);
+
 		public Vector4Int(int x, int y, int z, int w)
 		{
 			this.x = x;
