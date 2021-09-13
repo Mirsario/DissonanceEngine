@@ -43,6 +43,13 @@ namespace Dissonance.Engine
 				z = value.y;
 			}
 		}
+		public Vector2 YZ {
+			get => new(y, z);
+			set {
+				y = value.x;
+				z = value.y;
+			}
+		}
 		public Vector3 Normalized {
 			get {
 				float mag = Magnitude;
