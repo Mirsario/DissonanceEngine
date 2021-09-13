@@ -254,6 +254,9 @@ namespace Dissonance.Engine
 
 		public static unsafe implicit operator float*(Vector2 vec) => (float*)&vec;
 
+		// Vector3
+		public static implicit operator Vector3(Vector2 vec) => new Vector3(vec.x, vec.y, 0);
+
 		// System.Numerics.Vector2
 
 		public static implicit operator Vector2(System.Numerics.Vector2 value) => new Vector2(value.X, value.Y);
