@@ -11,6 +11,8 @@ namespace Dissonance.Engine
 			this.y = y;
 		}
 
+		public Vector2UShort(ushort xy) : this(xy, xy) { }
+
 		public override string ToString()
 			=> $"[{x}, {y}]";
 
