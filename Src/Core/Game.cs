@@ -18,7 +18,7 @@ namespace Dissonance.Engine
 		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
 		
 		/// <summary>
-		/// The current running game instance. Will be null before <see cref="Game.Run(GameFlags, string[])"/> is called.
+		/// The current running game instance. Will be null before <see cref="Game.Run(GameFlags)"/> is called.
 		/// </summary>
 		public static Game Instance => instance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
 
@@ -45,7 +45,6 @@ namespace Dissonance.Engine
 		/// The <see cref="GameFlags"/> the game was ran with.
 		/// </summary>
 		public GameFlags Flags { get; private set; }
-		public IReadOnlyList<string> StartArguments { get; private set; }
 
 		internal bool NoWindow { get; private set; }
 		internal bool NoGraphics { get; private set; }
@@ -75,7 +74,7 @@ namespace Dissonance.Engine
 		/// Begins running the game.
 		/// </summary>
 		/// <param name="flags">Flags describing how the game should be run.</param>
-		public void Run(GameFlags flags = GameFlags.Default, string[] args = null)
+		public void Run(GameFlags flags = GameFlags.Default)
 		{
 			if (instance != null) {
 				throw new InvalidOperationException("Cannot run a game while one instance is already running. If you wish to run multiple game instances - use AssemblyLoadContexts to isolate engine & same game assemblies from each other.");
@@ -83,7 +82,6 @@ namespace Dissonance.Engine
 
 			instance = this;
 			Flags = flags;
-			StartArguments = Array.AsReadOnly(args);
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
@@ -99,6 +97,7 @@ namespace Dissonance.Engine
 			//TODO: Move this.
 			assetsPath = "Assets" + Path.DirectorySeparatorChar;
 
+			string[] args = Environment.GetCommandLineArgs()[1..];
 			if (args != null) {
 				string joinedArgs = string.Join(" ", args);
 				var matches = RegexCache.CommandArguments.Matches(joinedArgs);
