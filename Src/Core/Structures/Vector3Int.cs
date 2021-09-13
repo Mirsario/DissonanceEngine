@@ -28,6 +28,28 @@ namespace Dissonance.Engine
 			z = Z;
 		}
 
+		public Vector2Int XY {
+			get => new(x, y);
+			set {
+				x = value.x;
+				y = value.y;
+			}
+		}
+		public Vector2Int XZ {
+			get => new(x, z);
+			set {
+				x = value.x;
+				z = value.y;
+			}
+		}
+		public Vector2Int YZ {
+			get => new(y, z);
+			set {
+				y = value.x;
+				z = value.y;
+			}
+		}
+
 		public override string ToString()
 			=> $"[{x}, {y}, {z}]";
 
