@@ -28,10 +28,6 @@ namespace Dissonance.Engine
 			this.w = w;
 		}
 
-		public Vector4Int(int X, int Y, int Z) : this(X, Y, Z, 0) { }
-
-		public Vector4Int(int X, int Y) : this(X, Y, 0, 0) { }
-
 		public Vector4Int(Vector3Int XYZ, int W) : this(XYZ.x, XYZ.y, XYZ.z, W) { }
 
 		public Vector4Int(Vector2Int XY, Vector2Int ZW) : this(XY.x, XY.y, ZW.x, ZW.y) { }

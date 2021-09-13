@@ -73,10 +73,6 @@ namespace Dissonance.Engine
 			w = W;
 		}
 
-		public Vector4(float X, float Y, float Z) : this(X, Y, Z, 0) { }
-
-		public Vector4(float X, float Y) : this(X, Y, 0, 0) { }
-
 		public Vector4(Vector3 XYZ, float W) : this(XYZ.x, XYZ.y, XYZ.z, W) { }
 
 		public Vector4(Vector2 XY, Vector2 ZW) : this(XY.x, XY.y, ZW.x, ZW.y) { }
