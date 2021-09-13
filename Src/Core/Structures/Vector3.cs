@@ -43,6 +43,13 @@ namespace Dissonance.Engine
 				z = value.y;
 			}
 		}
+		public Vector2 YZ {
+			get => new(y, z);
+			set {
+				y = value.x;
+				z = value.y;
+			}
+		}
 		public Vector3 Normalized {
 			get {
 				float mag = Magnitude;
@@ -87,12 +94,9 @@ namespace Dissonance.Engine
 			z = Z;
 		}
 
-		public Vector3(float XYZ)
-		{
-			x = XYZ;
-			y = XYZ;
-			z = XYZ;
-		}
+		public Vector3(Vector2 XY, float Z) : this(XY.x, XY.y, Z) { }
+
+		public Vector3(float XYZ) : this(XYZ, XYZ, XYZ) { }
 
 		public override int GetHashCode()
 			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;

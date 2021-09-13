@@ -49,6 +49,8 @@ namespace Dissonance.Engine
 			y = Y;
 		}
 
+		public Vector2(float XY) : this(XY, XY) { }
+
 		public override int GetHashCode()
 			=> x.GetHashCode() ^ y.GetHashCode() << 2;
 

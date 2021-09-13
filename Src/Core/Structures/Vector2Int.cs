@@ -23,6 +23,8 @@ namespace Dissonance.Engine
 			y = Y;
 		}
 
+		public Vector2Int(int XY) : this(XY, XY) { }
+
 		public override int GetHashCode()
 			=> x ^ y << 2;
 

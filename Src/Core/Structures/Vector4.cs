@@ -73,37 +73,13 @@ namespace Dissonance.Engine
 			w = W;
 		}
 
-		public Vector4(float X, float Y, float Z)
-		{
-			x = X;
-			y = Y;
-			z = Z;
-			w = 0f;
-		}
+		public Vector4(float X, float Y, float Z) : this(X, Y, Z, 0) { }
 
-		public Vector4(float X, float Y)
-		{
-			x = X;
-			y = Y;
-			z = 0f;
-			w = 0f;
-		}
+		public Vector4(float X, float Y) : this(X, Y, 0, 0) { }
 
-		public Vector4(Vector3 vec3, float W)
-		{
-			x = vec3.x;
-			y = vec3.y;
-			z = vec3.z;
-			w = W;
-		}
+		public Vector4(Vector3 XYZ, float W) : this(XYZ.x, XYZ.y, XYZ.z, W) { }
 
-		public Vector4(Vector2 vecA, Vector2 vecB)
-		{
-			x = vecA.x;
-			y = vecA.y;
-			z = vecB.x;
-			w = vecB.y;
-		}
+		public Vector4(Vector2 XY, Vector2 ZW) : this(XY.x, XY.y, ZW.x, ZW.y) { }
 
 		public override string ToString()
 			=> $"[{x}, {y}, {z}, {w}]";
