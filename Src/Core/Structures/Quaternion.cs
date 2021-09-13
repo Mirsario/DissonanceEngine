@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 	{
 		public const float kEpsilon = 1E-06f;
 
-		public static readonly Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
+		public static readonly Quaternion Identity = new(0f, 0f, 0f, 1f);
 
 		public float x;
 		public float y;

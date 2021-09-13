@@ -8,8 +8,8 @@ namespace Dissonance.Engine
 
 		private const string OutOfRangeMessage = "[{0},{1}] is not a valid matrix index.";
 
-		public static readonly Matrix4x4 Identity = new Matrix4x4(Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);
-		public static readonly Matrix4x4 Zero = new Matrix4x4(Vector4.Zero, Vector4.Zero, Vector4.Zero, Vector4.Zero);
+		public static readonly Matrix4x4 Identity = new(Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);
+		public static readonly Matrix4x4 Zero = new(Vector4.Zero, Vector4.Zero, Vector4.Zero, Vector4.Zero);
 
 		public float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
 
@@ -42,7 +42,7 @@ namespace Dissonance.Engine
 		}
 
 		public Vector4 Row0 {
-			get => new Vector4(m00, m01, m02, m03);
+			get => new(m00, m01, m02, m03);
 			set {
 				m00 = value.x;
 				m01 = value.y;
@@ -52,7 +52,7 @@ namespace Dissonance.Engine
 		}
 
 		public Vector4 Row1 {
-			get => new Vector4(m10, m11, m12, m13);
+			get => new(m10, m11, m12, m13);
 			set {
 				m10 = value.x;
 				m11 = value.y;
@@ -62,7 +62,7 @@ namespace Dissonance.Engine
 		}
 
 		public Vector4 Row2 {
-			get => new Vector4(m20, m21, m22, m23);
+			get => new(m20, m21, m22, m23);
 			set {
 				m20 = value.x;
 				m21 = value.y;
@@ -72,7 +72,7 @@ namespace Dissonance.Engine
 		}
 
 		public Vector4 Row3 {
-			get => new Vector4(m30, m31, m32, m33);
+			get => new(m30, m31, m32, m33);
 			set {
 				m30 = value.x;
 				m31 = value.y;
@@ -357,7 +357,7 @@ namespace Dissonance.Engine
 		}
 
 		// Extract
-		public Vector3 ExtractTranslation() => new Vector3(m30, m31, m32);
+		public Vector3 ExtractTranslation() => new(m30, m31, m32);
 
 		public Vector3 ExtractScale()
 		{

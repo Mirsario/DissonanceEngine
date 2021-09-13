@@ -12,7 +12,7 @@ namespace Dissonance.Engine.Graphics
 		public delegate void CursorPositionCallback(double x, double y);
 
 		public Vector2 WindowCenter => WindowLocation + WindowSize * 0.5f;
-		public RectInt WindowRectangle => new RectInt(WindowLocation, WindowSize);
+		public RectInt WindowRectangle => new(WindowLocation, WindowSize);
 
 		public abstract event CursorPositionCallback OnCursorPositionCallback;
 		public abstract event MouseButtonCallback OnMouseButtonCallback;

@@ -16,14 +16,14 @@ namespace Dissonance.Engine
 			set => y = value - height;
 		}
 		public Vector2Int Position {
-			get => new Vector2Int(x, y);
+			get => new(x, y);
 			set {
 				x = value.x;
 				y = value.y;
 			}
 		}
 		public Vector2Int Size {
-			get => new Vector2Int(width, height);
+			get => new(width, height);
 			set {
 				width = value.x;
 				height = value.y;

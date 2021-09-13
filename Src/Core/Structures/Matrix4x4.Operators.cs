@@ -62,14 +62,14 @@ namespace Dissonance.Engine
 
 		// Casts
 
-		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new Matrix4x4(
+		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new(
 			v.M11, v.M12, v.M13, v.M14,
 			v.M21, v.M22, v.M23, v.M24,
 			v.M31, v.M32, v.M33, v.M34,
 			v.M41, v.M42, v.M43, v.M44
 		);
 
-		public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new BulletSharp.Math.Matrix {
+		public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new() {
 			M11 = v.m00,
 			M12 = v.m01,
 			M13 = v.m02,

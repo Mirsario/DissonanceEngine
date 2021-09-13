@@ -10,8 +10,8 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Implement OnDispose
 	public class Material : Asset, ICloneable
 	{
-		private static readonly List<Material> ById = new List<Material>();
-		private static readonly Dictionary<string, Material> ByName = new Dictionary<string, Material>();
+		private static readonly List<Material> ById = new();
+		private static readonly Dictionary<string, Material> ByName = new();
 
 		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat;
 		private readonly List<KeyValuePair<string, Texture>> Textures;

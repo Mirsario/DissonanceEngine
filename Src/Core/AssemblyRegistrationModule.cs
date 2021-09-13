@@ -10,7 +10,7 @@ namespace Dissonance.Engine
 
 		public static event AssemblyRegistrationCallback OnAssemblyRegistered;
 
-		private static readonly List<WeakReference<Assembly>> Assemblies = new List<WeakReference<Assembly>>();
+		private static readonly List<WeakReference<Assembly>> Assemblies = new();
 
 		private static bool ready;
 

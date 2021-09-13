@@ -2,8 +2,8 @@ namespace Dissonance.Engine
 {
 	public struct RectFloat
 	{
-		public static readonly RectFloat Default = new RectFloat(0f, 0f, 1f, 1f);
-		public static readonly RectFloat Empty = new RectFloat(0f, 0f, 0f, 0f);
+		public static readonly RectFloat Default = new(0f, 0f, 1f, 1f);
+		public static readonly RectFloat Empty = new(0f, 0f, 0f, 0f);
 
 		public float x;
 		public float y;
@@ -19,21 +19,21 @@ namespace Dissonance.Engine
 			set => y = value - height;
 		}
 		public Vector2 Position {
-			get => new Vector2(x, y);
+			get => new(x, y);
 			set {
 				x = value.x;
 				y = value.y;
 			}
 		}
 		public Vector2 Size {
-			get => new Vector2(width, height);
+			get => new(width, height);
 			set {
 				width = value.x;
 				height = value.y;
 			}
 		}
 		public Vector4 Points {
-			get => new Vector4(x, y, x + width, y + height);
+			get => new(x, y, x + width, y + height);
 			set {
 				x = value.x;
 				y = value.y;

@@ -8,9 +8,9 @@ namespace Dissonance.Engine
 	partial class Game
 	{
 		private bool modulesReady;
-		private List<EngineModule> modules = new List<EngineModule>();
-		private Dictionary<Type, List<EngineModule>> modulesByType = new Dictionary<Type, List<EngineModule>>();
-		private EngineModuleHooks moduleHooks = new EngineModuleHooks();
+		private List<EngineModule> modules = new();
+		private Dictionary<Type, List<EngineModule>> modulesByType = new();
+		private EngineModuleHooks moduleHooks = new();
 
 		public void AddModule(EngineModule module)
 		{

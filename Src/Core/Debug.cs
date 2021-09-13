@@ -9,8 +9,8 @@ namespace Dissonance.Engine
 {
 	public static partial class Debug
 	{
-		public static readonly object LoggingLock = new object();
-		public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new Dictionary<string, ConsoleColor>();
+		public static readonly object LoggingLock = new();
+		public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new();
 
 		public static bool LogCurrentThread { get; set; }
 		public static bool LogAssembly { get; set; } = true;

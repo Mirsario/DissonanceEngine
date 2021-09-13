@@ -12,8 +12,8 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
 	public partial class Shader : Asset
 	{
-		internal static Dictionary<string, Shader> shadersByName = new Dictionary<string, Shader>(StringComparer.OrdinalIgnoreCase);
-		internal static List<Shader> shaders = new List<Shader>();
+		internal static Dictionary<string, Shader> shadersByName = new(StringComparer.OrdinalIgnoreCase);
+		internal static List<Shader> shaders = new();
 
 		private static Shader errorShader;
 
@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 		internal Dictionary<string, ShaderUniform> uniforms;
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
-		internal List<Material> materialAttachments = new List<Material>();
+		internal List<Material> materialAttachments = new();
 
 		private IntPtr namePtr;
 

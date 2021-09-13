@@ -14,7 +14,7 @@ namespace Dissonance.Engine.IO
 		private const uint ChunkJson = 0x4E4F534A;
 		private const uint ChunkBinary = 0x004E4942;
 
-		public static readonly Dictionary<ComponentType, uint> ComponentTypeSizes = new Dictionary<ComponentType, uint> {
+		public static readonly Dictionary<ComponentType, uint> ComponentTypeSizes = new() {
 			{ ComponentType.SByte,  1 },
 			{ ComponentType.Byte,   1 },
 			{ ComponentType.Short,  2 },
@@ -22,7 +22,7 @@ namespace Dissonance.Engine.IO
 			{ ComponentType.UInt,   4 },
 			{ ComponentType.Float,  4 },
 		};
-		public static readonly Dictionary<string, uint> AccessorTypeSizes = new Dictionary<string, uint>(StringComparer.InvariantCultureIgnoreCase) {
+		public static readonly Dictionary<string, uint> AccessorTypeSizes = new(StringComparer.InvariantCultureIgnoreCase) {
 			{ "SCALAR", 1 },
 			{ "VEC2",   2 },
 			{ "VEC3",   3 },
@@ -31,7 +31,7 @@ namespace Dissonance.Engine.IO
 			{ "MAT3",   9 },
 			{ "MAT4",   16 },
 		};
-		public static readonly Dictionary<string, Type> AttributeToType = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase) {
+		public static readonly Dictionary<string, Type> AttributeToType = new(StringComparer.InvariantCultureIgnoreCase) {
 			{ "POSITION",       typeof(VertexAttribute) },
 			{ "NORMAL",         typeof(NormalAttribute) },
 			{ "TANGENT",        typeof(TangentAttribute) },
