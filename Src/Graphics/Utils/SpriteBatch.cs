@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class SpriteBatch : IDisposable
 	{
-		protected static readonly Vector4 DefaultUvPoints = new Vector4(0f, 1f, 1f, 0f);
+		protected static readonly Vector4 DefaultUvPoints = new(0f, 1f, 1f, 0f);
 
 		protected Mesh bufferMesh;
 		protected int vertexCount;

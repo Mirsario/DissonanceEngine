@@ -11,7 +11,7 @@ namespace Dissonance.Engine
 		internal static event Action<World> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
 
-		private static readonly List<World> Worlds = new List<World>();
+		private static readonly List<World> Worlds = new();
 
 		protected override void Init()
 		{

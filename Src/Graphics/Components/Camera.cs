@@ -18,7 +18,7 @@ namespace Dissonance.Engine.Graphics
 		public Matrix4x4 InverseProjectionMatrix { get; internal set; }
 
 		public RectInt ViewPixel {
-			get => new RectInt(
+			get => new(
 				(int)(View.x * Screen.Width),
 				(int)(View.y * Screen.Height),
 				(int)(View.width * Screen.Width),

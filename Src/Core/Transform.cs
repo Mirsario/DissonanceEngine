@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 			All = Position | Rotation | Scale
 		}
 
-		public static Transform Default = new Transform(Vector3.Zero);
+		public static Transform Default = new(Vector3.Zero);
 
 		public readonly IReadOnlyList<Transform> Children;
 

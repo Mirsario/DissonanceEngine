@@ -25,19 +25,19 @@ namespace Dissonance.Engine
 		// Operations
 
 		// Int
-		public static Vector2UShort operator *(Vector2UShort a, int d) => new Vector2UShort((ushort)(a.x * d), (ushort)(a.y * d));
+		public static Vector2UShort operator *(Vector2UShort a, int d) => new((ushort)(a.x * d), (ushort)(a.y * d));
 
-		public static Vector2UShort operator *(int d, Vector2UShort a) => new Vector2UShort((ushort)(a.x * d), (ushort)(a.y * d));
+		public static Vector2UShort operator *(int d, Vector2UShort a) => new((ushort)(a.x * d), (ushort)(a.y * d));
 
-		public static Vector2UShort operator /(Vector2UShort a, int d) => new Vector2UShort((ushort)(a.x / d), (ushort)(a.y / d));
+		public static Vector2UShort operator /(Vector2UShort a, int d) => new((ushort)(a.x / d), (ushort)(a.y / d));
 
 		// UShort
 
-		public static Vector2UShort operator *(Vector2UShort a, ushort d) => new Vector2UShort((ushort)(a.x * d), (ushort)(a.y * d));
+		public static Vector2UShort operator *(Vector2UShort a, ushort d) => new((ushort)(a.x * d), (ushort)(a.y * d));
 
-		public static Vector2UShort operator *(ushort d, Vector2UShort a) => new Vector2UShort((ushort)(a.x * d), (ushort)(a.y * d));
+		public static Vector2UShort operator *(ushort d, Vector2UShort a) => new((ushort)(a.x * d), (ushort)(a.y * d));
 
-		public static Vector2UShort operator /(Vector2UShort a, ushort d) => new Vector2UShort((ushort)(a.x / d), (ushort)(a.y / d));
+		public static Vector2UShort operator /(Vector2UShort a, ushort d) => new((ushort)(a.x / d), (ushort)(a.y / d));
 
 		// Vector2UShort
 

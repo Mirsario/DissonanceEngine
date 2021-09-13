@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Graphics
 {
 	partial class Rendering
 	{
-		private static readonly Regex RegexGLVersion = new Regex(@".*?([\d.]+).*", RegexOptions.Compiled);
+		private static readonly Regex RegexGLVersion = new(@".*?([\d.]+).*", RegexOptions.Compiled);
 
 		public static Version GetOpenGLVersion()
 		{

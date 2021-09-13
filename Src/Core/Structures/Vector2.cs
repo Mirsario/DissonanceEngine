@@ -7,13 +7,13 @@ namespace Dissonance.Engine
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2));
 		public static readonly Vector2 Zero = default;
-		public static readonly Vector2 One = new Vector2(1f, 1f);
-		public static readonly Vector2 UnitX = new Vector2(1f, 0f);
-		public static readonly Vector2 UnitY = new Vector2(0f, 1f);
-		public static readonly Vector2 Up = new Vector2(0f, 1f);
-		public static readonly Vector2 Down = new Vector2(0f, -1f);
-		public static readonly Vector2 Left = new Vector2(-1f, 0f);
-		public static readonly Vector2 Right = new Vector2(1f, 0f);
+		public static readonly Vector2 One = new(1f, 1f);
+		public static readonly Vector2 UnitX = new(1f, 0f);
+		public static readonly Vector2 UnitY = new(0f, 1f);
+		public static readonly Vector2 Up = new(0f, 1f);
+		public static readonly Vector2 Down = new(0f, -1f);
+		public static readonly Vector2 Left = new(-1f, 0f);
+		public static readonly Vector2 Right = new(1f, 0f);
 
 		public float x;
 		public float y;
@@ -185,19 +185,19 @@ namespace Dissonance.Engine
 		// Operations
 
 		// Int
-		public static Vector2 operator *(Vector2 a, int d) => new Vector2(a.x * d, a.y * d);
+		public static Vector2 operator *(Vector2 a, int d) => new(a.x * d, a.y * d);
 
-		public static Vector2 operator *(int d, Vector2 a) => new Vector2(a.x * d, a.y * d);
+		public static Vector2 operator *(int d, Vector2 a) => new(a.x * d, a.y * d);
 
-		public static Vector2 operator /(Vector2 a, int d) => new Vector2(a.x / d, a.y / d);
+		public static Vector2 operator /(Vector2 a, int d) => new(a.x / d, a.y / d);
 
 		// Float
 
-		public static Vector2 operator *(Vector2 a, float d) => new Vector2(a.x * d, a.y * d);
+		public static Vector2 operator *(Vector2 a, float d) => new(a.x * d, a.y * d);
 
-		public static Vector2 operator *(float d, Vector2 a) => new Vector2(a.x * d, a.y * d);
+		public static Vector2 operator *(float d, Vector2 a) => new(a.x * d, a.y * d);
 
-		public static Vector2 operator /(Vector2 a, float d) => new Vector2(a.x / d, a.y / d);
+		public static Vector2 operator /(Vector2 a, float d) => new(a.x / d, a.y / d);
 
 		// Vector2
 		public static bool operator ==(Vector2 a, Vector2 b) => (a - b).SqrMagnitude < 9.99999944E-11f;
@@ -258,17 +258,17 @@ namespace Dissonance.Engine
 
 		// System.Numerics.Vector2
 
-		public static implicit operator Vector2(System.Numerics.Vector2 value) => new Vector2(value.X, value.Y);
+		public static implicit operator Vector2(System.Numerics.Vector2 value) => new(value.X, value.Y);
 
-		public static implicit operator System.Numerics.Vector2(Vector2 value) => new System.Numerics.Vector2(value.x, value.y);
+		public static implicit operator System.Numerics.Vector2(Vector2 value) => new(value.x, value.y);
 
 		// Vector2Int
 
-		public static explicit operator Vector2(Vector2Int value) => new Vector2(value.x, value.y);
+		public static explicit operator Vector2(Vector2Int value) => new(value.x, value.y);
 
 		// Vector2UShort
 
-		public static explicit operator Vector2(Vector2UShort value) => new Vector2(value.x, value.y);
+		public static explicit operator Vector2(Vector2UShort value) => new(value.x, value.y);
 	}
 }
 

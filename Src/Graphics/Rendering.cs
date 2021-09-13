@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Graphics
 	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Resources), typeof(ComponentManager))]
 	public sealed partial class Rendering : EngineModule
 	{
-		public static readonly Version MinOpenGLVersion = new Version(3, 2);
+		public static readonly Version MinOpenGLVersion = new(3, 2);
 		public static readonly Version[] SupportedOpenGLVersions = GL.SupportedVersions.Where(v => v >= MinOpenGLVersion).ToArray();
 
 		internal static Texture whiteTexture; //TODO: Move this

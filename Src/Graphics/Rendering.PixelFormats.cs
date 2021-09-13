@@ -7,7 +7,7 @@ namespace Dissonance.Engine.Graphics
 	partial class Rendering
 	{
 		//TODO: Move this
-		public static Dictionary<TextureFormat, (PixelFormat formatGeneral, PixelInternalFormat formatInternal, PixelType pixelType, Type dataType)> textureFormatInfo = new Dictionary<TextureFormat, (PixelFormat, PixelInternalFormat, PixelType, Type)> {
+		public static Dictionary<TextureFormat, (PixelFormat formatGeneral, PixelInternalFormat formatInternal, PixelType pixelType, Type dataType)> textureFormatInfo = new() {
 			#region A
 
 			{ TextureFormat.A8,                 (PixelFormat.Alpha,             PixelInternalFormat.R8,                 PixelType.UnsignedByte,             typeof(byte)) },	// 8

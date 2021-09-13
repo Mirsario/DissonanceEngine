@@ -7,7 +7,7 @@ namespace Dissonance.Engine
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public class ModuleAutoloadAttribute : Attribute
 	{
-		private static readonly ModuleAutoloadAttribute Default = new ModuleAutoloadAttribute();
+		private static readonly ModuleAutoloadAttribute Default = new();
 
 		public readonly bool Enabled;
 

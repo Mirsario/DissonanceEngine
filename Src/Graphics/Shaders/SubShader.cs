@@ -7,8 +7,8 @@ namespace Dissonance.Engine.Graphics
 {
 	public class SubShader : IDisposable
 	{
-		private static readonly Regex RegexFSuffixA = new Regex(@"([^.]|^)([\d]+)f(?=[^\w])", RegexOptions.Compiled);
-		private static readonly Regex RegexFSuffixB = new Regex(@"(\.)([\d]+)f(?=[^\w])", RegexOptions.Compiled);
+		private static readonly Regex RegexFSuffixA = new(@"([^.]|^)([\d]+)f(?=[^\w])", RegexOptions.Compiled);
+		private static readonly Regex RegexFSuffixB = new(@"(\.)([\d]+)f(?=[^\w])", RegexOptions.Compiled);
 
 		public readonly ShaderType Type;
 

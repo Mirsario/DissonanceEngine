@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 {
 	public sealed class EntitySet
 	{
-		private readonly List<Entity> Entities = new List<Entity>();
+		private readonly List<Entity> Entities = new();
 
 		internal readonly Predicate<Entity> Predicate;
 		internal readonly bool? EntityIsActiveFilter;
