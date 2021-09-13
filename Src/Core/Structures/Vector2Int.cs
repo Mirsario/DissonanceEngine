@@ -23,6 +23,8 @@ namespace Dissonance.Engine
 			y = Y;
 		}
 
+		public Vector2Int(int XY) : this(XY, XY) { }
+
 		public override int GetHashCode()
 			=> x ^ y << 2;
 
@@ -98,12 +100,6 @@ namespace Dissonance.Engine
 
 		// int*
 		public static unsafe implicit operator int*(Vector2Int vec) => (int*)&vec;
-
-		// Vector3Int
-		public static implicit operator Vector3Int(Vector2Int vec) => new Vector3Int(vec.x, vec.y, 0);
-
-		// Vector4Int
-		public static implicit operator Vector4Int(Vector2Int vec) => new Vector4Int(vec.x, vec.y, 0, 0);
 
 		// System.Drawing.Point
 

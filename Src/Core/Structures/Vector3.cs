@@ -94,12 +94,9 @@ namespace Dissonance.Engine
 			z = Z;
 		}
 
-		public Vector3(float XYZ)
-		{
-			x = XYZ;
-			y = XYZ;
-			z = XYZ;
-		}
+		public Vector3(Vector2 XY, float Z) : this(XY.x, XY.y, Z) { }
+
+		public Vector3(float XYZ) : this(XYZ, XYZ, XYZ) { }
 
 		public override int GetHashCode()
 			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
@@ -357,9 +354,6 @@ namespace Dissonance.Engine
 		// float*
 
 		public static unsafe implicit operator float*(Vector3 vec) => (float*)&vec;
-
-		// Vector4
-		public static implicit operator Vector4(Vector3 vec) => new Vector4(vec.x, vec.y, vec.z, 0);
 
 		// System.Numerics.Vector3
 

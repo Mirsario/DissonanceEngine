@@ -28,6 +28,10 @@ namespace Dissonance.Engine
 			z = Z;
 		}
 
+		public Vector3Int(Vector2Int XY, int Z) : this(XY.x, XY.y, Z) { }
+
+		public Vector3Int(int XYZ) : this(XYZ, XYZ, XYZ) { }
+
 		public Vector2Int XY {
 			get => new(x, y);
 			set {
@@ -84,8 +88,6 @@ namespace Dissonance.Engine
 		public static bool operator !=(Vector3Int a, Vector3Int b) => a.x != b.x || a.y != b.y || a.z != b.z;
 
 		public static unsafe implicit operator int*(Vector3Int vec) => (int*)&vec;
-
-		public static implicit operator Vector4Int(Vector3Int vec) => new Vector4Int(vec.x, vec.y, vec.z, 0);
 	}
 }
 

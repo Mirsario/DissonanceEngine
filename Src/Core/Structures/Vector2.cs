@@ -49,6 +49,8 @@ namespace Dissonance.Engine
 			y = Y;
 		}
 
+		public Vector2(float XY) : this(XY, XY) { }
+
 		public override int GetHashCode()
 			=> x.GetHashCode() ^ y.GetHashCode() << 2;
 
@@ -253,12 +255,6 @@ namespace Dissonance.Engine
 		// float*
 
 		public static unsafe implicit operator float*(Vector2 vec) => (float*)&vec;
-
-		// Vector3
-		public static implicit operator Vector3(Vector2 vec) => new Vector3(vec.x, vec.y, 0);
-
-		// Vector4
-		public static implicit operator Vector4(Vector2 vec) => new Vector4(vec.x, vec.y, 0, 0);
 
 		// System.Numerics.Vector2
 
