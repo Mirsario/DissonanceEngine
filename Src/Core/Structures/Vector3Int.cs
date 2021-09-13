@@ -21,11 +21,37 @@ namespace Dissonance.Engine
 		public int y;
 		public int z;
 
-		public Vector3Int(int X, int Y, int Z)
+		public Vector3Int(int x, int y, int z)
 		{
-			x = X;
-			y = Y;
-			z = Z;
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		public Vector3Int(int xyz) : this(xyz, xyz, xyz) { }
+
+		public Vector3Int(Vector2Int xy, int z) : this(xy.x, xy.y, z) { }
+
+		public Vector2Int XY {
+			get => new(x, y);
+			set {
+				x = value.x;
+				y = value.y;
+			}
+		}
+		public Vector2Int XZ {
+			get => new(x, z);
+			set {
+				x = value.x;
+				z = value.y;
+			}
+		}
+		public Vector2Int YZ {
+			get => new(y, z);
+			set {
+				y = value.x;
+				z = value.y;
+			}
 		}
 
 		public override string ToString()

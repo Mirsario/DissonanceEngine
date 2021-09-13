@@ -16,7 +16,10 @@ namespace Dissonance.Engine
 
 		public static bool HasFocus { get; internal set; } = true;
 		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
-
+		
+		/// <summary>
+		/// The current running game instance. Will be null before <see cref="Game.Run(GameFlags, string[])"/> is called.
+		/// </summary>
 		public static Game Instance => instance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
 
 		internal bool shouldQuit;
@@ -28,8 +31,19 @@ namespace Dissonance.Engine
 		private Stopwatch renderStopwatch;
 		private ulong numFixedUpdates;
 
+		/// <summary>
+		/// Unused.
+		/// </summary>
 		public string Name { get; set; } = "UntitledGame";
+
+		/// <summary>
+		/// The window title. Set this in the constructor of your game.
+		/// </summary>
 		public string DisplayName { get; set; } = "Untitled Game";
+
+		/// <summary>
+		/// The <see cref="GameFlags"/> the game was ran with.
+		/// </summary>
 		public GameFlags Flags { get; private set; }
 		public IReadOnlyList<string> StartArguments { get; private set; }
 
@@ -37,14 +51,30 @@ namespace Dissonance.Engine
 		internal bool NoGraphics { get; private set; }
 		internal bool NoAudio { get; private set; }
 
+		/// <summary>
+		/// Called before the game is initialized. Use <see cref="Rendering.SetRenderingPipeline{T}"/> here.
+		/// </summary>
 		public virtual void PreInit() { }
-		
+
+		/// <summary>
+		/// Called when the game starts.
+		/// </summary>
 		public virtual void Start() { }
-		
+
+		/// <summary>
+		/// Called when render passes are rendered.
+		/// </summary>
 		public virtual void OnGUI() { }
 
+		/// <summary>
+		/// Called when the game instance is disposed.
+		/// </summary>
 		public virtual void OnDispose() { }
 
+		/// <summary>
+		/// Begins running the game.
+		/// </summary>
+		/// <param name="flags">Flags describing how the game should be run.</param>
 		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
 		{
 			if (instance != null) {

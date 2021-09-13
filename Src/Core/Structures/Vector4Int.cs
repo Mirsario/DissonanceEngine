@@ -17,6 +17,9 @@ namespace Dissonance.Engine
 		public int z;
 		public int w;
 
+		public Vector2Int XY => new(x, y);
+		public Vector3Int XYZ => new(x, y, z);
+
 		public Vector4Int(int x, int y, int z, int w)
 		{
 			this.x = x;
@@ -24,6 +27,14 @@ namespace Dissonance.Engine
 			this.z = z;
 			this.w = w;
 		}
+
+		public Vector4Int(int xyzw) : this(xyzw, xyzw, xyzw, xyzw) { }
+
+		public Vector4Int(Vector3Int xyz, int w) : this(xyz.x, xyz.y, xyz.z, w) { }
+
+		public Vector4Int(Vector2Int xy, int z, int w) : this(xy.x, xy.y, z, w) { }
+
+		public Vector4Int(Vector2Int xy, Vector2Int zw) : this(xy.x, xy.y, zw.x, zw.y) { }
 
 		public override string ToString() => $"[{x}, {y}, {z}, {w}]";
 
