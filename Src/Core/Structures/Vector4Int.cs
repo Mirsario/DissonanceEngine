@@ -28,9 +28,13 @@ namespace Dissonance.Engine
 			this.w = w;
 		}
 
-		public Vector4Int(Vector3Int XYZ, int W) : this(XYZ.x, XYZ.y, XYZ.z, W) { }
+		public Vector4Int(int xyzw) : this(xyzw, xyzw, xyzw, xyzw) { }
 
-		public Vector4Int(Vector2Int XY, Vector2Int ZW) : this(XY.x, XY.y, ZW.x, ZW.y) { }
+		public Vector4Int(Vector3Int xyz, int w) : this(xyz.x, xyz.y, xyz.z, w) { }
+
+		public Vector4Int(Vector2Int xy, int z, int w) : this(xy.x, xy.y, z, w) { }
+
+		public Vector4Int(Vector2Int xy, Vector2Int zw) : this(xy.x, xy.y, zw.x, zw.y) { }
 
 		public override string ToString() => $"[{x}, {y}, {z}, {w}]";
 

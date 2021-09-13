@@ -21,16 +21,16 @@ namespace Dissonance.Engine
 		public int y;
 		public int z;
 
-		public Vector3Int(int X, int Y, int Z)
+		public Vector3Int(int x, int y, int z)
 		{
-			x = X;
-			y = Y;
-			z = Z;
+			this.x = x;
+			this.y = y;
+			this.z = z;
 		}
 
-		public Vector3Int(Vector2Int XY, int Z) : this(XY.x, XY.y, Z) { }
+		public Vector3Int(int xyz) : this(xyz, xyz, xyz) { }
 
-		public Vector3Int(int XYZ) : this(XYZ, XYZ, XYZ) { }
+		public Vector3Int(Vector2Int xy, int z) : this(xy.x, xy.y, z) { }
 
 		public Vector2Int XY {
 			get => new(x, y);

@@ -17,13 +17,13 @@ namespace Dissonance.Engine
 		public int x;
 		public int y;
 
-		public Vector2Int(int X, int Y)
+		public Vector2Int(int x, int y)
 		{
-			x = X;
-			y = Y;
+			this.x = x;
+			this.y = y;
 		}
 
-		public Vector2Int(int XY) : this(XY, XY) { }
+		public Vector2Int(int xy) : this(xy, xy) { }
 
 		public override int GetHashCode()
 			=> x ^ y << 2;

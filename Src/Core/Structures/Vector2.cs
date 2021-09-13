@@ -43,13 +43,13 @@ namespace Dissonance.Engine
 			}
 		}
 
-		public Vector2(float X, float Y)
+		public Vector2(float x, float y)
 		{
-			x = X;
-			y = Y;
+			this.x = x;
+			this.y = y;
 		}
 
-		public Vector2(float XY) : this(XY, XY) { }
+		public Vector2(float xy) : this(xy, xy) { }
 
 		public override int GetHashCode()
 			=> x.GetHashCode() ^ y.GetHashCode() << 2;
