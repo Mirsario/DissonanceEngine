@@ -75,7 +75,7 @@ namespace Dissonance.Engine
 		/// Begins running the game.
 		/// </summary>
 		/// <param name="flags">Flags describing how the game should be run.</param>
-		public void Run(GameFlags flags = GameFlags.None, string[] args = null)
+		public void Run(GameFlags flags = GameFlags.Default, string[] args = null)
 		{
 			if (instance != null) {
 				throw new InvalidOperationException("Cannot run a game while one instance is already running. If you wish to run multiple game instances - use AssemblyLoadContexts to isolate engine & same game assemblies from each other.");

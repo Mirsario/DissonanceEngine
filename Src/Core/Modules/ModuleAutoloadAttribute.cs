@@ -11,8 +11,8 @@ namespace Dissonance.Engine
 
 		public readonly bool Enabled;
 
-		public GameFlags RequiredGameFlags { get; set; } = GameFlags.None;
-		public GameFlags DisablingGameFlags { get; set; } = GameFlags.None;
+		public GameFlags RequiredGameFlags { get; set; } = GameFlags.Default;
+		public GameFlags DisablingGameFlags { get; set; } = GameFlags.Default;
 
 		public bool NeedsAutoloading => Enabled && (Game.Instance.Flags & RequiredGameFlags) >= RequiredGameFlags && (Game.Instance.Flags & DisablingGameFlags) == 0;
 
