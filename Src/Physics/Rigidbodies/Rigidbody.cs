@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Physics
 			Mass = 4,
 		}
 
-		public static readonly Rigidbody Default = new(RigidbodyType.Dynamic);
+		public static readonly Rigidbody Default = new();
 
 		internal bool ownsCollisionShape;
 		internal bool collisionsHaveBeenModified;
@@ -26,10 +26,10 @@ namespace Dissonance.Engine.Physics
 		internal Vector3? pendingAngularFactor;
 		internal List<Collision> collisions;
 
-		private float mass;
-		private RigidbodyType type;
+		private float mass = 1f;
+		private RigidbodyType type = RigidbodyType.Dynamic;
 
-		public float Friction { get; set; }
+		public float Friction { get; set; } = 0.5f;
 
 		public ReadOnlySpan<Collision> Collisions => CollectionsMarshal.AsSpan(collisions);
 
@@ -78,11 +78,9 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 
-		public Rigidbody(RigidbodyType type = RigidbodyType.Dynamic, float mass = 1f, float friction = 0.5f) : this()
+		/*public Rigidbody(RigidbodyType type) : this()
 		{
-			Type = type;
-			Mass = mass;
-			Friction = friction;
-		}
+			this.type = type;
+		}*/
 	}
 }
