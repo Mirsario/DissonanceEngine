@@ -54,23 +54,23 @@ namespace Dissonance.Engine.Graphics
 						shader.SetupCameraUniforms(camera, cameraPos);
 
 						// Update CullMode
-						if (lastCullMode != shader.cullMode) {
-							if (shader.cullMode == CullMode.Off) {
+						if (lastCullMode != shader.CullMode) {
+							if (shader.CullMode == CullMode.Off) {
 								GL.Disable(EnableCap.CullFace);
 							} else {
 								if (lastCullMode == CullMode.Off) {
 									GL.Enable(EnableCap.CullFace);
 								}
 
-								GL.CullFace((CullFaceMode)shader.cullMode);
+								GL.CullFace((CullFaceMode)shader.CullMode);
 							}
 
-							lastCullMode = shader.cullMode;
+							lastCullMode = shader.CullMode;
 						}
 
 						// Update PolygonMode
-						if (lastPolygonMode != shader.polygonMode) {
-							GL.PolygonMode(MaterialFace.FrontAndBack, lastPolygonMode = shader.polygonMode);
+						if (lastPolygonMode != shader.PolygonMode) {
+							GL.PolygonMode(MaterialFace.FrontAndBack, lastPolygonMode = shader.PolygonMode);
 						}
 
 						lastShader = shader;
