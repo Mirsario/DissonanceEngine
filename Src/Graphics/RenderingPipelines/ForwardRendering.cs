@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
 	public class ForwardRendering : RenderingPipeline
 	{
+		public override Shader DefaultGeometryShader { get; } = Resources.Find<Shader>("Forward/Unlit/Texture");
+
 		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
 			// RenderPasses
