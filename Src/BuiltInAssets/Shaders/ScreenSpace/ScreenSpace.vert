@@ -5,19 +5,19 @@ in vec4 vertex;
 in vec2 uv0;
 #endif
 
-out vec2 vUV;
+out vec2 screenPos;
 
 void main()
 {
 	gl_Position = vertex;
 	
 	#ifdef UV
-		vUV = uv0;
+		screenPos = uv0;
 	#else
 		vec4 pos = vertex;
 		
 		pos.xyz /= pos.w;
 		
-		vUV = (pos.xy + vec2(1f, 1f)) / 2f;
+		screenPos = (pos.xy + vec2(1.0, 1.0)) / 2.0;
 	#endif
 }
