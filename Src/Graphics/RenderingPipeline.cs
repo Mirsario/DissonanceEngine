@@ -17,6 +17,11 @@ namespace Dissonance.Engine.Graphics
 			set => renderPasses = value ?? new RenderPass[0];
 		}
 
+		/// <summary>
+		/// Used for materials loaded from asset files. May be removed in the future.
+		/// </summary>
+		public abstract Shader DefaultGeometryShader { get; }
+
 		public abstract void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses);
 
 		public virtual void PreRender() { }
