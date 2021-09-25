@@ -20,14 +20,6 @@ namespace Dissonance.Engine.Graphics
 		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
-		public int queue;
-		public uint stencilMask;
-		public string[] defines;
-		public BlendingFactor blendFactorSrc;
-		public BlendingFactor blendFactorDst;
-		public CullMode cullMode = CullMode.Front;
-		public PolygonMode polygonMode = PolygonMode.Fill;
-
 		internal Dictionary<string, ShaderUniform> uniforms;
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
@@ -35,11 +27,18 @@ namespace Dissonance.Engine.Graphics
 
 		private IntPtr namePtr;
 
+		public int Priority { get; set; }
+		public uint StencilMask { get; set; }
+		public string[] Defines { get; set; }
+		public CullMode CullMode { get; set; } = CullMode.Front;
+		public PolygonMode PolygonMode { get; set; } = PolygonMode.Fill;
+		public BlendingFactor BlendFactorSrc { get; set; } = BlendingFactor.One;
+		public BlendingFactor BlendFactorDst { get; set; } = BlendingFactor.Zero;
 		public uint Id { get; private set; }
 		public string Name { get; private set; }
-		public SubShader VertexShader { get; set; }
-		public SubShader FragmentShader { get; set; }
-		public SubShader GeometryShader { get; set; }
+		public SubShader VertexShader { get; private set; }
+		public SubShader FragmentShader { get; private set; }
+		public SubShader GeometryShader { get; private set; }
 
 		public override string AssetName => Name;
 
@@ -291,8 +290,8 @@ namespace Dissonance.Engine.Graphics
 				GL.UseProgram(shader.Id);
 				ActiveShader = shader;
 
-				Rendering.SetStencilMask(shader.stencilMask);
-				Rendering.SetBlendFunc(shader.blendFactorSrc, shader.blendFactorDst);
+				Rendering.SetStencilMask(shader.StencilMask);
+				Rendering.SetBlendFunc(shader.BlendFactorSrc, shader.BlendFactorDst);
 			} else {
 				GL.UseProgram(0);
 
@@ -333,7 +332,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			var shader = new Shader(name) {
-				defines = defines
+				Defines = defines
 			};
 
 			void TryCompileShader(Shader shader, ShaderType shaderType, string code, Action<Shader, SubShader> setter)

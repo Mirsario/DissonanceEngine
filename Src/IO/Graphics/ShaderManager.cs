@@ -33,11 +33,11 @@ namespace Dissonance.Engine.IO
 
 				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.shaderDefines);
 
-				shader.queue = jsonShader.queue;
-				shader.cullMode = jsonShader.cullMode;
-				shader.polygonMode = jsonShader.polygonMode;
-				shader.blendFactorSrc = jsonShader.blendFactorSrc;
-				shader.blendFactorDst = jsonShader.blendFactorDst;
+				shader.Priority = jsonShader.queue;
+				shader.CullMode = jsonShader.cullMode;
+				shader.PolygonMode = jsonShader.polygonMode;
+				shader.BlendFactorSrc = jsonShader.blendFactorSrc;
+				shader.BlendFactorDst = jsonShader.blendFactorDst;
 
 				shaders.Add(shader);
 			}

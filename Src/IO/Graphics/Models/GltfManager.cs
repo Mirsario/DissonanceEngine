@@ -242,7 +242,8 @@ namespace Dissonance.Engine.IO
 					meshes.Add(mesh);
 				}
 
-				var material = new Material("DefaultMaterial", Resources.Find<Shader>("Diffuse"));
+				//TODO: Add proper material support, remove this hardcode.
+				var material = new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader);
 
 				for (int i = 0; i < meshes.Count; i++) {
 					var entity = info.Scene.CreateEntity();
