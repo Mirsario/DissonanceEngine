@@ -3,7 +3,8 @@ using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
-	[Reads(typeof(AudioListener), typeof(Transform))]
+	[Reads<AudioListener>]
+	[Reads<Transform>]
 	public sealed class AudioListenerSystem : GameSystem
 	{
 		private static readonly float[] OrientationArray = new float[6];

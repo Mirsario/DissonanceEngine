@@ -3,9 +3,10 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads(typeof(CollisionShapesInfo))]
-	[Writes(typeof(CollisionShapesInfo))]
-	[Receives(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage))]
+	[Reads<CollisionShapesInfo>]
+	[Writes<CollisionShapesInfo>]
+	[Receives<AddCollisionShapeMessage>]
+	[Receives<RemoveCollisionShapeMessage>]
 	public sealed class CollisionShapesInfoSystem : GameSystem
 	{
 		protected internal override void FixedUpdate()

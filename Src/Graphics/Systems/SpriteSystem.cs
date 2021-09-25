@@ -4,8 +4,10 @@ using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(GeometryPassData), typeof(Transform), typeof(Sprite))]
-	[Writes(typeof(GeometryPassData))]
+	[Reads<GeometryPassData>]
+	[Reads<Transform>]
+	[Reads<Sprite>]
+	[Writes<GeometryPassData>]
 	public sealed class SpriteSystem : GameSystem
 	{
 		private EntitySet entities;

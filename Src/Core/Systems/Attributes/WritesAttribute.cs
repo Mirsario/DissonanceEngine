@@ -1,16 +1,10 @@
-﻿using System;
-using Dissonance.Engine.Utilities;
-
-namespace Dissonance.Engine
+﻿namespace Dissonance.Engine
 {
-	public sealed class WritesAttribute : SystemTypesAttribute
+	public sealed class WritesAttribute<T> : SystemTypeDataAttribute where T : struct
 	{
-		public WritesAttribute(params Type[] types)
+		public override void ModifySystemTypeData(SystemTypeData systemTypeData)
 		{
-			AssertionUtils.ValuesNotNull(types, nameof(types));
-			AssertionUtils.TypesAreStruct(types);
-
-			Types = types;
+			systemTypeData.WriteTypes.Add(typeof(T));
 		}
 	}
 }

@@ -13,19 +13,9 @@ namespace Dissonance.Engine
 
 		public SystemTypeData(Type type)
 		{
-			void GetTypesFromAttribute<T>(HashSet<Type> hashSet) where T : SystemTypesAttribute
-			{
-				var attrib = type.GetCustomAttribute<T>();
-
-				if (attrib != null) {
-					hashSet.UnionWith(attrib.Types);
-				}
+			foreach (var attribute in type.GetCustomAttributes<SystemTypeDataAttribute>()) {
+				attribute.ModifySystemTypeData(this);
 			}
-
-			GetTypesFromAttribute<ReadsAttribute>(ReadTypes);
-			GetTypesFromAttribute<WritesAttribute>(WriteTypes);
-			GetTypesFromAttribute<ReceivesAttribute>(ReceiveTypes);
-			GetTypesFromAttribute<SendsAttribute>(SendTypes);
 
 			// A bit of hardcode. Receivers of engine-sent ComponentAddedMessage<T> and ComponentRemovedMessage<T> must be treated as readers of T, to depend on writers of it.
 			foreach (var receiveType in ReceiveTypes) {
