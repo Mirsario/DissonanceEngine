@@ -2,10 +2,11 @@
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads(typeof(CapsuleCollider))]
-	[Writes(typeof(CapsuleCollider))]
-	[Receives(typeof(ComponentRemovedMessage<CapsuleCollider>))]
-	[Sends(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage))]
+	[Reads<CapsuleCollider>]
+	[Writes<CapsuleCollider>]
+	[Receives<ComponentRemovedMessage<CapsuleCollider>>]
+	[Sends<AddCollisionShapeMessage>]
+	[Sends<RemoveCollisionShapeMessage>]
 	public sealed class CapsuleColliderSystem : GameSystem
 	{
 		private EntitySet entities;

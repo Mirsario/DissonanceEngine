@@ -2,8 +2,9 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(Camera), typeof(Transform))]
-	[Writes(typeof(Camera))]
+	[Reads<Camera>]
+	[Reads<Transform>]
+	[Writes<Camera>]
 	public sealed class CameraUpdateSystem : GameSystem
 	{
 		private EntitySet entities;

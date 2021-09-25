@@ -2,9 +2,12 @@
 
 namespace Dissonance.Engine.Audio
 {
-	[Reads(typeof(AudioSource), typeof(Transform))]
-	[Writes(typeof(AudioSource))]
-	[Receives(typeof(PlayAudioSourceMessage), typeof(PauseAudioSourceMessage), typeof(StopAudioSourceMessage))]
+	[Reads<AudioSource>]
+	[Reads<Transform>]
+	[Writes<AudioSource>]
+	[Receives<PlayAudioSourceMessage>]
+	[Receives<PauseAudioSourceMessage>]
+	[Receives<StopAudioSourceMessage>]
 	public sealed class AudioSourceSystem : GameSystem
 	{
 		private EntitySet entities;

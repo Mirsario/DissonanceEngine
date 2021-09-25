@@ -6,7 +6,10 @@
 		<RootNamespace>Dissonance.Engine</RootNamespace>
 		<Platforms>AnyCPU</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<TieredCompilation>false</TieredCompilation>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 

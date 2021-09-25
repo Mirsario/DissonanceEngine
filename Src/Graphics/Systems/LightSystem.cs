@@ -1,7 +1,9 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads(typeof(LightingPassData), typeof(Light), typeof(Transform))]
-	[Writes(typeof(LightingPassData))]
+	[Reads<LightingPassData>]
+	[Reads<Light>]
+	[Reads<Transform>]
+	[Writes<LightingPassData>]
 	public sealed class LightSystem : GameSystem
 	{
 		private EntitySet entities;

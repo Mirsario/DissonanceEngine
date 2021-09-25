@@ -3,8 +3,10 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads(typeof(WorldPhysics), typeof(Rigidbody))]
-	[Writes(typeof(Transform))]
+	[Reads<WorldPhysics>]
+	[Reads<Rigidbody>]
+	[Reads<Transform>]
+	[Writes<Transform>]
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{
 		private EntitySet rigidbodyEntities;

@@ -1,14 +1,12 @@
-﻿using System;
-using BulletSharp;
-using Dissonance.Engine.Input;
-using Dissonance.Framework.Windowing.Input;
+﻿using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads(typeof(BoxCollider))]
-	[Writes(typeof(BoxCollider))]
-	[Receives(typeof(ComponentRemovedMessage<BoxCollider>))]
-	[Sends(typeof(AddCollisionShapeMessage), typeof(RemoveCollisionShapeMessage))]
+	[Reads<BoxCollider>]
+	[Writes<BoxCollider>]
+	[Receives<ComponentRemovedMessage<BoxCollider>>]
+	[Sends<AddCollisionShapeMessage>]
+	[Sends<RemoveCollisionShapeMessage>]
 	public sealed class BoxColliderSystem : GameSystem
 	{
 		private EntitySet entities;
