@@ -15,20 +15,15 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		public RenderTexture(string name, int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat textureFormat = TextureFormat.RGBA8)
+			: base(name, width, height, filterMode, wrapMode, useMipmaps, textureFormat) { }
+
+		protected override void SetupTexture()
 		{
-			Id = GL.GenTexture();
-			Width = width;
-			Height = height;
-			TextureFormat = textureFormat;
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D, Id);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
 
-			this.Name = name;
-			this.filterMode = filterMode ?? DefaultFilterMode;
-			this.wrapMode = wrapMode ?? DefaultWrapMode;
-			this.useMipmaps = useMipmaps;
-
-			// Debug.Log($"Created [{Width},{Height}] RenderTexture");
-
-			SetupTexture();
+			SetupFiltering(filterMode, wrapMode, useMipmaps);
 		}
 
 		public void GenerateMipmaps()
@@ -69,17 +64,6 @@ namespace Dissonance.Engine.Graphics
 			Resize(vec.x, vec.y);
 
 			return true;
-		}
-
-		private void SetupTexture()
-		{
-			var (formatGeneral, formatInternal, _, _) = Rendering.textureFormatInfo[TextureFormat];
-
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, Id);
-			GL.TexImage2D(TextureTarget.Texture2D, 0, formatInternal, Width, Height, 0, formatGeneral, PixelType.UnsignedByte, IntPtr.Zero);
-
-			SetupFiltering(filterMode, wrapMode, useMipmaps);
 		}
 	}
 }
