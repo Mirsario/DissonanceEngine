@@ -45,17 +45,9 @@ namespace Dissonance.Engine.Graphics
 			this.wrapMode = wrapMode ?? DefaultWrapMode;
 			this.useMipmaps = useMipmaps;
 
-			var fillColor = new Pixel(255, 255, 255, 255);
+			(PixelFormat, PixelInternalFormat, PixelType, _) = Rendering.textureFormatInfo[format];
 
-			int length = width * height;
-
-			var pixels = new Pixel[length];
-
-			for (int i = 0; i < length; i++) {
-				pixels[i] = fillColor;
-			}
-
-			SetPixels(pixels);
+			SetupTexture();
 		}
 
 		internal Texture(uint id, int width, int height)
@@ -63,6 +55,15 @@ namespace Dissonance.Engine.Graphics
 			Id = id;
 			Width = width;
 			Height = height;
+		}
+
+		protected virtual void SetupTexture()
+		{
+			var pixels = new Pixel[Width * Height];
+
+			Array.Fill(pixels, new Pixel(255, 255, 255, 255));
+
+			SetPixels(pixels);
 		}
 
 		public override void Dispose()
