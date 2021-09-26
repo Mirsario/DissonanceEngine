@@ -4,7 +4,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class GeometryPass : RenderPass
 	{
-		//public ulong? layerMask;
+		public LayerMask LayerMask { get; set; } = LayerMask.All;
 
 		public override void Render()
 		{
@@ -29,22 +29,29 @@ namespace Dissonance.Engine.Graphics
 			var renderViewData = GlobalGet<RenderViewData>();
 			var geometryPassData = GlobalGet<GeometryPassData>();
 
+			bool checkLayerMask = LayerMask != LayerMask.All;
+
 			// CameraLoop
 			foreach (var renderView in renderViewData.RenderViews) {
 				var camera = renderView.camera;
-				var cameraTransform = renderView.transform;
 				var viewport = GetViewport(camera);
 
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
+				var cameraTransform = renderView.transform;
 				var cameraPos = cameraTransform.Position;
 
 				// Render
 				for (int i = 0; i < geometryPassData.RenderEntries.Count; i++) {
 					var entry = geometryPassData.RenderEntries[i];
-					var material = entry.material;
+
+					if (checkLayerMask && (entry.LayerMask & LayerMask) == LayerMask.None) {
+						continue;
+					}
+
+					var material = entry.Material;
 					var shader = material.Shader;
-					var rendererTransform = entry.transform;
+					var rendererTransform = entry.Transform;
 
 					// Update Shader
 					if (lastShader != shader) {
@@ -101,7 +108,7 @@ namespace Dissonance.Engine.Graphics
 						camera.ProjectionMatrix, camera.InverseProjectionMatrix
 					);
 
-					entry.mesh.Render();
+					entry.Mesh.Render();
 
 					Rendering.DrawCallsCount++;
 				}

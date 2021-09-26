@@ -3,6 +3,7 @@
 	[Reads<GeometryPassData>]
 	[Reads<Transform>]
 	[Reads<MeshRenderer>]
+	[Reads<Layer>]
 	[Writes<GeometryPassData>]
 	public sealed class MeshRendererSystem : GameSystem
 	{
@@ -21,14 +22,13 @@
 				var renderer = entity.Get<MeshRenderer>();
 				var transform = entity.Get<Transform>();
 
-				var mesh = renderer.Mesh;
-				var material = renderer.Material;
-
-				if (mesh == null || material == null) {
+				if (renderer.Mesh == null || renderer.Material == null) {
 					continue;
 				}
 
-				geometryPassData.RenderEntries.Add(new(transform, mesh, material));
+				var layerMask = entity.Has<Layer>() ? entity.Get<Layer>().Mask : LayerMask.All;
+
+				geometryPassData.RenderEntries.Add(new(transform, renderer.Mesh, renderer.Material, layerMask));
 			}
 		}
 	}
