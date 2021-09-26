@@ -6,15 +6,20 @@ namespace Dissonance.Engine.Graphics
 	{
 		public readonly struct RenderEntry
 		{
-			public readonly Transform transform;
-			public readonly Mesh mesh;
-			public readonly Material material;
+			public readonly Transform Transform;
+			public readonly Mesh Mesh;
+			public readonly Material Material;
+			public readonly LayerMask LayerMask;
 
 			public RenderEntry(Transform transform, Mesh mesh, Material material)
+				: this(transform, mesh, material, LayerMask.All) { }
+
+			public RenderEntry(Transform transform, Mesh mesh, Material material, LayerMask layerMask)
 			{
-				this.transform = transform;
-				this.mesh = mesh;
-				this.material = material;
+				Transform = transform;
+				Mesh = mesh;
+				Material = material;
+				LayerMask = layerMask;
 			}
 		}
 

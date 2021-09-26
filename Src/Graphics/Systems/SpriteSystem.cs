@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
@@ -10,53 +10,118 @@ namespace Dissonance.Engine.Graphics
 	[Writes<GeometryPassData>]
 	public sealed class SpriteSystem : GameSystem
 	{
+		private class BatchData : IDisposable
+		{
+			public int EntityCount;
+			public int NextEntityId;
+			public Entity[] Entities;
+			public Material Material;
+			public LayerMask LayerMask;
+			public Mesh CompoundMesh;
+
+			public void Dispose()
+			{
+				CompoundMesh.Dispose();
+			}
+		}
+
 		private EntitySet entities;
-		private Dictionary<Material, Mesh> meshesByMaterial;
+		private Dictionary<ulong, BatchData> batches;
 
 		protected internal override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
-			meshesByMaterial = new();
+			batches = new();
 		}
 
 		protected internal override void RenderUpdate()
 		{
+			var entitiesSpan = entities.ReadEntities();
 			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
 
-			var entitiesByMaterial = new Dictionary<Material, List<Entity>>();
+			static ulong GetBatchIndex(uint materialId, uint layerId)
+				=> (layerId << 32) | materialId;
 
-			foreach (var entity in entities.ReadEntities()) {
-				var sprite = entity.Get<Sprite>();
-				var material = sprite.Material;
+			// Enumerate entities to define batches and count entities for them
+			foreach (var entity in entitiesSpan) {
+				var material = entity.Get<Sprite>().Material;
 
 				if (material == null) {
 					continue;
 				}
 
-				if (!entitiesByMaterial.TryGetValue(material, out var entityList)) {
-					entitiesByMaterial[material] = entityList = new();
+				var layer = entity.Has<Layer>() ? entity.Get<Layer>() : Layers.DefaultLayer;
+				ulong batchKey = GetBatchIndex((uint)material.Id, (uint)layer.Index);
+
+				if (!batches.TryGetValue(batchKey, out var batch)) {
+					batches[batchKey] = batch = new() {
+						Material = material,
+						LayerMask = layer.Mask
+					};
 				}
 
-				entityList.Add(entity);
+				batch.EntityCount++;
 			}
 
-			var meshKeysToRemove = meshesByMaterial.Keys.ToList();
+			var batchKeysToRemove = new List<ulong>();
 
-			foreach (var pair in entitiesByMaterial) {
-				var material = pair.Key;
-				var entities = pair.Value;
+			// Prepare batches
+			foreach (var pair in batches) {
+				var batch = pair.Value;
 
-				if (!meshesByMaterial.TryGetValue(material, out var compoundMesh)) {
-					meshesByMaterial[material] = compoundMesh = new();
-
-					compoundMesh.bufferUsage = BufferUsageHint.DynamicDraw;
+				// Mark unused last-frame batches for removal
+				if (batch.EntityCount == 0) {
+					batchKeysToRemove.Add(pair.Key);
+					continue;
 				}
 
-				meshKeysToRemove.Remove(material);
+				// Create entity arrays for batches
+				batch.Entities = new Entity[batch.EntityCount];
+				// Reset entity count, as it'll be reused as a counter on the second entity enumeration
+				batch.EntityCount = 0;
+			}
 
-				var vertices = compoundMesh.Vertices = new Vector3[entities.Count * 4];
-				var uv0 = compoundMesh.Uv0 = new Vector2[entities.Count * 4];
-				uint[] indices = compoundMesh.Indices = new uint[entities.Count * 6];
+			// Cleanup batches that existed in the previous frame but are unneeded in this one
+			foreach (ulong key in batchKeysToRemove) {
+				if (batches.Remove(key, out var batch)) {
+					batch.Dispose();
+				}
+			}
+
+			// Enumerate entities for the second time to fill batches' entity arrays
+			foreach (var entity in entitiesSpan) {
+				var material = entity.Get<Sprite>().Material;
+
+				if (material == null) {
+					continue;
+				}
+
+				uint layerId = entity.Has<Layer>() ? (uint)entity.Get<Layer>().Index : 0u;
+				ulong batchKey = GetBatchIndex((uint)material.Id, layerId);
+				var batchData = batches[batchKey];
+
+				batchData.Entities[batchData.EntityCount++] = entity;
+			}
+
+			// Enumerate and run batches
+			foreach (var pair in batches) {
+				ulong key = pair.Key;
+				var batch = pair.Value;
+
+				if (batch.CompoundMesh == null) {
+					batch.CompoundMesh = new Mesh() {
+						bufferUsage = BufferUsageHint.DynamicDraw
+					};
+				}
+
+				batchKeysToRemove.Remove(key);
+
+				var compoundMesh = batch.CompoundMesh;
+				var entities = batch.Entities;
+
+				var vertices = compoundMesh.Vertices = new Vector3[entities.Length * 4];
+				var uv0 = compoundMesh.Uv0 = new Vector2[entities.Length * 4];
+				uint[] indices = compoundMesh.Indices = new uint[entities.Length * 6];
 
 				uint vertex = 0;
 				uint index = 0;
@@ -108,15 +173,9 @@ namespace Dissonance.Engine.Graphics
 
 				compoundMesh.Apply();
 
-				geometryPassData.RenderEntries.Add(new(Transform.Default, compoundMesh, material));
-			}
+				geometryPassData.RenderEntries.Add(new(Transform.Default, compoundMesh, batch.Material, batch.LayerMask));
 
-			// Cleanup temporary meshes if they weren't used this frame.
-
-			foreach (var key in meshKeysToRemove) {
-				if (meshesByMaterial.Remove(key, out var mesh)) {
-					mesh.Dispose();
-				}
+				batch.EntityCount = 0; // Reset entity count once again, will be used for disposing the batch in the next frame
 			}
 		}
 
