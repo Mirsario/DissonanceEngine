@@ -5,6 +5,7 @@ namespace Dissonance.Engine.Physics
 {
 	[Reads<Rigidbody>]
 	[Reads<WorldPhysics>]
+	[Reads<CollisionShapesInfo>]
 	[Writes<Rigidbody>]
 	[Receives<AddCollisionShapeMessage>]
 	[Receives<RemoveCollisionShapeMessage>]
