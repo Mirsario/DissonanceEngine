@@ -13,7 +13,6 @@ namespace Dissonance.Engine.Graphics
 		public bool Enabled { get; set; } = true;
 		public Framebuffer Framebuffer { get; set; }
 		public Renderbuffer[] Renderbuffers { get; set; }
-		public Func<Camera, RectInt> ViewportFunc { get; set; }
 
 		public RenderTexture[] PassedTextures {
 			get => passedTextures;
@@ -40,23 +39,6 @@ namespace Dissonance.Engine.Graphics
 		protected virtual void OnInit() { }
 
 		protected virtual void OnDispose() { }
-
-		protected virtual RectInt GetViewport(Camera? camera)
-		{
-			if (camera.HasValue) {
-				if (ViewportFunc != null) {
-					return ViewportFunc(camera.Value);
-				}
-
-				return camera.Value.ViewPixel;
-			}
-
-			if (Framebuffer != null) {
-				return new RectInt(0, 0, Framebuffer.maxTextureWidth, Framebuffer.maxTextureHeight);
-			}
-
-			return new RectInt(0, 0, Screen.Width, Screen.Height);
-		}
 
 		public void Dispose()
 		{

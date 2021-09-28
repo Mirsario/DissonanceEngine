@@ -33,12 +33,11 @@ namespace Dissonance.Engine.Graphics
 
 			// CameraLoop
 			foreach (var renderView in renderViewData.RenderViews) {
-				var camera = renderView.camera;
-				var viewport = GetViewport(camera);
+				var viewport = renderView.Viewport;
 
 				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-				var cameraTransform = renderView.transform;
+				var cameraTransform = renderView.Transform;
 				var cameraPos = cameraTransform.Position;
 
 				// Render
@@ -58,7 +57,7 @@ namespace Dissonance.Engine.Graphics
 						Shader.SetShader(shader);
 
 						shader.SetupCommonUniforms();
-						shader.SetupCameraUniforms(camera, cameraPos);
+						shader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPos);
 
 						// Update CullMode
 						if (lastCullMode != shader.CullMode) {
@@ -104,8 +103,8 @@ namespace Dissonance.Engine.Graphics
 						worldMatrix, ref inverseWorldMatrix,
 						ref worldViewMatrix, ref inverseWorldViewMatrix,
 						ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
-						camera.ViewMatrix, camera.InverseViewMatrix,
-						camera.ProjectionMatrix, camera.InverseProjectionMatrix
+						renderView.ViewMatrix, renderView.InverseViewMatrix,
+						renderView.ProjectionMatrix, renderView.InverseProjectionMatrix
 					);
 
 					entry.Mesh.Render();
