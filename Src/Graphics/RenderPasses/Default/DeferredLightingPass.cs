@@ -27,13 +27,12 @@ namespace Dissonance.Engine.Graphics
 			var lightingData = GlobalGet<LightingPassData>();
 
 			foreach (var renderView in renderViewData.RenderViews) {
-				var camera = renderView.camera;
-				var cameraTransform = renderView.transform;
-				var viewRect = camera.ViewPixel;
+				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewRect.x, viewRect.y, viewRect.width, viewRect.height);
+				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
-				var cameraPos = cameraTransform.Position;
+				var cameraTransform = renderView.Transform;
+				var cameraPosition = cameraTransform.Position;
 
 				for (int i = 0; i < ShadersByLightType.Length; i++) {
 					var activeShader = ShadersByLightType[i];
@@ -45,7 +44,7 @@ namespace Dissonance.Engine.Graphics
 					Shader.SetShader(activeShader);
 
 					activeShader.SetupCommonUniforms();
-					activeShader.SetupCameraUniforms(camera, cameraPos);
+					activeShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPosition);
 
 					var lightType = (Light.LightType)i;
 
@@ -79,8 +78,8 @@ namespace Dissonance.Engine.Graphics
 							in worldMatrix, ref inverseWorldMatrix,
 							ref worldViewMatrix, ref inverseWorldViewMatrix,
 							ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
-							camera.ViewMatrix, camera.InverseViewMatrix,
-							camera.ProjectionMatrix, camera.InverseProjectionMatrix
+							renderView.ViewMatrix, renderView.InverseViewMatrix,
+							renderView.ProjectionMatrix, renderView.InverseProjectionMatrix
 						);
 
 						if (uniformLightRange != -1 && light.Range.HasValue) {

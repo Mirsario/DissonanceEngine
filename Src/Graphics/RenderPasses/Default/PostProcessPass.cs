@@ -22,11 +22,10 @@ namespace Dissonance.Engine.Graphics
 			var renderViewData = GlobalGet<RenderViewData>();
 
 			foreach (var renderView in renderViewData.RenderViews) {
-				var camera = renderView.camera;
-				var transform = renderView.transform;
-				var viewport = GetViewport(camera);
+				var transform = renderView.Transform;
+				var viewport = renderView.Viewport;
 
-				PassShader.SetupCameraUniforms(camera, transform.Position);
+				PassShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, transform.Position);
 
 				if (PassedTextures != null) {
 					for (int j = 0; j < PassedTextures.Length; j++) {

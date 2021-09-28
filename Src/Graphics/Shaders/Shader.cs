@@ -137,14 +137,14 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		internal void SetupCameraUniforms(in Camera camera, Vector3 cameraPos)
+		internal void SetupCameraUniforms(float nearClip, float farClip, Vector3 cameraPos)
 		{
 			if (hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip], camera.NearClip);
+				GL.Uniform1(defaultUniformIndex[DSU.NearClip], nearClip);
 			}
 
 			if (hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip], camera.FarClip);
+				GL.Uniform1(defaultUniformIndex[DSU.FarClip], farClip);
 			}
 
 			if (hasDefaultUniform[DSU.CameraPosition]) {
