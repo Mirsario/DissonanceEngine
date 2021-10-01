@@ -15,11 +15,6 @@ namespace Dissonance.Engine.Graphics
 			GL.Enable(EnableCap.Blend);
 			GL.CullFace(CullFaceMode.Back);
 
-			bool[] uniformComputed = new bool[DefaultShaderUniforms.Count];
-			Matrix4x4 worldMatrix = default, inverseWorldMatrix = default,
-			worldViewMatrix = default, inverseWorldViewMatrix = default,
-			worldViewProjMatrix = default, inverseWorldViewProjMatrix = default;
-
 			// Render cache
 			Shader lastShader = null;
 			Material lastMaterial = null;
@@ -56,8 +51,9 @@ namespace Dissonance.Engine.Graphics
 					if (lastShader != shader) {
 						Shader.SetShader(shader);
 
-						shader.SetupCommonUniforms();
-						shader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPos);
+						shader.SetupDefaultUniforms(in rendererTransform, in renderView);
+						//shader.SetupDefaultUniforms();
+						//shader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPos);
 
 						// Update CullMode
 						if (lastCullMode != shader.CullMode) {
@@ -92,20 +88,15 @@ namespace Dissonance.Engine.Graphics
 
 					// Render mesh
 
-					// Mark matrices for recalculation
-					for (int k = DefaultShaderUniforms.World; k <= DefaultShaderUniforms.ProjInverse; k++) {
-						uniformComputed[k] = false;
-					}
+					var worldMatrix = rendererTransform.WorldMatrix;
 
-					worldMatrix = rendererTransform.WorldMatrix;
-
-					shader.SetupMatrixUniforms(
+					/*shader.SetupMatrixUniforms(
 						worldMatrix, ref inverseWorldMatrix,
 						ref worldViewMatrix, ref inverseWorldViewMatrix,
 						ref worldViewProjMatrix, ref inverseWorldViewProjMatrix,
 						renderView.ViewMatrix, renderView.InverseViewMatrix,
 						renderView.ProjectionMatrix, renderView.InverseProjectionMatrix
-					);
+					);*/
 
 					entry.Mesh.Render();
 

@@ -38,10 +38,10 @@ namespace Dissonance.Engine.IO
 			}
 
 			assetManagers = new Dictionary<string, List<AssetManager>>();
-			nameToPath = new Dictionary<string, string>(InternalUtils.StringComparerInvariantIgnoreCase);
+			nameToPath = new Dictionary<string, string>(InternalUtils.DefaultStringComparer);
 			cacheByPath = new Dictionary<Type, Dictionary<string, object>>();
 			cacheByName = new Dictionary<Type, Dictionary<string, object>>();
-			builtInAssets = new Dictionary<string, byte[]>(InternalUtils.StringComparerInvariantIgnoreCase);
+			builtInAssets = new Dictionary<string, byte[]>(InternalUtils.DefaultStringComparer);
 
 			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -54,7 +54,7 @@ namespace Dissonance.Engine.IO
 			var type = typeof(T);
 
 			if (!cacheByPath.TryGetValue(typeof(T), out var dict)) {
-				cacheByPath[type] = dict = new Dictionary<string, object>(InternalUtils.StringComparerInvariantIgnoreCase);
+				cacheByPath[type] = dict = new Dictionary<string, object>(InternalUtils.DefaultStringComparer);
 			}
 
 			dict[filePath] = content;

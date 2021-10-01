@@ -83,10 +83,10 @@ namespace Dissonance.Engine.Graphics
 				(rect.y + rect.height) / Screen.Height
 			);
 
-			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			if (Shader.ActiveShader.TryGetUniformLocation("color", out int colorLocation)) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
+				GL.Uniform4(colorLocation, col.x, col.y, col.z, col.w);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
@@ -169,15 +169,20 @@ namespace Dissonance.Engine.Graphics
 				return;
 			}
 
-			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
+			// This uniform code is weird
+			if (!Shader.ActiveShader.TryGetUniformLocation("mainTex", out int mainTexLocation)) {
+				return;
+			}
+
+			if (Shader.ActiveShader.TryGetUniformLocation("color", out int colorLocation)) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
+				GL.Uniform4(colorLocation, col.x, col.y, col.z, col.w);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D, font.Texture.Id);
-			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
+			GL.Uniform1(mainTexLocation, 0);
 
 			float scale = fontSize / font.CharSize.y;
 			var position = new Vector2(rect.x, rect.y);

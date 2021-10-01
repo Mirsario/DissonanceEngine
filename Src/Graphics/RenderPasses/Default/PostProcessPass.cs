@@ -15,7 +15,7 @@ namespace Dissonance.Engine.Graphics
 
 			Shader.SetShader(PassShader);
 
-			PassShader.SetupCommonUniforms();
+			//PassShader.SetupDefaultUniforms();
 
 			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 
@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Graphics
 				var transform = renderView.Transform;
 				var viewport = renderView.Viewport;
 
-				PassShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, transform.Position);
+				//PassShader.SetupDefaultUniforms(renderView.NearClip, renderView.FarClip, transform.Position);
 
 				if (PassedTextures != null) {
 					for (int j = 0; j < PassedTextures.Length; j++) {

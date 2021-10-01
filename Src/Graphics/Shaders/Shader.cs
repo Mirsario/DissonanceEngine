@@ -2,17 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Dissonance.Engine.IO;
+using Dissonance.Engine.Utilities;
 using Dissonance.Framework.Graphics;
-using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 
 namespace Dissonance.Engine.Graphics
 {
-	//TODO: Should this be renamed to ShaderProgram?
-	//TODO: Initialize static fields after Graphics.Init();
-	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
+	//TODO: Initialize static fields after Rendering.Init();
 	public partial class Shader : Asset
 	{
-		internal static Dictionary<string, Shader> shadersByName = new(StringComparer.OrdinalIgnoreCase);
+		private struct UniformInfo
+		{
+			public readonly string Name;
+			public readonly ActiveUniformType Type;
+			public readonly int Location;
+
+			public UniformInfo(string name, ActiveUniformType type, int location)
+			{
+				Name = name;
+				Type = type;
+				Location = location;
+			}
+		}
+
+		internal static Dictionary<string, Shader> shadersByName = new(InternalUtils.DefaultStringComparer);
 		internal static List<Shader> shaders = new();
 
 		private static Shader errorShader;
@@ -20,12 +32,12 @@ namespace Dissonance.Engine.Graphics
 		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
-		internal Dictionary<string, ShaderUniform> uniforms;
-		internal bool[] hasDefaultUniform = new bool[DSU.Count];
-		internal int[] defaultUniformIndex = new int[DSU.Count];
 		internal List<Material> materialAttachments = new();
+		internal AutomaticUniformUsageInfo[] defaultUniforms = Array.Empty<AutomaticUniformUsageInfo>();
 
 		private IntPtr namePtr;
+		private UniformInfo[] uniforms;
+		private Dictionary<string, int> uniformIdByName = new(InternalUtils.DefaultStringComparer);
 
 		public int Priority { get; set; }
 		public uint StencilMask { get; set; }
@@ -91,12 +103,12 @@ namespace Dissonance.Engine.Graphics
 			=> Name;
 
 		public int GetUniformLocation(string uniformName)
-			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
+			=> TryGetUniformLocation(uniformName, out int result) ? result : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
 
 		public bool TryGetUniformLocation(string uniformName, out int location)
 		{
-			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				location = uniform.location;
+			if (uniformIdByName.TryGetValue(uniformName, out int uniformId)) {
+				location = uniforms[uniformId].Location;
 
 				return true;
 			}
@@ -106,144 +118,16 @@ namespace Dissonance.Engine.Graphics
 			return false;
 		}
 
+		public void SetupDefaultUniforms(in Transform transform, in RenderViewData.RenderView viewData)
+		{
+			AutomaticUniformModule.Apply(this, in transform, in viewData);
+		}
+
 		internal void MaterialDetach(Material material)
 			=> materialAttachments.Remove(material);
 
 		internal void MaterialAttach(Material material)
 			=> materialAttachments.Add(material);
-
-		// SetupUniforms
-
-		internal void SetupCommonUniforms()
-		{
-			if (hasDefaultUniform[DSU.ScreenWidth]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth], Screen.Width);
-			}
-
-			if (hasDefaultUniform[DSU.ScreenHeight]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight], Screen.Height);
-			}
-
-			if (hasDefaultUniform[DSU.ScreenResolution]) {
-				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution], Screen.Width, (float)Screen.Height);
-			}
-
-			if (hasDefaultUniform[DSU.Time]) {
-				GL.Uniform1(defaultUniformIndex[DSU.Time], Time.RenderGameTime);
-			}
-
-			if (hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.x, Rendering.AmbientColor.y, Rendering.AmbientColor.z);
-			}
-		}
-
-		internal void SetupCameraUniforms(float nearClip, float farClip, Vector3 cameraPos)
-		{
-			if (hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip], nearClip);
-			}
-
-			if (hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip], farClip);
-			}
-
-			if (hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.x, cameraPos.y, cameraPos.z);
-			}
-
-			if (hasDefaultUniform[DSU.CameraDirection]) {
-				//TODO:
-				// var forward = camera.Transform.Forward;
-				//
-				// GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
-			}
-		}
-
-		internal void SetupMatrixUniforms(
-			in Matrix4x4 world, ref Matrix4x4 worldInverse,
-			ref Matrix4x4 worldView, ref Matrix4x4 worldViewInverse,
-			ref Matrix4x4 worldViewProj, ref Matrix4x4 worldViewProjInverse,
-			in Matrix4x4 view, in Matrix4x4 viewInverse,
-			in Matrix4x4 proj, in Matrix4x4 projInverse
-		)
-		{
-			//TODO: The following is the most horrible part of this codebase. To be rewritten.
-
-			#region World
-
-			if (hasDefaultUniform[DSU.World] || hasDefaultUniform[DSU.WorldInverse] || hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-				if (hasDefaultUniform[DSU.World]) {
-					UniformMatrix4(defaultUniformIndex[DSU.World], in world);
-				}
-
-				if (hasDefaultUniform[DSU.WorldInverse]) {
-					worldInverse = world.Inverted;
-					UniformMatrix4(defaultUniformIndex[DSU.WorldInverse], in worldInverse);
-				}
-
-				#region WorldView
-
-				if (hasDefaultUniform[DSU.WorldView] || hasDefaultUniform[DSU.WorldViewInverse] || hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-					worldView = world * view;
-
-					if (hasDefaultUniform[DSU.WorldView]) {
-						UniformMatrix4(defaultUniformIndex[DSU.WorldView], in worldView);
-					}
-
-					if (hasDefaultUniform[DSU.WorldViewInverse]) {
-						worldViewInverse = worldView.Inverted;
-
-						UniformMatrix4(defaultUniformIndex[DSU.WorldViewInverse], in worldViewInverse);
-					}
-
-					#region WorldViewProj
-
-					if (hasDefaultUniform[DSU.WorldViewProj] || hasDefaultUniform[DSU.WorldViewProjInverse]) {
-						worldViewProj = worldView * proj;
-
-						if (hasDefaultUniform[DSU.WorldViewProj]) {
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProj], in worldViewProj);
-						}
-
-						if (hasDefaultUniform[DSU.WorldViewProjInverse]) {
-							worldViewProjInverse = worldViewProj.Inverted;
-
-							UniformMatrix4(defaultUniformIndex[DSU.WorldViewProjInverse], in worldViewProjInverse);
-						}
-					}
-
-					#endregion
-				}
-
-				#endregion
-			}
-
-			#endregion
-
-			#region View
-
-			if (hasDefaultUniform[DSU.View]) {
-				UniformMatrix4(defaultUniformIndex[DSU.View], in view);
-			}
-
-			if (hasDefaultUniform[DSU.ViewInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ViewInverse], in viewInverse);
-			}
-
-			#endregion
-
-			#region Proj
-
-			if (hasDefaultUniform[DSU.Proj]) {
-				UniformMatrix4(defaultUniformIndex[DSU.Proj], in proj);
-			}
-
-			if (hasDefaultUniform[DSU.ProjInverse]) {
-				UniformMatrix4(defaultUniformIndex[DSU.ProjInverse], in projInverse);
-			}
-
-			#endregion
-		}
 
 		private void Init()
 		{
@@ -257,29 +141,24 @@ namespace Dissonance.Engine.Graphics
 			shaders.Add(this);
 
 			// Set uniform locations
-			uniforms = new Dictionary<string, ShaderUniform>();
-
 			Rendering.CheckGLErrors($"Start of {nameof(Shader)}.{nameof(Init)}()");
 
 			GL.GetProgram(Id, GetProgramParameter.ActiveUniforms, out int uniformCount);
+
+			uniforms = new UniformInfo[uniformCount];
 
 			const int MaxUniformNameLength = 32;
 
 			for (int i = 0; i < uniformCount; i++) {
 				GL.GetActiveUniform(Id, (uint)i, MaxUniformNameLength, out int length, out int size, out ActiveUniformType uniformType, out string uniformName);
 
-				int location = GL.GetUniformLocation(Id, uniformName); // Uniform location != uniform index, and that's pretty ridiculous and painful.
+				int location = GL.GetUniformLocation(Id, uniformName); // Note: Uniform location is not the same thing as uniform index.
 
-				uniforms.Add(uniformName, new ShaderUniform(uniformName, uniformType, location));
-
-				// Optimization for engine's uniforms
-				int indexOf = Array.IndexOf(DSU.names, uniformName);
-
-				if (indexOf >= 0) {
-					hasDefaultUniform[indexOf] = true;
-					defaultUniformIndex[indexOf] = location;
-				}
+				uniforms[i] = new UniformInfo(uniformName, uniformType, location);
+				uniformIdByName[uniformName] = i;
 			}
+
+			defaultUniforms = AutomaticUniformModule.GetPresentDefaultUniformInfo(this);
 
 			Rendering.CheckGLErrors($"End of {nameof(Shader)}.{nameof(Init)}()");
 		}
@@ -369,7 +248,7 @@ namespace Dissonance.Engine.Graphics
 
 		internal static unsafe void UniformMatrix4(int location, in Matrix4x4 matrix, bool transpose = false)
 		{
-			fixed(float* matrix_ptr = &matrix.m00) {
+			fixed (float* matrix_ptr = &matrix.m00) {
 				GL.UniformMatrix4(location, 1, transpose, matrix_ptr);
 			}
 		}

@@ -43,8 +43,8 @@ namespace Dissonance.Engine.Graphics
 
 					Shader.SetShader(activeShader);
 
-					activeShader.SetupCommonUniforms();
-					activeShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPosition);
+					//activeShader.SetupDefaultUniforms();
+					//activeShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, cameraPosition);
 
 					var lightType = (Light.LightType)i;
 
@@ -74,6 +74,7 @@ namespace Dissonance.Engine.Graphics
 
 						worldMatrix = light.Matrix;
 
+						/*
 						activeShader.SetupMatrixUniforms(
 							in worldMatrix, ref inverseWorldMatrix,
 							ref worldViewMatrix, ref inverseWorldViewMatrix,
@@ -81,6 +82,7 @@ namespace Dissonance.Engine.Graphics
 							renderView.ViewMatrix, renderView.InverseViewMatrix,
 							renderView.ProjectionMatrix, renderView.InverseProjectionMatrix
 						);
+						*/
 
 						if (uniformLightRange != -1 && light.Range.HasValue) {
 							GL.Uniform1(uniformLightRange, light.Range.Value);

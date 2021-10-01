@@ -68,34 +68,34 @@ namespace Dissonance.Engine.Graphics
 
 		internal void ApplyTextures(Shader shader)
 		{
-			ShaderUniform uniform;
-
 			if (Textures.Count > 0) {
 				for (int i = 0; i < Textures.Count && i < 32; i++) {
 					string textureName = Textures[i].Key;
 					var texture = Textures[i].Value;
 
-					if (texture == null || !shader.uniforms.TryGetValue(textureName, out uniform)) {
+					if (texture == null || !shader.TryGetUniformLocation(textureName, out int textureLocation)) {
 						continue;
 					}
 
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
 					GL.BindTexture(TextureTarget.Texture2D, texture.Id);
-					GL.Uniform1(uniform.location, i);
+					GL.Uniform1(textureLocation, i);
 				}
-			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
+			} else if (shader.TryGetUniformLocation("mainTex", out int mainTexLocation)) {
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
-				GL.Uniform1(uniform.location, 0);
+				GL.Uniform1(mainTexLocation, 0);
 			}
 		}
 
 		internal void ApplyUniforms(Shader shader)
 		{
 			foreach (var pair in UniformsFloat) {
-				(byte vecSize, var data) = pair.Value;
+				(byte vecSize, float[] data) = pair.Value;
 
-				int location = shader.uniforms[pair.Key].location;
+				if (!shader.TryGetUniformLocation(pair.Key, out int location)) {
+					continue;
+				}
 
 				switch (vecSize) {
 					case 1:
@@ -122,7 +122,7 @@ namespace Dissonance.Engine.Graphics
 				throw new Exception($"Material's Shader is null.");
 			}
 
-			if (!shader.uniforms.ContainsKey(name)) {
+			if (!shader.TryGetUniformLocation(name, out _)) {
 				throw new Exception($"Uniform {name} doesn't exist in shader ''{shader.Name}''.");
 			}
 		}

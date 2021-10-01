@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Utilities
 {
 	internal static class InternalUtils
 	{
-		public static readonly StringComparer StringComparerInvariantIgnoreCase = StringComparer.InvariantCultureIgnoreCase;
+		public static readonly StringComparer DefaultStringComparer = StringComparer.InvariantCultureIgnoreCase;
 
 		public static int GenContentId<T>(T instance, List<T> byIdList) where T : class
 		{
