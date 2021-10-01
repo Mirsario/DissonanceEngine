@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Dissonance.Engine.Utilities;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -46,8 +47,9 @@ namespace Dissonance.Engine.Graphics
 		private static readonly List<UniformEntry> instancesEntries = new();
 		private static readonly Dictionary<Type, int> entryIndicesByType = new();
 
-		protected override void PreInit()
+		protected unsafe override void PreInit()
 		{
+			// Autoload automatic uniforms
 			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
 				foreach (var type in types) {
 					if (type.IsAbstract || !typeof(AutomaticUniform).IsAssignableFrom(type)) {
@@ -69,6 +71,31 @@ namespace Dissonance.Engine.Graphics
 					entry.Instance.dependencyIndices.AddRange(dependencyIndices);
 				}
 			};
+
+			// Setup default apply functions
+			static void ApplyInt(int location, in int data) => GL.Uniform1(location, data);
+
+			static void ApplyFloat(int location, in float data) => GL.Uniform1(location, data);
+
+			static void ApplyVector2(int location, in Vector2 data) => GL.Uniform2(location, data.x, data.y);
+
+			static void ApplyVector3(int location, in Vector3 data) => GL.Uniform3(location, data.x, data.y, data.z);
+
+			static void ApplyVector4(int location, in Vector4 data) => GL.Uniform4(location, data.x, data.y, data.z, data.w);
+
+			static void ApplyMatrix4x4(int location, in Matrix4x4 data)
+			{
+				fixed (float* matrix_ptr = &data.m00) {
+					GL.UniformMatrix4(location, 1, false, matrix_ptr);
+				}
+			}
+
+			AutomaticUniform<int>.ApplyFunction = &ApplyInt;
+			AutomaticUniform<float>.ApplyFunction = &ApplyFloat;
+			AutomaticUniform<Vector2>.ApplyFunction = &ApplyVector2;
+			AutomaticUniform<Vector3>.ApplyFunction = &ApplyVector3;
+			AutomaticUniform<Vector4>.ApplyFunction = &ApplyVector4;
+			AutomaticUniform<Matrix4x4>.ApplyFunction = &ApplyMatrix4x4;
 		}
 
 		/// <summary> Returns an ordered array of indices of default uniforms that should be calculated, together with (nullable) locations on the shader. </summary>

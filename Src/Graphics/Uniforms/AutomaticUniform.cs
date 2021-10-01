@@ -23,9 +23,11 @@ namespace Dissonance.Engine.Graphics
 
 	public abstract class AutomaticUniform<TData> : AutomaticUniform where TData : unmanaged
 	{
-		public abstract TData Calculate(Shader shader, in Transform transform, in RenderViewData.RenderView viewData);
+		/// <summary> The function called to upload uniform data to the GPU. </summary>
+		public unsafe static delegate*<int, in TData, void> ApplyFunction { get; set; }
 
-		public abstract void Apply(int location, in TData value);
+		/// <summary> Calculates data to later be uploaded to the gpu and/or used in another uniform. </summary>
+		public abstract TData Calculate(Shader shader, in Transform transform, in RenderViewData.RenderView viewData);
 
 		internal void CalculateAndCache<TThis>(Shader shader, in Transform transform, in RenderViewData.RenderView viewData)
 			where TThis : AutomaticUniform<TData>
@@ -33,10 +35,10 @@ namespace Dissonance.Engine.Graphics
 			UniformCache<TThis, TData>.Value = Calculate(shader, in transform, in viewData);
 		}
 
-		internal void ApplyFromCache<TThis>(int location)
+		internal unsafe void ApplyFromCache<TThis>(int location)
 			where TThis : AutomaticUniform<TData>
 		{
-			Apply(location, in UniformCache<TThis, TData>.Value);
+			ApplyFunction(location, in UniformCache<TThis, TData>.Value);
 		}
 	}
 }

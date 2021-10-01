@@ -8,8 +8,5 @@ namespace Dissonance.Engine.Graphics
 
 		public override int Calculate(Shader shader, in Transform transform, in RenderViewData.RenderView viewData)
 			=> Screen.Height;
-
-		public override void Apply(int location, in int value)
-			=> GL.Uniform1(location, value);
 	}
 }
