@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 
 			private static void Clear()
 			{
-				for (int i = 0; i < messagesByWorld.Length; i++) {
+				for (int i = WorldManager.DefaultWorldId; i < messagesByWorld.Length; i++) {
 					messagesByWorld[i].Clear();
 				}
 			}

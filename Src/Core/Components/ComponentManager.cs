@@ -21,19 +21,16 @@ namespace Dissonance.Engine
 			}
 
 			public static T GlobalSingleton;
+			public static bool HasGlobalSingleton;
 			public static WorldData[] DataByWorld = Array.Empty<WorldData>();
 		}
 
 		internal static Action<Entity, Type> OnComponentAdded;
 		internal static Action<Entity, Type> OnComponentRemoved;
 
-		internal static bool HasComponent<T>(int worldId) where T : struct
+		internal static bool HasComponent<T>() where T : struct
 		{
-			if (worldId >= ComponentData<T>.DataByWorld.Length) {
-				return false;
-			}
-
-			return ComponentData<T>.DataByWorld[worldId].GlobalDataIndex >= 0;
+			return ComponentData<T>.HasGlobalSingleton;
 		}
 
 		internal static bool HasComponent<T>(int worldId, int entityId) where T : struct
@@ -52,13 +49,12 @@ namespace Dissonance.Engine
 		}
 
 		internal static ref T GetComponent<T>() where T : struct
-			=> ref ComponentData<T>.GlobalSingleton;
-
-		internal static ref T GetComponent<T>(int worldId) where T : struct
 		{
-			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
+			if (!HasComponent<T>()) {
+				throw new InvalidOperationException($"No global value of component '{typeof(T).Name}' set.");
+			}
 
-			return ref worldData.Data[worldData.GlobalDataIndex];
+			return ref ComponentData<T>.GlobalSingleton;
 		}
 
 		internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct
@@ -69,24 +65,9 @@ namespace Dissonance.Engine
 		}
 
 		internal static void SetComponent<T>(T value) where T : struct
-			=> ComponentData<T>.GlobalSingleton = value;
-
-		internal static void SetComponent<T>(int worldId, T value) where T : struct
 		{
-			if (ComponentData<T>.DataByWorld.Length <= worldId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.WorldData.Default);
-			}
-
-			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
-			ref int dataId = ref worldData.GlobalDataIndex;
-
-			if (dataId <= 0) {
-				dataId = worldData.Data.Length;
-
-				Array.Resize(ref worldData.Data, dataId + 1);
-			}
-
-			worldData.Data[dataId] = value;
+			ComponentData<T>.GlobalSingleton = value;
+			ComponentData<T>.HasGlobalSingleton = true;
 		}
 
 		internal static void SetComponent<T>(in Entity entity, T value) where T : struct
