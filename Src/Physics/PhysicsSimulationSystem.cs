@@ -7,6 +7,7 @@ namespace Dissonance.Engine.Physics
 	[Reads<Rigidbody>]
 	[Reads<Transform>]
 	[Writes<Transform>]
+	[Writes<WorldPhysics>]
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{
 		private EntitySet rigidbodyEntities;
@@ -15,23 +16,23 @@ namespace Dissonance.Engine.Physics
 		{
 			rigidbodyEntities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 
-			var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
+			var physics = WorldHas<WorldPhysics>() ? WorldGet<WorldPhysics>() : WorldPhysics.Default;
 
 			physics.CollisionDispatcher ??= new CollisionDispatcher(PhysicsEngine.collisionConf);
 			physics.PhysicsWorld ??= new DiscreteDynamicsWorld(physics.CollisionDispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
 				Gravity = physics.Gravity
 			};
 
-			World.Set(physics);
+			WorldSet(physics);
 		}
 
 		protected internal override void FixedUpdate()
 		{
-			if (!World.Has<WorldPhysics>()) {
+			if (!WorldHas<WorldPhysics>()) {
 				return;
 			}
 
-			ref var physics = ref World.Get<WorldPhysics>();
+			ref var physics = ref WorldGet<WorldPhysics>();
 
 			physics.PhysicsWorld.Gravity = physics.Gravity;
 

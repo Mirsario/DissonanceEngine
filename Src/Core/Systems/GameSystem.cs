@@ -7,6 +7,7 @@ namespace Dissonance.Engine
 		public World World { get; internal set; }
 
 		protected internal SystemTypeData TypeData { get; }
+
 		internal bool Initialized { get; set; }
 
 		protected GameSystem()
@@ -15,7 +16,9 @@ namespace Dissonance.Engine
 		}
 
 		protected internal virtual void Initialize() { }
+
 		protected internal virtual void FixedUpdate() { }
+
 		protected internal virtual void RenderUpdate() { }
 
 		protected ref T GlobalGet<T>() where T : struct
@@ -39,26 +42,35 @@ namespace Dissonance.Engine
 		protected bool WorldHas<T>() where T : struct
 			=> World.Has<T>();
 
+		protected bool WorldHas<T>(World world) where T : struct
+			=> world.Has<T>();
+
 		protected ref T WorldGet<T>() where T : struct
+			=> ref WorldGet<T>(World);
+
+		protected ref T WorldGet<T>(World world) where T : struct
 		{
 			if (!TypeData.ReadTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared world component - '{typeof(T).Name}'.");
 			}
 
-			return ref World.Get<T>();
+			return ref world.Get<T>();
 		}
 
 		protected void WorldSet<T>(T value) where T : struct
+			=> WorldSet(World, value);
+
+		protected void WorldSet<T>(World world, T value) where T : struct
 		{
 			if (!TypeData.WriteTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to write an undeclared global component - '{typeof(T).Name}'.");
 			}
 
-			World.Set(value);
+			world.Set(value);
 		}
 
 		protected ReadOnlySpan<Entity> ReadEntities(bool? active = true)
-			=> World.ReadEntities();
+			=> World.ReadEntities(active);
 
 		protected void SendMessage<T>(in T message) where T : struct
 		{
@@ -72,7 +84,7 @@ namespace Dissonance.Engine
 		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct
 		{
 			if (!TypeData.ReceiveTypes.Contains(typeof(T))) {
-				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared message - '{typeof(T).Name}'.");
+				throw new InvalidOperationException($"System {GetType().Name} tried to receive an undeclared message - '{typeof(T).Name}'.");
 			}
 
 			return World.ReadMessages<T>();

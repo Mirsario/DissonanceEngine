@@ -7,6 +7,11 @@ namespace Dissonance.Engine
 	{
 		internal readonly int Id;
 
+		internal Entity WorldEntity;
+
+		/// <summary> Whether or not this is the default engine-provided world. The default world cannot be removed. </summary>
+		public bool IsDefault => Id == WorldManager.DefaultWorldId;
+
 		internal World(int id)
 		{
 			Id = id;
@@ -30,14 +35,14 @@ namespace Dissonance.Engine
 
 		// Components
 
-		public bool Has<T>() where T : struct
-			=> ComponentManager.HasComponent<T>(Id);
+		internal bool Has<T>() where T : struct
+			=> WorldEntity.Has<T>();
 
-		public ref T Get<T>() where T : struct
-			=> ref ComponentManager.GetComponent<T>(Id);
+		internal ref T Get<T>() where T : struct
+			=> ref WorldEntity.Get<T>();
 
-		public void Set<T>(T value) where T : struct
-			=> ComponentManager.SetComponent(Id, value);
+		internal void Set<T>(T value) where T : struct
+			=> WorldEntity.Set(value);
 
 		// Messages
 
@@ -46,5 +51,12 @@ namespace Dissonance.Engine
 
 		public void SendMessage<T>(in T message) where T : struct
 			=> MessageManager.SendMessage(Id, message);
+
+		// Etc
+
+		internal void Init()
+		{
+			WorldEntity = CreateEntity();
+		}
 	}
 }

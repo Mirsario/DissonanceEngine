@@ -67,6 +67,10 @@ namespace Dissonance.Engine.Graphics
 
 					var methods = typeof(ComponentManager).GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
 
+					var hasComponentMethod = methods
+						.First(m => m.Name == nameof(ComponentManager.HasComponent) && m.GetParameters().Length == 0)
+						.MakeGenericMethod(type);
+
 					var getComponentMethod = methods
 						.First(m => m.Name == nameof(ComponentManager.GetComponent) && m.GetParameters().Length == 0)
 						.MakeGenericMethod(type);
@@ -76,7 +80,13 @@ namespace Dissonance.Engine.Graphics
 						.MakeGenericMethod(type);
 
 					resetRenderComponents += () => {
-						IRenderComponent component = (IRenderComponent)getComponentMethod.Invoke(null, null);
+						IRenderComponent component;
+
+						if ((bool)hasComponentMethod?.Invoke(null, null)) {
+							component = (IRenderComponent)getComponentMethod.Invoke(null, null);
+						} else {
+							component = (IRenderComponent)Activator.CreateInstance(type);
+						}
 
 						component.Reset();
 
