@@ -22,11 +22,11 @@ namespace Dissonance.Engine.Physics
 
 		protected internal override void FixedUpdate()
 		{
-			if (!World.Has<WorldPhysics>()) {
+			if (!WorldHas<WorldPhysics>()) {
 				return;
 			}
 
-			var physics = World.Get<WorldPhysics>();
+			var physics = WorldGet<WorldPhysics>();
 
 			// Set UpdateShapes to true whenever collision shapes have been modified.
 
