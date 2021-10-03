@@ -21,6 +21,15 @@ namespace Dissonance.Engine
 
 		protected internal virtual void RenderUpdate() { }
 
+		protected bool GlobalHas<T>() where T : struct
+		{
+			if (!TypeData.ReadTypes.Contains(typeof(T))) {
+				throw new InvalidOperationException($"System {GetType().Name} tried to read an undeclared global component - '{typeof(T).Name}'.");
+			}
+
+			return ComponentManager.HasComponent<T>();
+		}
+
 		protected ref T GlobalGet<T>() where T : struct
 		{
 			if (!TypeData.ReadTypes.Contains(typeof(T))) {

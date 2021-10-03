@@ -6,16 +6,24 @@ namespace Dissonance.Engine
 {
 	public sealed class WorldManager : EngineModule
 	{
+		internal const int InvalidtWorldId = 0;
+		internal const int DefaultWorldId = 1;
+
 		public static World DefaultWorld { get; private set; }
 
 		internal static event Action<World> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
 
-		private static readonly List<World> Worlds = new();
+		private static readonly List<World> Worlds = new() { null };
 
 		protected override void Init()
 		{
 			DefaultWorld = CreateWorld();
+
+			// Sanity check
+			if (DefaultWorld.Id != DefaultWorldId) {
+				throw new InvalidOperationException($"Default world ID equals {DefaultWorld.Id}, but {DefaultWorldId} was expected. Are we all insane here?");
+			}
 		}
 
 		public static World CreateWorld()
@@ -26,10 +34,13 @@ namespace Dissonance.Engine
 
 			OnWorldCreated?.Invoke(world);
 
+			world.Init();
+
 			return world;
 		}
 
-		public static World GetWorld(int id) => Worlds[id] ?? throw new ArgumentException($"No world with id '{id}'.");
+		public static World GetWorld(int id)
+			=> Worlds[id] ?? throw new ArgumentException($"No world with id '{id}'.");
 
 		public static bool TryGetWorld(int id, out World result)
 		{
@@ -44,6 +55,9 @@ namespace Dissonance.Engine
 			return false;
 		}
 
-		internal static ReadOnlySpan<World> ReadWorlds() => CollectionsMarshal.AsSpan(Worlds);
+		internal static ReadOnlySpan<World> ReadWorlds()
+		{
+			return CollectionsMarshal.AsSpan(Worlds).Slice(1);
+		}
 	}
 }
