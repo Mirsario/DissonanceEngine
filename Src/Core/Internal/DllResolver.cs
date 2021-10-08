@@ -7,12 +7,8 @@ namespace Dissonance.Engine
 {
 	internal static class DllResolver
 	{
+		//TODO: Unhardcode
 		private static readonly string[] EmbeddedAssemblies = {
-			"System.Text.Encoding.CodePages",
-			"System.Runtime.CompilerServices.Unsafe",
-			"NVorbis",
-			"Ionic.Zip",
-			"Newtonsoft.Json",
 			"BulletSharp"
 		};
 
@@ -33,7 +29,7 @@ namespace Dissonance.Engine
 			{
 				if (assemblyName == argsName || argsName.StartsWith(assemblyName + ",")) {
 					try {
-						using var stream = AssemblyCache.EngineAssembly.GetManifestResourceStream($"{nameof(Dissonance)}.{nameof(Engine)}.References.{assemblyName}.dll");
+						using var stream = AssemblyCache.EngineAssembly.GetManifestResourceStream($"{nameof(Dissonance)}.{nameof(Engine)}.{assemblyName}.dll");
 						byte[] data = new byte[stream.Length];
 
 						stream.Read(data, 0, data.Length);
@@ -64,7 +60,7 @@ namespace Dissonance.Engine
 
 				for (int i = 0; i < EmbeddedAssemblies.Length; i++) {
 					if (TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
-						//TODO: Unhardcode somehow..?
+						//TODO: Unhardcode
 						if (assembly.FullName.StartsWith("BulletSharp,")) {
 							DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().GetName().Name}.dll.config");
 						}
