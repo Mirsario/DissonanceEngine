@@ -51,13 +51,13 @@ namespace Dissonance.Engine.IO
 		}
 
 		public static string ImportText(string filePath, bool addToCache = false)
-			=> Import(filePath, addToCache, (AssetManager<string>)assetManagers[".txt"][0]);
+			=> Import(filePath, addToCache, GetAssetManager<TextManager>());
 
 		public static byte[] ImportBytes(string filePath, bool addToCache = false)
-			=> Import(filePath, addToCache, (AssetManager<byte[]>)assetManagers[".bytes"][0]);
+			=> Import(filePath, addToCache, GetAssetManager<BytesManager>());
 
 		// 'Get' imports and caches files, or gets them from cache, if they have already been loaded.
-		public static T Get<T>(string filePath)
+		public static T Get<T>(string filePath, AssetManager<T> assetManager = null)
 		{
 			ReadyPath(ref filePath);
 			NameToPath(ref filePath, out bool ntpMultiplePaths);
@@ -66,7 +66,7 @@ namespace Dissonance.Engine.IO
 				return content;
 			}
 
-			return ImportInternal<T>(filePath, true, null, ntpMultiplePaths);
+			return ImportInternal(filePath, true, assetManager, ntpMultiplePaths);
 		}
 
 		// 'Find' finds already loaded resources by their internal asset names, if they have them. Exists mostly for stuff like shaders.
