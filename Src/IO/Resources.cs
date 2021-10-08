@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Runtime.Serialization;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Imaging;
 using Dissonance.Engine.Utilities;
+using Dissonance.Framework.Imaging;
 
 namespace Dissonance.Engine.IO
 {
@@ -17,6 +16,11 @@ namespace Dissonance.Engine.IO
 	[ModuleDependency(true, typeof(Windowing))]
 	public sealed partial class Resources : EngineModule
 	{
+		private static class ManagerInstance<T> where T : AssetManager
+		{
+			public static T Instance;
+		}
+
 		public const string AssetsFolder = "Assets";
 		public const string BuiltInAssetsFolder = "BuiltInAssets";
 
@@ -95,26 +99,11 @@ namespace Dissonance.Engine.IO
 			return outManager.Autoload(file);
 		}
 
-		public static T1 GetAssetManager<T1, T2>()
-			where T1 : AssetManager<T2>
-			where T2 : Asset
-		{
-			var type = typeof(T1);
+		public static T GetAssetManager<T>() where T : AssetManager
+			=> ManagerInstance<T>.Instance;
 
-			//TODO: This loop is idiotic. Cache data for this exact method.
-			foreach (var pair in assetManagers) {
-				foreach (var assetManager in pair.Value) {
-					if (assetManager.GetType() == type) {
-						return (T1)assetManager;
-					}
-				}
-			}
-
-			return null;
-		}
-
-		public static void RegisterFormats<T>(AssetManager<T> importer, string[] formats, bool allowOverwriting = false) where T : class
-			=> RegisterFormats(typeof(T), importer, formats, allowOverwriting);
+		public static void RegisterFormats<T>(AssetManager<T> importer, string[] formats) where T : class
+			=> RegisterFormats(typeof(T), importer, formats);
 
 		internal static string[] GetFilesRecursive(string path, string[] searchPattern = null, string[] ignoredPaths = null)
 		{
@@ -164,7 +153,7 @@ namespace Dissonance.Engine.IO
 					continue;
 				}
 
-				var manager = (AssetManager)Activator.CreateInstance(type);
+				var instance = (AssetManager)Activator.CreateInstance(type);
 
 				var generics = type?.BaseType.GetGenericArguments();
 				var returnType = generics?.Length == 1 ? generics[0] : null;
@@ -173,13 +162,18 @@ namespace Dissonance.Engine.IO
 					continue;
 				}
 
-				manager.Init();
+				typeof(ManagerInstance<>)
+					.MakeGenericType(type)
+					.GetField(nameof(ManagerInstance<AssetManager>.Instance))
+					.SetValue(null, instance);
+
+				instance.Init();
 
 				var realReturnType = returnType.IsArray ? returnType.GetElementType() : returnType;
 
-				RegisterFormats(realReturnType, manager, manager.Extensions); // Allow overwriting engine's types by games'
+				RegisterFormats(realReturnType, instance, instance.Extensions); // Allow overwriting engine's types by games'
 
-				newOrder[0].Add(manager);
+				newOrder[0].Add(instance);
 			}
 
 			// Sort everything based on dependencies
@@ -392,10 +386,8 @@ namespace Dissonance.Engine.IO
 			}
 		}
 
-		private static void RegisterFormats(Type type, AssetManager assetManager, string[] extensions, bool allowOverwriting = false)
+		private static void RegisterFormats(Type type, AssetManager assetManager, string[] extensions)
 		{
-			//TODO: Use the unused parameters.
-
 			for (int i = 0; i < extensions.Length; i++) {
 				string ext = extensions[i];
 
