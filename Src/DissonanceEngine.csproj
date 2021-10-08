@@ -20,35 +20,23 @@
 	<Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
 	
 	<ItemGroup>
-		<Compile Remove="References\**" />
-		<EmbeddedResource Include="BuiltInAssets\**" />
-		<EmbeddedResource Include="References\**" />
-		<EmbeddedResource Remove="References\DissonanceFramework.*" />
-		<None Remove="References\**" />
-		<None Remove="BuiltInAssets\**" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<ProjectReference Include="../Framework/Src/DissonanceFramework.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Reference Include="BulletSharp">
-			<HintPath>References\BulletSharp.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Ionic.Zip">
-			<HintPath>References\Ionic.Zip.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>References\Newtonsoft.Json.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="NVorbis">
-			<HintPath>References\NVorbis.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
+		<EmbeddedResource Include="..\References\*.dll" />
+		<EmbeddedResource Include="BuiltInAssets\**" />
+		<None Remove="BuiltInAssets\**" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="BulletSharp" HintPath="..\References\BulletSharp.dll" Private="false" />
+	</ItemGroup>
+	
+	<ItemGroup>
+    	<PackageReference Include="Ionic.Zip" Version="1.9.1.8" />
+    	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    	<PackageReference Include="NVorbis" Version="0.10.4" />
 	</ItemGroup>
 	
 	<ItemGroup>
