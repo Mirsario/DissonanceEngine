@@ -1,28 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dissonance.Engine.IO;
 using Dissonance.Engine.Utilities;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
 	//TODO: Implement OnDispose
-	public class Material : Asset, ICloneable
+	public sealed class Material : ICloneable
 	{
 		private static readonly List<Material> ById = new();
 		private static readonly Dictionary<string, Material> ByName = new();
 
-		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat;
-		private readonly List<KeyValuePair<string, Texture>> Textures;
+		private readonly List<KeyValuePair<string, Texture>> Textures = new();
+		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat = new();
 
-		public readonly int Id;
-
-		public string name;
-
-		protected Shader shader;
+		private Shader shader;
 
 		internal List<IRenderer> rendererAttachments;
+
+		public int Id { get; }
+		public string Name { get; }
 
 		public Shader Shader {
 			get => shader;
@@ -39,25 +37,18 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public override string AssetName => name;
-
 		public Material(string name, Shader shader)
 		{
-			this.name = name;
-
+			Name = name;
 			Id = InternalUtils.GenContentId(this, ById);
-
 			Shader = shader;
 
 			ByName[name] = this;
-
-			UniformsFloat = new Dictionary<string, (byte, float[])>();
-			Textures = new List<KeyValuePair<string, Texture>>();
 		}
 
 		public Material Clone()
 		{
-			var clone = new Material(name, Shader);
+			var clone = new Material(Name, Shader);
 
 			UniformsFloat.CopyTo(clone.UniformsFloat);
 

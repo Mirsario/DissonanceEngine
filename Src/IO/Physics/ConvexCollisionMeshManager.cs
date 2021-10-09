@@ -12,7 +12,6 @@ namespace Dissonance.Engine.IO
 		public override ConvexCollisionMesh Import(Stream stream, string filePath)
 		{
 			var mesh = Resources.ImportFromStream<Mesh>(stream, filePath: filePath);
-
 			var collisionMesh = new ConvexCollisionMesh();
 
 			collisionMesh.SetupFromMesh(mesh);

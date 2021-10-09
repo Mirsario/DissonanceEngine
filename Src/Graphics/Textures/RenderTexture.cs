@@ -23,7 +23,7 @@ namespace Dissonance.Engine.Graphics
 			GL.BindTexture(TextureTarget.Texture2D, Id);
 			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
 
-			SetupFiltering(filterMode, wrapMode, useMipmaps);
+			SetupFiltering(FilterMode, WrapMode, UseMipmaps);
 		}
 
 		public void GenerateMipmaps()

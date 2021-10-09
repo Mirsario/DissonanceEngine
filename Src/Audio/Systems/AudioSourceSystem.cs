@@ -32,7 +32,7 @@ namespace Dissonance.Engine.Audio
 				}
 
 				// Update buffer.
-				uint newBufferId = audioSource.Clip?.bufferId ?? 0;
+				uint newBufferId = audioSource.Clip?.BufferId ?? 0;
 
 				if (audioSource.bufferId != newBufferId) {
 					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);

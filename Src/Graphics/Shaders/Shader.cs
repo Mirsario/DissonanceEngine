@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Should this be renamed to ShaderProgram?
 	//TODO: Initialize static fields after Graphics.Init();
 	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
-	public partial class Shader : Asset
+	public sealed partial class Shader : IDisposable
 	{
 		internal static Dictionary<string, Shader> shadersByName = new(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new();
@@ -40,8 +40,6 @@ namespace Dissonance.Engine.Graphics
 		public SubShader FragmentShader { get; private set; }
 		public SubShader GeometryShader { get; private set; }
 
-		public override string AssetName => Name;
-
 		private Shader(string name = null)
 		{
 			Name = name;
@@ -58,10 +56,11 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public override void Dispose()
-		{
-			base.Dispose();
+		public override string ToString()
+			=> Name;
 
+		public void Dispose()
+		{
 			if (Id > 0) {
 				GL.DeleteProgram(Id);
 
@@ -86,9 +85,6 @@ namespace Dissonance.Engine.Graphics
 
 			GC.SuppressFinalize(this);
 		}
-
-		public override string ToString()
-			=> Name;
 
 		public int GetUniformLocation(string uniformName)
 			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");

@@ -1,10 +1,9 @@
 using System;
-using Dissonance.Engine.IO;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class Texture : Asset
+	public class Texture : IDisposable
 	{
 		protected const PixelType DefaultPixelType = PixelType.UnsignedByte;
 		protected const PixelFormat DefaultPixelFormat = PixelFormat.Rgba;
@@ -13,10 +12,6 @@ namespace Dissonance.Engine.Graphics
 		public static FilterMode DefaultFilterMode { get; set; } = FilterMode.Trilinear;
 		public static TextureWrapMode DefaultWrapMode { get; set; } = TextureWrapMode.Repeat;
 
-		protected FilterMode filterMode;
-		protected TextureWrapMode wrapMode;
-		protected bool useMipmaps;
-
 		public string Name { get; set; } = string.Empty;
 		public uint Id { get; protected set; }
 		public int Width { get; protected set; }
@@ -24,6 +19,10 @@ namespace Dissonance.Engine.Graphics
 		public PixelType PixelType { get; protected set; }
 		public PixelFormat PixelFormat { get; protected set; }
 		public PixelInternalFormat PixelInternalFormat { get; protected set; }
+
+		protected FilterMode FilterMode { get; set; }
+		protected TextureWrapMode WrapMode { get; set; }
+		protected bool UseMipmaps { get; set; }
 
 		public Vector2Int Size => new(Width, Height);
 
@@ -41,9 +40,9 @@ namespace Dissonance.Engine.Graphics
 			Width = width;
 			Height = height;
 
-			this.filterMode = filterMode ?? DefaultFilterMode;
-			this.wrapMode = wrapMode ?? DefaultWrapMode;
-			this.useMipmaps = useMipmaps;
+			FilterMode = filterMode ?? DefaultFilterMode;
+			WrapMode = wrapMode ?? DefaultWrapMode;
+			UseMipmaps = useMipmaps;
 
 			(PixelFormat, PixelInternalFormat, PixelType, _) = Rendering.textureFormatInfo[format];
 
@@ -66,7 +65,7 @@ namespace Dissonance.Engine.Graphics
 			SetPixels(pixels);
 		}
 
-		public override void Dispose()
+		public void Dispose()
 		{
 			GL.DeleteTexture(Id);
 			GC.SuppressFinalize(this);
@@ -112,7 +111,7 @@ namespace Dissonance.Engine.Graphics
 
 			setter();
 
-			SetupFiltering(filterMode, wrapMode, useMipmaps);
+			SetupFiltering(FilterMode, WrapMode, UseMipmaps);
 		}
 
 		internal static void SetupFiltering(FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true)
