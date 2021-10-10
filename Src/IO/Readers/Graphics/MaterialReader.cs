@@ -9,8 +9,8 @@ using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine.IO
 {
-	[AutoloadRequirement(typeof(ShaderManager))]
-	public class MaterialManager : IAssetReader<Material>
+	[AutoloadRequirement(typeof(ShaderReader))]
+	public class MaterialReader : IAssetReader<Material>
 	{
 		[JsonObject]
 		private class JSON_Material

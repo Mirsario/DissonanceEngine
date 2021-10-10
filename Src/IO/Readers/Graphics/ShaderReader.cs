@@ -5,17 +5,15 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class ShaderManager : IAssetReader<Shader[]>
+	public partial class ShaderReader : IAssetReader<Shader[]>
 	{
 		public string[] Extensions { get; } = { ".program" };
 
 		public Shader[] ReadFromStream(Stream stream, string filePath)
 		{
-			string jsonText;
-
-			using(var reader = new StreamReader(stream)) {
-				jsonText = reader.ReadToEnd();
-			}
+			using var reader = new StreamReader(stream);
+			
+			string jsonText = reader.ReadToEnd();
 
 			var shaders = new List<Shader>();
 			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string, JsonShaderProgram>>(jsonText);
