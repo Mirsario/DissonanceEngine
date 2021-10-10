@@ -22,13 +22,15 @@
 				var renderer = entity.Get<MeshRenderer>();
 				var transform = entity.Get<Transform>();
 
-				if (renderer.Mesh == null || renderer.Material == null) {
+				if (renderer.Mesh?.IsLoaded != true || renderer.Material?.IsLoaded != true) {
 					continue;
 				}
 
+				var mesh = renderer.Mesh.Value;
+				var material = renderer.Material.Value;
 				var layerMask = entity.Has<Layer>() ? entity.Get<Layer>().Mask : LayerMask.All;
 
-				geometryPassData.RenderEntries.Add(new(transform, renderer.Mesh, renderer.Material, layerMask));
+				geometryPassData.RenderEntries.Add(new(transform, mesh, material, layerMask));
 			}
 		}
 	}

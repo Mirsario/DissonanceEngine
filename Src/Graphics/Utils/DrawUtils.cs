@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static void DrawQuadUv0()
 		{
-			PrimitiveMeshes.ScreenQuad.Render();
+			PrimitiveMeshes.ScreenQuad.Value.Render();
 		}
 
 		public static void DrawQuadUv0(Vector4 vertices, Vector4 uv0)
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Graphics
 					0,1,2,
 					0,2,3
 				},
-				bufferUsage = BufferUsageHint.StreamDraw
+				BufferUsage = BufferUsageHint.StreamDraw
 			};
 		}
 	}

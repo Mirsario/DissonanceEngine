@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(null);
 
-			Shader.SetShader(Rendering.GUIShader);
+			Shader.SetShader(Rendering.GUIShader.GetValueImmediately());
 
 			GL.Enable(EnableCap.Blend);
 			GL.Enable(EnableCap.CullFace);

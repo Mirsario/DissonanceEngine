@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class GltfManager : AssetManager<PackedScene>
+	public partial class GltfReader : IAssetReader<PackedScene>
 	{
 		public const uint FormatHeader = 0x46546C67;
 
@@ -42,9 +42,9 @@ namespace Dissonance.Engine.IO
 			// { "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
 		};
 
-		public override string[] Extensions => new[] { ".gltf", ".glb" };
+		public string[] Extensions { get; } = { ".gltf", ".glb" };
 
-		public override PackedScene Import(Stream stream, string filePath)
+		public PackedScene ReadFromStream(Stream stream, string filePath)
 		{
 			var info = new GltfInfo(filePath);
 
@@ -204,7 +204,7 @@ namespace Dissonance.Engine.IO
 			}
 
 			foreach (var jsonMesh in json.meshes) {
-				var meshes = new List<Mesh>();
+				var meshes = new List<Asset<Mesh>>();
 
 				foreach (var jsonPrimitive in jsonMesh.primitives) {
 					var mesh = new Mesh();
@@ -239,11 +239,11 @@ namespace Dissonance.Engine.IO
 
 					mesh.Apply();
 
-					meshes.Add(mesh);
+					meshes.Add(Asset.FromValue(mesh.Name, mesh));
 				}
 
 				//TODO: Add proper material support, remove this hardcode.
-				var material = new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader);
+				var material = Asset.FromValue("DefaultMaterial", new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader));
 
 				for (int i = 0; i < meshes.Count; i++) {
 					var entity = info.Scene.CreateEntity();

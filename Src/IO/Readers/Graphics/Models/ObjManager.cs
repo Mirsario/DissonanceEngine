@@ -6,7 +6,7 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
 {
-	public class ObjManager : AssetManager<Mesh>
+	public class ObjManager : IAssetReader<Mesh>
 	{
 		internal struct MeshInfo
 		{
@@ -17,9 +17,9 @@ namespace Dissonance.Engine.IO
 			public Vector2[] uv;
 		}
 
-		public override string[] Extensions { get; } = new[] { ".obj" };
+		public string[] Extensions { get; } = { ".obj" };
 
-		public override Mesh Import(Stream stream, string filePath)
+		public Mesh ReadFromStream(Stream stream, string filePath)
 		{
 			string text;
 
@@ -51,7 +51,7 @@ namespace Dissonance.Engine.IO
 			}
 
 			var mesh = new Mesh {
-				name = Path.GetFileName(filePath),
+				Name = Path.GetFileName(filePath),
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,

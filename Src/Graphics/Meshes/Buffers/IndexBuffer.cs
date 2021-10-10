@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(BufferTarget.ElementArrayBuffer, (int)(DataLength * sizeof(int)), data, mesh.bufferUsage);
+			GL.BufferData(BufferTarget.ElementArrayBuffer, (int)(DataLength * sizeof(int)), data, mesh.BufferUsage);
 		}
 
 		public override void Dispose()

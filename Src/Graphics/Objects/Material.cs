@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dissonance.Engine.IO;
 using Dissonance.Engine.Utilities;
 using Dissonance.Framework.Graphics;
 
@@ -12,32 +13,28 @@ namespace Dissonance.Engine.Graphics
 		private static readonly List<Material> ById = new();
 		private static readonly Dictionary<string, Material> ByName = new();
 
-		private readonly List<KeyValuePair<string, Texture>> Textures = new();
+		private readonly List<KeyValuePair<string, Asset<Texture>>> Textures = new();
 		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat = new();
 
-		private Shader shader;
+		private Asset<Shader> shader;
 
 		internal List<IRenderer> rendererAttachments;
 
 		public int Id { get; }
 		public string Name { get; }
 
-		public Shader Shader {
+		public Asset<Shader> Shader {
 			get => shader;
 			set {
 				if (shader == value) {
 					return;
 				}
 
-				shader?.MaterialDetach(this);
-
 				shader = value;
-
-				shader?.MaterialAttach(this);
 			}
 		}
 
-		public Material(string name, Shader shader)
+		public Material(string name, Asset<Shader> shader)
 		{
 			Name = name;
 			Id = InternalUtils.GenContentId(this, ById);
@@ -64,14 +61,14 @@ namespace Dissonance.Engine.Graphics
 			if (Textures.Count > 0) {
 				for (int i = 0; i < Textures.Count && i < 32; i++) {
 					string textureName = Textures[i].Key;
-					var texture = Textures[i].Value;
+					var textureAsset = Textures[i].Value;
 
-					if (texture == null || !shader.uniforms.TryGetValue(textureName, out uniform)) {
+					if (textureAsset == null || !shader.uniforms.TryGetValue(textureName, out uniform)) {
 						continue;
 					}
 
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
-					GL.BindTexture(TextureTarget.Texture2D, texture.Id);
+					GL.BindTexture(TextureTarget.Texture2D, textureAsset.IsLoaded ? textureAsset.Value.Id : 0);
 					GL.Uniform1(uniform.location, i);
 				}
 			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
@@ -107,10 +104,10 @@ namespace Dissonance.Engine.Graphics
 
 		private void CheckUniform(string name)
 		{
-			Shader shader = Shader;
+			var shader = Shader?.Value;
 
 			if (shader == null) {
-				throw new Exception($"Material's Shader is null.");
+				throw new Exception($"Material's Shader is missing or not ready.");
 			}
 
 			if (!shader.uniforms.ContainsKey(name)) {
@@ -174,21 +171,21 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public void SetTexture(string name, Texture texture)
+		public void SetTexture(string name, Asset<Texture> texture)
 		{
 			CheckUniform(name);
 
 			for (int i = 0; i < Textures.Count; i++) {
 				if (Textures[i].Key == name) {
-					Textures[i] = new KeyValuePair<string, Texture>(name, texture);
+					Textures[i] = new KeyValuePair<string, Asset<Texture>>(name, texture);
 					return;
 				}
 			}
 
-			Textures.Add(new KeyValuePair<string, Texture>(name, texture));
+			Textures.Add(new KeyValuePair<string, Asset<Texture>>(name, texture));
 		}
 
-		public bool GetTexture(string name, out Texture texture)
+		public bool GetTexture(string name, out Asset<Texture> texture)
 			=> (texture = Textures.FirstOrDefault(pair => pair.Key == name).Value) != null;
 
 		object ICloneable.Clone()

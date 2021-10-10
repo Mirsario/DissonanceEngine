@@ -1,10 +1,11 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Dissonance.Engine.IO;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
 	public class PostProcessPass : RenderPass
 	{
-		public Shader PassShader { get; set; }
+		public Asset<Shader> PassShader { get; set; }
 
 		public override void Render()
 		{
@@ -13,9 +14,11 @@ namespace Dissonance.Engine.Graphics
 			GL.Enable(EnableCap.Blend);
 			GL.DepthMask(false);
 
-			Shader.SetShader(PassShader);
+			var passShaderValue = PassShader.GetValueImmediately();
 
-			PassShader.SetupCommonUniforms();
+			Shader.SetShader(passShaderValue);
+
+			passShaderValue.SetupCommonUniforms();
 
 			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 
@@ -25,7 +28,7 @@ namespace Dissonance.Engine.Graphics
 				var transform = renderView.Transform;
 				var viewport = renderView.Viewport;
 
-				PassShader.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, transform.Position);
+				passShaderValue.SetupCameraUniforms(renderView.NearClip, renderView.FarClip, transform.Position);
 
 				if (PassedTextures != null) {
 					for (int j = 0; j < PassedTextures.Length; j++) {
@@ -34,9 +37,7 @@ namespace Dissonance.Engine.Graphics
 						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
 						GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
-						if (PassShader != null) {
-							GL.Uniform1(GL.GetUniformLocation(PassShader.Id, texture.Name), j);
-						}
+						GL.Uniform1(GL.GetUniformLocation(passShaderValue.Id, texture.Name), j);
 					}
 				}
 

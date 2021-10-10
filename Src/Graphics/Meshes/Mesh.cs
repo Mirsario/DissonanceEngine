@@ -21,15 +21,14 @@ namespace Dissonance.Engine.Graphics
 
 		private readonly CustomVertexBuffer[] VertexBuffers;
 
-		public string name;
-		public Bounds bounds;
-		public BufferUsageHint bufferUsage;
-
 		internal uint vertexArrayId;
 
 		private PrimitiveType currentPrimitiveType = PrimitiveType.Triangles;
 		private PrimitiveType primitiveTypeToSet = PrimitiveType.Triangles;
 
+		public string Name { get; set; }
+		public Bounds Bounds { get; set; }
+		public BufferUsageHint BufferUsage { get; set; }
 		public bool IsReady { get; private set; }
 
 		// Shortcut refs to buffers' arrays
@@ -48,7 +47,7 @@ namespace Dissonance.Engine.Graphics
 
 		public Mesh()
 		{
-			bufferUsage = BufferUsageHint.StaticDraw;
+			BufferUsage = BufferUsageHint.StaticDraw;
 
 			IndexBuffer = new IndexBuffer {
 				mesh = this
@@ -141,7 +140,7 @@ namespace Dissonance.Engine.Graphics
 
 			// Calculate bounds.
 
-			bounds = VertexBuffer.CalculateBounds();
+			Bounds = VertexBuffer.CalculateBounds();
 
 			Rendering.CheckGLErrors();
 

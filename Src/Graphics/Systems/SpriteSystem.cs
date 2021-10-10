@@ -110,7 +110,7 @@ namespace Dissonance.Engine.Graphics
 
 				if (batch.CompoundMesh == null) {
 					batch.CompoundMesh = new Mesh() {
-						bufferUsage = BufferUsageHint.DynamicDraw
+						BufferUsage = BufferUsageHint.DynamicDraw
 					};
 				}
 

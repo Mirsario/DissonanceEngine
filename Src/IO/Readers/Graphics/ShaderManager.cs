@@ -5,14 +5,11 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class ShaderManager : AssetManager<Shader[]>
+	public partial class ShaderManager : IAssetReader<Shader[]>
 	{
-		public override string[] Extensions { get; } = new[] { ".program" };
+		public string[] Extensions { get; } = { ".program" };
 
-		public override bool Autoload(string file)
-			=> !Game.Instance.NoGraphics;
-
-		public override Shader[] Import(Stream stream, string filePath)
+		public Shader[] ReadFromStream(Stream stream, string filePath)
 		{
 			string jsonText;
 
@@ -27,9 +24,9 @@ namespace Dissonance.Engine.IO
 				string name = pair.Key;
 				var jsonShader = pair.Value;
 
-				string vertexCode = Resources.ImportText(jsonShader.vertexShader);
-				string fragmentCode = Resources.ImportText(jsonShader.fragmentShader);
-				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Resources.ImportText(jsonShader.geometryShader) : null;
+				string vertexCode = Resources.Get<string>(jsonShader.vertexShader, AssetRequestMode.ImmediateLoad).Value;
+				string fragmentCode = Resources.Get<string>(jsonShader.fragmentShader, AssetRequestMode.ImmediateLoad).Value;
+				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Resources.Get<string>(jsonShader.geometryShader, AssetRequestMode.ImmediateLoad).Value : null;
 
 				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.shaderDefines);
 

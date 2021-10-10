@@ -15,15 +15,14 @@ namespace Dissonance.Engine.Graphics
 		internal static Dictionary<string, Shader> shadersByName = new(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new();
 
-		private static Shader errorShader;
+		private static Asset<Shader> errorShader;
 
-		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
+		public static Asset<Shader> ErrorShader => errorShader ??= Resources.Get<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
 		internal Dictionary<string, ShaderUniform> uniforms;
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
-		internal List<Material> materialAttachments = new();
 
 		private IntPtr namePtr;
 
@@ -101,12 +100,6 @@ namespace Dissonance.Engine.Graphics
 
 			return false;
 		}
-
-		internal void MaterialDetach(Material material)
-			=> materialAttachments.Remove(material);
-
-		internal void MaterialAttach(Material material)
-			=> materialAttachments.Add(material);
 
 		// SetupUniforms
 

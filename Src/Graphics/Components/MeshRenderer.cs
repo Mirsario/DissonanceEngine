@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -49,17 +50,16 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 		}
-		public Mesh Mesh {
-			get => lodMeshes[0].mesh;
-			set => lodMeshes[0].mesh = value;
+		public Asset<Mesh> Mesh {
+			get => lodMeshes[0].Mesh;
+			set => lodMeshes[0].Mesh = value;
+		}
+		public Asset<Material> Material {
+			get => lodMeshes[0].Material;
+			set => lodMeshes[0].Material = value;
 		}
 
-		public Material Material {
-			get => lodMeshes[0].material;
-			set => lodMeshes[0].material = value;
-		}
-
-		public MeshRenderer(Mesh mesh, Material material)
+		public MeshRenderer(Asset<Mesh> mesh, Asset<Material> material)
 		{
 			aabb = default;
 			aabbLastMatrix = default;
@@ -78,7 +78,7 @@ namespace Dissonance.Engine.Graphics
 				return new Bounds(aabb.min + translation, aabb.max + translation);
 			}
 
-			var bounds = Mesh.bounds;
+			var bounds = Mesh.Value.Bounds;
 			var min = bounds.min;
 			var max = bounds.max;
 

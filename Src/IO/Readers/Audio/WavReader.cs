@@ -4,11 +4,11 @@ using Dissonance.Engine.Audio;
 
 namespace Dissonance.Engine.IO
 {
-	public class WavManager : AssetManager<AudioClip>
+	public class WavReader : IAssetReader<AudioClip>
 	{
-		public override string[] Extensions { get; } = new[] { ".wav", ".wave" };
+		public string[] Extensions { get; } = { ".wav" };
 
-		public override AudioClip Import(Stream stream, string filePath)
+		public AudioClip ReadFromStream(Stream stream, string assetPath)
 		{
 			using var reader = new BinaryReader(stream);
 

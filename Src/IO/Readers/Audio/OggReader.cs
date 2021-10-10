@@ -4,16 +4,16 @@ using NVorbis;
 
 namespace Dissonance.Engine.IO
 {
-	public class OggManager : AssetManager<AudioClip>
+	public class OggReader : IAssetReader<AudioClip>
 	{
-		public override string[] Extensions { get; } = new[] { ".ogg" };
+		public string[] Extensions { get; } = { ".ogg" };
 
-		public override AudioClip Import(Stream stream, string filePath)
+		public AudioClip ReadFromStream(Stream stream, string assetPath)
 		{
 			using var r = new VorbisReader(stream, true);
 
 			long bufferSize = r.TotalSamples * r.Channels;
-			var data = new float[bufferSize];
+			float[] data = new float[bufferSize];
 
 			r.ReadSamples(data, 0, (int)bufferSize);
 

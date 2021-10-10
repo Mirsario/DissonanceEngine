@@ -90,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(Target, (int)(DataLength * tSize), data, mesh.bufferUsage);
+			GL.BufferData(Target, (int)(DataLength * tSize), data, mesh.BufferUsage);
 
 			foreach (uint attributeId in attributes) {
 				GL.EnableVertexAttribArray(attributeId);

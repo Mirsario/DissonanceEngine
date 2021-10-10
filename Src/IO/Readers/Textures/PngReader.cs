@@ -6,11 +6,11 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
 {
-	public class PngManager : AssetManager<Texture>
+	public class PngReader : IAssetReader<Texture>
 	{
-		public override string[] Extensions { get; } = new[] { ".png" };
+		public string[] Extensions { get; } = { ".png" };
 
-		public override Texture Import(Stream stream, string filePath)
+		public Texture ReadFromStream(Stream stream, string assetPath)
 		{
 			int length = (int)stream.Length;
 
@@ -22,7 +22,7 @@ namespace Dissonance.Engine.IO
 				stream.CopyTo(unmanagedStream, length);
 
 				if (!IL.Load(LoadImageTypeLumps.Png, ptr, length)) {
-					throw new FileLoadException($"Unable to load image '{filePath}'.");
+					throw new FileLoadException($"Unable to load image.");
 				}
 			}
 
@@ -33,11 +33,6 @@ namespace Dissonance.Engine.IO
 			texture.SetPixels(IL.GetData());
 
 			return texture;
-		}
-
-		public override void Export(Texture asset, Stream stream)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

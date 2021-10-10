@@ -10,7 +10,7 @@ using Dissonance.Engine.Utilities;
 namespace Dissonance.Engine.IO
 {
 	[AutoloadRequirement(typeof(ShaderManager))]
-	public class MaterialManager : AssetManager<Material>
+	public class MaterialManager : IAssetReader<Material>
 	{
 		[JsonObject]
 		private class JSON_Material
@@ -26,12 +26,9 @@ namespace Dissonance.Engine.IO
 			public string shader;
 		}
 
-		public override string[] Extensions { get; } = new[] { ".material" };
+		public string[] Extensions { get; } = { ".material" };
 
-		public override bool Autoload(string file)
-			=> !Game.Instance.NoGraphics;
-
-		public override Material Import(Stream stream, string filePath)
+		public Material ReadFromStream(Stream stream, string assetPath)
 		{
 			string jsonText;
 
@@ -41,10 +38,10 @@ namespace Dissonance.Engine.IO
 
 			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
 
-			jsonMat.name = FilterText(jsonMat.name, filePath);
-			jsonMat.shader = FilterText(jsonMat.shader, filePath);
+			jsonMat.name = FilterText(jsonMat.name, assetPath);
+			jsonMat.shader = FilterText(jsonMat.shader, assetPath);
 
-			var shader = Resources.Find<Shader>(jsonMat.shader);
+			var shader = Resources.Get<Shader>(jsonMat.shader);
 
 			if (shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
@@ -54,19 +51,19 @@ namespace Dissonance.Engine.IO
 
 			if (jsonMat.textures != null) {
 				foreach (var pair in jsonMat.textures) {
-					material.SetTexture(FilterText(pair.Key, filePath), Resources.Import<Texture>(FilterText(pair.Value, filePath)));
+					material.SetTexture(FilterText(pair.Key, assetPath), Resources.Get<Texture>(FilterText(pair.Value, assetPath)));
 				}
 			}
 
 			if (jsonMat.floats != null) {
 				foreach (var pair in jsonMat.floats) {
-					material.SetFloat(FilterText(pair.Key, filePath), pair.Value);
+					material.SetFloat(FilterText(pair.Key, assetPath), pair.Value);
 				}
 			}
 
 			if (jsonMat.vectors != null) {
 				foreach (var pair in jsonMat.vectors) {
-					material.SetVector(FilterText(pair.Key, filePath), pair.Value);
+					material.SetVector(FilterText(pair.Key, assetPath), pair.Value);
 				}
 			}
 
