@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Dissonance.Engine.IO
@@ -28,6 +29,7 @@ namespace Dissonance.Engine.IO
 			}
 
 			AddAssetSource(new FileSystemAssetSource(assetsPath));
+			AddAssetSource(new AssemblyResourcesAssetSource(Assembly.GetExecutingAssembly(), "Dissonance/Engine"));
 		}
 
 		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.None)
