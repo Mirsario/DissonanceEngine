@@ -9,27 +9,22 @@ namespace Dissonance.Engine.IO
 	//TODO: Make a ton more threadsafe.
 	public sealed class Resources : EngineModule
 	{
-		private class AssetReaderCollection<T>
+		internal class AssetReaderCollection<T>
 		{
 			public List<IAssetReader<T>> AssetReaders { get; } = new();
 			public Dictionary<string, IAssetReader<T>> AssetReaderByExtension { get; } = new();
 		}
 
+		internal static readonly HashSet<object> Readers = new();
+		internal static readonly Dictionary<Type, object> ReaderCollectionsByType = new();
+
 		private static readonly HashSet<AssetSource> sources = new();
-		private static readonly HashSet<object> readers = new();
-		private static readonly Dictionary<Type, object> readerCollectionsByType = new();
 		private static readonly Dictionary<string, Asset> assets = new();
 
 		protected override void Init()
 		{
-			string assetsPath = Path.GetFullPath(Path.Combine(".", "Assets"));
-
-			if (!Directory.Exists(assetsPath)) {
-				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\r\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
-			}
-
-			AddAssetSource(new FileSystemAssetSource(assetsPath));
-			AddAssetSource(new AssemblyResourcesAssetSource(Assembly.GetExecutingAssembly(), "Dissonance/Engine"));
+			RegisterAssetSources();
+			RegisterAssetReaders();
 		}
 
 		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.None)
@@ -37,18 +32,6 @@ namespace Dissonance.Engine.IO
 			if (assets.TryGetValue(assetPath, out var cachedAsset) && cachedAsset is Asset<T> cachedAssetResult) {
 				return cachedAssetResult;
 			}
-
-			/*
-			string extension = Path.GetExtension(assetPath);
-
-			if (!assetReaderCollectionsByType.TryGetValue(typeof(T), out object result) || result is not AssetReaderCollection<T> assetReaderCollection) {
-				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
-			}
-
-			if (!assetReaderCollection.AssetReaderByExtension.TryGetValue(extension, out var assetReader)) {
-				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
-			}
-			*/
 
 			foreach (var source in sources) {
 				if (!source.HasAsset(assetPath)) {
@@ -76,6 +59,42 @@ namespace Dissonance.Engine.IO
 		public static void AddAssetSource(AssetSource assetSource)
 		{
 			sources.Add(assetSource);
+		}
+
+		public static void AddAssetReader<T>(IAssetReader<T> assetReader)
+		{
+			if (!Readers.Add(assetReader)) {
+				throw new InvalidOperationException($"Asset reader '{assetReader.GetType().Name}' is already registered.");
+			}
+
+			if (!ReaderCollectionsByType.TryGetValue(typeof(T), out object collectionObj) || collectionObj is not AssetReaderCollection<T> collection) {
+				ReaderCollectionsByType[typeof(T)] = collection = new AssetReaderCollection<T>();
+			}
+
+			collection.AssetReaders.Add(assetReader);
+
+			foreach (string extension in assetReader.Extensions) {
+				collection.AssetReaderByExtension.Add(extension, assetReader);
+			}
+		}
+
+		private static void RegisterAssetSources()
+		{
+			string assetsPath = Path.GetFullPath(Path.Combine(".", "Assets"));
+
+			if (!Directory.Exists(assetsPath)) {
+				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\r\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
+			}
+
+			AddAssetSource(new FileSystemAssetSource(assetsPath));
+			AddAssetSource(new AssemblyResourcesAssetSource(Assembly.GetExecutingAssembly(), "Dissonance/Engine"));
+		}
+
+		private static void RegisterAssetReaders()
+		{
+			AddAssetReader(new PngReader());
+			AddAssetReader(new ShaderReader());
+			AddAssetReader(new MaterialReader());
 		}
 	}
 }

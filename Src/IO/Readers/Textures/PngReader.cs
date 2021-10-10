@@ -14,6 +14,8 @@ namespace Dissonance.Engine.IO
 		{
 			int length = (int)stream.Length;
 
+			IL.Init();
+
 			unsafe {
 				IntPtr ptr = Marshal.AllocHGlobal(length);
 

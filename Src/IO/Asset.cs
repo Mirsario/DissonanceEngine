@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Dissonance.Engine.IO
 {
@@ -63,9 +64,22 @@ namespace Dissonance.Engine.IO
 				return;
 			}
 
-			if (!Enum.IsDefined(mode)) {
-				throw new ArgumentOutOfRangeException(nameof(mode));
+			string extension = Path.GetExtension(Name);
+
+			if (!Resources.ReaderCollectionsByType.TryGetValue(typeof(T), out object result) || result is not Resources.AssetReaderCollection<T> assetReaderCollection) {
+				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
 			}
+
+			if (!assetReaderCollection.AssetReaderByExtension.TryGetValue(extension, out var assetReader)) {
+				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
+			}
+
+			State = AssetState.Loading;
+
+			using var stream = Source.OpenStream(Name);
+
+			Value = assetReader.ReadFromStream(stream, Name);
+			State = AssetState.Loaded;
 		}
 
 		public bool TryGetOrRequestValue(out T result)
