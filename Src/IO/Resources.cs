@@ -9,7 +9,7 @@ namespace Dissonance.Engine.IO
 	//TODO: Make a ton more threadsafe.
 	public sealed class Resources : EngineModule
 	{
-		internal static class ReaderData<T>
+		internal static class ReadersByDataType<T>
 		{
 			internal static readonly Dictionary<string, IAssetReader<T>> ReaderByExtension = new();
 		}
@@ -73,7 +73,7 @@ namespace Dissonance.Engine.IO
 			readersOfThisType.Add(assetReader);
 
 			foreach (string extension in assetReader.Extensions) {
-				ReaderData<T>.ReaderByExtension.Add(extension, assetReader);
+				ReadersByDataType<T>.ReaderByExtension.Add(extension, assetReader);
 			}
 		}
 
@@ -105,13 +105,13 @@ namespace Dissonance.Engine.IO
 			AddAssetReader(new PngReader());
 			AddAssetReader(new ShaderReader());
 			AddAssetReader(new MaterialReader());
+			AddAssetReader(new TextReader());
 		}
 
 		private static void AutoloadAssets()
 		{
 			object[] parameterArray = new object[1];
-			var autoloadAssetsMethod = typeof(Resources)
-				.GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
+			var autoloadAssetsMethod = typeof(Resources).GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
 
 			foreach (var pair in ReadersByType) {
 				var type = pair.Key;

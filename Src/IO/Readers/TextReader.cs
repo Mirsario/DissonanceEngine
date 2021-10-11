@@ -4,7 +4,7 @@ namespace Dissonance.Engine.IO
 {
 	public class TextReader : IAssetReader<string>
 	{
-		public string[] Extensions { get; } = { ".txt" };
+		public string[] Extensions { get; } = { "*", ".txt" };
 
 		public string ReadFromStream(Stream stream, string assetPath)
 		{

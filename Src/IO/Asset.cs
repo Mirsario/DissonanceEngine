@@ -66,13 +66,13 @@ namespace Dissonance.Engine.IO
 			}
 
 			string extension = Path.GetExtension(Name);
-			var readerByExtension = Resources.ReaderData<T>.ReaderByExtension;
+			var readerByExtension = Resources.ReadersByDataType<T>.ReaderByExtension;
 
 			if (readerByExtension.Count == 0) {
 				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
 			}
 
-			if (!readerByExtension.TryGetValue(extension, out var assetReader)) {
+			if (!readerByExtension.TryGetValue(extension, out var assetReader) && !readerByExtension.TryGetValue("*", out assetReader)) {
 				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
 			}
 
