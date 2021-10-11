@@ -89,11 +89,11 @@ namespace Dissonance.Engine
 		}
 
 		public float Depth2D {
-			get => Position.z;
+			get => Position.Z;
 			set {
 				var position3D = Position;
 
-				position3D.z = value;
+				position3D.Z = value;
 
 				Position = position3D;
 			}
@@ -119,11 +119,11 @@ namespace Dissonance.Engine
 		}
 
 		public float LocalDepth2D {
-			get => LocalPosition.z;
+			get => LocalPosition.Z;
 			set {
 				var position3D = LocalPosition;
 
-				position3D.z = value;
+				position3D.Z = value;
 
 				LocalPosition = position3D;
 			}

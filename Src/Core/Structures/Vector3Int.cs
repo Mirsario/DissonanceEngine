@@ -17,75 +17,75 @@ namespace Dissonance.Engine
 		public static readonly Vector3Int Forward = new(0, 0, 1);
 		public static readonly Vector3Int Backward = new(0, 0, -1);
 
-		public int x;
-		public int y;
-		public int z;
+		public int X;
+		public int Y;
+		public int Z;
 
 		public Vector3Int(int x, int y, int z)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			X = x;
+			Y = y;
+			Z = z;
 		}
 
 		public Vector3Int(int xyz) : this(xyz, xyz, xyz) { }
 
-		public Vector3Int(Vector2Int xy, int z) : this(xy.x, xy.y, z) { }
+		public Vector3Int(Vector2Int xy, int z) : this(xy.X, xy.Y, z) { }
 
 		public Vector2Int XY {
-			get => new(x, y);
+			get => new(X, Y);
 			set {
-				x = value.x;
-				y = value.y;
+				X = value.X;
+				Y = value.Y;
 			}
 		}
 		public Vector2Int XZ {
-			get => new(x, z);
+			get => new(X, Z);
 			set {
-				x = value.x;
-				z = value.y;
+				X = value.X;
+				Z = value.Y;
 			}
 		}
 		public Vector2Int YZ {
-			get => new(y, z);
+			get => new(Y, Z);
 			set {
-				y = value.x;
-				z = value.y;
+				Y = value.X;
+				Z = value.Y;
 			}
 		}
 
 		public override string ToString()
-			=> $"[{x}, {y}, {z}]";
+			=> $"[{X}, {Y}, {Z}]";
 
 		public override int GetHashCode()
-			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
+			=> X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2;
 
 		public override bool Equals(object other)
-			=> other is Vector3Int vector && x == vector.x && y == vector.y && z == vector.z;
+			=> other is Vector3Int vector && X == vector.X && Y == vector.Y && Z == vector.Z;
 
-		public static explicit operator Vector3(Vector3Int value) => new(value.x, value.y, value.z);
+		public static explicit operator Vector3(Vector3Int value) => new(value.X, value.Y, value.Z);
 
-		public static explicit operator Vector3Int(Vector3 value) => new((int)value.x, (int)value.y, (int)value.z);
+		public static explicit operator Vector3Int(Vector3 value) => new((int)value.X, (int)value.Y, (int)value.Z);
 
-		public static Vector3Int operator +(Vector3Int a, Vector3Int b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
+		public static Vector3Int operator +(Vector3Int a, Vector3Int b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
-		public static Vector3Int operator -(Vector3Int a, Vector3Int b) => new(a.x - b.x, a.y - b.y, a.z + b.z);
+		public static Vector3Int operator -(Vector3Int a, Vector3Int b) => new(a.X - b.X, a.Y - b.Y, a.Z + b.Z);
 
-		public static Vector3Int operator -(Vector3Int a) => new(-a.x, -a.y, -a.z);
+		public static Vector3Int operator -(Vector3Int a) => new(-a.X, -a.Y, -a.Z);
 
-		public static Vector3Int operator *(Vector3Int a, int d) => new(a.x * d, a.y * d, a.z * d);
+		public static Vector3Int operator *(Vector3Int a, int d) => new(a.X * d, a.Y * d, a.Z * d);
 
-		public static Vector3Int operator *(int d, Vector3Int a) => new(a.x * d, a.y * d, a.z * d);
+		public static Vector3Int operator *(int d, Vector3Int a) => new(a.X * d, a.Y * d, a.Z * d);
 
-		public static Vector3Int operator /(Vector3Int a, int d) => new(a.x / d, a.y / d, a.z / d);
+		public static Vector3Int operator /(Vector3Int a, int d) => new(a.X / d, a.Y / d, a.Z / d);
 
-		public static Vector3 operator *(Vector3Int a, float d) => new(a.x * d, a.y * d, a.z * d);
+		public static Vector3 operator *(Vector3Int a, float d) => new(a.X * d, a.Y * d, a.Z * d);
 
-		public static Vector3 operator /(Vector3Int a, float d) => new(a.x / d, a.y / d, a.z / d);
+		public static Vector3 operator /(Vector3Int a, float d) => new(a.X / d, a.Y / d, a.Z / d);
 
-		public static bool operator ==(Vector3Int a, Vector3Int b) => a.x == b.x && a.y == b.y && a.z == b.z;
+		public static bool operator ==(Vector3Int a, Vector3Int b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
 
-		public static bool operator !=(Vector3Int a, Vector3Int b) => a.x != b.x || a.y != b.y || a.z != b.z;
+		public static bool operator !=(Vector3Int a, Vector3Int b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
 
 		public static unsafe implicit operator int*(Vector3Int vec) => (int*)&vec;
 	}

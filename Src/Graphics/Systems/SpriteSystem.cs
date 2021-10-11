@@ -110,7 +110,7 @@ namespace Dissonance.Engine.Graphics
 
 				if (batch.CompoundMesh == null) {
 					batch.CompoundMesh = new Mesh() {
-						bufferUsage = BufferUsageHint.DynamicDraw
+						BufferUsage = BufferUsageHint.DynamicDraw
 					};
 				}
 
@@ -134,15 +134,15 @@ namespace Dissonance.Engine.Graphics
 
 					var sourceRect = sprite.SourceRectangle;
 					var sourceUV = new Vector4(
-						sourceRect.x,
-						sourceRect.y,
+						sourceRect.X,
+						sourceRect.Y,
 						sourceRect.Right,
 						sourceRect.Bottom
 					);
 					var uvPoints = sprite.Effects switch {
-						Sprite.SpriteEffects.FlipHorizontally | Sprite.SpriteEffects.FlipVertically => new Vector4(sourceUV.z, sourceUV.w, sourceUV.x, sourceUV.y),
-						Sprite.SpriteEffects.FlipHorizontally => new Vector4(sourceUV.z, sourceUV.y, sourceUV.x, sourceUV.w),
-						Sprite.SpriteEffects.FlipVertically => new Vector4(sourceUV.x, sourceUV.w, sourceUV.z, sourceUV.y),
+						Sprite.SpriteEffects.FlipHorizontally | Sprite.SpriteEffects.FlipVertically => new Vector4(sourceUV.Z, sourceUV.W, sourceUV.X, sourceUV.Y),
+						Sprite.SpriteEffects.FlipHorizontally => new Vector4(sourceUV.Z, sourceUV.Y, sourceUV.X, sourceUV.W),
+						Sprite.SpriteEffects.FlipVertically => new Vector4(sourceUV.X, sourceUV.W, sourceUV.Z, sourceUV.Y),
 						_ => sourceUV
 					};
 
@@ -150,15 +150,15 @@ namespace Dissonance.Engine.Graphics
 						RecalculateVertices(ref sprite);
 					}
 
-					vertices[vertex] = worldMatrix * new Vector3(sprite.vertices.x, sprite.vertices.y, 0f);
-					vertices[vertex + 1] = worldMatrix * new Vector3(sprite.vertices.z, sprite.vertices.y, 0f);
-					vertices[vertex + 2] = worldMatrix * new Vector3(sprite.vertices.z, sprite.vertices.w, 0f);
-					vertices[vertex + 3] = worldMatrix * new Vector3(sprite.vertices.x, sprite.vertices.w, 0f);
+					vertices[vertex] = worldMatrix * new Vector3(sprite.vertices.X, sprite.vertices.Y, 0f);
+					vertices[vertex + 1] = worldMatrix * new Vector3(sprite.vertices.Z, sprite.vertices.Y, 0f);
+					vertices[vertex + 2] = worldMatrix * new Vector3(sprite.vertices.Z, sprite.vertices.W, 0f);
+					vertices[vertex + 3] = worldMatrix * new Vector3(sprite.vertices.X, sprite.vertices.W, 0f);
 
-					uv0[vertex] = new Vector2(uvPoints.x, uvPoints.w);
-					uv0[vertex + 1] = new Vector2(uvPoints.z, uvPoints.w);
-					uv0[vertex + 2] = new Vector2(uvPoints.z, uvPoints.y);
-					uv0[vertex + 3] = new Vector2(uvPoints.x, uvPoints.y);
+					uv0[vertex] = new Vector2(uvPoints.X, uvPoints.W);
+					uv0[vertex + 1] = new Vector2(uvPoints.Z, uvPoints.W);
+					uv0[vertex + 2] = new Vector2(uvPoints.Z, uvPoints.Y);
+					uv0[vertex + 3] = new Vector2(uvPoints.X, uvPoints.Y);
 
 					indices[index] = vertex + 2;
 					indices[index + 1] = vertex + 1;
@@ -181,14 +181,14 @@ namespace Dissonance.Engine.Graphics
 
 		private static void RecalculateVertices(ref Sprite sprite)
 		{
-			float xSize = sprite.FrameSize.x * sprite.PixelSize;
-			float ySize = sprite.FrameSize.y * sprite.PixelSize;
-			float yOrigin = 1f - sprite.Origin.y;
+			float xSize = sprite.FrameSize.X * sprite.PixelSize;
+			float ySize = sprite.FrameSize.Y * sprite.PixelSize;
+			float yOrigin = 1f - sprite.Origin.Y;
 
 			sprite.vertices = new Vector4(
-				-sprite.Origin.x * xSize,
+				-sprite.Origin.X * xSize,
 				-yOrigin * ySize,
-				(1f - sprite.Origin.x) * xSize,
+				(1f - sprite.Origin.X) * xSize,
 				(1f - yOrigin) * ySize
 			);
 			sprite.verticesNeedRecalculation = false;

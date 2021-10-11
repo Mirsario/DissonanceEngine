@@ -6,7 +6,7 @@ namespace Dissonance.Engine
 	{
 		// Translation
 		
-		public static Matrix4x4 CreateTranslation(Vector3 vec) => CreateTranslation(vec.x, vec.y, vec.z);
+		public static Matrix4x4 CreateTranslation(Vector3 vec) => CreateTranslation(vec.X, vec.Y, vec.Z);
 		
 		public static Matrix4x4 CreateTranslation(float x, float y, float z)
 		{
@@ -70,7 +70,7 @@ namespace Dissonance.Engine
 		}
 		
 		public static Matrix4x4 CreateRotation(Vector3 vec)
-			=> CreateRotation(vec.x, vec.y, vec.z);
+			=> CreateRotation(vec.X, vec.Y, vec.Z);
 		
 		public static Matrix4x4 CreateRotation(float eulerRotX, float eulerRotY, float eulerRotZ)
 		{
@@ -96,21 +96,21 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateRotation(Quaternion q)
 		{
-			float x = q.x * 2f;
-			float y = q.y * 2f;
-			float z = q.z * 2f;
+			float x = q.X * 2f;
+			float y = q.Y * 2f;
+			float z = q.Z * 2f;
 
-			float xx = q.x * x;
-			float yy = q.y * y;
-			float zz = q.z * z;
+			float xx = q.X * x;
+			float yy = q.Y * y;
+			float zz = q.Z * z;
 
-			float xy = q.x * y;
-			float xz = q.x * z;
-			float yz = q.y * z;
+			float xy = q.X * y;
+			float xz = q.X * z;
+			float yz = q.Y * z;
 
-			float wx = q.w * x;
-			float wy = q.w * y;
-			float wz = q.w * z;
+			float wx = q.W * x;
+			float wy = q.W * y;
+			float wz = q.W * z;
 
 			return new Matrix4x4(
 				1 - (yy + zz), xy + wz, xz - wy, 0f,
@@ -126,9 +126,9 @@ namespace Dissonance.Engine
 
 			axis.Normalize();
 
-			float axisX = axis.x;
-			float axisY = axis.y;
-			float axisZ = axis.z;
+			float axisX = axis.X;
+			float axisY = axis.Y;
+			float axisZ = axis.Z;
 
 			float cos = MathF.Cos(-angle);
 			float sin = MathF.Sin(-angle);
@@ -170,7 +170,7 @@ namespace Dissonance.Engine
 		
 		public static Matrix4x4 CreateScale(float xyz) => CreateScale(xyz, xyz, xyz);
 		
-		public static Matrix4x4 CreateScale(Vector3 vec) => CreateScale(vec.x, vec.y, vec.z);
+		public static Matrix4x4 CreateScale(Vector3 vec) => CreateScale(vec.X, vec.Y, vec.Z);
 		
 		public static Matrix4x4 CreateScale(float x, float y, float z)
 		{
@@ -294,24 +294,24 @@ namespace Dissonance.Engine
 
 			Matrix4x4 result;
 
-			result.m00 = x.x;
-			result.m01 = y.x;
-			result.m02 = z.x;
+			result.m00 = x.X;
+			result.m01 = y.X;
+			result.m02 = z.X;
 			result.m03 = 0f;
 
-			result.m10 = x.y;
-			result.m11 = y.y;
-			result.m12 = z.y;
+			result.m10 = x.Y;
+			result.m11 = y.Y;
+			result.m12 = z.Y;
 			result.m13 = 0f;
 
-			result.m20 = x.z;
-			result.m21 = y.z;
-			result.m22 = z.z;
+			result.m20 = x.Z;
+			result.m21 = y.Z;
+			result.m22 = z.Z;
 			result.m23 = 0f;
 
-			result.m30 = -(x.x * eye.x + x.y * eye.y + x.z * eye.z);
-			result.m31 = -(y.x * eye.x + y.y * eye.y + y.z * eye.z);
-			result.m32 = -(z.x * eye.x + z.y * eye.y + z.z * eye.z);
+			result.m30 = -(x.X * eye.X + x.Y * eye.Y + x.Z * eye.Z);
+			result.m31 = -(y.X * eye.X + y.Y * eye.Y + y.Z * eye.Z);
+			result.m32 = -(z.X * eye.X + z.Y * eye.Y + z.Z * eye.Z);
 			result.m33 = 1f;
 
 			return result;

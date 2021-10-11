@@ -19,16 +19,16 @@ namespace Dissonance.Engine.Graphics
 
 		public RectInt ViewPixel {
 			get => new(
-				(int)(View.x * Screen.Width),
-				(int)(View.y * Screen.Height),
-				(int)(View.width * Screen.Width),
-				(int)(View.height * Screen.Height)
+				(int)(View.X * Screen.Width),
+				(int)(View.Y * Screen.Height),
+				(int)(View.Width * Screen.Width),
+				(int)(View.Height * Screen.Height)
 			);
 			set => View = new RectFloat(
-				value.x / Screen.Width,
-				value.y / Screen.Height,
-				value.width / Screen.Width,
-				value.height / Screen.Height
+				value.X / Screen.Width,
+				value.Y / Screen.Height,
+				value.Width / Screen.Width,
+				value.Height / Screen.Height
 			);
 		}
 
@@ -104,7 +104,7 @@ namespace Dissonance.Engine.Graphics
 		public bool PointInFrustum(Vector3 point)
 		{
 			for (int i = 0; i < 6; i++) {
-				if (Frustum[i, 0] * point.x + Frustum[i, 1] * point.y + Frustum[i, 2] * point.z + Frustum[i, 3] <= 0) {
+				if (Frustum[i, 0] * point.X + Frustum[i, 1] * point.Y + Frustum[i, 2] * point.Z + Frustum[i, 3] <= 0) {
 					return false;
 				}
 			}
@@ -114,12 +114,12 @@ namespace Dissonance.Engine.Graphics
 
 		public bool BoxInFrustum(Bounds box)
 		{
-			float x1 = box.min.x;
-			float x2 = box.max.x;
-			float y1 = box.min.y;
-			float y2 = box.max.y;
-			float z1 = box.min.z;
-			float z2 = box.max.z;
+			float x1 = box.Min.X;
+			float x2 = box.Max.X;
+			float y1 = box.Min.Y;
+			float y2 = box.Max.Y;
+			float z1 = box.Min.Z;
+			float z2 = box.Max.Z;
 
 			for (int i = 0; i < 6; i++) {
 				float f0 = Frustum[i, 0];

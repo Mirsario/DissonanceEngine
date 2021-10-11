@@ -26,20 +26,20 @@ namespace Dissonance.Engine
 			var b = end;
 
 			// Ceiling
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(b.x, a.y, a.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(a.x, a.y, b.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, a.z), new Vector3(b.x, a.y, b.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, b.z), new Vector3(b.x, a.y, b.z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, a.Y, a.Z), new Vector3(b.X, a.Y, a.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, a.Y, a.Z), new Vector3(a.X, a.Y, b.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.X, a.Y, a.Z), new Vector3(b.X, a.Y, b.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, a.Y, b.Z), new Vector3(b.X, a.Y, b.Z), color);
 			// Walls
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, a.z), new Vector3(a.x, b.y, a.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, a.z), new Vector3(b.x, b.y, a.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, a.y, b.z), new Vector3(a.x, b.y, b.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, a.y, b.z), new Vector3(b.x, b.y, b.z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, a.Y, a.Z), new Vector3(a.X, b.Y, a.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.X, a.Y, a.Z), new Vector3(b.X, b.Y, a.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, a.Y, b.Z), new Vector3(a.X, b.Y, b.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.X, a.Y, b.Z), new Vector3(b.X, b.Y, b.Z), color);
 			// Floor
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, b.y, a.z), new Vector3(b.x, b.y, a.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, b.y, a.z), new Vector3(a.x, b.y, b.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.x, b.y, a.z), new Vector3(b.x, b.y, b.z), color);
-			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.x, b.y, b.z), new Vector3(b.x, b.y, b.z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, b.Y, a.Z), new Vector3(b.X, b.Y, a.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, b.Y, a.Z), new Vector3(a.X, b.Y, b.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(b.X, b.Y, a.Z), new Vector3(b.X, b.Y, b.Z), color);
+			AddLine(bufferMesh, ref vertexIndex, new Vector3(a.X, b.Y, b.Z), new Vector3(b.X, b.Y, b.Z), color);
 		}
 
 		internal static void ResetRendering()

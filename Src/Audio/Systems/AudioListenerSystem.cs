@@ -39,12 +39,12 @@ namespace Dissonance.Engine.Audio
 
 				position = transform.Position;
 
-				OrientationArray[0] = lookAt.x;
-				OrientationArray[1] = lookAt.y;
-				OrientationArray[2] = lookAt.z;
-				OrientationArray[3] = up.x;
-				OrientationArray[4] = up.y;
-				OrientationArray[5] = up.z;
+				OrientationArray[0] = lookAt.X;
+				OrientationArray[1] = lookAt.Y;
+				OrientationArray[2] = lookAt.Z;
+				OrientationArray[3] = up.X;
+				OrientationArray[4] = up.Y;
+				OrientationArray[5] = up.Z;
 			} else {
 				position = Vector3.Zero;
 
@@ -53,7 +53,7 @@ namespace Dissonance.Engine.Audio
 				}
 			}
 
-			AL.Listener3(ListenerFloat3.Position, position.x, position.y, position.z);
+			AL.Listener3(ListenerFloat3.Position, position.X, position.Y, position.Z);
 			AL.Listener(ListenerFloatArray.Orientation, OrientationArray);
 
 			AudioEngine.CheckALErrors();

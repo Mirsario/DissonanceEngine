@@ -35,15 +35,15 @@ namespace Dissonance.Engine
 		// Vector2
 
 		public static Vector2 operator *(Vector2 vec, Matrix4x4 matrix)
-			=> new(vec.x * matrix.m00 + vec.y * matrix.m10 + matrix.m30, vec.x * matrix.m01 + vec.y * matrix.m11 + matrix.m31);
+			=> new(vec.X * matrix.m00 + vec.Y * matrix.m10 + matrix.m30, vec.X * matrix.m01 + vec.Y * matrix.m11 + matrix.m31);
 		
 		public static Vector3 operator *(Matrix4x4 m, Vector3 v)
 		{
 			Vector3 result;
 
-			result.x = m.m00 * v.x + m.m10 * v.y + m.m20 * v.z + m.m30;
-			result.y = m.m01 * v.x + m.m11 * v.y + m.m21 * v.z + m.m31;
-			result.z = m.m02 * v.x + m.m12 * v.y + m.m22 * v.z + m.m32;
+			result.X = m.m00 * v.X + m.m10 * v.Y + m.m20 * v.Z + m.m30;
+			result.Y = m.m01 * v.X + m.m11 * v.Y + m.m21 * v.Z + m.m31;
+			result.Z = m.m02 * v.X + m.m12 * v.Y + m.m22 * v.Z + m.m32;
 
 			return result;
 		}
@@ -52,10 +52,10 @@ namespace Dissonance.Engine
 		{
 			Vector4 result;
 
-			result.x = lhs.m00 * v.x + lhs.m01 * v.y + lhs.m02 * v.z + lhs.m03 * v.w;
-			result.y = lhs.m10 * v.x + lhs.m11 * v.y + lhs.m12 * v.z + lhs.m13 * v.w;
-			result.z = lhs.m20 * v.x + lhs.m21 * v.y + lhs.m22 * v.z + lhs.m23 * v.w;
-			result.w = lhs.m30 * v.x + lhs.m31 * v.y + lhs.m32 * v.z + lhs.m33 * v.w;
+			result.X = lhs.m00 * v.X + lhs.m01 * v.Y + lhs.m02 * v.Z + lhs.m03 * v.W;
+			result.Y = lhs.m10 * v.X + lhs.m11 * v.Y + lhs.m12 * v.Z + lhs.m13 * v.W;
+			result.Z = lhs.m20 * v.X + lhs.m21 * v.Y + lhs.m22 * v.Z + lhs.m23 * v.W;
+			result.W = lhs.m30 * v.X + lhs.m31 * v.Y + lhs.m32 * v.Z + lhs.m33 * v.W;
 
 			return result;
 		}

@@ -224,7 +224,7 @@ namespace Dissonance.Engine.Graphics
 
 					Framebuffer.BindWithDrawBuffers(framebuffer);
 
-					GL.ClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+					GL.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, clearColor.W);
 					// GL.StencilMask(~0);
 					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 				}

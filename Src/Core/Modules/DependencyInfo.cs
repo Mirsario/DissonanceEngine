@@ -4,13 +4,13 @@ namespace Dissonance.Engine
 {
 	public struct DependencyInfo
 	{
-		public Type type;
-		public bool optional;
+		public Type Type;
+		public bool Optional;
 
 		public DependencyInfo(Type type, bool optional = false)
 		{
-			this.type = type;
-			this.optional = optional;
+			Type = type;
+			Optional = optional;
 		}
 	}
 }

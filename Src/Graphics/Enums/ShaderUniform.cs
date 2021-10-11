@@ -4,15 +4,15 @@ namespace Dissonance.Engine.Graphics
 {
 	public class ShaderUniform
 	{
-		public string name;
-		public ActiveUniformType type;
-		public int location;
+		public string Name { get; set; }
+		public ActiveUniformType Type { get; set; }
+		public int Location { get; set; }
 
 		public ShaderUniform(string name, ActiveUniformType type, int location)
 		{
-			this.name = name;
-			this.type = type;
-			this.location = location;
+			Name = name;
+			Type = type;
+			Location = location;
 		}
 	}
 }

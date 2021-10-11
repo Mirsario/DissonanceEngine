@@ -2,70 +2,70 @@ namespace Dissonance.Engine
 {
 	public struct RectInt
 	{
-		public int x;
-		public int y;
-		public int width;
-		public int height;
+		public int X;
+		public int Y;
+		public int Width;
+		public int Height;
 
 		public int Right {
-			get => x + width;
-			set => x = value - width;
+			get => X + Width;
+			set => X = value - Width;
 		}
 		public int Bottom {
-			get => y + height;
-			set => y = value - height;
+			get => Y + Height;
+			set => Y = value - Height;
 		}
 		public Vector2Int Position {
-			get => new(x, y);
+			get => new(X, Y);
 			set {
-				x = value.x;
-				y = value.y;
+				X = value.X;
+				Y = value.Y;
 			}
 		}
 		public Vector2Int Size {
-			get => new(width, height);
+			get => new(Width, Height);
 			set {
-				width = value.x;
-				height = value.y;
+				Width = value.X;
+				Height = value.Y;
 			}
 		}
 
-		public RectInt(Vector2Int position, Vector2Int size) : this(position.x, position.y, size.x, size.y) { }
+		public RectInt(Vector2Int position, Vector2Int size) : this(position.X, position.Y, size.X, size.Y) { }
 
-		public RectInt(Vector2Int position, int width, int height) : this(position.x, position.y, width, height) { }
+		public RectInt(Vector2Int position, int width, int height) : this(position.X, position.Y, width, height) { }
 
-		public RectInt(int x, int y, Vector2Int size) : this(x, y, size.x, size.y) { }
+		public RectInt(int x, int y, Vector2Int size) : this(x, y, size.X, size.Y) { }
 
 		public RectInt(int x, int y, int width, int height)
 		{
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
 		}
 
 		public bool Contains(Vector2 point, bool inclusive = false)
 		{
 			if (inclusive) {
-				return point.x > x && point.x < x + width && point.y > y && point.y < y + height;
+				return point.X > X && point.X < X + Width && point.Y > Y && point.Y < Y + Height;
 			}
 
-			return point.x >= x && point.x <= x + width && point.y >= y && point.y <= y + height;
+			return point.X >= X && point.X <= X + Width && point.Y >= Y && point.Y <= Y + Height;
 		}
 
 		public static RectInt FromPoints(int x1, int y1, int x2, int y2)
 		{
 			RectInt rect;
 
-			rect.x = x1;
-			rect.y = y1;
-			rect.width = x2 - x1;
-			rect.height = y2 - y1;
+			rect.X = x1;
+			rect.Y = y1;
+			rect.Width = x2 - x1;
+			rect.Height = y2 - y1;
 
 			return rect;
 		}
 
 		public static implicit operator RectInt(RectFloat rectF)
-			=> new((int)rectF.x, (int)rectF.y, (int)rectF.width, (int)rectF.height);
+			=> new((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
 	}
 }

@@ -6,11 +6,11 @@ namespace Dissonance.Engine.Graphics
 	{
 		public void Recalculate(Vector2[] uv = null)
 		{
-			var indices = mesh.Indices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(mesh.Indices)} array to be ready.");
-			var vertices = mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
-			var normals = mesh.Normals ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(NormalBuffer)} to be ready. Call {nameof(NormalBuffer)}.{nameof(NormalBuffer.Recalculate)}() first?");
+			var indices = Mesh.Indices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(Mesh.Indices)} array to be ready.");
+			var vertices = Mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
+			var normals = Mesh.Normals ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(NormalBuffer)} to be ready. Call {nameof(NormalBuffer)}.{nameof(NormalBuffer.Recalculate)}() first?");
 
-			uv ??= mesh.Uv0 ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(Uv0Buffer)} to be ready, or a ready UV map to be passed through '{nameof(uv)}' parameter.");
+			uv ??= Mesh.Uv0 ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(Uv0Buffer)} to be ready, or a ready UV map to be passed through '{nameof(uv)}' parameter.");
 
 			int vertexCount = vertices.Length;
 
@@ -32,17 +32,17 @@ namespace Dissonance.Engine.Graphics
 				var w2 = uv[i2];
 				var w3 = uv[i3];
 
-				float x1 = v2.x - v1.x;
-				float x2 = v3.x - v1.x;
-				float y1 = v2.y - v1.y;
-				float y2 = v3.y - v1.y;
-				float z1 = v2.z - v1.z;
-				float z2 = v3.z - v1.z;
+				float x1 = v2.X - v1.X;
+				float x2 = v3.X - v1.X;
+				float y1 = v2.Y - v1.Y;
+				float y2 = v3.Y - v1.Y;
+				float z1 = v2.Z - v1.Z;
+				float z2 = v3.Z - v1.Z;
 
-				float s1 = w2.x - w1.x;
-				float s2 = w3.x - w1.x;
-				float t1 = w2.y - w1.y;
-				float t2 = w3.y - w1.y;
+				float s1 = w2.X - w1.X;
+				float s2 = w3.X - w1.X;
+				float t1 = w2.Y - w1.Y;
+				float t2 = w3.Y - w1.Y;
 
 				float r = 1f / (s1 * t2 - s2 * t1);
 				var sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);

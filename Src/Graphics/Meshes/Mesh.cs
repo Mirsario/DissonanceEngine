@@ -7,7 +7,7 @@ using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class Mesh : Asset
+	public sealed class Mesh : Asset
 	{
 		public delegate void ArrayCopyDelegate<T>(uint meshIndex, T[] srcArray, uint srcIndex, Vector3[] dstArray, uint dstIndex, uint length);
 
@@ -22,16 +22,14 @@ namespace Dissonance.Engine.Graphics
 
 		private readonly CustomVertexBuffer[] VertexBuffers;
 
-		public string name;
-		public Bounds bounds;
-		public BufferUsageHint bufferUsage;
+		private uint vertexArrayId;
+		private PrimitiveType currentPrimitiveType = PrimitiveType.Triangles;
+		private PrimitiveType primitiveTypeToSet = PrimitiveType.Triangles;
 
-		internal uint vertexArrayId;
-
-		protected PrimitiveType currentPrimitiveType = PrimitiveType.Triangles;
-		protected PrimitiveType primitiveTypeToSet = PrimitiveType.Triangles;
-
-		public bool IsReady { get; protected set; }
+		public string Name { get; set; }
+		public Bounds Bounds { get; set; }
+		public BufferUsageHint BufferUsage { get; set; }
+		public bool IsReady { get; private set; }
 
 		// Shortcut refs to buffers' arrays
 		public ref uint[] Indices => ref IndexBuffer.data;
@@ -49,10 +47,10 @@ namespace Dissonance.Engine.Graphics
 
 		public Mesh()
 		{
-			bufferUsage = BufferUsageHint.StaticDraw;
+			BufferUsage = BufferUsageHint.StaticDraw;
 
 			IndexBuffer = new IndexBuffer {
-				mesh = this
+				Mesh = this
 			};
 
 			VertexBuffers = new CustomVertexBuffer[CustomVertexBuffer.Count];
@@ -60,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 			for (int i = 0; i < VertexBuffers.Length; i++) {
 				var instance = CustomVertexBuffer.CreateInstance(i);
 
-				instance.mesh = this;
+				instance.Mesh = this;
 
 				VertexBuffers[i] = instance;
 			}
@@ -73,7 +71,7 @@ namespace Dissonance.Engine.Graphics
 			BoneWeightsBuffer = GetBuffer<BoneWeightsBuffer>();
 		}
 
-		public virtual void Render()
+		public void Render()
 		{
 			GL.BindVertexArray(vertexArrayId);
 
@@ -142,7 +140,7 @@ namespace Dissonance.Engine.Graphics
 
 			// Calculate bounds.
 
-			bounds = VertexBuffer.CalculateBounds();
+			Bounds = VertexBuffer.CalculateBounds();
 
 			Rendering.CheckGLErrors();
 

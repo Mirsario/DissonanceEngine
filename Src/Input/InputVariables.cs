@@ -7,24 +7,20 @@ namespace Dissonance.Engine.Input
 {
 	internal class InputVariables
 	{
-		// Mouse
-		public int mouseWheel;
-		public Vector2 mousePosition;
-		public bool[] mouseButtons = new bool[InputEngine.MaxMouseButtons];
+		public HashSet<string> PressedButtons { get; } = new(StringComparer.InvariantCultureIgnoreCase);
+		public Dictionary<Keys, byte> PressedKeys { get; } = new(); // Value is amount of ticks left until released.
 
-		// Keyboard
-		public Dictionary<Keys, byte> pressedKeys = new(); // Value is amount of ticks left until released.
-		public string inputString = string.Empty;
+		public int MouseWheel { get; set; }
+		public Vector2 MousePosition { get; set; }
+		public string InputString { get; set; } = string.Empty;
+		public bool[] MouseButtons { get; private set; } = new bool[InputEngine.MaxMouseButtons];
 
 		// Gamepads
 		// public GamePadState[] gamepadStates = new GamePadState[Input.MaxGamepads];
 
-		// Universal
-		public HashSet<string> pressedButtons = new(StringComparer.InvariantCultureIgnoreCase);
-
 		public void Update()
 		{
-			var pairs = pressedKeys.ToArray();
+			var pairs = PressedKeys.ToArray();
 
 			foreach (var pair in pairs) {
 				byte release = pair.Value;
@@ -33,9 +29,9 @@ namespace Dissonance.Engine.Input
 					release--;
 
 					if (release == 0) {
-						pressedKeys.Remove(pair.Key);
+						PressedKeys.Remove(pair.Key);
 					} else {
-						pressedKeys[pair.Key] = release;
+						PressedKeys[pair.Key] = release;
 					}
 				}
 			}
@@ -47,35 +43,35 @@ namespace Dissonance.Engine.Input
 				other.Reset(false);
 			}
 
-			other.mouseWheel = mouseWheel;
-			other.mousePosition = mousePosition;
-			other.inputString = inputString;
+			other.MouseWheel = MouseWheel;
+			other.MousePosition = MousePosition;
+			other.InputString = InputString;
 
-			foreach (var pair in pressedKeys) {
-				other.pressedKeys.Add(pair.Key, pair.Value);
+			foreach (var pair in PressedKeys) {
+				other.PressedKeys.Add(pair.Key, pair.Value);
 			}
 
-			foreach (string str in pressedButtons) {
-				other.pressedButtons.Add(str);
+			foreach (string str in PressedButtons) {
+				other.PressedButtons.Add(str);
 			}
 
 			for (int i = 0; i < InputEngine.MaxMouseButtons; i++) {
-				other.mouseButtons[i] = mouseButtons[i];
+				other.MouseButtons[i] = MouseButtons[i];
 			}
 		}
 
 		public void Reset(bool resetArrays = true)
 		{
-			mouseWheel = 0;
-			mousePosition = Vector2.Zero;
-			inputString = string.Empty;
+			MouseWheel = 0;
+			MousePosition = Vector2.Zero;
+			InputString = string.Empty;
 
-			pressedKeys.Clear();
-			pressedButtons.Clear();
+			PressedKeys.Clear();
+			PressedButtons.Clear();
 
 			if (resetArrays) {
 				for (int i = 0; i < InputEngine.MaxMouseButtons; i++) {
-					mouseButtons[i] = false;
+					MouseButtons[i] = false;
 				}
 			}
 		}

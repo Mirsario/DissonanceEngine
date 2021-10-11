@@ -50,13 +50,13 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 		public Mesh Mesh {
-			get => lodMeshes[0].mesh;
-			set => lodMeshes[0].mesh = value;
+			get => lodMeshes[0].Mesh;
+			set => lodMeshes[0].Mesh = value;
 		}
 
 		public Material Material {
-			get => lodMeshes[0].material;
-			set => lodMeshes[0].material = value;
+			get => lodMeshes[0].Material;
+			set => lodMeshes[0].Material = value;
 		}
 
 		public MeshRenderer(Mesh mesh, Material material)
@@ -75,21 +75,21 @@ namespace Dissonance.Engine.Graphics
 			matrix.m03 = matrix.m13 = matrix.m23 = matrix.m33 = 0f; // Remove projection
 
 			if (matrix == aabbLastMatrix) {
-				return new Bounds(aabb.min + translation, aabb.max + translation);
+				return new Bounds(aabb.Min + translation, aabb.Max + translation);
 			}
 
-			var bounds = Mesh.bounds;
-			var min = bounds.min;
-			var max = bounds.max;
+			var bounds = Mesh.Bounds;
+			var min = bounds.Min;
+			var max = bounds.Max;
 
 			Vector3[] corners = new Vector3[8] {
 				min,
-				new Vector3(min.x, min.y, max.z),
-				new Vector3(min.x, max.y, min.z),
-				new Vector3(max.x, min.y, min.z),
-				new Vector3(min.x, max.y, max.z),
-				new Vector3(max.x, min.y, max.z),
-				new Vector3(max.x, max.y, min.z),
+				new Vector3(min.X, min.Y, max.Z),
+				new Vector3(min.X, max.Y, min.Z),
+				new Vector3(max.X, min.Y, min.Z),
+				new Vector3(min.X, max.Y, max.Z),
+				new Vector3(max.X, min.Y, max.Z),
+				new Vector3(max.X, max.Y, min.Z),
 				max,
 			};
 
@@ -106,7 +106,7 @@ namespace Dissonance.Engine.Graphics
 			aabb = new Bounds(newMin, newMax);
 			aabbLastMatrix = matrix;
 
-			return new Bounds(aabb.min + translation, aabb.max + translation);
+			return new Bounds(aabb.Min + translation, aabb.Max + translation);
 		}
 	}
 }

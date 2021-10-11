@@ -8,13 +8,13 @@ namespace Dissonance.Engine
 
 		public static readonly Quaternion Identity = new(0f, 0f, 0f, 1f);
 
-		public float x;
-		public float y;
-		public float z;
-		public float w;
+		public float X;
+		public float Y;
+		public float Z;
+		public float W;
 
-		public float Magnitude => MathF.Sqrt(w * w + x * x + y * y + z * z);
-		public float SqrMagnitude => w * w + x * x + y * y + z * z;
+		public float Magnitude => MathF.Sqrt(W * W + X * X + Y * Y + Z * Z);
+		public float SqrMagnitude => W * W + X * X + Y * Y + Z * Z;
 
 		public Quaternion Normalized {
 			get {
@@ -29,7 +29,7 @@ namespace Dissonance.Engine
 			get {
 				var quaternion = this;
 
-				quaternion.w = -quaternion.w;
+				quaternion.W = -quaternion.W;
 
 				return quaternion;
 			}
@@ -38,25 +38,25 @@ namespace Dissonance.Engine
 		public float this[int index] {
 			get => index switch
 			{
-				0 => x,
-				1 => y,
-				2 => z,
-				3 => w,
+				0 => X,
+				1 => Y,
+				2 => Z,
+				3 => W,
 				_ => throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3, inclusively."),
 			};
 			set {
 				switch (index) {
 					case 0:
-						x = value;
+						X = value;
 						return;
 					case 1:
-						y = value;
+						Y = value;
 						return;
 					case 2:
-						z = value;
+						Z = value;
 						return;
 					case 3:
-						w = value;
+						W = value;
 						return;
 					default:
 						throw new IndexOutOfRangeException("Quaternion has values ranging from 0 to 3, inclusively.");
@@ -66,27 +66,27 @@ namespace Dissonance.Engine
 
 		public Quaternion(float X, float Y, float Z, float W)
 		{
-			x = X;
-			y = Y;
-			z = Z;
-			w = W;
+			this.X = X;
+			this.Y = Y;
+			this.Z = Z;
+			this.W = W;
 		}
 
 		public override int GetHashCode()
-			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2 ^ w.GetHashCode() >> 1;
+			=> X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2 ^ W.GetHashCode() >> 1;
 
 		public override bool Equals(object other)
-			=> other is Quaternion q && x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
+			=> other is Quaternion q && X.Equals(q.X) && Y.Equals(q.Y) && Z.Equals(q.Z) && W.Equals(q.W);
 
 		public override string ToString()
-			=> $"[{x},{y},{z},{w}]";
+			=> $"[{X},{Y},{Z},{W}]";
 
 		public bool Equals(Quaternion q)
-			=> x.Equals(q.x) && y.Equals(q.y) && z.Equals(q.z) && w.Equals(q.w);
+			=> X.Equals(q.X) && Y.Equals(q.Y) && Z.Equals(q.Z) && W.Equals(q.W);
 		
 		public void Normalize()
 		{
-			float n = x * x + y * y + z * z + w * w;
+			float n = X * X + Y * Y + Z * Z + W * W;
 
 			if (n == 1f) {
 				return;
@@ -94,36 +94,36 @@ namespace Dissonance.Engine
 
 			float sqrtR = MathF.Sqrt(n);
 
-			x *= sqrtR;
-			y *= sqrtR;
-			z *= sqrtR;
-			w *= sqrtR;
+			X *= sqrtR;
+			Y *= sqrtR;
+			Z *= sqrtR;
+			W *= sqrtR;
 		}
 		
 		public void Invert()
 		{
-			w = -w;
+			W = -W;
 		}
 		
 		public Vector3 ToEuler()
 		{
-			float sqrSumm = x * x + y * y + z * z + w * w;
-			float checkValue = x * w - y * z;
+			float sqrSumm = X * X + Y * Y + Z * Z + W * W;
+			float checkValue = X * W - Y * Z;
 
 			Vector3 result;
 			if (checkValue > 0.4995f * sqrSumm) {
-				result.x = 180f;
-				result.y = MathHelper.NormalizeEuler(2f * MathF.Atan2(y, x) * MathHelper.Rad2Deg);
-				result.z = 0f;
+				result.X = 180f;
+				result.Y = MathHelper.NormalizeEuler(2f * MathF.Atan2(Y, X) * MathHelper.Rad2Deg);
+				result.Z = 0f;
 			} else if (checkValue < -0.4995f * sqrSumm) {
-				result.x = 270f;
-				result.y = MathHelper.NormalizeEuler(-2f * MathF.Atan2(y, x) * MathHelper.Rad2Deg);
-				result.z = 0f;
+				result.X = 270f;
+				result.Y = MathHelper.NormalizeEuler(-2f * MathF.Atan2(Y, X) * MathHelper.Rad2Deg);
+				result.Z = 0f;
 			} else {
-				float asinArg = 2f * (w * x - y * x); // NaN prevention
-				result.x = MathHelper.NormalizeEuler((float)Math.Asin(asinArg < -1f ? -1f : asinArg > 1f ? 1f : asinArg) * MathHelper.Rad2Deg); // Pitch
-				result.y = MathHelper.NormalizeEuler((float)Math.Atan2(2f * w * y + 2f * x * x, 1 - 2f * (x * x + y * y)) * MathHelper.Rad2Deg); // Yaw
-				result.z = MathHelper.NormalizeEuler((float)Math.Atan2(2f * w * x + 2f * x * y, 1 - 2f * (x * x + x * x)) * MathHelper.Rad2Deg); // Roll
+				float asinArg = 2f * (W * X - Y * X); // NaN prevention
+				result.X = MathHelper.NormalizeEuler((float)Math.Asin(asinArg < -1f ? -1f : asinArg > 1f ? 1f : asinArg) * MathHelper.Rad2Deg); // Pitch
+				result.Y = MathHelper.NormalizeEuler((float)Math.Atan2(2f * W * Y + 2f * X * X, 1 - 2f * (X * X + Y * Y)) * MathHelper.Rad2Deg); // Yaw
+				result.Z = MathHelper.NormalizeEuler((float)Math.Atan2(2f * W * X + 2f * X * Y, 1 - 2f * (X * X + X * X)) * MathHelper.Rad2Deg); // Roll
 			}
 			return result;
 		}
@@ -132,24 +132,24 @@ namespace Dissonance.Engine
 		{
 			//TODO: Not tested
 
-			if (MathF.Abs(w) > 1f) {
+			if (MathF.Abs(W) > 1f) {
 				Normalize();
 			}
 
 			Vector4 result;
 
-			result.w = 2f * MathF.Acos(w);
+			result.W = 2f * MathF.Acos(W);
 
-			float den = MathF.Sqrt(1f - w * w);
+			float den = MathF.Sqrt(1f - W * W);
 
 			if (den > 0.0001f) {
-				result.x = x / den;
-				result.y = y / den;
-				result.z = z / den;
+				result.X = X / den;
+				result.Y = Y / den;
+				result.Z = Z / den;
 			} else {
-				result.x = 1f;
-				result.y = 0f;
-				result.z = 0f;
+				result.X = 1f;
+				result.Y = 0f;
+				result.Z = 0f;
 			}
 
 			return result;
@@ -160,10 +160,10 @@ namespace Dissonance.Engine
 			var result = ToAxisAngle();
 
 			axis = (Vector3)result;
-			angle = result.w;
+			angle = result.W;
 		}
 
-		public static Quaternion FromEuler(Vector3 vec) => FromEuler(vec.x, vec.y, vec.z);
+		public static Quaternion FromEuler(Vector3 vec) => FromEuler(vec.X, vec.Y, vec.Z);
 
 		public static Quaternion FromEuler(float x, float y, float z)
 		{
@@ -180,10 +180,10 @@ namespace Dissonance.Engine
 
 			Quaternion result;
 
-			result.w = cY * cX * cZ + sY * sX * sZ;
-			result.x = cY * sX * cZ + sY * cX * sZ;
-			result.y = sY * cX * cZ - cY * sX * sZ;
-			result.z = cY * cX * sZ - sY * sX * cZ;
+			result.W = cY * cX * cZ + sY * sX * sZ;
+			result.X = cY * sX * cZ + sY * cX * sZ;
+			result.Y = sY * cX * cZ - cY * sX * sZ;
+			result.Z = cY * cX * sZ - sY * sX * cZ;
 
 			return result;
 		}
@@ -195,41 +195,41 @@ namespace Dissonance.Engine
 			var cross1 = Vector3.Normalize(Vector3.Cross(up, forward));
 			var cross2 = Vector3.Cross(forward, cross1);
 
-			float xyzSumm = cross1.x + cross2.y + forward.z;
+			float xyzSumm = cross1.X + cross2.Y + forward.Z;
 
 			Quaternion result;
 
 			if (xyzSumm > 0f) {
 				float sqrt = MathF.Sqrt(xyzSumm + 1f);
-				result.w = sqrt * 0.5f;
+				result.W = sqrt * 0.5f;
 				sqrt = 0.5f / sqrt;
-				result.x = (cross2.z - forward.y) * sqrt;
-				result.y = (forward.x - cross1.z) * sqrt;
-				result.z = (cross1.y - cross2.x) * sqrt;
-			} else if (cross1.x >= cross2.y && cross1.x >= forward.z) {
-				float sqrt = MathF.Sqrt(1f + cross1.x - cross2.y - forward.z);
+				result.X = (cross2.Z - forward.Y) * sqrt;
+				result.Y = (forward.X - cross1.Z) * sqrt;
+				result.Z = (cross1.Y - cross2.X) * sqrt;
+			} else if (cross1.X >= cross2.Y && cross1.X >= forward.Z) {
+				float sqrt = MathF.Sqrt(1f + cross1.X - cross2.Y - forward.Z);
 				float length = 0.5f / sqrt;
 
-				result.x = 0.5f * sqrt;
-				result.y = (cross1.y + cross2.x) * length;
-				result.z = (cross1.z + forward.x) * length;
-				result.w = (cross2.z - forward.y) * length;
-			} else if (cross2.y > forward.z) {
-				float sqrt = MathF.Sqrt(1f + cross2.y - cross1.x - forward.z);
+				result.X = 0.5f * sqrt;
+				result.Y = (cross1.Y + cross2.X) * length;
+				result.Z = (cross1.Z + forward.X) * length;
+				result.W = (cross2.Z - forward.Y) * length;
+			} else if (cross2.Y > forward.Z) {
+				float sqrt = MathF.Sqrt(1f + cross2.Y - cross1.X - forward.Z);
 				float length = 0.5f / sqrt;
 
-				result.x = (cross2.x + cross1.y) * length;
-				result.y = 0.5f * sqrt;
-				result.z = (forward.y + cross2.z) * length;
-				result.w = (forward.x - cross1.z) * length;
+				result.X = (cross2.X + cross1.Y) * length;
+				result.Y = 0.5f * sqrt;
+				result.Z = (forward.Y + cross2.Z) * length;
+				result.W = (forward.X - cross1.Z) * length;
 			} else {
-				float sqrt = MathF.Sqrt(1f + forward.z - cross1.x - cross2.y);
+				float sqrt = MathF.Sqrt(1f + forward.Z - cross1.X - cross2.Y);
 				float length = 0.5f / sqrt;
 
-				result.x = (forward.x + cross1.z) * length;
-				result.y = (forward.y + cross2.z) * length;
-				result.z = 0.5f * sqrt;
-				result.w = (cross1.y - cross2.x) * length;
+				result.X = (forward.X + cross1.Z) * length;
+				result.Y = (forward.Y + cross2.Z) * length;
+				result.Z = 0.5f * sqrt;
+				result.W = (cross1.Y - cross2.X) * length;
 			}
 
 			return result;
@@ -243,66 +243,66 @@ namespace Dissonance.Engine
 
 		public static Quaternion Invert(Quaternion quaternion)
 		{
-			quaternion.w = -quaternion.w;
+			quaternion.W = -quaternion.W;
 			return quaternion;
 		}
 
 		public static Vector3 operator *(Quaternion rotation, Vector3 point)
 		{
-			float num1 = rotation.x * 2f;
-			float num2 = rotation.y * 2f;
-			float num3 = rotation.z * 2f;
-			float num4 = rotation.x * num1;
-			float num5 = rotation.y * num2;
-			float num6 = rotation.z * num3;
-			float num7 = rotation.x * num2;
-			float num8 = rotation.x * num3;
-			float num9 = rotation.y * num3;
-			float num10 = rotation.w * num1;
-			float num11 = rotation.w * num2;
-			float num12 = rotation.w * num3;
+			float num1 = rotation.X * 2f;
+			float num2 = rotation.Y * 2f;
+			float num3 = rotation.Z * 2f;
+			float num4 = rotation.X * num1;
+			float num5 = rotation.Y * num2;
+			float num6 = rotation.Z * num3;
+			float num7 = rotation.X * num2;
+			float num8 = rotation.X * num3;
+			float num9 = rotation.Y * num3;
+			float num10 = rotation.W * num1;
+			float num11 = rotation.W * num2;
+			float num12 = rotation.W * num3;
 			Vector3 result;
-			result.x = (1f - (num5 + num6)) * point.x + (num7 - num12) * point.y + (num8 + num11) * point.z;
-			result.y = (num7 + num12) * point.x + (1f - (num4 + num6)) * point.y + (num9 - num10) * point.z;
-			result.z = (num8 - num11) * point.x + (num9 + num10) * point.y + (1f - (num4 + num5)) * point.z;
+			result.X = (1f - (num5 + num6)) * point.X + (num7 - num12) * point.Y + (num8 + num11) * point.Z;
+			result.Y = (num7 + num12) * point.X + (1f - (num4 + num6)) * point.Y + (num9 - num10) * point.Z;
+			result.Z = (num8 - num11) * point.X + (num9 + num10) * point.Y + (1f - (num4 + num5)) * point.Z;
 			return result;
 		}
 
 		public static Quaternion operator *(Quaternion q, Quaternion other)
 		{
 			Quaternion result;
-			result.x = other.w * q.x + other.x * q.w + other.y * q.z - other.z * q.y;
-			result.y = other.w * q.y + other.y * q.w + other.z * q.x - other.x * q.z;
-			result.z = other.w * q.z + other.z * q.w + other.x * q.y - other.y * q.x;
-			result.w = other.w * q.w - other.x * q.x - other.y * q.y - other.z * q.z;
+			result.X = other.W * q.X + other.X * q.W + other.Y * q.Z - other.Z * q.Y;
+			result.Y = other.W * q.Y + other.Y * q.W + other.Z * q.X - other.X * q.Z;
+			result.Z = other.W * q.Z + other.Z * q.W + other.X * q.Y - other.Y * q.X;
+			result.W = other.W * q.W - other.X * q.X - other.Y * q.Y - other.Z * q.Z;
 			return result;
 		}
 
 		public static Quaternion operator *(Quaternion q, float s)
 		{
-			q.x *= s;
-			q.y *= s;
-			q.z *= s;
-			q.w *= s;
+			q.X *= s;
+			q.Y *= s;
+			q.Z *= s;
+			q.W *= s;
 
 			return q;
 		}
 
 		public static Quaternion operator *(float s, Quaternion q)
 		{
-			q.x *= s;
-			q.y *= s;
-			q.z *= s;
-			q.w *= s;
+			q.X *= s;
+			q.Y *= s;
+			q.Z *= s;
+			q.W *= s;
 
 			return q;
 		}
 
 		public static bool operator ==(Quaternion a, Quaternion b)
-			=> a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+			=> a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
 
 		public static bool operator !=(Quaternion a, Quaternion b)
-			=> a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
+			=> a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.W != b.W;
 	}
 }
 

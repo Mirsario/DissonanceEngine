@@ -17,11 +17,11 @@ namespace Dissonance.Engine.Input
 		private static Windowing windowing;
 
 		// Mouse
-		public static Vector2 MouseDelta => PrevInput.mousePosition - CurrentInput.mousePosition;
-		public static Vector2 MousePosition => CurrentInput.mousePosition;
-		public static int MouseWheel => CurrentInput.mouseWheel;
+		public static Vector2 MouseDelta => PrevInput.MousePosition - CurrentInput.MousePosition;
+		public static Vector2 MousePosition => CurrentInput.MousePosition;
+		public static int MouseWheel => CurrentInput.MouseWheel;
 		// Keyboard
-		public static string InputString => CurrentInput.inputString;
+		public static string InputString => CurrentInput.InputString;
 
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
@@ -78,8 +78,8 @@ namespace Dissonance.Engine.Input
 				return;
 			}
 
-			CurrentInput.inputString = string.Empty;
-			CurrentInput.mouseWheel = 0;
+			CurrentInput.InputString = string.Empty;
+			CurrentInput.MouseWheel = 0;
 
 			CurrentInput.CopyTo(PrevInput);
 		}

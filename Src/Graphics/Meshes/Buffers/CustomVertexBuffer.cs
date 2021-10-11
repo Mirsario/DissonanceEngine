@@ -26,7 +26,7 @@ namespace Dissonance.Engine.Graphics
 
 		public readonly int TypeId;
 
-		internal CustomVertexBuffer()
+		internal protected CustomVertexBuffer()
 		{
 			TypeId = GetId(GetType());
 		}
@@ -90,7 +90,7 @@ namespace Dissonance.Engine.Graphics
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(Target, (int)(DataLength * tSize), data, mesh.bufferUsage);
+			GL.BufferData(Target, (int)(DataLength * tSize), data, Mesh.BufferUsage);
 
 			foreach (uint attributeId in attributes) {
 				GL.EnableVertexAttribArray(attributeId);

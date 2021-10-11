@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Graphics
 		public readonly TextureFormat TextureFormat;
 
 		public RenderTexture(string name, Func<Vector2Int> targetSize, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat textureFormat = TextureFormat.RGBA8)
-			: this(name, targetSize().x, targetSize().y, filterMode, wrapMode, useMipmaps, textureFormat)
+			: this(name, targetSize().X, targetSize().Y, filterMode, wrapMode, useMipmaps, textureFormat)
 		{
 			TargetSize = targetSize;
 		}
@@ -49,19 +49,19 @@ namespace Dissonance.Engine.Graphics
 
 			var vec = TargetSize();
 
-			if (vec.x <= 0) {
+			if (vec.X <= 0) {
 				throw new InvalidOperationException("Texture's width can't equal or be less than zero.");
 			}
 
-			if (vec.y <= 0) {
+			if (vec.Y <= 0) {
 				throw new InvalidOperationException("Texture's height can't equal or be less than zero.");
 			}
 
-			if (vec.x == Width && vec.y == Height) {
+			if (vec.X == Width && vec.Y == Height) {
 				return false;
 			}
 
-			Resize(vec.x, vec.y);
+			Resize(vec.X, vec.Y);
 
 			return true;
 		}
