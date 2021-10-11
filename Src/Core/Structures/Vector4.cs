@@ -13,16 +13,16 @@ namespace Dissonance.Engine
 		public static readonly Vector4 UnitZ = new(0f, 0f, 1f, 0f);
 		public static readonly Vector4 UnitW = new(0f, 0f, 0f, 1f);
 
-		public float x;
-		public float y;
-		public float z;
-		public float w;
+		public float X;
+		public float Y;
+		public float Z;
+		public float W;
 
-		public float Magnitude => MathF.Sqrt(x * x + y * y + z * z + w * w);
-		public float SqrMagnitude => x * x + y * y + z * z + w * w;
-		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
-		public Vector2 XY => new(x, y);
-		public Vector3 XYZ => new(x, y, z);
+		public float Magnitude => MathF.Sqrt(X * X + Y * Y + Z * Z + W * W);
+		public float SqrMagnitude => X * X + Y * Y + Z * Z + W * W;
+		public bool HasNaNs => float.IsNaN(X) || float.IsNaN(Y) || float.IsNaN(Z);
+		public Vector2 XY => new(X, Y);
+		public Vector3 XYZ => new(X, Y, Z);
 
 		public Vector4 Normalized {
 			get {
@@ -39,25 +39,25 @@ namespace Dissonance.Engine
 		public float this[int index] {
 			get => index switch
 			{
-				0 => x,
-				1 => y,
-				2 => z,
-				3 => w,
+				0 => X,
+				1 => Y,
+				2 => Z,
+				3 => W,
 				_ => throw new IndexOutOfRangeException("Indices for Vector4 run from 0 to 3,inclusive."),
 			};
 			set {
 				switch (index) {
 					case 0:
-						x = value;
+						X = value;
 						return;
 					case 1:
-						y = value;
+						Y = value;
 						return;
 					case 2:
-						z = value;
+						Z = value;
 						return;
 					case 3:
-						w = value;
+						W = value;
 						return;
 					default:
 						throw new IndexOutOfRangeException("Indices for Vector4 run from 0 to 3,inclusive.");
@@ -67,33 +67,33 @@ namespace Dissonance.Engine
 
 		public Vector4(float x, float y, float z, float w)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.w = w;
+			X = x;
+			Y = y;
+			Z = z;
+			W = w;
 		}
 
 		public Vector4(float xyzw) : this(xyzw, xyzw, xyzw, xyzw) { }
 
-		public Vector4(Vector3 xyz, float w) : this(xyz.x, xyz.y, xyz.z, w) { }
+		public Vector4(Vector3 xyz, float w) : this(xyz.X, xyz.Y, xyz.Z, w) { }
 
-		public Vector4(Vector2 xy, float z, float w) : this(xy.x, xy.y, z, w) { }
+		public Vector4(Vector2 xy, float z, float w) : this(xy.X, xy.Y, z, w) { }
 
-		public Vector4(Vector2 xy, Vector2 zw) : this(xy.x, xy.y, zw.x, zw.y) { }
+		public Vector4(Vector2 xy, Vector2 zw) : this(xy.X, xy.Y, zw.X, zw.Y) { }
 
 		public override string ToString()
-			=> $"[{x}, {y}, {z}, {w}]";
+			=> $"[{X}, {Y}, {Z}, {W}]";
 
 		public override int GetHashCode()
-			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2 ^ w.GetHashCode() >> 1;
+			=> X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2 ^ W.GetHashCode() >> 1;
 
 		public override bool Equals(object other)
-			=> other is Vector4 vector && x == vector.x && y == vector.y && z == vector.z && w == vector.w;
+			=> other is Vector4 vector && X == vector.X && Y == vector.Y && Z == vector.Z && W == vector.W;
 
 		public float[] ToArray()
 		{
 			return new[] {
-				x,y,z,w
+				X,Y,Z,W
 			};
 		}
 
@@ -102,10 +102,10 @@ namespace Dissonance.Engine
 			float mag = Magnitude;
 			if (mag != 0f) {
 				float num = 1f / mag;
-				x *= num;
-				y *= num;
-				z *= num;
-				w *= num;
+				X *= num;
+				Y *= num;
+				Z *= num;
+				W *= num;
 			}
 		}
 
@@ -114,10 +114,10 @@ namespace Dissonance.Engine
 			magnitude = Magnitude;
 			if (magnitude != 0f) {
 				float num = 1f / magnitude;
-				x *= num;
-				y *= num;
-				z *= num;
-				w *= num;
+				X *= num;
+				Y *= num;
+				Z *= num;
+				W *= num;
 			}
 		}
 
@@ -126,32 +126,35 @@ namespace Dissonance.Engine
 			t = MathHelper.Clamp01(t);
 
 			return new Vector4(
-				from.x + (to.x - from.x) * t,
-				from.y + (to.y - from.y) * t,
-				from.z + (to.z - from.z) * t,
-				from.w + (to.w - from.w) * t
+				from.X + (to.X - from.X) * t,
+				from.Y + (to.Y - from.Y) * t,
+				from.Z + (to.Z - from.Z) * t,
+				from.W + (to.W - from.W) * t
 			);
 		}
 
 		public static Vector4 BiLerp(Vector4 valueTopLeft, Vector4 valueTopRight, Vector4 valueBottomLeft, Vector4 valueBottomRight, Vector2 topLeft, Vector2 bottomRight, Vector2 point)
 		{
 			float x2x1, y2y1, x2x, y2y, yy1, xx1;
-			x2x1 = bottomRight.x - topLeft.x;
-			y2y1 = bottomRight.y - topLeft.y;
-			x2x = bottomRight.x - point.x;
-			y2y = bottomRight.y - point.y;
-			yy1 = point.y - topLeft.y;
-			xx1 = point.x - topLeft.x;
+
+			x2x1 = bottomRight.X - topLeft.X;
+			y2y1 = bottomRight.Y - topLeft.Y;
+			x2x = bottomRight.X - point.X;
+			y2y = bottomRight.Y - point.Y;
+			yy1 = point.Y - topLeft.Y;
+			xx1 = point.X - topLeft.X;
+
 			float mul = 1f / (x2x1 * y2y1);
 			float mulTopLeft = x2x * yy1;
 			float mulTopRight = xx1 * yy1;
 			float mulBottomLeft = x2x * y2y;
 			float mulBottomRight = xx1 * y2y;
+
 			return new Vector4(
-				mul * (valueTopLeft.x * mulTopLeft + valueTopRight.x * mulTopRight + valueBottomLeft.x * mulBottomLeft + valueBottomRight.x * mulBottomRight),
-				mul * (valueTopLeft.y * mulTopLeft + valueTopRight.y * mulTopRight + valueBottomLeft.y * mulBottomLeft + valueBottomRight.y * mulBottomRight),
-				mul * (valueTopLeft.z * mulTopLeft + valueTopRight.z * mulTopRight + valueBottomLeft.z * mulBottomLeft + valueBottomRight.z * mulBottomRight),
-				mul * (valueTopLeft.w * mulTopLeft + valueTopRight.w * mulTopRight + valueBottomLeft.w * mulBottomLeft + valueBottomRight.w * mulBottomRight)
+				mul * (valueTopLeft.X * mulTopLeft + valueTopRight.X * mulTopRight + valueBottomLeft.X * mulBottomLeft + valueBottomRight.X * mulBottomRight),
+				mul * (valueTopLeft.Y * mulTopLeft + valueTopRight.Y * mulTopRight + valueBottomLeft.Y * mulBottomLeft + valueBottomRight.Y * mulBottomRight),
+				mul * (valueTopLeft.Z * mulTopLeft + valueTopRight.Z * mulTopRight + valueBottomLeft.Z * mulBottomLeft + valueBottomRight.Z * mulBottomRight),
+				mul * (valueTopLeft.W * mulTopLeft + valueTopRight.W * mulTopRight + valueBottomLeft.W * mulBottomLeft + valueBottomRight.W * mulBottomRight)
 			);
 		}
 
@@ -167,54 +170,57 @@ namespace Dissonance.Engine
 
 		public static Vector4 Floor(Vector4 vec)
 		{
-			vec.x = MathF.Floor(vec.x);
-			vec.y = MathF.Floor(vec.y);
-			vec.z = MathF.Floor(vec.z);
-			vec.w = MathF.Floor(vec.w);
+			vec.X = MathF.Floor(vec.X);
+			vec.Y = MathF.Floor(vec.Y);
+			vec.Z = MathF.Floor(vec.Z);
+			vec.W = MathF.Floor(vec.W);
+
 			return vec;
 		}
 
 		public static Vector4 Ceil(Vector4 vec)
 		{
-			vec.x = MathF.Ceiling(vec.x);
-			vec.y = MathF.Ceiling(vec.y);
-			vec.z = MathF.Ceiling(vec.z);
-			vec.w = MathF.Ceiling(vec.w);
+			vec.X = MathF.Ceiling(vec.X);
+			vec.Y = MathF.Ceiling(vec.Y);
+			vec.Z = MathF.Ceiling(vec.Z);
+			vec.W = MathF.Ceiling(vec.W);
+
 			return vec;
 		}
 
 		public static Vector4 Round(Vector4 vec)
 		{
-			vec.x = MathF.Round(vec.x);
-			vec.y = MathF.Round(vec.y);
-			vec.z = MathF.Round(vec.z);
-			vec.w = MathF.Round(vec.w);
+			vec.X = MathF.Round(vec.X);
+			vec.Y = MathF.Round(vec.Y);
+			vec.Z = MathF.Round(vec.Z);
+			vec.W = MathF.Round(vec.W);
+
 			return vec;
 		}
 
-		public static explicit operator Vector4(Vector3 value) => new(value.x, value.y, value.z, 0f);
+		public static explicit operator Vector4(Vector3 value) => new(value.X, value.Y, value.Z, 0f);
 
-		public static explicit operator Vector3(Vector4 value) => new(value.x, value.y, value.z);
+		public static explicit operator Vector3(Vector4 value) => new(value.X, value.Y, value.Z);
 
-		public static explicit operator Vector2(Vector4 value) => new(value.x, value.y);
+		public static explicit operator Vector2(Vector4 value) => new(value.X, value.Y);
 
 		// Vector4
 
-		public static Vector4 operator +(Vector4 a, Vector4 b) => new(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+		public static Vector4 operator +(Vector4 a, Vector4 b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
 
-		public static Vector4 operator -(Vector4 a, Vector4 b) => new(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+		public static Vector4 operator -(Vector4 a, Vector4 b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
 
-		public static Vector4 operator *(Vector4 a, Vector4 b) => new(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+		public static Vector4 operator *(Vector4 a, Vector4 b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
 
-		public static Vector4 operator /(Vector4 a, Vector4 b) => new(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+		public static Vector4 operator /(Vector4 a, Vector4 b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
 
-		public static Vector4 operator -(Vector4 a) => new(-a.x, -a.y, -a.z, -a.w);
+		public static Vector4 operator -(Vector4 a) => new(-a.X, -a.Y, -a.Z, -a.W);
 
-		public static Vector4 operator *(Vector4 a, float d) => new(a.x * d, a.y * d, a.z * d, a.w * d);
+		public static Vector4 operator *(Vector4 a, float d) => new(a.X * d, a.Y * d, a.Z * d, a.W * d);
 
-		public static Vector4 operator *(float d, Vector4 a) => new(a.x * d, a.y * d, a.z * d, a.w * d);
+		public static Vector4 operator *(float d, Vector4 a) => new(a.X * d, a.Y * d, a.Z * d, a.W * d);
 
-		public static Vector4 operator /(Vector4 a, float d) => new(a.x / d, a.y / d, a.z / d, a.w / d);
+		public static Vector4 operator /(Vector4 a, float d) => new(a.X / d, a.Y / d, a.Z / d, a.W / d);
 
 		public static bool operator ==(Vector4 a, Vector4 b) => (a - b).SqrMagnitude < 9.99999944E-11f;
 
@@ -227,7 +233,7 @@ namespace Dissonance.Engine
 
 		// System.Numerics.Vector3
 		public static implicit operator Vector4(System.Numerics.Vector4 value) => new(value.X, value.Y, value.Z, value.W);
-		public static implicit operator System.Numerics.Vector4(Vector4 value) => new(value.x, value.y, value.z, value.w);
+		public static implicit operator System.Numerics.Vector4(Vector4 value) => new(value.X, value.Y, value.Z, value.W);
 	}
 }
 

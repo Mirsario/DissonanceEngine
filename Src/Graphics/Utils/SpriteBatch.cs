@@ -73,15 +73,15 @@ namespace Dissonance.Engine.Graphics
 			var uv0 = bufferMesh.Uv0;
 			uint[] indices = bufferMesh.Indices;
 
-			vertices[vertexCount] = new Vector3(vertexPoints.x, vertexPoints.y, depth);
-			vertices[vertexCount + 1] = new Vector3(vertexPoints.x, vertexPoints.w, depth);
-			vertices[vertexCount + 2] = new Vector3(vertexPoints.z, vertexPoints.w, depth);
-			vertices[vertexCount + 3] = new Vector3(vertexPoints.z, vertexPoints.y, depth);
+			vertices[vertexCount] = new Vector3(vertexPoints.X, vertexPoints.Y, depth);
+			vertices[vertexCount + 1] = new Vector3(vertexPoints.X, vertexPoints.W, depth);
+			vertices[vertexCount + 2] = new Vector3(vertexPoints.Z, vertexPoints.W, depth);
+			vertices[vertexCount + 3] = new Vector3(vertexPoints.Z, vertexPoints.Y, depth);
 
-			uv0[vertexCount] = new Vector2(uvPoints.x, uvPoints.y);
-			uv0[vertexCount + 1] = new Vector2(uvPoints.x, uvPoints.w);
-			uv0[vertexCount + 2] = new Vector2(uvPoints.z, uvPoints.w);
-			uv0[vertexCount + 3] = new Vector2(uvPoints.z, uvPoints.y);
+			uv0[vertexCount] = new Vector2(uvPoints.X, uvPoints.Y);
+			uv0[vertexCount + 1] = new Vector2(uvPoints.X, uvPoints.W);
+			uv0[vertexCount + 2] = new Vector2(uvPoints.Z, uvPoints.W);
+			uv0[vertexCount + 3] = new Vector2(uvPoints.Z, uvPoints.Y);
 
 			uint unsignedVertexCount = (uint)vertexCount;
 

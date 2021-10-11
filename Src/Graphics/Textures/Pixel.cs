@@ -5,52 +5,34 @@ namespace Dissonance.Engine.Graphics
 {
 	public struct Pixel
 	{
-		public byte r;
-		public byte g;
-		public byte b;
-		public byte a;
-
-		public float R {
-			get => r / 255f;
-			set => r = (byte)(value / 255);
-		}
-		public float G {
-			get => g / 255f;
-			set => g = (byte)(value / 255);
-		}
-		public float B {
-			get => b / 255f;
-			set => b = (byte)(value / 255);
-		}
-		public float A {
-			get => a / 255f;
-			set => a = (byte)(value / 255);
-		}
+		public byte R;
+		public byte G;
+		public byte B;
+		public byte A;
 
 		public byte this[int index] {
 			get {
-				return index switch
-				{
-					0 => r,
-					1 => g,
-					2 => b,
-					3 => a,
+				return index switch {
+					0 => R,
+					1 => G,
+					2 => B,
+					3 => A,
 					_ => throw new IndexOutOfRangeException("Indices for Pixel run from 0 to 3,inclusive."),
 				};
 			}
 			set {
 				switch (index) {
 					case 0:
-						r = value;
+						R = value;
 						return;
 					case 1:
-						g = value;
+						G = value;
 						return;
 					case 2:
-						b = value;
+						B = value;
 						return;
 					case 3:
-						a = value;
+						A = value;
 						return;
 					default:
 						throw new IndexOutOfRangeException("Indices for Pixel run from 0 to 3,inclusive.");
@@ -60,29 +42,28 @@ namespace Dissonance.Engine.Graphics
 
 		public Pixel(byte r, byte g, byte b, byte a)
 		{
-			this.r = r;
-			this.g = g;
-			this.b = b;
-			this.a = a;
+			R = r;
+			G = g;
+			B = b;
+			A = a;
 		}
 
 		public Pixel(float r, float g, float b, float a)
 		{
-			this.r = (byte)(r / 255);
-			this.g = (byte)(g / 255);
-			this.b = (byte)(b / 255);
-			this.a = (byte)(a / 255);
+			R = (byte)(r / 255);
+			G = (byte)(g / 255);
+			B = (byte)(b / 255);
+			A = (byte)(a / 255);
 		}
 
-		public override string ToString()
-			=> $"[{R}, {G}, {B}, {A}]";
+		public override string ToString() => $"[{R}, {G}, {B}, {A}]";
 
-		public static implicit operator Color(Pixel value) => Color.FromArgb(value.a, value.r, value.g, value.b);
+		public static implicit operator Color(Pixel value) => Color.FromArgb(value.A, value.R, value.G, value.B);
 
 		public static implicit operator Pixel(Color value) => new(value.R, value.G, value.B, value.A);
 
-		public static implicit operator Vector4(Pixel value) => new(value.R, value.G, value.B, value.A);
+		public static explicit operator Vector4(Pixel value) => new(value.R / 255f, value.G / 255f, value.B / 255f, value.A / 255f);
 
-		public static implicit operator Pixel(Vector4 value) => new(value.x, value.y, value.z, value.w);
+		public static explicit operator Pixel(Vector4 value) => new(value.X, value.Y, value.Z, value.W);
 	}
 }

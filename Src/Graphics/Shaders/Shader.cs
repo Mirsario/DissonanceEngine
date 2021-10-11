@@ -91,12 +91,12 @@ namespace Dissonance.Engine.Graphics
 			=> Name;
 
 		public int GetUniformLocation(string uniformName)
-			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
+			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.Location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
 
 		public bool TryGetUniformLocation(string uniformName, out int location)
 		{
 			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				location = uniform.location;
+				location = uniform.Location;
 
 				return true;
 			}
@@ -133,7 +133,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if (hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.x, Rendering.AmbientColor.y, Rendering.AmbientColor.z);
+				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.X, Rendering.AmbientColor.Y, Rendering.AmbientColor.Z);
 			}
 		}
 
@@ -148,7 +148,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if (hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.x, cameraPos.y, cameraPos.z);
+				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.X, cameraPos.Y, cameraPos.Z);
 			}
 
 			if (hasDefaultUniform[DSU.CameraDirection]) {

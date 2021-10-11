@@ -2,8 +2,8 @@
 {
 	public class MeshLOD
 	{
-		public Mesh mesh;
-		public Material material;
+		public Mesh Mesh { get; set; }
+		public Material Material { get; set; }
 
 		public float MaxDistance {
 			get => maxDistance;
@@ -18,8 +18,8 @@
 
 		public MeshLOD(Mesh mesh, Material material)
 		{
-			this.mesh = mesh;
-			this.material = material;
+			Mesh = mesh;
+			Material = material;
 		}
 
 		public MeshLOD(Mesh mesh, Material material, float maxDistance) : this(mesh, material)

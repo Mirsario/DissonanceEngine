@@ -18,11 +18,11 @@ namespace Dissonance.Engine.Graphics
 
 		public readonly int Id;
 
-		public string name;
-
-		protected Shader shader;
+		private Shader shader;
 
 		internal List<IRenderer> rendererAttachments;
+
+		public string Name { get; set; }
 
 		public Shader Shader {
 			get => shader;
@@ -39,14 +39,12 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public override string AssetName => name;
+		public override string AssetName => Name;
 
 		public Material(string name, Shader shader)
 		{
-			this.name = name;
-
+			Name = name;
 			Id = InternalUtils.GenContentId(this, ById);
-
 			Shader = shader;
 
 			ByName[name] = this;
@@ -57,7 +55,7 @@ namespace Dissonance.Engine.Graphics
 
 		public Material Clone()
 		{
-			var clone = new Material(name, Shader);
+			var clone = new Material(Name, Shader);
 
 			UniformsFloat.CopyTo(clone.UniformsFloat);
 
@@ -81,12 +79,12 @@ namespace Dissonance.Engine.Graphics
 
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
 					GL.BindTexture(TextureTarget.Texture2D, texture.Id);
-					GL.Uniform1(uniform.location, i);
+					GL.Uniform1(uniform.Location, i);
 				}
 			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
-				GL.Uniform1(uniform.location, 0);
+				GL.Uniform1(uniform.Location, 0);
 			}
 		}
 
@@ -95,7 +93,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var pair in UniformsFloat) {
 				(byte vecSize, var data) = pair.Value;
 
-				int location = shader.uniforms[pair.Key].location;
+				int location = shader.uniforms[pair.Key].Location;
 
 				switch (vecSize) {
 					case 1:

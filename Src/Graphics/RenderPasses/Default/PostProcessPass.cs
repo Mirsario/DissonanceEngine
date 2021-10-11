@@ -41,8 +41,8 @@ namespace Dissonance.Engine.Graphics
 				}
 
 				var vpPointsA = new Vector4(
-					viewport.x / (float)Screen.Width,
-					viewport.y / (float)Screen.Height,
+					viewport.X / (float)Screen.Width,
+					viewport.Y / (float)Screen.Height,
 					viewport.Right / (float)Screen.Width,
 					viewport.Bottom / (float)Screen.Height
 				);

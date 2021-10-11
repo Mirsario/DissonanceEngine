@@ -13,11 +13,10 @@ namespace Dissonance.Engine.Input
 			// Gamepad
 		}
 
-		public readonly string Binding;
-
-		public float deadZone;
-		public float sensitivity;
-		public bool inversed;
+		public string Binding { get; }
+		public float DeadZone { get; set; }
+		public float Sensitivity { get; set; }
+		public bool Inversed { get; set; }
 
 		public float RawValue => InputEngine.GetSignal(Binding);
 
@@ -25,7 +24,7 @@ namespace Dissonance.Engine.Input
 			get {
 				float value = RawValue;
 
-				return value > deadZone || value < -deadZone ? (inversed ? -value : value) * sensitivity : 0f;
+				return value > DeadZone || value < -DeadZone ? (Inversed ? -value : value) * Sensitivity : 0f;
 			}
 		}
 
@@ -39,7 +38,7 @@ namespace Dissonance.Engine.Input
 
 			if (minus || input[0] == '+') {
 				if (minus) {
-					inversed = true;
+					Inversed = true;
 				}
 
 				input = input.Substring(1);
@@ -50,9 +49,9 @@ namespace Dissonance.Engine.Input
 
 		protected InputBinding(float sensitivity = 1f, float deadZone = 0.2f, bool inversed = false)
 		{
-			this.sensitivity = sensitivity;
-			this.deadZone = deadZone;
-			this.inversed = inversed;
+			Sensitivity = sensitivity;
+			DeadZone = deadZone;
+			Inversed = inversed;
 		}
 
 		public static implicit operator InputBinding(MouseButton button)

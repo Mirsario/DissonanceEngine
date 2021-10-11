@@ -29,7 +29,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
 
 				var cameraTransform = renderView.Transform;
 				var cameraPosition = cameraTransform.Position;
@@ -89,13 +89,13 @@ namespace Dissonance.Engine.Graphics
 						if (uniformLightPosition != -1 && light.Position.HasValue) {
 							var position = light.Position.Value;
 
-							GL.Uniform3(uniformLightPosition, position.x, position.y, position.z);
+							GL.Uniform3(uniformLightPosition, position.X, position.Y, position.Z);
 						}
 
 						if (uniformLightDirection != -1 && light.Direction.HasValue) {
 							var direction = light.Direction.Value;
 
-							GL.Uniform3(uniformLightDirection, direction.x, direction.y, direction.z);
+							GL.Uniform3(uniformLightDirection, direction.X, direction.Y, direction.Z);
 						}
 
 						if (uniformLightIntensity != -1) {
@@ -103,7 +103,7 @@ namespace Dissonance.Engine.Graphics
 						}
 
 						if (uniformLightColor != -1) {
-							GL.Uniform3(uniformLightColor, light.Color.x, light.Color.y, light.Color.z);
+							GL.Uniform3(uniformLightColor, light.Color.X, light.Color.Y, light.Color.Z);
 						}
 
 						switch (lightType) {

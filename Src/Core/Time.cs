@@ -9,17 +9,17 @@ namespace Dissonance.Engine
 		private struct TimeData
 		{
 			// Time
-			public float game;
-			public float gameDelta;
-			public float global;
-			public float globalDelta;
+			public float Game;
+			public float GameDelta;
+			public float Global;
+			public float GlobalDelta;
 			// Framerate
-			public float ms;
-			public float msTemp;
-			public uint frameNum;
-			public uint framerate;
+			public float Ms;
+			public float MsTemp;
+			public uint FrameNum;
+			public uint Framerate;
 			// Etc
-			public uint updateCount;
+			public uint UpdateCount;
 		}
 
 		// Target Framerate
@@ -41,21 +41,21 @@ namespace Dissonance.Engine
 		public static float GlobalTime => Game.IsFixedUpdate ? FixedGlobalTime : RenderGlobalTime;
 		public static float DeltaTime => Game.IsFixedUpdate ? FixedDeltaTime : RenderDeltaTime; // It might be a bit weird that this isn't 2 'GameDeltaTime' and 'GlobalDeltaTime' properties.
 		// Fixed Time
-		public static float FixedGameTime => fixedTime.game;
-		public static float FixedGlobalTime => fixedTime.global;
+		public static float FixedGameTime => fixedTime.Game;
+		public static float FixedGlobalTime => fixedTime.Global;
 		public static float FixedDeltaTime => 1f / (float)TargetUpdateFrequency;
-		public static uint FixedUpdateCount => fixedTime.updateCount;
+		public static uint FixedUpdateCount => fixedTime.UpdateCount;
 		// Render Time
-		public static float RenderGameTime => renderTime.game;
-		public static float RenderGlobalTime => renderTime.global;
-		public static float RenderDeltaTime => renderTime.gameDelta;
-		public static uint RenderUpdateCount => renderTime.updateCount;
+		public static float RenderGameTime => renderTime.Game;
+		public static float RenderGlobalTime => renderTime.Global;
+		public static float RenderDeltaTime => renderTime.GameDelta;
+		public static uint RenderUpdateCount => renderTime.UpdateCount;
 		// Fixed Framerate
-		public static uint FixedFramerate => fixedTime.framerate;
-		public static float FixedMs => fixedTime.ms;
+		public static uint FixedFramerate => fixedTime.Framerate;
+		public static float FixedMs => fixedTime.Ms;
 		// Render Framerate
-		public static uint RenderFramerate => renderTime.framerate;
-		public static float RenderMs => renderTime.ms;
+		public static uint RenderFramerate => renderTime.Framerate;
+		public static float RenderMs => renderTime.Ms;
 
 		// Time
 		public static float TimeScale {
@@ -131,12 +131,12 @@ namespace Dissonance.Engine
 		{
 			stopwatch.Restart();
 
-			currentTime.global = (float)globalStopwatch.Elapsed.TotalSeconds;
-			currentTime.globalDelta = currentTime.global - previousTime.global;
-			currentTime.gameDelta = currentTime.globalDelta * timeScale;
-			currentTime.game += currentTime.gameDelta;
+			currentTime.Global = (float)globalStopwatch.Elapsed.TotalSeconds;
+			currentTime.GlobalDelta = currentTime.Global - previousTime.Global;
+			currentTime.GameDelta = currentTime.GlobalDelta * timeScale;
+			currentTime.Game += currentTime.GameDelta;
 
-			currentTime.updateCount++;
+			currentTime.UpdateCount++;
 		}
 
 		private static void PostUpdate(ref TimeData currentTime, ref TimeData previousTime, Stopwatch stopwatch)
@@ -148,14 +148,14 @@ namespace Dissonance.Engine
 
 		private static void MeasureFPS(ref TimeData time, TimeData timePrev, Stopwatch stopwatch)
 		{
-			time.frameNum++;
-			time.msTemp += stopwatch.ElapsedMilliseconds;
+			time.FrameNum++;
+			time.MsTemp += stopwatch.ElapsedMilliseconds;
 
-			if (MathF.Floor(time.global) > MathF.Floor(timePrev.global)) {
-				time.framerate = time.frameNum;
-				time.frameNum = 0;
-				time.ms = time.msTemp / Math.Max(1, time.framerate);
-				time.msTemp = 0f;
+			if (MathF.Floor(time.Global) > MathF.Floor(timePrev.Global)) {
+				time.Framerate = time.FrameNum;
+				time.FrameNum = 0;
+				time.Ms = time.MsTemp / Math.Max(1, time.Framerate);
+				time.MsTemp = 0f;
 			}
 		}
 	}

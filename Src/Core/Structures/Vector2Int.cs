@@ -14,87 +14,87 @@ namespace Dissonance.Engine
 		public static readonly Vector2Int Left = new(-1, 0);
 		public static readonly Vector2Int Right = new(1, 0);
 
-		public int x;
-		public int y;
+		public int X;
+		public int Y;
 
 		public Vector2Int(int x, int y)
 		{
-			this.x = x;
-			this.y = y;
+			X = x;
+			Y = y;
 		}
 
 		public Vector2Int(int xy) : this(xy, xy) { }
 
 		public override int GetHashCode()
-			=> x ^ y << 2;
+			=> X ^ Y << 2;
 
 		public override bool Equals(object other)
-			=> other is Vector2Int point && x == point.x && y == point.y;
+			=> other is Vector2Int point && X == point.X && Y == point.Y;
 
 		public override string ToString()
-			=> $"[{x}, {y}]";
+			=> $"[{X}, {Y}]";
 
 		// Operations
 
 		// int
 
-		public static Vector2Int operator *(Vector2Int a, int d) => new(a.x * d, a.y * d);
+		public static Vector2Int operator *(Vector2Int a, int d) => new(a.X * d, a.Y * d);
 
-		public static Vector2Int operator *(int d, Vector2Int a) => new(a.x * d, a.y * d);
+		public static Vector2Int operator *(int d, Vector2Int a) => new(a.X * d, a.Y * d);
 
-		public static Vector2Int operator /(Vector2Int a, int d) => new(a.x / d, a.y / d);
+		public static Vector2Int operator /(Vector2Int a, int d) => new(a.X / d, a.Y / d);
 
 		// float
 
-		public static Vector2 operator *(Vector2Int a, float d) => new(a.x * d, a.y * d);
+		public static Vector2 operator *(Vector2Int a, float d) => new(a.X * d, a.Y * d);
 
-		public static Vector2 operator *(float d, Vector2Int a) => new(d * a.x, d * a.y);
+		public static Vector2 operator *(float d, Vector2Int a) => new(d * a.X, d * a.Y);
 
-		public static Vector2 operator /(Vector2Int a, float d) => new(a.x / d, a.y / d);
+		public static Vector2 operator /(Vector2Int a, float d) => new(a.X / d, a.Y / d);
 
 		// Vector2Int
 
-		public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.x + b.x, a.y + b.y);
+		public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
 
-		public static Vector2Int operator -(Vector2Int a, Vector2Int b) => new(a.x - b.x, a.y - b.y);
+		public static Vector2Int operator -(Vector2Int a, Vector2Int b) => new(a.X - b.X, a.Y - b.Y);
 
-		public static Vector2Int operator *(Vector2Int a, Vector2Int b) => new(a.x * b.x, a.y * b.y);
+		public static Vector2Int operator *(Vector2Int a, Vector2Int b) => new(a.X * b.X, a.Y * b.Y);
 
-		public static Vector2Int operator /(Vector2Int a, Vector2Int b) => new(a.x / b.x, a.y / b.y);
+		public static Vector2Int operator /(Vector2Int a, Vector2Int b) => new(a.X / b.X, a.Y / b.Y);
 
-		public static Vector2Int operator -(Vector2Int a) => new(-a.x, -a.y);
+		public static Vector2Int operator -(Vector2Int a) => new(-a.X, -a.Y);
 
-		public static bool operator ==(Vector2Int a, Vector2Int b) => a.x == b.x && a.y == b.y;
+		public static bool operator ==(Vector2Int a, Vector2Int b) => a.X == b.X && a.Y == b.Y;
 
-		public static bool operator !=(Vector2Int a, Vector2Int b) => a.x != b.x || a.y != b.y;
+		public static bool operator !=(Vector2Int a, Vector2Int b) => a.X != b.X || a.Y != b.Y;
 
 		// Vector2
 
-		public static bool operator ==(Vector2Int a, Vector2 b) => a.x == b.x && a.y == b.y;
+		public static bool operator ==(Vector2Int a, Vector2 b) => a.X == b.X && a.Y == b.Y;
 
-		public static bool operator ==(Vector2 a, Vector2Int b) => a.x == b.x && a.y == b.y;
+		public static bool operator ==(Vector2 a, Vector2Int b) => a.X == b.X && a.Y == b.Y;
 
-		public static bool operator !=(Vector2Int a, Vector2 b) => a.x != b.x || a.y != b.y;
+		public static bool operator !=(Vector2Int a, Vector2 b) => a.X != b.X || a.Y != b.Y;
 
-		public static bool operator !=(Vector2 a, Vector2Int b) => a.x != b.x || a.y != b.y;
+		public static bool operator !=(Vector2 a, Vector2Int b) => a.X != b.X || a.Y != b.Y;
 
 		// Vector2UShort
 
-		public static Vector2Int operator +(Vector2Int a, Vector2UShort b) => new(a.x + b.x, a.y + b.y);
+		public static Vector2Int operator +(Vector2Int a, Vector2UShort b) => new(a.X + b.X, a.Y + b.Y);
 
-		public static Vector2Int operator +(Vector2UShort a, Vector2Int b) => new(a.x + b.x, a.y + b.y);
+		public static Vector2Int operator +(Vector2UShort a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
 
-		public static Vector2Int operator -(Vector2Int a, Vector2UShort b) => new(a.x - b.x, a.y - b.y);
+		public static Vector2Int operator -(Vector2Int a, Vector2UShort b) => new(a.X - b.X, a.Y - b.Y);
 
-		public static Vector2Int operator -(Vector2UShort a, Vector2Int b) => new(a.x - b.x, a.y - b.y);
+		public static Vector2Int operator -(Vector2UShort a, Vector2Int b) => new(a.X - b.X, a.Y - b.Y);
 
-		public static Vector2Int operator *(Vector2Int a, Vector2UShort b) => new(a.x * b.x, a.y * b.y);
+		public static Vector2Int operator *(Vector2Int a, Vector2UShort b) => new(a.X * b.X, a.Y * b.Y);
 
-		public static Vector2Int operator *(Vector2UShort a, Vector2Int b) => new(a.x * b.x, a.y * b.y);
+		public static Vector2Int operator *(Vector2UShort a, Vector2Int b) => new(a.X * b.X, a.Y * b.Y);
 
-		public static Vector2Int operator /(Vector2Int a, Vector2UShort b) => new(a.x / b.x, a.y / b.y);
+		public static Vector2Int operator /(Vector2Int a, Vector2UShort b) => new(a.X / b.X, a.Y / b.Y);
 
-		public static Vector2Int operator /(Vector2UShort a, Vector2Int b) => new(a.x / b.x, a.y / b.y);
+		public static Vector2Int operator /(Vector2UShort a, Vector2Int b) => new(a.X / b.X, a.Y / b.Y);
 
 		// Casts
 
@@ -103,17 +103,17 @@ namespace Dissonance.Engine
 
 		// System.Drawing.Point
 
-		public static implicit operator System.Drawing.Point(Vector2Int value) => new(value.x, value.y);
+		public static implicit operator System.Drawing.Point(Vector2Int value) => new(value.X, value.Y);
 
 		public static implicit operator Vector2Int(System.Drawing.Point value) => new(value.X, value.Y);
 
 		// Vector2Int
 
-		public static explicit operator Vector2Int(Vector2 value) => new((int)value.x, (int)value.y);
+		public static explicit operator Vector2Int(Vector2 value) => new((int)value.X, (int)value.Y);
 
 		// Vector2UShort
 
-		public static explicit operator Vector2Int(Vector2UShort value) => new(value.x, value.y);
+		public static explicit operator Vector2Int(Vector2UShort value) => new(value.X, value.Y);
 	}
 }
 

@@ -17,10 +17,11 @@ namespace Dissonance.Engine.Graphics
 
 	public abstract class MeshBuffer : IMeshBuffer
 	{
-		public Mesh mesh;
-
+		public Mesh Mesh { get; internal set; }
 		public uint BufferId { get; protected set; }
 		public uint DataLength { get; protected set; }
+
+		internal protected MeshBuffer() { }
 
 		public abstract void Apply();
 

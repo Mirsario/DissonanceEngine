@@ -44,40 +44,40 @@ namespace Dissonance.Engine
 		public Vector4 Row0 {
 			get => new(m00, m01, m02, m03);
 			set {
-				m00 = value.x;
-				m01 = value.y;
-				m02 = value.z;
-				m03 = value.w;
+				m00 = value.X;
+				m01 = value.Y;
+				m02 = value.Z;
+				m03 = value.W;
 			}
 		}
 
 		public Vector4 Row1 {
 			get => new(m10, m11, m12, m13);
 			set {
-				m10 = value.x;
-				m11 = value.y;
-				m12 = value.z;
-				m13 = value.w;
+				m10 = value.X;
+				m11 = value.Y;
+				m12 = value.Z;
+				m13 = value.W;
 			}
 		}
 
 		public Vector4 Row2 {
 			get => new(m20, m21, m22, m23);
 			set {
-				m20 = value.x;
-				m21 = value.y;
-				m22 = value.z;
-				m23 = value.w;
+				m20 = value.X;
+				m21 = value.Y;
+				m22 = value.Z;
+				m23 = value.W;
 			}
 		}
 
 		public Vector4 Row3 {
 			get => new(m30, m31, m32, m33);
 			set {
-				m30 = value.x;
-				m31 = value.y;
-				m32 = value.z;
-				m33 = value.w;
+				m30 = value.X;
+				m31 = value.Y;
+				m32 = value.Z;
+				m33 = value.W;
 			}
 		}
 
@@ -300,22 +300,22 @@ namespace Dissonance.Engine
 		
 		public Matrix4x4(Vector4 row0, Vector4 row1, Vector4 row2, Vector4 row3)
 		{
-			m00 = row0.x;
-			m01 = row0.y;
-			m02 = row0.z;
-			m03 = row0.w;
-			m10 = row1.x;
-			m11 = row1.y;
-			m12 = row1.z;
-			m13 = row1.w;
-			m20 = row2.x;
-			m21 = row2.y;
-			m22 = row2.z;
-			m23 = row2.w;
-			m30 = row3.x;
-			m31 = row3.y;
-			m32 = row3.z;
-			m33 = row3.w;
+			m00 = row0.X;
+			m01 = row0.Y;
+			m02 = row0.Z;
+			m03 = row0.W;
+			m10 = row1.X;
+			m11 = row1.Y;
+			m12 = row1.Z;
+			m13 = row1.W;
+			m20 = row2.X;
+			m21 = row2.Y;
+			m22 = row2.Z;
+			m23 = row2.W;
+			m30 = row3.X;
+			m31 = row3.Y;
+			m32 = row3.Z;
+			m33 = row3.W;
 		}
 
 		public override string ToString() => $"[{m00}, {m01}, {m02}, {m03},\n {m10}, {m11}, {m12}, {m13},\n {m20}, {m21}, {m22}, {m23},\n {m30}, {m31}, {m32}, {m33}]";
@@ -363,9 +363,9 @@ namespace Dissonance.Engine
 		{
 			Vector3 result;
 
-			result.x = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
-			result.y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
-			result.z = MathF.Sqrt(m20 * m20 + m21 * m21 + m22 * m22);
+			result.X = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
+			result.Y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
+			result.Z = MathF.Sqrt(m20 * m20 + m21 * m21 + m22 * m22);
 
 			return result;
 		}
@@ -374,8 +374,8 @@ namespace Dissonance.Engine
 		{
 			Vector2 result;
 
-			result.x = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
-			result.y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
+			result.X = MathF.Sqrt(m00 * m00 + m01 * m01 + m02 * m02);
+			result.Y = MathF.Sqrt(m10 * m10 + m11 * m11 + m12 * m12);
 
 			return result;
 		}
@@ -439,40 +439,40 @@ namespace Dissonance.Engine
 			var row2 = Row2.XYZ.Normalized;
 
 			var q = new Quaternion();
-			float trace = 0.25f * (row0.x + row1.y + row2.z + 1f);
+			float trace = 0.25f * (row0.X + row1.Y + row2.Z + 1f);
 
 			if (trace > 0) {
 				float sq = MathF.Sqrt(trace);
 
-				q.w = sq;
+				q.W = sq;
 				sq = 1f / (4f * sq);
-				q.x = (row1.z - row2.y) * sq;
-				q.y = (row2.x - row0.z) * sq;
-				q.z = (row0.y - row1.x) * sq;
-			} else if (row0.x > row1.y && row0.x > row2.z) {
-				float sq = 2f * MathF.Sqrt(1f + row0.x - row1.y - row2.z);
+				q.X = (row1.Z - row2.Y) * sq;
+				q.Y = (row2.X - row0.Z) * sq;
+				q.Z = (row0.Y - row1.X) * sq;
+			} else if (row0.X > row1.Y && row0.X > row2.Z) {
+				float sq = 2f * MathF.Sqrt(1f + row0.X - row1.Y - row2.Z);
 
-				q.x = 0.25f * sq;
+				q.X = 0.25f * sq;
 				sq = 1f / sq;
-				q.w = (row2.y - row1.z) * sq;
-				q.y = (row1.x + row0.y) * sq;
-				q.z = (row2.x + row0.z) * sq;
-			} else if (row1.y > row2.z) {
-				float sq = 2f * MathF.Sqrt(1f + row1.y - row0.x - row2.z);
+				q.W = (row2.Y - row1.Z) * sq;
+				q.Y = (row1.X + row0.Y) * sq;
+				q.Z = (row2.X + row0.Z) * sq;
+			} else if (row1.Y > row2.Z) {
+				float sq = 2f * MathF.Sqrt(1f + row1.Y - row0.X - row2.Z);
 
-				q.y = 0.25f * sq;
+				q.Y = 0.25f * sq;
 				sq = 1f / sq;
-				q.w = (row2.x - row0.z) * sq;
-				q.x = (row1.x + row0.y) * sq;
-				q.z = (row2.y + row1.z) * sq;
+				q.W = (row2.X - row0.Z) * sq;
+				q.X = (row1.X + row0.Y) * sq;
+				q.Z = (row2.Y + row1.Z) * sq;
 			} else {
-				float sq = 2f * MathF.Sqrt(1f + row2.z - row0.x - row1.y);
+				float sq = 2f * MathF.Sqrt(1f + row2.Z - row0.X - row1.Y);
 
-				q.z = 0.25f * sq;
+				q.Z = 0.25f * sq;
 				sq = 1f / sq;
-				q.w = (row1.x - row0.y) * sq;
-				q.x = (row2.x + row0.z) * sq;
-				q.y = (row2.y + row1.z) * sq;
+				q.W = (row1.X - row0.Y) * sq;
+				q.X = (row2.X + row0.Z) * sq;
+				q.Y = (row2.Y + row1.Z) * sq;
 			}
 
 			q.Normalize();
@@ -483,39 +483,39 @@ namespace Dissonance.Engine
 		// Set
 		public void SetTranslation(Vector3 translation)
 		{
-			m30 = translation.x;
-			m31 = translation.y;
-			m32 = translation.z;
+			m30 = translation.X;
+			m31 = translation.Y;
+			m32 = translation.Z;
 		}
 
 		public void SetScale(Vector3 scale)
 		{
 			ClearScale();
 
-			m00 *= scale.x;
-			m01 *= scale.x;
-			m02 *= scale.x;
+			m00 *= scale.X;
+			m01 *= scale.X;
+			m02 *= scale.X;
 
-			m10 *= scale.y;
-			m11 *= scale.y;
-			m12 *= scale.y;
+			m10 *= scale.Y;
+			m11 *= scale.Y;
+			m12 *= scale.Y;
 
-			m20 *= scale.z;
-			m21 *= scale.z;
-			m22 *= scale.z;
+			m20 *= scale.Z;
+			m21 *= scale.Z;
+			m22 *= scale.Z;
 		}
 
 		public void SetScale2D(Vector2 scale)
 		{
 			ClearScale2D();
 
-			m00 *= scale.x;
-			m01 *= scale.x;
-			m02 *= scale.x;
+			m00 *= scale.X;
+			m01 *= scale.X;
+			m02 *= scale.X;
 
-			m10 *= scale.y;
-			m11 *= scale.y;
-			m12 *= scale.y;
+			m10 *= scale.Y;
+			m11 *= scale.Y;
+			m12 *= scale.Y;
 		}
 
 		public void SetRotation(Quaternion q)
@@ -523,30 +523,30 @@ namespace Dissonance.Engine
 
 		public void SetRotationAndScale(Quaternion q, Vector3 scale)
 		{
-			float x = q.x * 2f;
-			float y = q.y * 2f;
-			float z = q.z * 2f;
+			float x = q.X * 2f;
+			float y = q.Y * 2f;
+			float z = q.Z * 2f;
 
-			float xx = q.x * x;
-			float yy = q.y * y;
-			float zz = q.z * z;
+			float xx = q.X * x;
+			float yy = q.Y * y;
+			float zz = q.Z * z;
 
-			float xy = q.x * y;
-			float xz = q.x * z;
-			float yz = q.y * z;
-			float wx = q.w * x;
-			float wy = q.w * y;
-			float wz = q.w * z;
+			float xy = q.X * y;
+			float xz = q.X * z;
+			float yz = q.Y * z;
+			float wx = q.W * x;
+			float wy = q.W * y;
+			float wz = q.W * z;
 
-			m00 = (1f - (yy + zz)) * scale.x;
-			m01 = (xy + wz) * scale.x;
-			m02 = (xz - wy) * scale.x;
-			m10 = (xy - wz) * scale.y;
-			m11 = (1f - (xx + zz)) * scale.y;
-			m12 = (yz + wx) * scale.y;
-			m20 = (xz + wy) * scale.z;
-			m21 = (yz - wx) * scale.z;
-			m22 = (1f - (xx + yy)) * scale.z;
+			m00 = (1f - (yy + zz)) * scale.X;
+			m01 = (xy + wz) * scale.X;
+			m02 = (xz - wy) * scale.X;
+			m10 = (xy - wz) * scale.Y;
+			m11 = (1f - (xx + zz)) * scale.Y;
+			m12 = (yz + wx) * scale.Y;
+			m20 = (xz + wy) * scale.Z;
+			m21 = (yz - wx) * scale.Z;
+			m22 = (1f - (xx + yy)) * scale.Z;
 		}
 
 		// Etc

@@ -34,8 +34,8 @@ namespace Dissonance.Engine.Graphics
 
 				// UVs
 				Uv0 = addUVs ? new Vector2[] {
-					new(uv.x, uv.y), new(uv.z, uv.y),
-					new(uv.x, uv.w), new(uv.z, uv.w),
+					new(uv.X, uv.Y), new(uv.Z, uv.Y),
+					new(uv.X, uv.W), new(uv.Z, uv.W),
 				} : null,
 
 				// Triangles
@@ -71,8 +71,8 @@ namespace Dissonance.Engine.Graphics
 			Vector2 to01 = Vector2.One / realResolution;
 			Vector2 realUvSize = uvSize ?? Vector2.One;
 
-			int vertexCount = realResolution.x * realResolution.y;
-			int triIndexCount = resolution.x * resolution.y * 6;
+			int vertexCount = realResolution.X * realResolution.Y;
+			int triIndexCount = resolution.X * resolution.Y * 6;
 
 			var newMesh = new Mesh {
 				Vertices = new Vector3[vertexCount],
@@ -80,14 +80,14 @@ namespace Dissonance.Engine.Graphics
 				Uv0 = addUVs ? new Vector2[vertexCount] : null
 			};
 
-			uint[,] vertexMap = new uint[realResolution.x, realResolution.y];
+			uint[,] vertexMap = new uint[realResolution.X, realResolution.Y];
 
 			uint vertex = 0;
 			uint triangle = 0;
 
-			for (int y = 0; y < realResolution.y; y++) {
-				for (int x = 0; x < realResolution.x; x++) {
-					newMesh.Vertices[vertex] = new Vector3(x * stepSize.x + offset.x, 0f, y * stepSize.y + offset.y);
+			for (int y = 0; y < realResolution.Y; y++) {
+				for (int x = 0; x < realResolution.X; x++) {
+					newMesh.Vertices[vertex] = new Vector3(x * stepSize.X + offset.X, 0f, y * stepSize.Y + offset.Y);
 
 					if (addUVs) {
 						newMesh.Uv0[vertex] = new Vector2(x, y) * to01 * realUvSize;
@@ -97,8 +97,8 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			for (int y = 0; y < resolution.y; y++) {
-				for (int x = 0; x < resolution.x; x++) {
+			for (int y = 0; y < resolution.Y; y++) {
+				for (int x = 0; x < resolution.X; x++) {
 					uint topLeft = vertexMap[x, y];
 					uint topRight = vertexMap[x + 1, y];
 					uint bottomLeft = vertexMap[x, y + 1];
@@ -136,12 +136,12 @@ namespace Dissonance.Engine.Graphics
 			var newMesh = new Mesh {
 				// Vertices
 				Vertices = new Vector3[] {
-					new(min.x, max.y, max.z), new(max.x, max.y, max.z), new(min.x, min.y, max.z), new(max.x, min.y, max.z),
-					new(max.x, max.y, min.z), new(min.x, max.y, min.z), new(max.x, min.y, min.z), new(min.x, min.y, min.z),
-					new(min.x, max.y, max.z), new(max.x, max.y, max.z), new(min.x, max.y, min.z), new(max.x, max.y, min.z),
-					new(min.x, min.y, max.z), new(max.x, min.y, max.z), new(min.x, min.y, min.z), new(max.x, min.y, min.z),
-					new(min.x, max.y, min.z), new(min.x, max.y, max.z), new(min.x, min.y, min.z), new(min.x, min.y, max.z),
-					new(max.x, max.y, min.z), new(max.x, max.y, max.z), new(max.x, min.y, min.z), new(max.x, min.y, max.z)
+					new(min.X, max.Y, max.Z), new(max.X, max.Y, max.Z), new(min.X, min.Y, max.Z), new(max.X, min.Y, max.Z),
+					new(max.X, max.Y, min.Z), new(min.X, max.Y, min.Z), new(max.X, min.Y, min.Z), new(min.X, min.Y, min.Z),
+					new(min.X, max.Y, max.Z), new(max.X, max.Y, max.Z), new(min.X, max.Y, min.Z), new(max.X, max.Y, min.Z),
+					new(min.X, min.Y, max.Z), new(max.X, min.Y, max.Z), new(min.X, min.Y, min.Z), new(max.X, min.Y, min.Z),
+					new(min.X, max.Y, min.Z), new(min.X, max.Y, max.Z), new(min.X, min.Y, min.Z), new(min.X, min.Y, max.Z),
+					new(max.X, max.Y, min.Z), new(max.X, max.Y, max.Z), new(max.X, min.Y, min.Z), new(max.X, min.Y, max.Z)
 				},
 
 				// Normals
@@ -322,8 +322,8 @@ namespace Dissonance.Engine.Graphics
 				var vertex = vertices[i];
 			
 				uv[i] = new Vector2(
-					(MathF.Atan2(vertex.z, vertex.x) / (2f * MathF.PI)) + 0.5f,
-					(MathF.Asin(vertex.y) / MathF.PI) - 0.5f
+					(MathF.Atan2(vertex.Z, vertex.X) / (2f * MathF.PI)) + 0.5f,
+					(MathF.Asin(vertex.Y) / MathF.PI) - 0.5f
 				);
 			}
 

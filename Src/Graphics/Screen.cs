@@ -74,18 +74,18 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			// Framebuffer
-			Width = windowing.FramebufferSize.x;
-			Height = windowing.FramebufferSize.y;
+			Width = windowing.FramebufferSize.X;
+			Height = windowing.FramebufferSize.Y;
 
 			Size = windowing.FramebufferSize;
 			Center = Size * 0.5f;
 			Rectangle = new RectInt(0, 0, Width, Height);
 
 			// Window
-			WindowX = windowing.WindowLocation.x;
-			WindowY = windowing.WindowLocation.y;
-			WindowWidth = windowing.WindowSize.x;
-			WindowHeight = windowing.WindowSize.y;
+			WindowX = windowing.WindowLocation.X;
+			WindowY = windowing.WindowLocation.Y;
+			WindowWidth = windowing.WindowSize.X;
+			WindowHeight = windowing.WindowSize.Y;
 
 			WindowSize = windowing.WindowSize;
 			WindowLocation = windowing.WindowLocation;

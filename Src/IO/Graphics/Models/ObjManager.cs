@@ -39,19 +39,19 @@ namespace Dissonance.Engine.IO
 			for (int i = 0; i < meshInfo.faceData.Length; i++) {
 				Vector3 v = meshInfo.faceData[i];
 
-				newVerts[i] = meshInfo.vertices[(int)v.x - 1];
+				newVerts[i] = meshInfo.vertices[(int)v.X - 1];
 
-				if (v.y >= 1) {
-					newUVs[i] = meshInfo.uv[(int)v.y - 1];
+				if (v.Y >= 1) {
+					newUVs[i] = meshInfo.uv[(int)v.Y - 1];
 				}
 
-				if (v.z >= 1) {
-					newNormals[i] = meshInfo.normals[(int)v.z - 1];
+				if (v.Z >= 1) {
+					newNormals[i] = meshInfo.normals[(int)v.Z - 1];
 				}
 			}
 
 			var mesh = new Mesh {
-				name = Path.GetFileName(filePath),
+				Name = Path.GetFileName(filePath),
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,
@@ -211,18 +211,18 @@ namespace Dissonance.Engine.IO
 
 							brokenBrokenString = brokenString[j].Split(splitIdentifier2, 3); // Separate the face into individual components(vert,uv,normal)
 
-							temp.x = Convert.ToInt32(brokenBrokenString[0]);
+							temp.X = Convert.ToInt32(brokenBrokenString[0]);
 
 							if (brokenBrokenString.Length == 2) {  // Some .obj files skip UV and normal
-								temp.y = Convert.ToInt32(brokenBrokenString[1]);
+								temp.Y = Convert.ToInt32(brokenBrokenString[1]);
 							}
 
 							if (brokenBrokenString.Length == 3) {  // Some .obj files skip UV and normal
 								if (brokenBrokenString[1] != "") { // Some .obj files skip the uv and not the normal
-									temp.y = Convert.ToInt32(brokenBrokenString[1]);
+									temp.Y = Convert.ToInt32(brokenBrokenString[1]);
 								}
 
-								temp.z = Convert.ToInt32(brokenBrokenString[2]);
+								temp.Z = Convert.ToInt32(brokenBrokenString[2]);
 							}
 
 							j++;

@@ -24,12 +24,12 @@ namespace Dissonance.Engine
 
 		public static float BiLerp(float valueTopLeft, float valueTopRight, float valueBottomLeft, float valueBottomRight, Vector2 topLeft, Vector2 bottomRight, Vector2 point)
 		{
-			float x2x1 = bottomRight.x - topLeft.x;
-			float y2y1 = bottomRight.y - topLeft.y;
-			float x2x = bottomRight.x - point.x;
-			float y2y = bottomRight.y - point.y;
-			float yy1 = point.y - topLeft.y;
-			float xx1 = point.x - topLeft.x;
+			float x2x1 = bottomRight.X - topLeft.X;
+			float y2y1 = bottomRight.Y - topLeft.Y;
+			float x2x = bottomRight.X - point.X;
+			float y2y = bottomRight.Y - point.Y;
+			float yy1 = point.Y - topLeft.Y;
+			float xx1 = point.X - topLeft.X;
 
 			return 1f / (x2x1 * y2y1) * (valueBottomLeft * x2x * y2y + valueBottomRight * xx1 * y2y + valueTopLeft * x2x * yy1 + valueTopRight * xx1 * yy1);
 		}
