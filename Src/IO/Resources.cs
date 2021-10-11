@@ -1,22 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Dissonance.Engine.IO
 {
 	//TODO: Make a ton more threadsafe.
 	public sealed class Resources : EngineModule
 	{
-		internal class AssetReaderCollection<T>
+		internal static class ReaderData<T>
 		{
-			public List<IAssetReader<T>> AssetReaders { get; } = new();
-			public Dictionary<string, IAssetReader<T>> AssetReaderByExtension { get; } = new();
+			internal static readonly Dictionary<string, IAssetReader<T>> ReaderByExtension = new();
 		}
 
-		internal static readonly HashSet<object> Readers = new();
-		internal static readonly Dictionary<Type, object> ReaderCollectionsByType = new();
+		internal static readonly HashSet<IAssetReader<object>> Readers = new();
+		internal static readonly Dictionary<Type, IReadOnlyList<IAssetReader<object>>> ReadersByType = new();
 
 		private static readonly HashSet<AssetSource> sources = new();
 		private static readonly Dictionary<string, Asset> assets = new();
@@ -25,9 +24,10 @@ namespace Dissonance.Engine.IO
 		{
 			RegisterAssetSources();
 			RegisterAssetReaders();
+			AutoloadAssets();
 		}
 
-		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.None)
+		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.AsyncLoad)
 		{
 			if (assets.TryGetValue(assetPath, out var cachedAsset) && cachedAsset is Asset<T> cachedAssetResult) {
 				return cachedAssetResult;
@@ -38,13 +38,7 @@ namespace Dissonance.Engine.IO
 					continue;
 				}
 
-				var asset = new Asset<T>(assetPath, source);
-
-				assets[assetPath] = asset;
-
-				asset.Request(mode);
-
-				return asset;
+				return RequestFromSource<T>(source, assetPath, mode);
 			}
 
 			throw new Exception($"Couldn't find asset '{assetPath}' in any available content sources.");
@@ -63,19 +57,35 @@ namespace Dissonance.Engine.IO
 
 		public static void AddAssetReader<T>(IAssetReader<T> assetReader)
 		{
-			if (!Readers.Add(assetReader)) {
+			if (!Readers.Add((IAssetReader<object>)assetReader)) {
 				throw new InvalidOperationException($"Asset reader '{assetReader.GetType().Name}' is already registered.");
 			}
 
-			if (!ReaderCollectionsByType.TryGetValue(typeof(T), out object collectionObj) || collectionObj is not AssetReaderCollection<T> collection) {
-				ReaderCollectionsByType[typeof(T)] = collection = new AssetReaderCollection<T>();
+			List<IAssetReader<T>> readersOfThisType;
+
+			if (ReadersByType.TryGetValue(typeof(T), out var readersOfThisTypeTemp)) {
+				readersOfThisType = (List<IAssetReader<T>>)readersOfThisTypeTemp;
+			} else {
+				readersOfThisType = new List<IAssetReader<T>>();
+				ReadersByType[typeof(T)] = (IReadOnlyList<IAssetReader<object>>)readersOfThisType;
 			}
 
-			collection.AssetReaders.Add(assetReader);
+			readersOfThisType.Add(assetReader);
 
 			foreach (string extension in assetReader.Extensions) {
-				collection.AssetReaderByExtension.Add(extension, assetReader);
+				ReaderData<T>.ReaderByExtension.Add(extension, assetReader);
 			}
+		}
+
+		private static Asset<T> RequestFromSource<T>(AssetSource source, string assetPath, AssetRequestMode mode = AssetRequestMode.AsyncLoad)
+		{
+			var asset = new Asset<T>(assetPath, source);
+
+			assets[assetPath] = asset;
+
+			asset.Request(mode);
+
+			return asset;
 		}
 
 		private static void RegisterAssetSources()
@@ -95,6 +105,42 @@ namespace Dissonance.Engine.IO
 			AddAssetReader(new PngReader());
 			AddAssetReader(new ShaderReader());
 			AddAssetReader(new MaterialReader());
+		}
+
+		private static void AutoloadAssets()
+		{
+			object[] parameterArray = new object[1];
+			var autoloadAssetsMethod = typeof(Resources)
+				.GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
+
+			foreach (var pair in ReadersByType) {
+				var type = pair.Key;
+				var readers = pair.Value;
+
+				foreach (var reader in readers) {
+					if (!reader.AutoloadAssets) {
+						continue;
+					}
+
+					parameterArray[0] = reader;
+					autoloadAssetsMethod
+						.MakeGenericMethod(type)
+						.Invoke(null, parameterArray);
+				}
+			}
+		}
+
+		private static void AutoloadAssetsGeneric<T>(IAssetReader<T> reader)
+		{
+			foreach (var source in sources) {
+				foreach (string assetPath in source.EnumerateAssets()) {
+					string extension = Path.GetExtension(assetPath);
+
+					if (reader.Extensions.Contains(extension)) {
+						RequestFromSource<T>(source, assetPath, AssetRequestMode.ImmediateLoad); //TODO: Use async load, then wait for all of them to finish.
+					}
+				}
+			}
 		}
 	}
 }

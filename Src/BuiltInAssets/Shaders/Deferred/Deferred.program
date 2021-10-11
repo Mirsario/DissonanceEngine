@@ -1,22 +1,22 @@
 {
 	"Deferred/Lighting/Point": {
-		"vertexShader": "Shaders/Deferred/Lighting.vert",
-		"fragmentShader": "Shaders/Deferred/Lighting.frag",
+		"vertexShader": "BuiltInAssets/Shaders/Deferred/Lighting.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Lighting.frag",
 		"shaderDefines": [ "POINT" ],
 		"blendFactorSrc": "OneMinusDstColor",
 		"blendFactorDst": "One"
 	},
 	
 	"Deferred/Lighting/Directional": {
-		"vertexShader": "Shaders/Deferred/Lighting.vert",
-		"fragmentShader": "Shaders/Deferred/Lighting.frag",
+		"vertexShader": "BuiltInAssets/Shaders/Deferred/Lighting.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Lighting.frag",
 		"shaderDefines": [ "DIRECTIONAL" ],
 		"blendFactorSrc": "OneMinusDstColor",
 		"blendFactorDst": "One"
 	},
 	
 	"Deferred/Composite": {
-		"vertexShader": "Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "Shaders/Deferred/Composite.frag"
+		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Composite.frag"
 	}
 }

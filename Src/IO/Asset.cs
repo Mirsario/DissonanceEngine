@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Dissonance.Engine.IO
@@ -65,12 +66,13 @@ namespace Dissonance.Engine.IO
 			}
 
 			string extension = Path.GetExtension(Name);
+			var readerByExtension = Resources.ReaderData<T>.ReaderByExtension;
 
-			if (!Resources.ReaderCollectionsByType.TryGetValue(typeof(T), out object result) || result is not Resources.AssetReaderCollection<T> assetReaderCollection) {
+			if (readerByExtension.Count == 0) {
 				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
 			}
 
-			if (!assetReaderCollection.AssetReaderByExtension.TryGetValue(extension, out var assetReader)) {
+			if (!readerByExtension.TryGetValue(extension, out var assetReader)) {
 				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
 			}
 

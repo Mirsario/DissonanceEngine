@@ -1,6 +1,6 @@
 {
 	"Debug": {
-		"vertexShader": "Shaders/Debug/Debug.vert",
-		"fragmentShader": "Shaders/Debug/Debug.frag"
+		"vertexShader": "BuiltInAssets/Shaders/Debug/Debug.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/Debug/Debug.frag"
 	}
 }

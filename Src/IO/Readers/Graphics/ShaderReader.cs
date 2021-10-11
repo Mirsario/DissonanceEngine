@@ -1,21 +1,22 @@
-using Dissonance.Engine.Graphics;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using Dissonance.Engine.Graphics;
+using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class ShaderReader : IAssetReader<Shader[]>
+	public partial class ShaderReader : IAssetReader<Asset<Shader>[]>
 	{
 		public string[] Extensions { get; } = { ".program" };
 
-		public Shader[] ReadFromStream(Stream stream, string filePath)
+		public bool AutoloadAssets => true;
+
+		public Asset<Shader>[] ReadFromStream(Stream stream, string filePath)
 		{
 			using var reader = new StreamReader(stream);
 			
 			string jsonText = reader.ReadToEnd();
-
-			var shaders = new List<Shader>();
+			var shaders = new List<Asset<Shader>>();
 			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string, JsonShaderProgram>>(jsonText);
 
 			foreach (var pair in jsonShaders) {
@@ -34,7 +35,11 @@ namespace Dissonance.Engine.IO
 				shader.BlendFactorSrc = jsonShader.blendFactorSrc;
 				shader.BlendFactorDst = jsonShader.blendFactorDst;
 
-				shaders.Add(shader);
+				var shaderAsset = Asset.FromValue(name, shader);
+
+				AssetLookup<Shader>.Register(name, shaderAsset);
+
+				shaders.Add(shaderAsset);
 			}
 
 			return shaders.ToArray();
