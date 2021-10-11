@@ -36,7 +36,7 @@ namespace Dissonance.Engine.Graphics
 				var cameraPosition = cameraTransform.Position;
 
 				for (int i = 0; i < ShadersByLightType.Length; i++) {
-					if (ShadersByLightType[i].TryGetOrRequestValue(out var activeShader)) {
+					if (!ShadersByLightType[i].TryGetOrRequestValue(out var activeShader)) {
 						continue;
 					}
 

@@ -41,7 +41,7 @@ namespace Dissonance.Engine.IO
 			jsonMat.name = FilterText(jsonMat.name, assetPath);
 			jsonMat.shader = FilterText(jsonMat.shader, assetPath);
 
-			var shader = Resources.Get<Shader>(jsonMat.shader);
+			var shader = Resources.Find<Shader>(jsonMat.shader);
 
 			if (shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
