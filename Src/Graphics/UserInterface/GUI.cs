@@ -52,10 +52,10 @@ namespace Dissonance.Engine.Graphics
 
 			if (!string.IsNullOrEmpty(text)) {
 				var textRect = new RectFloat(
-					rect.x + style.Border.left,
-					rect.y + style.Border.top,
-					rect.width - style.Border.left - style.Border.right,
-					rect.height - style.Border.top - style.Border.bottom
+					rect.X + style.Border.Left,
+					rect.Y + style.Border.Top,
+					rect.Width - style.Border.Left - style.Border.Right,
+					rect.Height - style.Border.Top - style.Border.Bottom
 				);
 
 				DrawString(Font, style.FontSize, textRect, text, alignment: style.TextAlignment);
@@ -81,24 +81,24 @@ namespace Dissonance.Engine.Graphics
 		internal static void Draw(RectFloat rect, Texture texture, Vector4? color = null, GUIStyle style = null)
 		{
 			var vector = new Vector4(
-				rect.x / Screen.Width,
-				rect.y / Screen.Height,
-				(rect.x + rect.width) / Screen.Width,
-				(rect.y + rect.height) / Screen.Height
+				rect.X / Screen.Width,
+				rect.Y / Screen.Height,
+				(rect.X + rect.Width) / Screen.Width,
+				(rect.Y + rect.Height) / Screen.Height
 			);
 
 			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
+				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
-			if (style == null || style.Border.left == 0) {
+			if (style == null || style.Border.Left == 0) {
 				DrawUtils.DrawQuadUv0(
-					new Vector4(vector.x, 1f - vector.w, vector.z, 1f - vector.y),
+					new Vector4(vector.X, 1f - vector.W, vector.Z, 1f - vector.Y),
 					new Vector4(0f, 0f, 1f, 1f)
 				);
 
@@ -107,12 +107,12 @@ namespace Dissonance.Engine.Graphics
 
 			var textureSize = new Vector2(texture.Width, texture.Height);
 			var center = new Vector4(
-				vector.x + style.Border.left / Screen.Width, vector.y + style.Border.top / Screen.Height,
-				vector.z - style.Border.right / Screen.Width, vector.w - style.Border.bottom / Screen.Height
+				vector.X + style.Border.Left / Screen.Width, vector.Y + style.Border.Top / Screen.Height,
+				vector.Z - style.Border.Right / Screen.Width, vector.W - style.Border.Bottom / Screen.Height
 			);
 			var centerUV = new Vector4(
-				style.Border.left / textureSize.x, style.Border.top / textureSize.y,
-				1f - style.Border.right / textureSize.x, 1f - style.Border.bottom / textureSize.y
+				style.Border.Left / textureSize.X, style.Border.Top / textureSize.Y,
+				1f - style.Border.Right / textureSize.X, 1f - style.Border.Bottom / textureSize.Y
 			);
 
 			for (int y = 0; y < 3; y++) {
@@ -121,43 +121,43 @@ namespace Dissonance.Engine.Graphics
 
 					switch (x) {
 						default:
-							vertices.x = vector.x;
-							vertices.z = center.x;
-							uv.x = 0f;
-							uv.z = centerUV.x;
+							vertices.X = vector.X;
+							vertices.Z = center.X;
+							uv.X = 0f;
+							uv.Z = centerUV.X;
 							break;
 						case 1:
-							vertices.x = center.x;
-							vertices.z = center.z;
-							uv.x = centerUV.x;
-							uv.z = centerUV.z;
+							vertices.X = center.X;
+							vertices.Z = center.Z;
+							uv.X = centerUV.X;
+							uv.Z = centerUV.Z;
 							break;
 						case 2:
-							vertices.x = center.z;
-							vertices.z = vector.z;
-							uv.x = centerUV.z;
-							uv.z = 1f;
+							vertices.X = center.Z;
+							vertices.Z = vector.Z;
+							uv.X = centerUV.Z;
+							uv.Z = 1f;
 							break;
 					}
 
 					switch (y) {
 						default:
-							vertices.y = 1f - vector.y;
-							vertices.w = 1f - center.y;
-							uv.y = centerUV.y;
-							uv.w = 0f;
+							vertices.Y = 1f - vector.Y;
+							vertices.W = 1f - center.Y;
+							uv.Y = centerUV.Y;
+							uv.W = 0f;
 							break;
 						case 1:
-							vertices.y = 1f - center.y;
-							vertices.w = 1f - center.w;
-							uv.y = centerUV.w;
-							uv.w = centerUV.y;
+							vertices.Y = 1f - center.Y;
+							vertices.W = 1f - center.W;
+							uv.Y = centerUV.W;
+							uv.W = centerUV.Y;
 							break;
 						case 2:
-							vertices.y = 1f - center.w;
-							vertices.w = 1f - vector.w;
-							uv.y = 1f;
-							uv.w = centerUV.w;
+							vertices.Y = 1f - center.W;
+							vertices.W = 1f - vector.W;
+							uv.Y = 1f;
+							uv.W = centerUV.W;
 							break;
 					}
 
@@ -176,28 +176,28 @@ namespace Dissonance.Engine.Graphics
 			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.x, col.y, col.z, col.w);
+				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D, font.Texture.TryGetOrRequestValue(out var tex) ? tex.Id : 0);
 			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
 
-			float scale = fontSize / font.CharSize.y;
-			var position = new Vector2(rect.x, rect.y);
+			float scale = fontSize / font.CharSize.Y;
+			var position = new Vector2(rect.X, rect.Y);
 			
 			if (alignment == TextAlignment.UpperCenter || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.LowerCenter) {
-				position.x += rect.width / 2f - font.CharSize.x * scale * text.Length / 2f;
+				position.X += rect.Width / 2f - font.CharSize.X * scale * text.Length / 2f;
 			}
 
 			if (alignment == TextAlignment.MiddleLeft || alignment == TextAlignment.MiddleCenter || alignment == TextAlignment.MiddleRight) {
-				position.y += rect.height / 2f - fontSize / 2f;
+				position.Y += rect.Height / 2f - fontSize / 2f;
 			}
 
-			float xPos = position.x / Screen.Width;
-			float yPos = position.y / Screen.Height;
-			float width = font.CharSize.x / Screen.Width * scale;
-			float height = font.CharSize.y / Screen.Height * scale;
+			float xPos = position.X / Screen.Width;
+			float yPos = position.Y / Screen.Height;
+			float width = font.CharSize.X / Screen.Width * scale;
+			float height = font.CharSize.Y / Screen.Height * scale;
 
 			int numCharacters = text.Count(c => !char.IsWhiteSpace(c) && font.CharToUv.ContainsKey(c));
 

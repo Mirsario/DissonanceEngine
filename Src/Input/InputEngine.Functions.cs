@@ -7,24 +7,24 @@ namespace Dissonance.Engine.Input
 		// Mouse
 		
 		public static bool GetMouseButton(MouseButton button)
-			=> CurrentInput.mouseButtons[(int)button];
+			=> CurrentInput.MouseButtons[(int)button];
 		
 		public static bool GetMouseButtonDown(MouseButton button)
-			=> CurrentInput.mouseButtons[(int)button] && !PrevInput.mouseButtons[(int)button];
+			=> CurrentInput.MouseButtons[(int)button] && !PrevInput.MouseButtons[(int)button];
 		
 		public static bool GetMouseButtonUp(MouseButton button)
-			=> !CurrentInput.mouseButtons[(int)button] && PrevInput.mouseButtons[(int)button];
+			=> !CurrentInput.MouseButtons[(int)button] && PrevInput.MouseButtons[(int)button];
 		
 		// Keys
 		
 		public static bool GetKey(Keys key)
-			=> CurrentInput.pressedKeys.ContainsKey(key);
+			=> CurrentInput.PressedKeys.ContainsKey(key);
 		
 		public static bool GetKeyDown(Keys key)
-			=> CurrentInput.pressedKeys.ContainsKey(key) && !PrevInput.pressedKeys.ContainsKey(key);
+			=> CurrentInput.PressedKeys.ContainsKey(key) && !PrevInput.PressedKeys.ContainsKey(key);
 		
 		public static bool GetKeyUp(Keys key)
-			=> !CurrentInput.pressedKeys.ContainsKey(key) && PrevInput.pressedKeys.ContainsKey(key);
+			=> !CurrentInput.PressedKeys.ContainsKey(key) && PrevInput.PressedKeys.ContainsKey(key);
 		
 		// Directions
 		

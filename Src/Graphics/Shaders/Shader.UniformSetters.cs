@@ -11,7 +11,7 @@ namespace Dissonance.Engine.Graphics
 			SetShader(this);
 
 			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				GL.Uniform1(uniform.location, value);
+				GL.Uniform1(uniform.Location, value);
 			}
 		}
 
@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 			SetShader(this);
 
 			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				GL.Uniform2(uniform.location, value.x, value.y);
+				GL.Uniform2(uniform.Location, value.X, value.Y);
 			}
 		}
 	}

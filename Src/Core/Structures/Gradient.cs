@@ -4,15 +4,15 @@ namespace Dissonance.Engine
 {
 	public class Gradient<T>
 	{
-		public class GradientKey
+		public struct GradientKey
 		{
-			public float time;
-			public T value;
+			public float Time;
+			public T Value;
 
 			public GradientKey(float time, T value)
 			{
-				this.time = time;
-				this.value = value;
+				Time = time;
+				Value = value;
 			}
 		}
 
@@ -58,22 +58,28 @@ namespace Dissonance.Engine
 
 		public T GetValue(float time)
 		{
-			GradientKey left = null;
-			GradientKey right = null;
+			GradientKey left = default;
+			GradientKey right = default;
+			bool leftHasValue = false;
+			bool rightHasValue = false;
 
 			for (int i = 0; i < keys.Length; i++) {
-				if (left == null || keys[i].time > left.time && keys[i].time <= time) {
+				if (!leftHasValue || keys[i].Time > left.Time && keys[i].Time <= time) {
 					left = keys[i];
+					leftHasValue = true;
 				}
 			}
 
 			for (int i = keys.Length - 1; i >= 0; i--) {
-				if (right == null || keys[i].time < right.time && keys[i].time >= time) {
+				if (!rightHasValue || keys[i].Time < right.Time && keys[i].Time >= time) {
 					right = keys[i];
+					rightHasValue = true;
 				}
 			}
 
-			return left.time == right.time ? left.value : LerpFunc(left.value, right.value, (time - left.time) / (right.time - left.time));
+			return left.Time == right.Time
+				? left.Value
+				: LerpFunc(left.Value, right.Value, (time - left.Time) / (right.Time - left.Time));
 		}
 	}
 }

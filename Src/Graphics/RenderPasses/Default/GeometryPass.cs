@@ -35,7 +35,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
 
 				var cameraTransform = renderView.Transform;
 				var cameraPos = cameraTransform.Position;

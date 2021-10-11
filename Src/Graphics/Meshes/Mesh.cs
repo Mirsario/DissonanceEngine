@@ -21,8 +21,8 @@ namespace Dissonance.Engine.Graphics
 
 		private readonly CustomVertexBuffer[] VertexBuffers;
 
-		internal uint vertexArrayId;
-
+		private uint vertexArrayId;
+		
 		private PrimitiveType currentPrimitiveType = PrimitiveType.Triangles;
 		private PrimitiveType primitiveTypeToSet = PrimitiveType.Triangles;
 
@@ -50,7 +50,7 @@ namespace Dissonance.Engine.Graphics
 			BufferUsage = BufferUsageHint.StaticDraw;
 
 			IndexBuffer = new IndexBuffer {
-				mesh = this
+				Mesh = this
 			};
 
 			VertexBuffers = new CustomVertexBuffer[CustomVertexBuffer.Count];
@@ -58,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 			for (int i = 0; i < VertexBuffers.Length; i++) {
 				var instance = CustomVertexBuffer.CreateInstance(i);
 
-				instance.mesh = this;
+				instance.Mesh = this;
 
 				VertexBuffers[i] = instance;
 			}

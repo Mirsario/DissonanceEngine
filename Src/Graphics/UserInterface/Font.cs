@@ -20,17 +20,17 @@ namespace Dissonance.Engine.Graphics
 			CharToUv = new Dictionary<char, Vector2[]>();
 
 			var textureValue = texture.GetValueImmediately();
-			var size = new Vector2(charSize.x / textureValue.Width, charSize.y / textureValue.Height);
+			var size = new Vector2(charSize.X / textureValue.Width, charSize.Y / textureValue.Height);
 
 			float x = 0f;
 			float y = 0f;
 
 			for (int i = 0; i < offset; i++) {
-				x += size.x;
+				x += size.X;
 
 				if (x >= 1f) {
 					x = 0f;
-					y += size.y;
+					y += size.Y;
 				}
 			}
 
@@ -39,17 +39,17 @@ namespace Dissonance.Engine.Graphics
 					charList[i],
 					new Vector2[4] {
 						new Vector2(x,			y),
-						new Vector2(x + size.x,	y),
-						new Vector2(x + size.x,	y + size.y),
-						new Vector2(x,			y + size.y)
+						new Vector2(x + size.X,	y),
+						new Vector2(x + size.X,	y + size.Y),
+						new Vector2(x,			y + size.Y)
 					}
 				);
 
-				x += size.x;
+				x += size.X;
 
 				if (x >= 1f) {
 					x = 0f;
-					y += size.y;
+					y += size.Y;
 				}
 			}
 		}

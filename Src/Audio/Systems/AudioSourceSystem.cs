@@ -54,10 +54,10 @@ namespace Dissonance.Engine.Audio
 					var position = transform.Position;
 
 					if (position == default) {
-						position.x = float.Epsilon;
+						position.X = float.Epsilon;
 					}
 
-					AL.Source(audioSource.sourceId, SourceFloat3.Position, position.x, position.y, position.z);
+					AL.Source(audioSource.sourceId, SourceFloat3.Position, position.X, position.Y, position.Z);
 
 					AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
 					AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);

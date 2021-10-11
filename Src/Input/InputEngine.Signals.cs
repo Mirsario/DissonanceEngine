@@ -24,8 +24,8 @@ namespace Dissonance.Engine.Input
 				RegisterSignal($"Mouse{button}", arg => GetMouseButton((MouseButton)arg) ? 1f : 0f, button);
 			}
 
-			RegisterSignal("MouseX", arg => MouseDelta.x);
-			RegisterSignal("MouseY", arg => MouseDelta.y);
+			RegisterSignal("MouseX", arg => MouseDelta.X);
+			RegisterSignal("MouseY", arg => MouseDelta.Y);
 			RegisterSignal("MouseWheel", arg => MouseWheel);
 		}
 

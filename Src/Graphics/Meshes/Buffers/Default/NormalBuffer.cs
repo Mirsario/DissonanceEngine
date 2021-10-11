@@ -7,12 +7,12 @@ namespace Dissonance.Engine.Graphics
 	{
 		public void Recalculate()
 		{
-			if (mesh.PrimitiveType != PrimitiveType.Triangles) {
-				throw new InvalidOperationException($"{nameof(Recalculate)}() can only work on meshes with {nameof(PrimitiveType.Triangles)} {nameof(Mesh.PrimitiveType)}.");
+			if (Mesh.PrimitiveType != PrimitiveType.Triangles) {
+				throw new InvalidOperationException($"{nameof(Recalculate)}() can only work on meshes with {nameof(PrimitiveType.Triangles)} {nameof(Graphics.Mesh.PrimitiveType)}.");
 			}
 
-			var vertices = mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
-			var indices = mesh.Indices;
+			var vertices = Mesh.Vertices ?? throw new InvalidOperationException($"{nameof(Recalculate)}() requires {nameof(VertexBuffer)} to be ready.");
+			var indices = Mesh.Indices;
 			bool isIndexed = indices != null;
 			int indexCount = isIndexed ? indices.Length : vertices.Length;
 

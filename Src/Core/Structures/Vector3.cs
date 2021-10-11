@@ -21,33 +21,33 @@ namespace Dissonance.Engine
 		public static readonly Vector3 Forward = new(0f, 0f, 1f);
 		public static readonly Vector3 Backward = new(0f, 0f, -1f);
 
-		public float x;
-		public float y;
-		public float z;
+		public float X;
+		public float Y;
+		public float Z;
 
-		public float Magnitude => MathF.Sqrt(x * x + y * y + z * z);
-		public float SqrMagnitude => x * x + y * y + z * z;
-		public bool HasNaNs => float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z);
+		public float Magnitude => MathF.Sqrt(X * X + Y * Y + Z * Z);
+		public float SqrMagnitude => X * X + Y * Y + Z * Z;
+		public bool HasNaNs => float.IsNaN(X) || float.IsNaN(Y) || float.IsNaN(Z);
 
 		public Vector2 XY {
-			get => new(x, y);
+			get => new(X, Y);
 			set {
-				x = value.x;
-				y = value.y;
+				X = value.X;
+				Y = value.Y;
 			}
 		}
 		public Vector2 XZ {
-			get => new(x, z);
+			get => new(X, Z);
 			set {
-				x = value.x;
-				z = value.y;
+				X = value.X;
+				Z = value.Y;
 			}
 		}
 		public Vector2 YZ {
-			get => new(y, z);
+			get => new(Y, Z);
 			set {
-				y = value.x;
-				z = value.y;
+				Y = value.X;
+				Z = value.Y;
 			}
 		}
 		public Vector3 Normalized {
@@ -65,21 +65,21 @@ namespace Dissonance.Engine
 		public float this[int index] {
 			get => index switch
 			{
-				0 => x,
-				1 => y,
-				2 => z,
+				0 => X,
+				1 => Y,
+				2 => Z,
 				_ => throw new IndexOutOfRangeException($"Indices for {nameof(Vector3)} run from 0 to 2 (inclusive)."),
 			};
 			set {
 				switch (index) {
 					case 0:
-						x = value;
+						X = value;
 						return;
 					case 1:
-						y = value;
+						Y = value;
 						return;
 					case 2:
-						z = value;
+						Z = value;
 						return;
 					default:
 						throw new IndexOutOfRangeException($"Indices for {nameof(Vector3)} run from 0 to 2 (inclusive).");
@@ -89,26 +89,26 @@ namespace Dissonance.Engine
 
 		public Vector3(float x, float y, float z)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			X = x;
+			Y = y;
+			Z = z;
 		}
 
 		public Vector3(float xyz) : this(xyz, xyz, xyz) { }
 
-		public Vector3(Vector2 xy, float z) : this(xy.x, xy.y, z) { }
+		public Vector3(Vector2 xy, float z) : this(xy.X, xy.Y, z) { }
 
 		public override int GetHashCode()
-			=> x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
+			=> X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2;
 
 		public override bool Equals(object other)
-			=> other is Vector3 vector && x == vector.x && y == vector.y && z == vector.z;
+			=> other is Vector3 vector && X == vector.X && Y == vector.Y && Z == vector.Z;
 
 		public override string ToString()
-			=> $"[{x}, {y}, {z}]";
+			=> $"[{X}, {Y}, {Z}]";
 
 		public float[] ToArray()
-			=> new[] { x, y, z };
+			=> new[] { X, Y, Z };
 
 		public void Normalize()
 		{
@@ -117,9 +117,9 @@ namespace Dissonance.Engine
 			if (mag != 0f) {
 				float num = 1f / mag;
 
-				x *= num;
-				y *= num;
-				z *= num;
+				X *= num;
+				Y *= num;
+				Z *= num;
 			}
 		}
 
@@ -130,9 +130,9 @@ namespace Dissonance.Engine
 			if (magnitude != 0f) {
 				float num = 1f / magnitude;
 
-				x *= num;
-				y *= num;
-				z *= num;
+				X *= num;
+				Y *= num;
+				Z *= num;
 			}
 		}
 
@@ -140,61 +140,61 @@ namespace Dissonance.Engine
 		{
 			//TODO: Rewrite without loops, sigh.
 
-			while (x >= 360f) {
-				x -= 360f;
+			while (X >= 360f) {
+				X -= 360f;
 			}
 
-			while (x < 0f) {
-				x += 360f;
+			while (X < 0f) {
+				X += 360f;
 			}
 
-			while (y >= 360f) {
-				y -= 360f;
+			while (Y >= 360f) {
+				Y -= 360f;
 			}
 
-			while (y < 0f) {
-				y += 360f;
+			while (Y < 0f) {
+				Y += 360f;
 			}
 
-			while (z >= 360f) {
-				z -= 360f;
+			while (Z >= 360f) {
+				Z -= 360f;
 			}
 
-			while (z < 0f) {
-				z += 360f;
+			while (Z < 0f) {
+				Z += 360f;
 			}
 		}
 
 		//TODO: Rewrite without matrices.
 		public Vector3 Rotate(Vector3 rot) => Matrix4x4.CreateRotation(rot) * this;
 
-		public Vector3 RotatedBy(Vector3 vec) => Matrix4x4.CreateRotation(-vec.x, vec.y, -vec.z) * this;
+		public Vector3 RotatedBy(Vector3 vec) => Matrix4x4.CreateRotation(-vec.X, vec.Y, -vec.Z) * this;
 
 		public Vector3 RotatedBy(float x, float y, float z) => Matrix4x4.CreateRotation(-x, y, -z) * this;
 
 		public static Vector3 Min(Vector3 a, Vector3 b)
 		{
-			return new Vector3(Math.Min(a.x, b.x), Math.Min(a.y, b.y), Math.Min(a.z, b.z));
+			return new Vector3(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z));
 		}
 
 		public static Vector3 Max(Vector3 a, Vector3 b)
 		{
-			return new Vector3(Math.Max(a.x, b.x), Math.Max(a.y, b.y), Math.Max(a.z, b.z));
+			return new Vector3(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
 		}
 
 		public static Vector3 StepTowards(Vector3 val, Vector3 goal, float step)
 		{
 			return new Vector3(
-				MathHelper.StepTowards(val.x, goal.x, step),
-				MathHelper.StepTowards(val.y, goal.y, step),
-				MathHelper.StepTowards(val.z, goal.z, step)
+				MathHelper.StepTowards(val.X, goal.X, step),
+				MathHelper.StepTowards(val.Y, goal.Y, step),
+				MathHelper.StepTowards(val.Z, goal.Z, step)
 			);
 		}
 
 		public static Vector3 EulerToDirection(Vector3 euler)
 		{
-			float pitch = euler.x * MathHelper.Deg2Rad;
-			float yaw = euler.y * MathHelper.Deg2Rad;
+			float pitch = euler.X * MathHelper.Deg2Rad;
+			float yaw = euler.Y * MathHelper.Deg2Rad;
 
 			float cX = MathF.Cos(pitch);
 			float sX = MathF.Sin(pitch);
@@ -210,9 +210,9 @@ namespace Dissonance.Engine
 
 		public static Vector3 DirectionToEuler(Vector3 direction)
 		{
-			float xzLength = MathF.Sqrt(direction.x * direction.x + direction.z * direction.z);
-			float pitch = MathF.Atan2(xzLength, direction.y) - MathHelper.HalfPI;
-			float yaw = MathF.Atan2(direction.x, direction.z);
+			float xzLength = MathF.Sqrt(direction.X * direction.X + direction.Z * direction.Z);
+			float pitch = MathF.Atan2(xzLength, direction.Y) - MathHelper.HalfPI;
+			float yaw = MathF.Atan2(direction.X, direction.Z);
 
 			return new Vector3(
 				pitch * MathHelper.Rad2Deg,
@@ -222,9 +222,9 @@ namespace Dissonance.Engine
 		}
 
 		public static Vector3 Repeat(Vector3 vec, float length) => new(
-			vec.x - MathF.Floor(vec.x / length) * length,
-			vec.y - MathF.Floor(vec.y / length) * length,
-			vec.z - MathF.Floor(vec.z / length) * length
+			vec.X - MathF.Floor(vec.X / length) * length,
+			vec.Y - MathF.Floor(vec.Y / length) * length,
+			vec.Z - MathF.Floor(vec.Z / length) * length
 		);
 
 		public static Vector3 Rotate(Vector3 vec, Vector3 rot)
@@ -243,27 +243,27 @@ namespace Dissonance.Engine
 
 		public static Vector3 Floor(Vector3 vec)
 		{
-			vec.x = MathF.Floor(vec.x);
-			vec.y = MathF.Floor(vec.y);
-			vec.z = MathF.Floor(vec.z);
+			vec.X = MathF.Floor(vec.X);
+			vec.Y = MathF.Floor(vec.Y);
+			vec.Z = MathF.Floor(vec.Z);
 
 			return vec;
 		}
 
 		public static Vector3 Ceil(Vector3 vec)
 		{
-			vec.x = MathF.Ceiling(vec.x);
-			vec.y = MathF.Ceiling(vec.y);
-			vec.z = MathF.Ceiling(vec.z);
+			vec.X = MathF.Ceiling(vec.X);
+			vec.Y = MathF.Ceiling(vec.Y);
+			vec.Z = MathF.Ceiling(vec.Z);
 
 			return vec;
 		}
 
 		public static Vector3 Round(Vector3 vec)
 		{
-			vec.x = MathF.Round(vec.x);
-			vec.y = MathF.Round(vec.y);
-			vec.z = MathF.Round(vec.z);
+			vec.X = MathF.Round(vec.X);
+			vec.Y = MathF.Round(vec.Y);
+			vec.Z = MathF.Round(vec.Z);
 
 			return vec;
 		}
@@ -272,7 +272,7 @@ namespace Dissonance.Engine
 		{
 			t = MathHelper.Clamp01(t);
 
-			return new Vector3(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t, from.z + (to.z - from.z) * t);
+			return new Vector3(from.X + (to.X - from.X) * t, from.Y + (to.Y - from.Y) * t, from.Z + (to.Z - from.Z) * t);
 		}
 
 		public static Vector3 LerpAngle(Vector3 from, Vector3 to, float t)
@@ -280,18 +280,18 @@ namespace Dissonance.Engine
 			// Could be sped up.
 
 			return new Vector3(
-				MathHelper.LerpAngle(from.x, to.x, t),
-				MathHelper.LerpAngle(from.y, to.y, t),
-				MathHelper.LerpAngle(from.z, to.z, t)
+				MathHelper.LerpAngle(from.X, to.X, t),
+				MathHelper.LerpAngle(from.Y, to.Y, t),
+				MathHelper.LerpAngle(from.Z, to.Z, t)
 			);
 		}
 
 		public static void Cross(ref Vector3 left, ref Vector3 right, out Vector3 result)
 		{
 			result = new Vector3(
-				left.y * right.z - left.z * right.y,
-				left.z * right.x - left.x * right.z,
-				left.x * right.y - left.y * right.x
+				left.Y * right.Z - left.Z * right.Y,
+				left.Z * right.X - left.X * right.Z,
+				left.X * right.Y - left.Y * right.X
 			);
 		}
 
@@ -303,7 +303,7 @@ namespace Dissonance.Engine
 		}
 
 		public static float Dot(Vector3 left, Vector3 right)
-			=> left.x * right.x + left.y * right.y + left.z * right.z;
+			=> left.X * right.X + left.Y * right.Y + left.Z * right.Z;
 
 		public static float Angle(Vector3 from, Vector3 to)
 		{
@@ -327,15 +327,15 @@ namespace Dissonance.Engine
 		// Operations
 
 		// Vector3
-		public static Vector3 operator *(Vector3 a, Vector3 b) => new(a.x * b.x, a.y * b.y, a.z * b.z);
+		public static Vector3 operator *(Vector3 a, Vector3 b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
-		public static Vector3 operator /(Vector3 a, Vector3 b) => new(a.x / b.x, a.y / b.y, a.z / b.z);
+		public static Vector3 operator /(Vector3 a, Vector3 b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
-		public static Vector3 operator +(Vector3 a, Vector3 b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
+		public static Vector3 operator +(Vector3 a, Vector3 b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
-		public static Vector3 operator -(Vector3 a, Vector3 b) => new(a.x - b.x, a.y - b.y, a.z - b.z);
+		public static Vector3 operator -(Vector3 a, Vector3 b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
-		public static Vector3 operator -(Vector3 a) => new(-a.x, -a.y, -a.z);
+		public static Vector3 operator -(Vector3 a) => new(-a.X, -a.Y, -a.Z);
 
 		public static bool operator ==(Vector3 a, Vector3 b) => (a - b).SqrMagnitude < 9.99999944E-11f;
 
@@ -343,11 +343,11 @@ namespace Dissonance.Engine
 
 		// Float
 
-		public static Vector3 operator *(Vector3 a, float d) => new(a.x * d, a.y * d, a.z * d);
+		public static Vector3 operator *(Vector3 a, float d) => new(a.X * d, a.Y * d, a.Z * d);
 
-		public static Vector3 operator *(float d, Vector3 a) => new(a.x * d, a.y * d, a.z * d);
+		public static Vector3 operator *(float d, Vector3 a) => new(a.X * d, a.Y * d, a.Z * d);
 
-		public static Vector3 operator /(Vector3 a, float d) => new(a.x / d, a.y / d, a.z / d);
+		public static Vector3 operator /(Vector3 a, float d) => new(a.X / d, a.Y / d, a.Z / d);
 
 		// Casts
 
@@ -359,11 +359,11 @@ namespace Dissonance.Engine
 
 		public static implicit operator Vector3(System.Numerics.Vector3 value) => new(value.X, value.Y, value.Z);
 
-		public static implicit operator System.Numerics.Vector3(Vector3 value) => new(value.x, value.y, value.z);
+		public static implicit operator System.Numerics.Vector3(Vector3 value) => new(value.X, value.Y, value.Z);
 
 		// BulletSharp.Math.Vector3
 
-		public static implicit operator BulletSharp.Math.Vector3(Vector3 value) => new(value.x, value.y, value.z);
+		public static implicit operator BulletSharp.Math.Vector3(Vector3 value) => new(value.X, value.Y, value.Z);
 
 		public static implicit operator Vector3(BulletSharp.Math.Vector3 value) => new(value.X, value.Y, value.Z);
 	}

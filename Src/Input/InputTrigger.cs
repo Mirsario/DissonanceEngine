@@ -6,10 +6,10 @@ namespace Dissonance.Engine.Input
 	{
 		internal struct SummInput
 		{
-			public bool isPressed;
-			public bool wasPressed;
-			public float analogInput;
-			public float prevAnalogInput;
+			public bool IsPressed;
+			public bool WasPressed;
+			public float AnalogInput;
+			public float PrevAnalogInput;
 		}
 
 		public const float DefaultMinValue = float.NegativeInfinity;
@@ -27,16 +27,16 @@ namespace Dissonance.Engine.Input
 		public float MaxValue { get; set; } = DefaultMaxValue;
 		public int Id { get; internal set; }
 
-		public bool IsPressed => CurrentInput.isPressed;
-		public bool WasPressed => CurrentInput.wasPressed;
-		public bool JustPressed => CurrentInput.isPressed && !CurrentInput.wasPressed;
-		public bool JustReleased => CurrentInput.wasPressed && !CurrentInput.isPressed;
+		public bool IsPressed => CurrentInput.IsPressed;
+		public bool WasPressed => CurrentInput.WasPressed;
+		public bool JustPressed => CurrentInput.IsPressed && !CurrentInput.WasPressed;
+		public bool JustReleased => CurrentInput.WasPressed && !CurrentInput.IsPressed;
 
 		public float Value {
-			get => CurrentInput.analogInput;
+			get => CurrentInput.AnalogInput;
 			internal set {
-				CurrentInput.analogInput = MathHelper.Clamp(value, MinValue, MaxValue);
-				CurrentInput.isPressed = value != 0f;
+				CurrentInput.AnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
+				CurrentInput.IsPressed = value != 0f;
 			}
 		}
 		public InputBinding[] Bindings {

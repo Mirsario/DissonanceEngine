@@ -106,11 +106,11 @@ namespace Dissonance.Engine.Graphics
 		private void UpdateValues()
 		{
 			// Framebuffer
-			GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.x, out framebufferSize.y);
+			GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
 
 			// Window
-			GLFW.GetWindowSize(WindowHandle, out windowSize.x, out windowSize.y);
-			GLFW.GetWindowPos(WindowHandle, out windowLocation.x, out windowLocation.y);
+			GLFW.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
+			GLFW.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
 		}
 
 		private void InitCallbacks()

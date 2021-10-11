@@ -2,13 +2,13 @@
 {
 	public struct BoneWeights
 	{
-		public int boneIndex0;
-		public int boneIndex1;
-		public int boneIndex2;
-		public int boneIndex3;
-		public float weight0;
-		public float weight1;
-		public float weight2;
-		public float weight3;
+		public int BoneIndex0;
+		public int BoneIndex1;
+		public int BoneIndex2;
+		public int BoneIndex3;
+		public float Weight0;
+		public float Weight1;
+		public float Weight2;
+		public float Weight3;
 	}
 }

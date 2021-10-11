@@ -108,8 +108,8 @@ namespace Dissonance.Engine
 		{
 			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
 				=> module.Dependencies?.Select(dependency => {
-					if (!TryGetModule(dependency.type, out var result) && !dependency.optional) {
-						throw new Exception($"Unable to find module of type '{dependency.type.Name}', required by module '{module.GetType().Name}'.");
+					if (!TryGetModule(dependency.Type, out var result) && !dependency.Optional) {
+						throw new Exception($"Unable to find module of type '{dependency.Type.Name}', required by module '{module.GetType().Name}'.");
 					}
 
 					return result;

@@ -22,8 +22,8 @@ namespace Dissonance.Engine.Input
 				var trigger = triggers[i];
 				ref var input = ref trigger.CurrentInput;
 
-				input.prevAnalogInput = input.analogInput;
-				input.wasPressed = input.isPressed;
+				input.PrevAnalogInput = input.AnalogInput;
+				input.WasPressed = input.IsPressed;
 
 				trigger.Value = 0f;
 

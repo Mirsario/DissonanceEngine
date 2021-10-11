@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Graphics
 				var transform = entity.Get<Transform>();
 
 				var viewSize = camera.ViewPixel;
-				float aspectRatio = viewSize.width / (float)viewSize.height;
+				float aspectRatio = viewSize.Width / (float)viewSize.Height;
 
 				camera.ViewMatrix = Matrix4x4.LookAt(transform.Position, transform.Position + transform.Forward, transform.Up);
 

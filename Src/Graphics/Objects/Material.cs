@@ -69,12 +69,12 @@ namespace Dissonance.Engine.Graphics
 
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
 					GL.BindTexture(TextureTarget.Texture2D, textureAsset.IsLoaded ? textureAsset.Value.Id : 0);
-					GL.Uniform1(uniform.location, i);
+					GL.Uniform1(uniform.Location, i);
 				}
 			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
-				GL.Uniform1(uniform.location, 0);
+				GL.Uniform1(uniform.Location, 0);
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var pair in UniformsFloat) {
 				(byte vecSize, var data) = pair.Value;
 
-				int location = shader.uniforms[pair.Key].location;
+				int location = shader.uniforms[pair.Key].Location;
 
 				switch (vecSize) {
 					case 1:
