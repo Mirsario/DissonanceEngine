@@ -345,15 +345,52 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void Init()
 		{
-			Quad = Assets.CreateUntracked(nameof(Quad), GenerateQuad());
-			QuadXFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVHorizontally: true));
-			QuadYFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVVertically: true));
-			QuadXYFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVHorizontally: true, flipUVVertically: true));
-			ScreenQuad = Assets.CreateUntracked(nameof(Quad), GenerateQuad(2f));
-			Cube = Assets.CreateUntracked(nameof(Quad), GenerateBox(Vector3.One));
-			InvertedCube = Assets.CreateUntracked(nameof(Quad), GenerateBox(Vector3.One, inverted: true));
-			Sphere = Assets.CreateUntracked(nameof(Quad), GenerateSphere());
-			IcoSphere = Assets.CreateUntracked(nameof(Quad), GenerateIcoSphere());
+			const string MeshesPath = $"{Assets.BuiltInAssetsDirectory}/Meshes";
+
+			Quad = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Quad)}",
+				GenerateQuad()
+			);
+
+			QuadXFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadXFlipped)}",
+				GenerateQuad(flipUVHorizontally: true)
+			);
+
+			QuadYFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadYFlipped)}",
+				GenerateQuad(flipUVVertically: true)
+			);
+
+			QuadXYFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadXYFlipped)}",
+				GenerateQuad(flipUVHorizontally: true, flipUVVertically: true)
+			);
+			
+			ScreenQuad = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(ScreenQuad)}",
+				GenerateQuad(2f)
+			);
+			
+			Cube = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Cube)}",
+				GenerateBox(Vector3.One)
+			);
+
+			InvertedCube = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(InvertedCube)}",
+				GenerateBox(Vector3.One, inverted: true)
+			);
+
+			Sphere = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Sphere)}",
+				GenerateSphere()
+			);
+
+			IcoSphere = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(IcoSphere)}",
+				GenerateIcoSphere()
+			);
 		}
 	}
 }

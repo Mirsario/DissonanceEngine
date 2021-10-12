@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Dissonance.Engine.IO
 {
@@ -8,13 +9,16 @@ namespace Dissonance.Engine.IO
 	/// </summary>
 	public abstract class Asset
 	{
-		/// <summary> The path identifier of this asset. </summary>
-		public string Name { get; internal set; }
+		/// <summary> The name of this asset. Used in registry. </summary>
+		public string Name { get; }
+
+		/// <summary> The virtual path this asset was created with. Can be null. </summary>
+		public string AssetPath { get; internal init; }
 
 		/// <summary> The state of this asset. </summary>
 		public AssetState State { get; internal set; }
 
-		/// <summary> The source of this asset. </summary>
+		/// <summary> The source of this asset. Can be null. </summary>
 		public AssetSource Source { get; internal set; }
 
 		/// <summary> Whether or not this asset is currently being loaded. </summary>
@@ -23,10 +27,13 @@ namespace Dissonance.Engine.IO
 		/// <summary> Whether or not this asset has been loaded. </summary>
 		public bool IsLoaded => State == AssetState.Loaded;
 
-		internal Asset(string name, AssetSource source)
+		internal Asset(string name)
 		{
+			if (string.IsNullOrWhiteSpace(name) || name.Any(c => char.IsWhiteSpace(c))) {
+				throw new ArgumentException("Asset name cannot be null, empty, or contain whitespaces.", nameof(name));
+			}
+
 			Name = name;
-			Source = source;
 		}
 	}
 
@@ -52,7 +59,7 @@ namespace Dissonance.Engine.IO
 			}
 		}
 
-		internal Asset(string name, AssetSource source) : base(name, source) { }
+		internal Asset(string name) : base(name) { }
 
 		public void Request(AssetRequestMode mode = AssetRequestMode.AsyncLoad)
 		{
@@ -60,7 +67,7 @@ namespace Dissonance.Engine.IO
 				return;
 			}
 
-			string extension = Path.GetExtension(Name);
+			string extension = Path.GetExtension(AssetPath);
 			var readerByExtension = Assets.ReadersByDataType<T>.ReaderByExtension;
 
 			if (readerByExtension.Count == 0) {
@@ -73,9 +80,9 @@ namespace Dissonance.Engine.IO
 
 			State = AssetState.Loading;
 
-			using var stream = Source.OpenStream(Name);
+			using var stream = Source.OpenStream(AssetPath);
 
-			Value = assetReader.ReadFromStream(stream, Name);
+			Value = assetReader.ReadFromStream(stream, AssetPath);
 			State = AssetState.Loaded;
 		}
 

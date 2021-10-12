@@ -30,48 +30,51 @@ namespace Dissonance.Engine.IO
 
 		public Material ReadFromStream(Stream stream, string assetPath)
 		{
-			string jsonText;
+			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-			using(var reader = new StreamReader(stream)) {
-				jsonText = reader.ReadToEnd();
-			}
+			using var reader = new StreamReader(stream);
+			string jsonText = reader.ReadToEnd();
 
 			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
 
-			jsonMat.name = FilterText(jsonMat.name, assetPath);
-			jsonMat.shader = FilterText(jsonMat.shader, assetPath);
+			string materialName = FilterText(jsonMat.name, assetPath);
+			string materialShaderName = FilterText(jsonMat.shader, assetPath);
 
-			var shader = Assets.Find<Shader>(jsonMat.shader);
+			var shader = Assets.Find<Shader>(materialShaderName);
 
 			if (shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
 			}
 
-			var material = new Material(jsonMat.name, shader);
+			var material = new Material(materialName, shader);
 
 			if (jsonMat.textures != null) {
 				foreach (var pair in jsonMat.textures) {
-					material.SetTexture(FilterText(pair.Key, assetPath), Assets.Get<Texture>(FilterText(pair.Value, assetPath)));
+					material.SetTexture(pair.Key, Assets.Get<Texture>(pair.Value, directory));
 				}
 			}
 
 			if (jsonMat.floats != null) {
 				foreach (var pair in jsonMat.floats) {
-					material.SetFloat(FilterText(pair.Key, assetPath), pair.Value);
+					material.SetFloat(pair.Key, pair.Value);
 				}
 			}
 
 			if (jsonMat.vectors != null) {
 				foreach (var pair in jsonMat.vectors) {
-					material.SetVector(FilterText(pair.Key, assetPath), pair.Value);
+					material.SetVector(pair.Key, pair.Value);
 				}
 			}
 
 			return material;
 		}
-		private static string FilterText(string str, string file) => str.ReplaceCaseInsensitive(
-			("$FILE$", Path.GetFileName(file)),
-			("$FILENAME$", Path.GetFileNameWithoutExtension(file))
-		);
+
+		private static string FilterText(string str, string file)
+		{
+			str = str.Replace("$File$", Path.GetFileName(file));
+			str = str.Replace("$FileName$", Path.GetFileNameWithoutExtension(file));
+
+			return str;
+		}
 	}
 }

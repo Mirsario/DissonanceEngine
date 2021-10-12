@@ -11,7 +11,7 @@ namespace Dissonance.Engine.IO
 
 		public bool AutoloadAssets => true;
 
-		public Asset<Shader>[] ReadFromStream(Stream stream, string filePath)
+		public Asset<Shader>[] ReadFromStream(Stream stream, string assetPath)
 		{
 			using var reader = new StreamReader(stream);
 			
@@ -35,9 +35,7 @@ namespace Dissonance.Engine.IO
 				shader.BlendFactorSrc = jsonShader.blendFactorSrc;
 				shader.BlendFactorDst = jsonShader.blendFactorDst;
 
-				var shaderAsset = Assets.CreateUntracked(name, shader);
-
-				AssetLookup<Shader>.Register(name, shaderAsset);
+				var shaderAsset = Assets.CreateLoaded(name, shader);
 
 				shaders.Add(shaderAsset);
 			}

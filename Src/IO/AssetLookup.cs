@@ -10,7 +10,7 @@ namespace Dissonance.Engine.IO
 		public static void Clear() => OnClear?.Invoke();
 	}
 
-	public static class AssetLookup<T>
+	internal static class AssetLookup<T>
 	{
 		private static readonly Dictionary<string, Asset<T>> lookup = new();
 
@@ -26,16 +26,18 @@ namespace Dissonance.Engine.IO
 		public static void Register(string name, Asset<T> asset)
 		{
 			if (lookup.ContainsKey(name)) {
-				throw new Exception($"Cannot register two {typeof(T).Name} with the same name: {name}.");
+				//throw new Exception($"Cannot register two {typeof(T).Name} with the same name: {name}.");
+
+				asset = null; // This marks the registry as ambiguous.
 			}
 
 			lookup[name] = asset;
 		}
 
-		internal static Asset<T> Get(string fullName)
-			=> lookup[fullName];
+		public static Asset<T> Get(string fullName)
+			=> lookup[fullName] ?? throw new ArgumentException($"Key '{fullName}' is ambiguous.");
 
-		internal static bool TryGetValue(string fullName, out Asset<T> value)
-			=> lookup.TryGetValue(fullName, out value);
+		public static bool TryGetValue(string fullName, out Asset<T> value)
+			=> lookup.TryGetValue(fullName, out value) && value != null;
 	}
 }
