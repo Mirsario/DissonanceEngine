@@ -28,6 +28,25 @@ namespace Dissonance.Engine.IO
 		}
 
 		/// <summary>
+		/// Returns whether or not an asset the provided case-sensitive virtual path exists.
+		/// </summary>
+		/// <param name="assetPath"> The path of the asset. This path is virtual and case-sensitive - system paths will not work. </param>
+		public static bool Exists(string assetPath)
+		{
+			if (assets.ContainsKey(assetPath)) {
+				return true;
+			}
+
+			foreach (var source in sources) {
+				if (source.HasAsset(assetPath)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Attempts to get or create an asset with the provided case-sensitive virtual asset path, optionally requesting it to be loaded with the provided mode. 
 		/// </summary>
 		/// <typeparam name="T"> The type of the asset. </typeparam>
@@ -67,9 +86,7 @@ namespace Dissonance.Engine.IO
 		public static Asset<T> Find<T>(string assetName)
 			=> AssetLookup<T>.Get(assetName);
 
-		/// <summary>
-		/// Safely attempts to find a registered asset using its case-sensitive name instead of a path.
-		/// </summary>
+		/// <summary> Safely attempts to find a registered asset using its case-sensitive name instead of a path. </summary>
 		/// <typeparam name="T"> The type of the asset. </typeparam>
 		/// <param name="assetName"> The case-sensitive name of the asset. This is not the same as its path. </param>
 		/// <param name="result"> The resulting <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle., if it was found. </param>
@@ -96,11 +113,21 @@ namespace Dissonance.Engine.IO
 			};
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="assetSource"> </param>
 		public static void AddAssetSource(AssetSource assetSource)
 		{
 			sources.Add(assetSource);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"> </typeparam>
+		/// <param name="assetReader"> </param>
+		/// <exception cref="InvalidOperationException"> </exception>
 		public static void AddAssetReader<T>(IAssetReader<T> assetReader)
 		{
 			if (!Readers.Add((IAssetReader<object>)assetReader)) {
