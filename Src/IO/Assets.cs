@@ -89,8 +89,8 @@ namespace Dissonance.Engine.IO
 		{
 			bool rootPath = assetPath.StartsWith('/');
 
-			if (!rootPath && TryGet<T>(FilterPath(Path.Combine(basePath, assetPath)), out var result, mode)) {
-				return result;
+			if (!rootPath && TryGet<T>(FilterPath(Path.Combine(basePath, assetPath)), out result, mode)) {
+				return true;
 			}
 
 			if (rootPath) {
