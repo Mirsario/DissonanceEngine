@@ -5,7 +5,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class ForwardRendering : RenderingPipeline
 	{
-		public override Asset<Shader> DefaultGeometryShader { get; } = Resources.Find<Shader>("Forward/Unlit/Texture");
+		public override Asset<Shader> DefaultGeometryShader { get; } = Assets.Find<Shader>("Forward/Unlit/Texture");
 
 		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{

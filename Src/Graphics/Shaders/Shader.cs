@@ -17,7 +17,7 @@ namespace Dissonance.Engine.Graphics
 
 		private static Asset<Shader> errorShader;
 
-		public static Asset<Shader> ErrorShader => errorShader ??= Resources.Get<Shader>("Error");
+		public static Asset<Shader> ErrorShader => errorShader ??= Assets.Get<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
 		internal Dictionary<string, ShaderUniform> uniforms;

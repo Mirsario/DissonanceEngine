@@ -6,7 +6,7 @@ using Dissonance.Engine.Input;
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Resources), typeof(Rendering))]
+	[ModuleDependency(typeof(Assets), typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
 		public static Font Font { get; set; }
@@ -22,10 +22,10 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
-			TexDefaultInactive = Resources.Get<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
-			TexDefault = Resources.Get<Texture>("BuiltInAssets/GUI/Default.png");
-			TexDefaultHover = Resources.Get<Texture>("BuiltInAssets/GUI/DefaultHover.png");
-			TexDefaultActive = Resources.Get<Texture>("BuiltInAssets/GUI/DefaultActive.png");
+			TexDefaultInactive = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
+			TexDefault = Assets.Get<Texture>("BuiltInAssets/GUI/Default.png");
+			TexDefaultHover = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultHover.png");
+			TexDefaultActive = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultActive.png");
 			Skin = new GUISkin();
 
 			textBufferMesh = new Mesh();

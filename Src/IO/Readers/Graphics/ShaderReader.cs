@@ -23,9 +23,9 @@ namespace Dissonance.Engine.IO
 				string name = pair.Key;
 				var jsonShader = pair.Value;
 
-				string vertexCode = Resources.Get<string>(jsonShader.vertexShader, AssetRequestMode.ImmediateLoad).Value;
-				string fragmentCode = Resources.Get<string>(jsonShader.fragmentShader, AssetRequestMode.ImmediateLoad).Value;
-				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Resources.Get<string>(jsonShader.geometryShader, AssetRequestMode.ImmediateLoad).Value : null;
+				string vertexCode = Assets.Get<string>(jsonShader.vertexShader, AssetRequestMode.ImmediateLoad).Value;
+				string fragmentCode = Assets.Get<string>(jsonShader.fragmentShader, AssetRequestMode.ImmediateLoad).Value;
+				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Assets.Get<string>(jsonShader.geometryShader, AssetRequestMode.ImmediateLoad).Value : null;
 
 				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.shaderDefines);
 

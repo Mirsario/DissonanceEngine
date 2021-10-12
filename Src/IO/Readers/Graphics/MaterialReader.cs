@@ -41,7 +41,7 @@ namespace Dissonance.Engine.IO
 			jsonMat.name = FilterText(jsonMat.name, assetPath);
 			jsonMat.shader = FilterText(jsonMat.shader, assetPath);
 
-			var shader = Resources.Find<Shader>(jsonMat.shader);
+			var shader = Assets.Find<Shader>(jsonMat.shader);
 
 			if (shader == null) {
 				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
@@ -51,7 +51,7 @@ namespace Dissonance.Engine.IO
 
 			if (jsonMat.textures != null) {
 				foreach (var pair in jsonMat.textures) {
-					material.SetTexture(FilterText(pair.Key, assetPath), Resources.Get<Texture>(FilterText(pair.Value, assetPath)));
+					material.SetTexture(FilterText(pair.Key, assetPath), Assets.Get<Texture>(FilterText(pair.Value, assetPath)));
 				}
 			}
 

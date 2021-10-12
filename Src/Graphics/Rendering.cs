@@ -7,7 +7,7 @@ using Dissonance.Framework.Graphics;
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Resources), typeof(ComponentManager))]
+	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
 	public sealed partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new(3, 2);
@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 		public static RenderingPipeline RenderingPipeline { get; set; }
 		public static bool DebugFramebuffers { get; set; }
 
-		public static Asset<Shader> GUIShader => guiShader ??= Resources.Find<Shader>("Gui/Default"); //TODO: To be moved
+		public static Asset<Shader> GUIShader => guiShader ??= Assets.Find<Shader>("Gui/Default"); //TODO: To be moved
 
 		public static Version OpenGLVersion {
 			get => openGLVersion;
@@ -112,7 +112,7 @@ namespace Dissonance.Engine.Graphics
 
 			// FontImport
 			//TODO: Add AssetManager for fonts and remove this hardcode
-			var tex = Resources.Get<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
+			var tex = Assets.Get<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
 
 			GUI.Font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", tex, new Vector2(12f, 16f), 0) { Size = 16 };
 

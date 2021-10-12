@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Dissonance.Engine.IO
 {
 	//TODO: Make a ton more threadsafe.
-	public sealed class Resources : EngineModule
+	public sealed class Assets : EngineModule
 	{
 		internal static class ReadersByDataType<T>
 		{
@@ -111,7 +111,7 @@ namespace Dissonance.Engine.IO
 		private static void AutoloadAssets()
 		{
 			object[] parameterArray = new object[1];
-			var autoloadAssetsMethod = typeof(Resources).GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
+			var autoloadAssetsMethod = typeof(Assets).GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
 
 			foreach (var pair in ReadersByType) {
 				var type = pair.Key;
