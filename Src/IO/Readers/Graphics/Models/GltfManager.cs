@@ -239,11 +239,11 @@ namespace Dissonance.Engine.IO
 
 					mesh.Apply();
 
-					meshes.Add(Asset.FromValue(mesh.Name, mesh));
+					meshes.Add(Assets.CreateUntracked(mesh.Name, mesh));
 				}
 
 				//TODO: Add proper material support, remove this hardcode.
-				var material = Asset.FromValue("DefaultMaterial", new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader));
+				var material = Assets.CreateUntracked("DefaultMaterial", new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader));
 
 				for (int i = 0; i < meshes.Count; i++) {
 					var entity = info.Scene.CreateEntity();

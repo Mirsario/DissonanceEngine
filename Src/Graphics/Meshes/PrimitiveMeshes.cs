@@ -345,15 +345,15 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void Init()
 		{
-			Quad = Asset.FromValue(nameof(Quad), GenerateQuad());
-			QuadXFlipped = Asset.FromValue(nameof(Quad), GenerateQuad(flipUVHorizontally: true));
-			QuadYFlipped = Asset.FromValue(nameof(Quad), GenerateQuad(flipUVVertically: true));
-			QuadXYFlipped = Asset.FromValue(nameof(Quad), GenerateQuad(flipUVHorizontally: true, flipUVVertically: true));
-			ScreenQuad = Asset.FromValue(nameof(Quad), GenerateQuad(2f));
-			Cube = Asset.FromValue(nameof(Quad), GenerateBox(Vector3.One));
-			InvertedCube = Asset.FromValue(nameof(Quad), GenerateBox(Vector3.One, inverted: true));
-			Sphere = Asset.FromValue(nameof(Quad), GenerateSphere());
-			IcoSphere = Asset.FromValue(nameof(Quad), GenerateIcoSphere());
+			Quad = Assets.CreateUntracked(nameof(Quad), GenerateQuad());
+			QuadXFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVHorizontally: true));
+			QuadYFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVVertically: true));
+			QuadXYFlipped = Assets.CreateUntracked(nameof(Quad), GenerateQuad(flipUVHorizontally: true, flipUVVertically: true));
+			ScreenQuad = Assets.CreateUntracked(nameof(Quad), GenerateQuad(2f));
+			Cube = Assets.CreateUntracked(nameof(Quad), GenerateBox(Vector3.One));
+			InvertedCube = Assets.CreateUntracked(nameof(Quad), GenerateBox(Vector3.One, inverted: true));
+			Sphere = Assets.CreateUntracked(nameof(Quad), GenerateSphere());
+			IcoSphere = Assets.CreateUntracked(nameof(Quad), GenerateIcoSphere());
 		}
 	}
 }

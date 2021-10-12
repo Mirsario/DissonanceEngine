@@ -50,6 +50,18 @@ namespace Dissonance.Engine.IO
 		public static bool TryFind<T>(string fullName, out Asset<T> result)
 			=> AssetLookup<T>.TryGetValue(fullName, out result);
 
+		public static Asset<T> CreateUntracked<T>(string name, T value)
+		{
+			if (value is null) {
+				throw new ArgumentNullException(nameof(value));
+			}
+
+			return new Asset<T>(name, null) {
+				Value = value,
+				State = AssetState.Loaded,
+			};
+		}
+
 		public static void AddAssetSource(AssetSource assetSource)
 		{
 			sources.Add(assetSource);

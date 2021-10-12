@@ -35,7 +35,7 @@ namespace Dissonance.Engine.IO
 				shader.BlendFactorSrc = jsonShader.blendFactorSrc;
 				shader.BlendFactorDst = jsonShader.blendFactorDst;
 
-				var shaderAsset = Asset.FromValue(name, shader);
+				var shaderAsset = Assets.CreateUntracked(name, shader);
 
 				AssetLookup<Shader>.Register(name, shaderAsset);
 

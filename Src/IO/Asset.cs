@@ -26,14 +26,6 @@ namespace Dissonance.Engine.IO
 			Name = name;
 			Source = source;
 		}
-
-		public static Asset<T> FromValue<T>(string name, T value)
-		{
-			return new Asset<T>(name, null) {
-				Value = value,
-				State = AssetState.Loaded,
-			};
-		}
 	}
 
 	public sealed class Asset<T> : Asset
