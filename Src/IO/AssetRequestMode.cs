@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dissonance.Engine.IO
+﻿namespace Dissonance.Engine.IO
 {
 	/// <summary>
 	/// Specifies the mode in which an asset should be loaded.
@@ -12,7 +6,7 @@ namespace Dissonance.Engine.IO
 	public enum AssetRequestMode
 	{
 		/// <summary> The asset will not be loaded, for now. </summary>
-		None,
+		DoNotLoad,
 		/// <summary> The asset will be loaded asynchronously on a separate thread. </summary>
 		AsyncLoad,
 		/// <summary> The asset will be loaded synchronously on the current thread, which may cause it to momentarily freeze. </summary>

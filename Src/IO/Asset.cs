@@ -1,9 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Dissonance.Engine.IO
 {
+	/// <summary>
+	/// Acts as a handle to an asset the load state of which may differ. Allows for delayed loading and potential unloading of assets.
+	/// </summary>
 	public abstract class Asset
 	{
 		/// <summary> The path identifier of this asset. </summary>
@@ -28,6 +30,7 @@ namespace Dissonance.Engine.IO
 		}
 	}
 
+	/// <inheritdoc/>
 	public sealed class Asset<T> : Asset
 	{
 		private T value;
@@ -53,7 +56,7 @@ namespace Dissonance.Engine.IO
 
 		public void Request(AssetRequestMode mode = AssetRequestMode.AsyncLoad)
 		{
-			if (IsLoaded || mode == AssetRequestMode.None) {
+			if (IsLoaded || mode == AssetRequestMode.DoNotLoad) {
 				return;
 			}
 

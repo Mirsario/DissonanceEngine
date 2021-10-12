@@ -27,9 +27,21 @@ namespace Dissonance.Engine.IO
 			AutoloadAssets();
 		}
 
-		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.AsyncLoad)
+		/// <summary>
+		/// Attempts to get or create an asset with the provided case-sensitive virtual asset path, optionally requesting it to be loaded with the provided mode. 
+		/// </summary>
+		/// <typeparam name="T"> The type of the asset. </typeparam>
+		/// <param name="assetPath"> The path of the asset. This path is virtual and case-sensitive - system paths will not work. </param>
+		/// <param name="mode"> The mode to request the asset's loading with. Defaults to <see cref="AssetRequestMode.DoNotLoad"/>. </param>
+		/// <returns> <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle. </returns>
+		/// <exception cref="ArgumentOutOfRangeException"> Asset couldn't be found. </exception>
+		public static Asset<T> Get<T>(string assetPath, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
 		{
 			if (assets.TryGetValue(assetPath, out var cachedAsset) && cachedAsset is Asset<T> cachedAssetResult) {
+				if (mode != AssetRequestMode.DoNotLoad && cachedAssetResult.State == AssetState.NotLoaded) {
+					cachedAssetResult.Request(mode);
+				}
+
 				return cachedAssetResult;
 			}
 
@@ -41,15 +53,37 @@ namespace Dissonance.Engine.IO
 				return RequestFromSource<T>(source, assetPath, mode);
 			}
 
-			throw new Exception($"Couldn't find asset '{assetPath}' in any available content sources.");
+			throw new ArgumentOutOfRangeException($"Couldn't find asset '{assetPath}' in any available content sources.");
 		}
 
-		public static Asset<T> Find<T>(string fullName)
-			=> AssetLookup<T>.Get(fullName);
+		/// <summary>
+		/// Attempts to find a registered asset using its case-sensitive name instead of a path.
+		/// <br/> Throws exceptions on failure.
+		/// </summary>
+		/// <typeparam name="T"> The type of the asset. </typeparam>
+		/// <param name="assetName"> The case-sensitive name of the asset. This is not the same as its path. </param>
+		/// <returns> <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle. </returns>
+		/// <exception cref="KeyNotFoundException"> No registered asset could be found with the provided name. </exception>
+		public static Asset<T> Find<T>(string assetName)
+			=> AssetLookup<T>.Get(assetName);
 
-		public static bool TryFind<T>(string fullName, out Asset<T> result)
-			=> AssetLookup<T>.TryGetValue(fullName, out result);
+		/// <summary>
+		/// Safely attempts to find a registered asset using its case-sensitive name instead of a path.
+		/// </summary>
+		/// <typeparam name="T"> The type of the asset. </typeparam>
+		/// <param name="assetName"> The case-sensitive name of the asset. This is not the same as its path. </param>
+		/// <param name="result"> The resulting <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle., if it was found. </param>
+		/// <returns> A boolean indicating whether the operation succeeded. </returns>
+		public static bool TryFind<T>(string assetName, out Asset<T> result)
+			=> AssetLookup<T>.TryGetValue(assetName, out result);
 
+		/// <summary>
+		/// Creates and returns a new untracked asset object with the provided name and value.
+		/// <br/> Untracked assets cannot be reloaded and are loaded by default.
+		/// </summary>
+		/// <typeparam name="T"> The type of the asset. </typeparam>
+		/// <param name="name"> The name that the created asset should have. </param>
+		/// <param name="value"> The value that the created asset should have. Must not be null. </param>
 		public static Asset<T> CreateUntracked<T>(string name, T value)
 		{
 			if (value is null) {
