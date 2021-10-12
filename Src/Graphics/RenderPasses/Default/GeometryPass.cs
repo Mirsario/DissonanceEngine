@@ -50,11 +50,10 @@ namespace Dissonance.Engine.Graphics
 
 					var material = entry.Material;
 
-					if (!material.Shader.IsLoaded) {
+					if (!material.Shader.TryGetOrRequestValue(out var shader)) {
 						continue;
 					}
 
-					var shader = material.Shader.Value;
 					var rendererTransform = entry.Transform;
 
 					// Update Shader

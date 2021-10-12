@@ -67,8 +67,10 @@ namespace Dissonance.Engine.Graphics
 						continue;
 					}
 
+					uint textureId = textureAsset.TryGetOrRequestValue(out var texture) ? texture.Id : 0;
+
 					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
-					GL.BindTexture(TextureTarget.Texture2D, textureAsset.IsLoaded ? textureAsset.Value.Id : 0);
+					GL.BindTexture(TextureTarget.Texture2D, textureId);
 					GL.Uniform1(uniform.Location, i);
 				}
 			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
