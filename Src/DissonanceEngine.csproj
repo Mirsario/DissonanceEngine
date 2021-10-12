@@ -37,6 +37,7 @@
     	<PackageReference Include="Ionic.Zip" Version="1.9.1.8" />
     	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     	<PackageReference Include="NVorbis" Version="0.10.4" />
+		<PackageReference Include="Hjson" Version="3.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup>

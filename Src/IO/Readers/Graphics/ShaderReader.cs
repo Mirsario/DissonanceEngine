@@ -17,7 +17,8 @@ namespace Dissonance.Engine.IO
 			
 			string jsonText = reader.ReadToEnd();
 			var shaders = new List<Asset<Shader>>();
-			var jsonShaders = JsonConvert.DeserializeObject<Dictionary<string, JsonShaderProgram>>(jsonText);
+
+			var jsonShaders = new HjsonReader().ReadFromStream(stream, assetPath).ToObject<Dictionary<string, JsonShaderProgram>>();
 
 			foreach (var pair in jsonShaders) {
 				string name = pair.Key;

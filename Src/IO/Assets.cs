@@ -268,10 +268,13 @@ namespace Dissonance.Engine.IO
 
 		private static void RegisterAssetReaders()
 		{
+			//Temp
 			AddAssetReader(new PngReader());
 			AddAssetReader(new ShaderReader());
 			AddAssetReader(new MaterialReader());
 			AddAssetReader(new TextReader());
+			AddAssetReader(new JsonReader());
+			AddAssetReader(new HjsonReader());
 		}
 
 		private static void AutoloadAssets()

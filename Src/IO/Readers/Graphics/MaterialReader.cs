@@ -32,10 +32,7 @@ namespace Dissonance.Engine.IO
 		{
 			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-			using var reader = new StreamReader(stream);
-			string jsonText = reader.ReadToEnd();
-
-			var jsonMat = JsonConvert.DeserializeObject<JSON_Material>(jsonText);
+			var jsonMat = new HjsonReader().ReadFromStream(stream, assetPath).ToObject<JSON_Material>();
 
 			string materialName = FilterText(jsonMat.name, assetPath);
 			string materialShaderName = FilterText(jsonMat.shader, assetPath);
