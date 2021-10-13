@@ -11,13 +11,11 @@ Fork it, clone it, ensure that submodules were downloaded correctly, and rename 
 
 ## Used libraries
 * [DissonanceFramework](https://github.com/Mirsario/DissonanceFramework)
-  * [GLFW](https://www.glfw.org/)
+  * [OpenGL](https://www.khronos.org/opengl)
+  * [GLFW](https://www.glfw.org)
   * [OpenAL Soft](https://github.com/kcat/openal-soft)
-  * [DevIL](http://openil.sourceforge.net/)
-* [BulletSharp](https://github.com/AndresTraks/BulletSharpPInvoke)
-  * [Bullet](https://pybullet.org)
 * [Json.NET](https://www.newtonsoft.com/json)
+* [hjson-cs](https://github.com/hjson/hjson-cs)
 * [NVorbis](https://github.com/NVorbis/NVorbis)
-* [Ionic.Zip](https://www.nuget.org/packages/Ionic.Zip/)
-
-All of these belong to their respective owners.
+* [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp)
+* [Ionic.Zip](https://www.nuget.org/packages/Ionic.Zip)
