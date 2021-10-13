@@ -1,13 +1,19 @@
-﻿using BulletSharp;
+﻿using System;
+using BulletSharp;
 using Dissonance.Engine.Graphics;
-using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Physics
 {
-	public abstract class CollisionMesh : Asset
+	public abstract class CollisionMesh : IDisposable
 	{
-		internal CollisionShape collisionShape;
+		internal protected CollisionShape CollisionShape { get; protected set; }
 
 		public abstract void SetupFromMesh(Mesh mesh);
+
+		public virtual void Dispose()
+		{
+			CollisionShape.Dispose();
+			GC.SuppressFinalize(this);
+		}
 	}
 }

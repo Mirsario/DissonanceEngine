@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dissonance.Framework.Graphics;
 using System.Runtime.CompilerServices;
-using Dissonance.Engine.IO;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	public sealed class Mesh : Asset
+	public sealed class Mesh : IDisposable
 	{
 		public delegate void ArrayCopyDelegate<T>(uint meshIndex, T[] srcArray, uint srcIndex, Vector3[] dstArray, uint dstIndex, uint length);
 
@@ -23,6 +22,7 @@ namespace Dissonance.Engine.Graphics
 		private readonly CustomVertexBuffer[] VertexBuffers;
 
 		private uint vertexArrayId;
+		
 		private PrimitiveType currentPrimitiveType = PrimitiveType.Triangles;
 		private PrimitiveType primitiveTypeToSet = PrimitiveType.Triangles;
 
@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Graphics
 			GL.BindVertexArray(0);
 		}
 
-		public override void Dispose()
+		public void Dispose()
 		{
 			if (vertexArrayId != 0) {
 				GL.DeleteVertexArray(vertexArrayId);

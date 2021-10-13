@@ -10,20 +10,19 @@ namespace Dissonance.Engine.Graphics
 	//TODO: Should this be renamed to ShaderProgram?
 	//TODO: Initialize static fields after Graphics.Init();
 	//TODO: Uniforms' code is quite terrible. Should really do OOP uniforms.
-	public partial class Shader : Asset
+	public sealed partial class Shader : IDisposable
 	{
 		internal static Dictionary<string, Shader> shadersByName = new(StringComparer.OrdinalIgnoreCase);
 		internal static List<Shader> shaders = new();
 
-		private static Shader errorShader;
+		private static Asset<Shader> errorShader;
 
-		public static Shader ErrorShader => errorShader ??= Resources.Find<Shader>("Error");
+		public static Asset<Shader> ErrorShader => errorShader ??= Assets.Get<Shader>("Error");
 		public static Shader ActiveShader { get; private set; }
 
 		internal Dictionary<string, ShaderUniform> uniforms;
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
-		internal List<Material> materialAttachments = new();
 
 		private IntPtr namePtr;
 
@@ -39,8 +38,6 @@ namespace Dissonance.Engine.Graphics
 		public SubShader VertexShader { get; private set; }
 		public SubShader FragmentShader { get; private set; }
 		public SubShader GeometryShader { get; private set; }
-
-		public override string AssetName => Name;
 
 		private Shader(string name = null)
 		{
@@ -58,10 +55,11 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public override void Dispose()
-		{
-			base.Dispose();
+		public override string ToString()
+			=> Name;
 
+		public void Dispose()
+		{
 			if (Id > 0) {
 				GL.DeleteProgram(Id);
 
@@ -87,9 +85,6 @@ namespace Dissonance.Engine.Graphics
 			GC.SuppressFinalize(this);
 		}
 
-		public override string ToString()
-			=> Name;
-
 		public int GetUniformLocation(string uniformName)
 			=> uniforms.TryGetValue(uniformName, out var uniform) ? uniform.Location : throw new ArgumentException($"Shader '{Name}' doesn't have uniform '{uniformName}'.");
 
@@ -105,12 +100,6 @@ namespace Dissonance.Engine.Graphics
 
 			return false;
 		}
-
-		internal void MaterialDetach(Material material)
-			=> materialAttachments.Remove(material);
-
-		internal void MaterialAttach(Material material)
-			=> materialAttachments.Add(material);
 
 		// SetupUniforms
 

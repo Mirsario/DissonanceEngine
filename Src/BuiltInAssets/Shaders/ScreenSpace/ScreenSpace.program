@@ -1,19 +1,19 @@
 {
 	"ScreenSpace/Texture": {
-		"vertexShader": "Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "Shaders/ScreenSpace/ScreenSpace.frag",
+		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
 		"shaderDefines": [ "TEXTURE" ],
 	},
 	
 	"ScreenSpace/TextureUV": {
-		"vertexShader": "Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "Shaders/ScreenSpace/ScreenSpace.frag",
+		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
 		"shaderDefines": [ "TEXTURE", "UV" ],
 	},
 	
 	"ScreenSpace/Color": {
-		"vertexShader": "Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "Shaders/ScreenSpace/ScreenSpace.frag",
+		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
+		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
 		"shaderDefines": [ "COLOR" ],
 	},
 }

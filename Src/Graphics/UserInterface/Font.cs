@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
 	public class Font
 	{
 		public int Size { get; set; } = 7;
-		public Texture Texture { get; private set; }
+		public Asset<Texture> Texture { get; private set; }
 		public string CharList { get; private set; }
 		public Vector2 CharSize { get; private set; }
 		public Dictionary<char, Vector2[]> CharToUv { get; private set; }
 
-		public Font(string charList, Texture texture, Vector2 charSize, int offset = 0)
+		public Font(string charList, Asset<Texture> texture, Vector2 charSize, int offset = 0)
 		{
 			Texture = texture;
 			CharList = charList;
@@ -18,7 +19,8 @@ namespace Dissonance.Engine.Graphics
 
 			CharToUv = new Dictionary<char, Vector2[]>();
 
-			var size = new Vector2(charSize.X / texture.Width, charSize.Y / texture.Height);
+			var textureValue = texture.GetValueImmediately();
+			var size = new Vector2(charSize.X / textureValue.Width, charSize.Y / textureValue.Height);
 
 			float x = 0f;
 			float y = 0f;

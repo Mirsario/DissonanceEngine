@@ -49,7 +49,11 @@ namespace Dissonance.Engine.Graphics
 					}
 
 					var material = entry.Material;
-					var shader = material.Shader;
+
+					if (!material.Shader.TryGetOrRequestValue(out var shader)) {
+						continue;
+					}
+
 					var rendererTransform = entry.Transform;
 
 					// Update Shader

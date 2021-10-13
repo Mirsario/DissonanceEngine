@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Graphics
 
 		public static void DrawQuadUv0()
 		{
-			PrimitiveMeshes.ScreenQuad.Render();
+			PrimitiveMeshes.ScreenQuad.Value.Render();
 		}
 
 		public static void DrawQuadUv0(Vector4 vertices, Vector4 uv0)

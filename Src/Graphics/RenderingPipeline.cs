@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -20,7 +21,7 @@ namespace Dissonance.Engine.Graphics
 		/// <summary>
 		/// Used for materials loaded from asset files. May be removed in the future.
 		/// </summary>
-		public abstract Shader DefaultGeometryShader { get; }
+		public abstract Asset<Shader> DefaultGeometryShader { get; }
 
 		public abstract void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses);
 

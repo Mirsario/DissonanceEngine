@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dissonance.Engine.IO
 {
-	partial class GltfManager
+	partial class GltfReader
 	{
 		public abstract class JsonElementBase
 		{

@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	partial class GltfManager
+	partial class GltfReader
 	{
 		protected class GltfInfo
 		{

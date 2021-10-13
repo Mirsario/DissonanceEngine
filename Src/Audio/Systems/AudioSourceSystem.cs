@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Audio;
+﻿using Dissonance.Engine.IO;
+using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
@@ -23,6 +24,24 @@ namespace Dissonance.Engine.Audio
 
 		private void Update()
 		{
+			foreach (var message in ReadMessages<StopAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Stop;
+				}
+			}
+
+			foreach (var message in ReadMessages<PauseAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Pause;
+				}
+			}
+
+			foreach (var message in ReadMessages<PlayAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Play;
+				}
+			}
+
 			foreach (var entity in entities.ReadEntities()) {
 				ref var audioSource = ref entity.Get<AudioSource>();
 
@@ -31,13 +50,37 @@ namespace Dissonance.Engine.Audio
 					AL.GenSource(out audioSource.sourceId);
 				}
 
+				// Load in clips
+				bool clipReady = audioSource.Clip != null && audioSource.Clip.TryGetOrRequestValue(out _);
+
 				// Update buffer.
-				uint newBufferId = audioSource.Clip?.bufferId ?? 0;
+				uint newBufferId = clipReady ? audioSource.Clip.Value.BufferId : 0;
 
 				if (audioSource.bufferId != newBufferId) {
 					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
 
 					audioSource.bufferId = newBufferId;
+				}
+
+				if (audioSource.PendingAction != AudioSource.PlaybackAction.None) {
+					switch (audioSource.PendingAction) {
+						case AudioSource.PlaybackAction.Play:
+							if (audioSource.bufferId == 0) {
+								break;
+							}
+
+							AL.SourcePlay(audioSource.sourceId);
+							goto default;
+						case AudioSource.PlaybackAction.Pause:
+							AL.SourcePause(audioSource.sourceId);
+							goto default;
+						case AudioSource.PlaybackAction.Stop:
+							AL.SourceStop(audioSource.sourceId);
+							goto default;
+						default:
+							audioSource.PendingAction = 0;
+							break;
+					}
 				}
 
 				// Update volume.
@@ -72,37 +115,6 @@ namespace Dissonance.Engine.Audio
 					AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
 
 					audioSource.wasLooped = audioSource.Loop;
-				}
-			}
-
-			AudioEngine.CheckALErrors();
-
-			ReadMessages();
-		}
-
-		private void ReadMessages()
-		{
-			foreach (var stopMessage in ReadMessages<StopAudioSourceMessage>()) {
-				if (stopMessage.Entity.Has<AudioSource>()) {
-					var audioSource = stopMessage.Entity.Get<AudioSource>();
-
-					AL.SourceStop(audioSource.sourceId);
-				}
-			}
-
-			foreach (var pauseMessage in ReadMessages<PauseAudioSourceMessage>()) {
-				if (pauseMessage.Entity.Has<AudioSource>()) {
-					var audioSource = pauseMessage.Entity.Get<AudioSource>();
-
-					AL.SourcePause(audioSource.sourceId);
-				}
-			}
-
-			foreach (var playMessage in ReadMessages<PlayAudioSourceMessage>()) {
-				if (playMessage.Entity.Has<AudioSource>()) {
-					var audioSource = playMessage.Entity.Get<AudioSource>();
-
-					AL.SourcePlay(audioSource.sourceId);
 				}
 			}
 

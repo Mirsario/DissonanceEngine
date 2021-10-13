@@ -1,14 +1,15 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Dissonance.Engine.Audio;
 
 namespace Dissonance.Engine.IO
 {
-	public class WavManager : AssetManager<AudioClip>
+	public class WavReader : IAssetReader<AudioClip>
 	{
-		public override string[] Extensions { get; } = new[] { ".wav", ".wave" };
+		public string[] Extensions { get; } = { ".wav" };
 
-		public override AudioClip Import(Stream stream, string filePath)
+		public async ValueTask<AudioClip> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			using var reader = new BinaryReader(stream);
 
@@ -50,6 +51,9 @@ namespace Dissonance.Engine.IO
 			int dataChunkSize = reader.ReadInt32();
 
 			byte[] data = reader.ReadBytes(dataChunkSize);
+
+			await switchToMainThread;
+
 			var clip = new AudioClip();
 
 			clip.SetData(data, channelsNum, bitsPerSample / 8, sampleRate);

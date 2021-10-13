@@ -1,18 +1,19 @@
 ﻿using System;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
 	public static class PrimitiveMeshes
 	{
-		public static Mesh Quad { get; private set; }
-		public static Mesh QuadXFlipped { get; private set; }
-		public static Mesh QuadYFlipped { get; private set; }
-		public static Mesh QuadXYFlipped { get; private set; }
-		public static Mesh ScreenQuad { get; private set; }
-		public static Mesh Cube { get; private set; }
-		public static Mesh InvertedCube { get; private set; }
-		public static Mesh Sphere { get; private set; }
-		public static Mesh IcoSphere { get; private set; }
+		public static Asset<Mesh> Quad { get; private set; }
+		public static Asset<Mesh> QuadXFlipped { get; private set; }
+		public static Asset<Mesh> QuadYFlipped { get; private set; }
+		public static Asset<Mesh> QuadXYFlipped { get; private set; }
+		public static Asset<Mesh> ScreenQuad { get; private set; }
+		public static Asset<Mesh> Cube { get; private set; }
+		public static Asset<Mesh> InvertedCube { get; private set; }
+		public static Asset<Mesh> Sphere { get; private set; }
+		public static Asset<Mesh> IcoSphere { get; private set; }
 
 		public static Mesh GenerateQuad(float size = 1f, bool inverted = false, bool addUVs = true, bool addNormals = true, bool addTangents = true, bool flipUVHorizontally = false, bool flipUVVertically = false, bool apply = true)
 		{
@@ -344,15 +345,52 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void Init()
 		{
-			Quad = GenerateQuad();
-			QuadXFlipped = GenerateQuad(flipUVHorizontally: true);
-			QuadYFlipped = GenerateQuad(flipUVVertically: true);
-			QuadXYFlipped = GenerateQuad(flipUVHorizontally: true, flipUVVertically: true);
-			ScreenQuad = GenerateQuad(2f);
-			Cube = GenerateBox(Vector3.One);
-			InvertedCube = GenerateBox(Vector3.One, inverted: true);
-			Sphere = GenerateSphere();
-			IcoSphere = GenerateIcoSphere();
+			const string MeshesPath = $"{Assets.BuiltInAssetsDirectory}/Meshes";
+
+			Quad = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Quad)}",
+				GenerateQuad()
+			);
+
+			QuadXFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadXFlipped)}",
+				GenerateQuad(flipUVHorizontally: true)
+			);
+
+			QuadYFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadYFlipped)}",
+				GenerateQuad(flipUVVertically: true)
+			);
+
+			QuadXYFlipped = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(QuadXYFlipped)}",
+				GenerateQuad(flipUVHorizontally: true, flipUVVertically: true)
+			);
+			
+			ScreenQuad = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(ScreenQuad)}",
+				GenerateQuad(2f)
+			);
+			
+			Cube = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Cube)}",
+				GenerateBox(Vector3.One)
+			);
+
+			InvertedCube = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(InvertedCube)}",
+				GenerateBox(Vector3.One, inverted: true)
+			);
+
+			Sphere = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(Sphere)}",
+				GenerateSphere()
+			);
+
+			IcoSphere = Assets.CreateLoaded(
+				$"{MeshesPath}/{nameof(IcoSphere)}",
+				GenerateIcoSphere()
+			);
 		}
 	}
 }
