@@ -23,6 +23,24 @@ namespace Dissonance.Engine.Audio
 
 		private void Update()
 		{
+			foreach (var message in ReadMessages<StopAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Stop;
+				}
+			}
+
+			foreach (var message in ReadMessages<PauseAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Pause;
+				}
+			}
+
+			foreach (var message in ReadMessages<PlayAudioSourceMessage>()) {
+				if (message.Entity.Has<AudioSource>()) {
+					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Play;
+				}
+			}
+
 			foreach (var entity in entities.ReadEntities()) {
 				ref var audioSource = ref entity.Get<AudioSource>();
 
@@ -32,12 +50,28 @@ namespace Dissonance.Engine.Audio
 				}
 
 				// Update buffer.
-				uint newBufferId = audioSource.Clip?.BufferId ?? 0;
+				uint newBufferId = audioSource.Clip?.IsLoaded == true ? audioSource.Clip.Value.BufferId : 0;
 
 				if (audioSource.bufferId != newBufferId) {
 					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
 
 					audioSource.bufferId = newBufferId;
+				}
+
+				if (audioSource.PendingAction != AudioSource.PlaybackAction.None) {
+					switch (audioSource.PendingAction) {
+						case AudioSource.PlaybackAction.Play:
+							AL.SourcePlay(audioSource.sourceId);
+							break;
+						case AudioSource.PlaybackAction.Pause:
+							AL.SourcePause(audioSource.sourceId);
+							break;
+						case AudioSource.PlaybackAction.Stop:
+							AL.SourceStop(audioSource.sourceId);
+							break;
+					}
+
+					audioSource.PendingAction = 0;
 				}
 
 				// Update volume.
@@ -72,37 +106,6 @@ namespace Dissonance.Engine.Audio
 					AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
 
 					audioSource.wasLooped = audioSource.Loop;
-				}
-			}
-
-			AudioEngine.CheckALErrors();
-
-			ReadMessages();
-		}
-
-		private void ReadMessages()
-		{
-			foreach (var stopMessage in ReadMessages<StopAudioSourceMessage>()) {
-				if (stopMessage.Entity.Has<AudioSource>()) {
-					var audioSource = stopMessage.Entity.Get<AudioSource>();
-
-					AL.SourceStop(audioSource.sourceId);
-				}
-			}
-
-			foreach (var pauseMessage in ReadMessages<PauseAudioSourceMessage>()) {
-				if (pauseMessage.Entity.Has<AudioSource>()) {
-					var audioSource = pauseMessage.Entity.Get<AudioSource>();
-
-					AL.SourcePause(audioSource.sourceId);
-				}
-			}
-
-			foreach (var playMessage in ReadMessages<PlayAudioSourceMessage>()) {
-				if (playMessage.Entity.Has<AudioSource>()) {
-					var audioSource = playMessage.Entity.Get<AudioSource>();
-
-					AL.SourcePlay(audioSource.sourceId);
 				}
 			}
 
