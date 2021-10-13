@@ -1,22 +1,20 @@
-{
-	"Deferred/Lighting/Point": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Lighting.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Lighting.frag",
-		"shaderDefines": [ "POINT" ],
-		"blendFactorSrc": "OneMinusDstColor",
-		"blendFactorDst": "One"
-	},
-	
-	"Deferred/Lighting/Directional": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Lighting.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Lighting.frag",
-		"shaderDefines": [ "DIRECTIONAL" ],
-		"blendFactorSrc": "OneMinusDstColor",
-		"blendFactorDst": "One"
-	},
-	
-	"Deferred/Composite": {
-		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Composite.frag"
-	}
+Deferred/Lighting/Point: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Lighting.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Lighting.frag"
+	ShaderDefines: [ "POINT" ]
+	BlendFactorSrc: "OneMinusDstColor"
+	BlendFactorDst: "One"
+}
+
+Deferred/Lighting/Directional: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Lighting.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Lighting.frag"
+	ShaderDefines: [ "DIRECTIONAL" ]
+	BlendFactorSrc: "OneMinusDstColor"
+	BlendFactorDst: "One"
+}
+
+Deferred/Composite: {
+	VertexShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Composite.frag"
 }

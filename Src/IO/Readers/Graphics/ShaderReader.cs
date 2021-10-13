@@ -28,17 +28,17 @@ namespace Dissonance.Engine.IO
 				string name = pair.Key;
 				var jsonShader = pair.Value;
 
-				string vertexCode = Assets.Get<string>(jsonShader.vertexShader, AssetRequestMode.ImmediateLoad).Value;
-				string fragmentCode = Assets.Get<string>(jsonShader.fragmentShader, AssetRequestMode.ImmediateLoad).Value;
-				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.geometryShader) ? Assets.Get<string>(jsonShader.geometryShader, AssetRequestMode.ImmediateLoad).Value : null;
+				string vertexCode = Assets.Get<string>(jsonShader.VertexShader, AssetRequestMode.ImmediateLoad).Value;
+				string fragmentCode = Assets.Get<string>(jsonShader.FragmentShader, AssetRequestMode.ImmediateLoad).Value;
+				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.GeometryShader) ? Assets.Get<string>(jsonShader.GeometryShader, AssetRequestMode.ImmediateLoad).Value : null;
 
-				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.shaderDefines);
+				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.ShaderDefines);
 
-				shader.Priority = jsonShader.queue;
-				shader.CullMode = jsonShader.cullMode;
-				shader.PolygonMode = jsonShader.polygonMode;
-				shader.BlendFactorSrc = jsonShader.blendFactorSrc;
-				shader.BlendFactorDst = jsonShader.blendFactorDst;
+				shader.Priority = jsonShader.Queue;
+				shader.CullMode = jsonShader.CullMode;
+				shader.PolygonMode = jsonShader.PolygonMode;
+				shader.BlendFactorSrc = jsonShader.BlendFactorSrc;
+				shader.BlendFactorDst = jsonShader.BlendFactorDst;
 
 				var shaderAsset = Assets.CreateLoaded(name, shader);
 

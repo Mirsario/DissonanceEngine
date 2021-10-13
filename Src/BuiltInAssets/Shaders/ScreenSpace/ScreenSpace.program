@@ -1,19 +1,17 @@
-{
-	"ScreenSpace/Texture": {
-		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
-		"shaderDefines": [ "TEXTURE" ],
-	},
-	
-	"ScreenSpace/TextureUV": {
-		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
-		"shaderDefines": [ "TEXTURE", "UV" ],
-	},
-	
-	"ScreenSpace/Color": {
-		"vertexShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag",
-		"shaderDefines": [ "COLOR" ],
-	},
+ScreenSpace/Texture: {
+	VertexShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert"
+	FragmentShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag"
+	ShaderDefines: [ "TEXTURE" ]
+}
+
+ScreenSpace/TextureUV: {
+	VertexShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert"
+	FragmentShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag"
+	ShaderDefines: [ "TEXTURE", "UV" ]
+}
+
+ScreenSpace/Color: {
+	VertexShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.vert"
+	FragmentShader: "BuiltInAssets/Shaders/ScreenSpace/ScreenSpace.frag"
+	ShaderDefines: [ "COLOR" ]
 }

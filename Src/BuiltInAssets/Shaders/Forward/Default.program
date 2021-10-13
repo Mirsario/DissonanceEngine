@@ -1,52 +1,50 @@
-{
-	"Forward/Unlit/Color": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "COLOR" ]
-	},
-	
-	"Forward/Unlit/VertexColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "VERTEXCOLOR" ]
-	},
-	
-	"Forward/Unlit/Texture": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "TEXTURE" ]
-	},
-	
-	"Forward/Unlit/TextureColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "TEXTURE", "COLOR" ]
-	},
-	
-	"Forward/Unlit/TransparentColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "COLOR" ],
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha",
-		"queue": 1000
-	},
-	
-	"Forward/Unlit/TransparentTexture": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "TEXTURE" ],
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha",
-		"queue": 1000
-	},
-	
-	"Forward/Unlit/TransparentTextureColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Forward/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Forward/Default.frag",
-		"shaderDefines": [ "TEXTURE", "COLOR" ],
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha",
-		"queue": 1000
-	},
+Forward/Unlit/Color: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "COLOR" ]
+}
+
+Forward/Unlit/VertexColor: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "VERTEXCOLOR" ]
+}
+
+Forward/Unlit/Texture: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "TEXTURE" ]
+}
+
+Forward/Unlit/TextureColor: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "TEXTURE", "COLOR" ]
+}
+
+Forward/Unlit/TransparentColor: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "COLOR" ]
+	BlendFactorSrc: "SrcAlpha"
+	BlendFactorDst: "OneMinusSrcAlpha"
+	Queue: 1000
+}
+
+Forward/Unlit/TransparentTexture: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "TEXTURE" ]
+	BlendFactorSrc: "SrcAlpha"
+	BlendFactorDst: "OneMinusSrcAlpha"
+	Queue: 1000
+}
+
+Forward/Unlit/TransparentTextureColor: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "TEXTURE", "COLOR" ]
+	BlendFactorSrc: "SrcAlpha"
+	BlendFactorDst: "OneMinusSrcAlpha"
+	Queue: 1000
 }

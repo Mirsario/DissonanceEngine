@@ -1,13 +1,12 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Dissonance.Engine.Graphics;
-using Dissonance.Engine.Utilities;
+using System.IO;
 using System.Threading.Tasks;
+using Dissonance.Engine.Graphics;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-#pragma warning disable CS0649
+#pragma warning disable CS0649 // Field is never assigned to
 
 namespace Dissonance.Engine.IO
 {
@@ -15,17 +14,17 @@ namespace Dissonance.Engine.IO
 	public class MaterialReader : IAssetReader<Material>
 	{
 		[JsonObject]
-		private class JSON_Material
+		private class JsonMaterial
 		{
-			public Dictionary<string, float> floats;
-			public Dictionary<string, float[]> vectors;
-			public Dictionary<string, string> textures;
+			public Dictionary<string, float> Floats;
+			public Dictionary<string, float[]> Vectors;
+			public Dictionary<string, string> Textures;
 
 			[JsonProperty(Required = Required.Always)]
-			public string name;
+			public string Name;
 
 			[JsonProperty(Required = Required.Always)]
-			public string shader;
+			public string Shader;
 		}
 
 		public string[] Extensions { get; } = { ".material" };
@@ -34,33 +33,33 @@ namespace Dissonance.Engine.IO
 		{
 			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-			var jsonMat = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<JSON_Material>();
+			var jsonMat = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<JsonMaterial>();
 
-			string materialName = FilterText(jsonMat.name, assetPath);
-			string materialShaderName = FilterText(jsonMat.shader, assetPath);
+			string materialName = FilterText(jsonMat.Name, assetPath);
+			string materialShaderName = FilterText(jsonMat.Shader, assetPath);
 
 			var shader = Assets.Find<Shader>(materialShaderName);
 
 			if (shader == null) {
-				throw new Exception($"Shader {jsonMat.shader} couldn't be found.");
+				throw new Exception($"Shader {jsonMat.Shader} couldn't be found.");
 			}
 
 			var material = new Material(materialName, shader);
 
-			if (jsonMat.textures != null) {
-				foreach (var pair in jsonMat.textures) {
+			if (jsonMat.Textures != null) {
+				foreach (var pair in jsonMat.Textures) {
 					material.SetTexture(pair.Key, Assets.Get<Texture>(pair.Value, directory));
 				}
 			}
 
-			if (jsonMat.floats != null) {
-				foreach (var pair in jsonMat.floats) {
+			if (jsonMat.Floats != null) {
+				foreach (var pair in jsonMat.Floats) {
 					material.SetFloat(pair.Key, pair.Value);
 				}
 			}
 
-			if (jsonMat.vectors != null) {
-				foreach (var pair in jsonMat.vectors) {
+			if (jsonMat.Vectors != null) {
+				foreach (var pair in jsonMat.Vectors) {
 					material.SetVector(pair.Key, pair.Value);
 				}
 			}

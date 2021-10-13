@@ -1,8 +1,6 @@
-{
-	"Gui/Default": {
-		"vertexShader": "BuiltInAssets/Shaders/Gui/Gui.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Gui/Gui.frag",
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha"
-	}
+Gui/Default: {
+	VertexShader: "BuiltInAssets/Shaders/Gui/Gui.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Gui/Gui.frag"
+	BlendFactorSrc: "SrcAlpha"
+	BlendFactorDst: "OneMinusSrcAlpha"
 }
