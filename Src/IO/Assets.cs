@@ -280,15 +280,34 @@ namespace Dissonance.Engine.IO
 
 		private static void RegisterAssetReaders()
 		{
-			//Temp
-			AddAssetReader(new PngReader());
-			AddAssetReader(new ShaderReader());
-			AddAssetReader(new MaterialReader());
-			AddAssetReader(new TextReader());
-			AddAssetReader(new HjsonReader());
-			AddAssetReader(new GltfReader());
-			AddAssetReader(new WavReader());
-			AddAssetReader(new OggReader());
+			//TODO: Create a common system/attribute for handling autoloading/autoregistration of types and use it here to allow game assemblies to benefit too.
+			var addAssetReaderMethod = typeof(Assets).GetMethod(nameof(AddAssetReader), BindingFlags.Static | BindingFlags.Public);
+			object[] argumentArray = new object[1];
+
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
+				if (type.IsAbstract) {
+					continue;
+				}
+
+				object instance = null;
+
+				foreach (var interfaceType in type.GetInterfaces()) {
+					if (!interfaceType.IsGenericType || interfaceType.GetGenericTypeDefinition() != typeof(IAssetReader<>)) {
+						continue;
+					}
+
+					var interfaceTypeArgument = interfaceType.GetGenericArguments()[0];
+
+					if (instance == null) {
+						instance = Activator.CreateInstance(type, true);
+						argumentArray[0] = instance;
+					}
+
+					addAssetReaderMethod
+						.MakeGenericMethod(interfaceTypeArgument)
+						.Invoke(null, argumentArray);
+				}
+			}
 		}
 
 		private static void AutoloadAssets()
