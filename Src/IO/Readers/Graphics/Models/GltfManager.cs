@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
 
@@ -44,11 +45,11 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".gltf", ".glb" };
 
-		public PackedScene ReadFromStream(Stream stream, string filePath)
+		public async ValueTask<PackedScene> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
-			var info = new GltfInfo(filePath);
+			var info = new GltfInfo(assetPath);
 
-			if (filePath.EndsWith(".gltf")) {
+			if (assetPath.EndsWith(".gltf")) {
 				byte[] textBytes = new byte[stream.Length - stream.Position];
 
 				stream.Read(textBytes, 0, textBytes.Length);

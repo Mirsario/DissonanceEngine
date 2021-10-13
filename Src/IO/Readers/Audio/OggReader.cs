@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Dissonance.Engine.Audio;
 using NVorbis;
 
@@ -8,7 +9,7 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".ogg" };
 
-		public AudioClip ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<AudioClip> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			using var r = new VorbisReader(stream, true);
 
@@ -16,6 +17,8 @@ namespace Dissonance.Engine.IO
 			float[] data = new float[bufferSize];
 
 			r.ReadSamples(data, 0, (int)bufferSize);
+
+			await switchToMainThread;
 
 			var clip = new AudioClip();
 

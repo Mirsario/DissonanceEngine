@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Dissonance.Engine.IO
 {
@@ -11,14 +13,16 @@ namespace Dissonance.Engine.IO
 
 		public bool AutoloadAssets => true;
 
-		public Asset<Shader>[] ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<Asset<Shader>[]> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			using var reader = new StreamReader(stream);
 			
 			string jsonText = reader.ReadToEnd();
 			var shaders = new List<Asset<Shader>>();
 
-			var jsonShaders = new HjsonReader().ReadFromStream(stream, assetPath).ToObject<Dictionary<string, JsonShaderProgram>>();
+			var jsonShaders = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<Dictionary<string, JsonShaderProgram>>();
+
+			await switchToMainThread;
 
 			foreach (var pair in jsonShaders) {
 				string name = pair.Key;

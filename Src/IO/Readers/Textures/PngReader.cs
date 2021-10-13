@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Dissonance.Framework.Imaging;
 using Dissonance.Engine.Graphics;
+using System.Threading.Tasks;
 
 namespace Dissonance.Engine.IO
 {
@@ -10,7 +11,7 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".png" };
 
-		public Texture ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<Texture> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			int length = (int)stream.Length;
 
@@ -30,7 +31,12 @@ namespace Dissonance.Engine.IO
 
 			IL.ConvertImage(ImageDataFormat.Rgba, ImageDataType.UnsignedByte);
 
-			var texture = new Texture(IL.GetInteger(ImageInt.ImageWidth), IL.GetInteger(ImageInt.ImageHeight));
+			int width = IL.GetInteger(ImageInt.ImageWidth);
+			int height = IL.GetInteger(ImageInt.ImageHeight);
+
+			await switchToMainThread;
+
+			var texture = new Texture(width, height);
 
 			texture.SetPixels(IL.GetData());
 

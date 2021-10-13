@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing;
@@ -15,6 +14,8 @@ namespace Dissonance.Engine
 		private static volatile Game instance;
 
 		public static bool HasFocus { get; internal set; } = true;
+		public static Thread MainThread { get; private set; }
+
 		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
 		
 		/// <summary>
@@ -81,6 +82,7 @@ namespace Dissonance.Engine
 			}
 
 			instance = this;
+			MainThread = Thread.CurrentThread;
 			Flags = flags;
 			StartArguments = Array.AsReadOnly(args);
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);

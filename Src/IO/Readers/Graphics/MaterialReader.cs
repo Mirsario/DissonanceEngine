@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Utilities;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 #pragma warning disable CS0649
 
@@ -28,11 +30,11 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".material" };
 
-		public Material ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<Material> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-			var jsonMat = new HjsonReader().ReadFromStream(stream, assetPath).ToObject<JSON_Material>();
+			var jsonMat = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<JSON_Material>();
 
 			string materialName = FilterText(jsonMat.name, assetPath);
 			string materialShaderName = FilterText(jsonMat.shader, assetPath);

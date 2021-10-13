@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
@@ -19,7 +20,7 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".obj" };
 
-		public Mesh ReadFromStream(Stream stream, string filePath)
+		public async ValueTask<Mesh> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			string text;
 
@@ -51,7 +52,7 @@ namespace Dissonance.Engine.IO
 			}
 
 			var mesh = new Mesh {
-				Name = Path.GetFileName(filePath),
+				Name = Path.GetFileName(assetPath),
 				Vertices = newVerts,
 				Uv0 = newUVs,
 				Normals = newNormals,

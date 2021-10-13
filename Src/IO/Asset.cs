@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Dissonance.Engine.IO
 {
@@ -26,6 +28,9 @@ namespace Dissonance.Engine.IO
 
 		/// <summary> Whether or not this asset has been loaded. </summary>
 		public bool IsLoaded => State == AssetState.Loaded;
+
+		internal Action Wait { get; set; }
+		internal Action Continuation { get; set; }
 
 		internal Asset(string name)
 		{
@@ -67,23 +72,11 @@ namespace Dissonance.Engine.IO
 				return;
 			}
 
-			string extension = Path.GetExtension(AssetPath);
-			var readerByExtension = Assets.ReadersByDataType<T>.ReaderByExtension;
-
-			if (readerByExtension.Count == 0) {
-				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
-			}
-
-			if (!readerByExtension.TryGetValue(extension, out var assetReader) && !readerByExtension.TryGetValue("*", out assetReader)) {
-				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
-			}
-
 			State = AssetState.Loading;
 
-			using var stream = Source.OpenStream(AssetPath);
+			var loadTask = Load(mode);
 
-			Value = assetReader.ReadFromStream(stream, AssetPath);
-			State = AssetState.Loaded;
+			Wait = () => SafelyWaitForLoad(loadTask, tracked: true);
 		}
 
 		public bool TryGetOrRequestValue(out T result)
@@ -110,6 +103,60 @@ namespace Dissonance.Engine.IO
 			}
 
 			return Value;
+		}
+
+		private async Task Load(AssetRequestMode mode)
+		{
+			var asyncContext = new ContinuationScheduler(this);
+
+			string extension = Path.GetExtension(AssetPath);
+			var readerByExtension = Assets.ReadersByDataType<T>.ReaderByExtension;
+
+			if (readerByExtension.Count == 0) {
+				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
+			}
+
+			if (!readerByExtension.TryGetValue(extension, out var assetReader) && !readerByExtension.TryGetValue("*", out assetReader)) {
+				throw new InvalidOperationException($"No asset reader found for file extension '{extension}'.");
+			}
+
+			if (mode == AssetRequestMode.AsyncLoad) {
+				await Task.Yield(); // This transfers the method's execution to a worker thread.
+			}
+
+			using var stream = Source.OpenStream(AssetPath);
+
+			Value = await assetReader.ReadFromStream(stream, AssetPath, new MainThreadCreationContext(asyncContext));
+
+			State = AssetState.Loaded;
+		}
+
+		private void SafelyWaitForLoad(Task loadTask, bool tracked)
+		{
+			if (State == AssetState.Loaded)
+				return;
+
+			if (!loadTask.IsCompleted && Assets.IsMainThread) {
+				while (Continuation == null) {
+					Thread.Yield();
+				}
+
+				if (tracked) {
+					lock (Assets.RequestLock) {
+						Continuation();
+					}
+				} else {
+					Continuation();
+				}
+
+				if (!loadTask.IsCompleted)
+					throw new Exception($"Load task not completed after running continuations on main thread?");
+			}
+
+			loadTask.GetAwaiter().GetResult(); // throw any exceptions (and wait for completion if this is not the worker thread)
+
+			if (State != AssetState.Loaded)
+				throw new Exception("This should not have happened.");
 		}
 	}
 }

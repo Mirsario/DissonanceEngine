@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Dissonance.Engine.IO
 {
@@ -6,7 +7,7 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { "*", ".txt" };
 
-		public string ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<string> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			using var reader = new StreamReader(stream);
 

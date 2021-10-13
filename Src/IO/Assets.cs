@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Dissonance.Engine.IO
 {
@@ -11,22 +13,35 @@ namespace Dissonance.Engine.IO
 	{
 		internal static class ReadersByDataType<T>
 		{
+			internal static readonly HashSet<IAssetReader<T>> Readers = new();
 			internal static readonly Dictionary<string, IAssetReader<T>> ReaderByExtension = new();
 		}
 
-		internal static readonly HashSet<IAssetReader<object>> Readers = new();
-		internal static readonly Dictionary<Type, IReadOnlyList<IAssetReader<object>>> ReadersByType = new();
+		internal const string BuiltInAssetsDirectory = "BuiltInAssets";
+
+		internal static readonly object RequestLock = new();
+		internal static readonly HashSet<Type> ReaderAssetTypes = new();
+		internal static readonly ConcurrentQueue<Action> AssetTransferQueue = new();
 
 		private static readonly HashSet<AssetSource> sources = new();
 		private static readonly Dictionary<string, Asset> assets = new();
 
-		internal const string BuiltInAssetsDirectory = "BuiltInAssets";
+		internal static bool IsMainThread => Thread.CurrentThread == Game.MainThread;
 
 		protected override void Init()
 		{
 			RegisterAssetSources();
 			RegisterAssetReaders();
 			AutoloadAssets();
+		}
+
+		protected override void PreRenderUpdate()
+		{
+			while (!AssetTransferQueue.IsEmpty) {
+				if (AssetTransferQueue.TryDequeue(out Action continuation)) {
+					continuation();
+				}
+			}
 		}
 
 		/// <summary>
@@ -118,6 +133,9 @@ namespace Dissonance.Engine.IO
 
 				result = cachedAssetResult;
 
+				if (mode == AssetRequestMode.ImmediateLoad)
+					result.Wait();
+
 				return true;
 			}
 
@@ -127,6 +145,9 @@ namespace Dissonance.Engine.IO
 				}
 
 				result = RequestFromSource<T>(source, assetPath, mode);
+
+				if (mode == AssetRequestMode.ImmediateLoad)
+					result.Wait();
 
 				return true;
 			}
@@ -217,20 +238,11 @@ namespace Dissonance.Engine.IO
 		/// <exception cref="InvalidOperationException"> </exception>
 		public static void AddAssetReader<T>(IAssetReader<T> assetReader)
 		{
-			if (!Readers.Add((IAssetReader<object>)assetReader)) {
+			if (!ReadersByDataType<T>.Readers.Add(assetReader)) {
 				throw new InvalidOperationException($"Asset reader '{assetReader.GetType().Name}' is already registered.");
 			}
 
-			List<IAssetReader<T>> readersOfThisType;
-
-			if (ReadersByType.TryGetValue(typeof(T), out var readersOfThisTypeTemp)) {
-				readersOfThisType = (List<IAssetReader<T>>)readersOfThisTypeTemp;
-			} else {
-				readersOfThisType = new List<IAssetReader<T>>();
-				ReadersByType[typeof(T)] = (IReadOnlyList<IAssetReader<object>>)readersOfThisType;
-			}
-
-			readersOfThisType.Add(assetReader);
+			ReaderAssetTypes.Add(typeof(T));
 
 			foreach (string extension in assetReader.Extensions) {
 				ReadersByDataType<T>.ReaderByExtension.Add(extension, assetReader);
@@ -273,40 +285,34 @@ namespace Dissonance.Engine.IO
 			AddAssetReader(new ShaderReader());
 			AddAssetReader(new MaterialReader());
 			AddAssetReader(new TextReader());
-			AddAssetReader(new JsonReader());
 			AddAssetReader(new HjsonReader());
 		}
 
 		private static void AutoloadAssets()
 		{
-			object[] parameterArray = new object[1];
 			var autoloadAssetsMethod = typeof(Assets).GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
 
-			foreach (var pair in ReadersByType) {
-				var type = pair.Key;
-				var readers = pair.Value;
-
-				foreach (var reader in readers) {
-					if (!reader.AutoloadAssets) {
-						continue;
-					}
-
-					parameterArray[0] = reader;
-					autoloadAssetsMethod
-						.MakeGenericMethod(type)
-						.Invoke(null, parameterArray);
-				}
+			foreach (var type in ReaderAssetTypes) {
+				autoloadAssetsMethod
+					.MakeGenericMethod(type)
+					.Invoke(null, null);
 			}
 		}
 
-		private static void AutoloadAssetsGeneric<T>(IAssetReader<T> reader)
+		private static void AutoloadAssetsGeneric<T>()
 		{
-			foreach (var source in sources) {
-				foreach (string assetPath in source.EnumerateAssets()) {
-					string extension = Path.GetExtension(assetPath);
+			foreach (var reader in ReadersByDataType<T>.Readers) {
+				if (!reader.AutoloadAssets) {
+					continue;
+				}
 
-					if (reader.Extensions.Contains(extension)) {
-						RequestFromSource<T>(source, assetPath, AssetRequestMode.ImmediateLoad); //TODO: Use async load, then wait for all of them to finish.
+				foreach (var source in sources) {
+					foreach (string assetPath in source.EnumerateAssets()) {
+						string extension = Path.GetExtension(assetPath);
+
+						if (reader.Extensions.Contains(extension)) {
+							RequestFromSource<T>(source, assetPath, AssetRequestMode.ImmediateLoad); //TODO: Use async load, then wait for all of them to finish.
+						}
 					}
 				}
 			}

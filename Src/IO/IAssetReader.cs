@@ -1,8 +1,9 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Dissonance.Engine.IO
 {
-	public interface IAssetReader<out T>
+	public interface IAssetReader<T>
 	{
 		/// <summary>
 		/// The file extensions that this reader should be associated with.
@@ -22,7 +23,8 @@ namespace Dissonance.Engine.IO
 		/// </summary>
 		/// <param name="stream"> The stream to read from. </param>
 		/// <param name="assetPath"> The path of the asset that's currently being loaded. </param>
+		/// <param name="switchToMainThread"> Await this to switch execution of the method to the main thread. </param>
 		/// <returns> A result of type <see cref="T"/>. </returns>
-		T ReadFromStream(Stream stream, string assetPath);
+		ValueTask<T> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread);
 	}
 }

@@ -2,6 +2,7 @@ using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Physics;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Dissonance.Engine.IO
 {
@@ -9,7 +10,7 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".obj" };
 
-		public ConvexCollisionMesh ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<ConvexCollisionMesh> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			var mesh = Assets.Get<Mesh>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			var collisionMesh = new ConvexCollisionMesh();

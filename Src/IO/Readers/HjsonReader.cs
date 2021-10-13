@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Hjson;
 using Newtonsoft.Json.Linq;
 
@@ -6,9 +7,9 @@ namespace Dissonance.Engine.IO
 {
 	public class HjsonReader : IAssetReader<JObject>
 	{
-		public string[] Extensions { get; } = new[] { ".hjson" };
+		public string[] Extensions { get; } = new[] { "*", ".hjson" };
 
-		public JObject ReadFromStream(Stream stream, string assetPath)
+		public async ValueTask<JObject> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			string hjsonText = Assets.Get<string>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			using var hjsonReader = new StringReader(hjsonText);
