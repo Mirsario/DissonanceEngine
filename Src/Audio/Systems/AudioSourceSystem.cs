@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Audio;
+﻿using Dissonance.Engine.IO;
+using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
@@ -49,8 +50,11 @@ namespace Dissonance.Engine.Audio
 					AL.GenSource(out audioSource.sourceId);
 				}
 
+				// Load in clips
+				bool clipReady = audioSource.Clip != null && audioSource.Clip.TryGetOrRequestValue(out _);
+
 				// Update buffer.
-				uint newBufferId = audioSource.Clip?.IsLoaded == true ? audioSource.Clip.Value.BufferId : 0;
+				uint newBufferId = clipReady ? audioSource.Clip.Value.BufferId : 0;
 
 				if (audioSource.bufferId != newBufferId) {
 					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
@@ -61,17 +65,22 @@ namespace Dissonance.Engine.Audio
 				if (audioSource.PendingAction != AudioSource.PlaybackAction.None) {
 					switch (audioSource.PendingAction) {
 						case AudioSource.PlaybackAction.Play:
+							if (audioSource.bufferId == 0) {
+								break;
+							}
+
 							AL.SourcePlay(audioSource.sourceId);
-							break;
+							goto default;
 						case AudioSource.PlaybackAction.Pause:
 							AL.SourcePause(audioSource.sourceId);
-							break;
+							goto default;
 						case AudioSource.PlaybackAction.Stop:
 							AL.SourceStop(audioSource.sourceId);
+							goto default;
+						default:
+							audioSource.PendingAction = 0;
 							break;
 					}
-
-					audioSource.PendingAction = 0;
 				}
 
 				// Update volume.

@@ -18,8 +18,6 @@ namespace Dissonance.Engine.IO
 
 			r.ReadSamples(data, 0, (int)bufferSize);
 
-			await switchToMainThread;
-
 			var clip = new AudioClip();
 
 			clip.SetData(data, r.Channels, sizeof(float), r.SampleRate);
