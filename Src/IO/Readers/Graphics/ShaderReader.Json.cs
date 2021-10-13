@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using Dissonance.Engine.Graphics;
 
-#pragma warning disable CS0649
+#pragma warning disable CS0649 // Field is never assigned to
 
 namespace Dissonance.Engine.IO
 {
@@ -14,23 +14,23 @@ namespace Dissonance.Engine.IO
 		{
 			// Shaders
 			[JsonRequired]
-			public string vertexShader;
+			public string VertexShader;
 
 			[JsonRequired]
-			public string fragmentShader;
+			public string FragmentShader;
 
-			public string geometryShader;
-			public string[] shaderDefines;
+			public string GeometryShader;
+			public string[] ShaderDefines;
 			// Parameters
-			public int queue;
-			public CullMode cullMode = CullMode.Front;
-			public PolygonMode polygonMode = PolygonMode.Fill;
-			public BlendingFactor blendFactorSrc = BlendingFactor.One;
-			public BlendingFactor blendFactorDst = BlendingFactor.Zero;
+			public int Queue;
+			public CullMode CullMode = CullMode.Front;
+			public PolygonMode PolygonMode = PolygonMode.Fill;
+			public BlendingFactor BlendFactorSrc = BlendingFactor.One;
+			public BlendingFactor BlendFactorDst = BlendingFactor.Zero;
 			// Uniforms
-			public Dictionary<string, float> floats;
-			public Dictionary<string, float[]> vectors;
-			public Dictionary<string, string> textures;
+			public Dictionary<string, float> Floats;
+			public Dictionary<string, float[]> Vectors;
+			public Dictionary<string, string> Textures;
 		}
 	}
 }

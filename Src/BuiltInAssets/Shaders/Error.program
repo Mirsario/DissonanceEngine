@@ -1,6 +1,5 @@
-{
-	"Error": { // Used for when other shaders fail to compile
-		"vertexShader": "BuiltInAssets/Shaders/Error.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Error.frag"
-	}
+// Used for when other shaders fail to compile
+Error: {
+	VertexShader: "BuiltInAssets/Shaders/Error.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Error.frag"
 }

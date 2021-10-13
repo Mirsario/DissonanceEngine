@@ -1,211 +1,208 @@
-{
-	// Diffuse
+// Diffuse
 
-	"Deferred/Diffuse": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag"
-	},
-	
-	"Deferred/DiffuseColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "COLOR" ]
-	},
-	
-	"Deferred/DiffuseBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "NORMALMAP" ]
-	},
-	
-	"Deferred/DiffuseBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "NORMALMAP", "COLOR" ]
-	},
+Deferred/Diffuse: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+}
 
-	// Specular
+Deferred/DiffuseColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "COLOR" ]
+}
 
-	"Deferred/Specular": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULAR" ]
-	},
-	
-	"Deferred/SpecularColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULAR", "COLOR" ]
-	},
-	
-	"Deferred/SpecularBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULAR", "NORMALMAP" ]
-	},
-	
-	"Deferred/SpecularBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULAR", "NORMALMAP", "COLOR" ]
-	},
+Deferred/DiffuseBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "NORMALMAP" ]
+}
 
-	// Specular Mapped
+Deferred/DiffuseBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "NORMALMAP", "COLOR" ]
+}
 
-	"Deferred/SpecularMapped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULARMAP" ]
-	},
-	
-	"Deferred/SpecularMappedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULARMAP", "COLOR" ]
-	},
-	
-	"Deferred/SpecularMappedBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULARMAP", "NORMALMAP" ]
-	},
-	
-	"Deferred/SpecularMappedBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "SPECULARMAP", "NORMALMAP", "COLOR" ]
-	},
+// Specular
 
-	// Emissive
+Deferred/Specular: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULAR" ]
+}
 
-	"Deferred/Emissive": { // Diffuse
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION" ]
-	},
-	
-	"Deferred/EmissiveColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "NORMALMAP" ]
-	},
-	
-	"Deferred/EmissiveBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "NORMALMAP", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveSpecular": { // Specular
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "SPECULAR" ]
-	},
-	
-	"Deferred/EmissiveSpecularColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "SPECULAR", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveSpecularBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "SPECULAR", "NORMALMAP" ]
-	},
-	
-	"Deferred/EmissiveSpecularBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "SPECULAR", "NORMALMAP", "COLOR" ]
-	},
+Deferred/SpecularColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULAR", "COLOR" ]
+}
 
-	// Emissive Mapped
+Deferred/SpecularBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULAR", "NORMALMAP" ]
+}
 
-	"Deferred/EmissiveMapped": { // Diffuse
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP" ]
-	},
-	
-	"Deferred/EmissiveMappedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveMappedBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "NORMALMAP" ]
-	},
-	
-	"Deferred/EmissiveMappedBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "NORMALMAP", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveMappedSpecular": { // Specular
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "SPECULAR" ]
-	},
-	
-	"Deferred/EmissiveMappedSpecularColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSION", "SPECULAR", "COLOR" ]
-	},
-	
-	"Deferred/EmissiveMappedSpecularBumped": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "SPECULAR", "NORMALMAP" ]
-	},
-	
-	"Deferred/EmissiveMappedSpecularBumpedColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "EMISSIONMAP", "SPECULAR", "NORMALMAP", "COLOR" ]
-	},
+Deferred/SpecularBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULAR", "NORMALMAP", "COLOR" ]
+}
 
-	// Transparent
+// Specular Mapped
 
-	"Deferred/Transparent/Diffuse": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "ALPHA" ],
-		"renderType": "Transparent",
-		"queue": 1000,
-		"blendFactorSrc": "SrcAlpha",
-		"blendFactorDst": "OneMinusSrcAlpha"
-	},
+Deferred/SpecularMapped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULARMAP" ]
+}
 
-	// Transparent Cutout
+Deferred/SpecularMappedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULARMAP", "COLOR" ]
+}
 
-	"Deferred/Transparent/Cutout/Diffuse": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "ALPHATEST" ]
-	},
-	
-	"Deferred/Transparent/Cutout/DiffuseDualSided": { // Weird name
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "ALPHATEST" ],
-		"cullMode": "Off"
-	},
-	
-	"Deferred/Transparent/Cutout/DiffuseColor": {
-		"vertexShader": "BuiltInAssets/Shaders/Deferred/Default.vert",
-		"fragmentShader": "BuiltInAssets/Shaders/Deferred/Default.frag",
-		"shaderDefines": [ "ALPHATEST", "COLOR" ]
-	},
+Deferred/SpecularMappedBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULARMAP", "NORMALMAP" ]
+}
+
+Deferred/SpecularMappedBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "SPECULARMAP", "NORMALMAP", "COLOR" ]
+}
+
+// Emissive
+
+Deferred/Emissive: { // Diffuse
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION" ]
+}
+
+Deferred/EmissiveColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "COLOR" ]
+}
+
+Deferred/EmissiveBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "NORMALMAP" ]
+}
+
+Deferred/EmissiveBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "NORMALMAP", "COLOR" ]
+}
+
+Deferred/EmissiveSpecular: { // Specular
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "SPECULAR" ]
+}
+
+Deferred/EmissiveSpecularColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "SPECULAR", "COLOR" ]
+}
+
+Deferred/EmissiveSpecularBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "SPECULAR", "NORMALMAP" ]
+}
+
+Deferred/EmissiveSpecularBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "SPECULAR", "NORMALMAP", "COLOR" ]
+}
+
+// Emissive Mapped
+
+Deferred/EmissiveMapped: { // Diffuse
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP" ]
+}
+
+Deferred/EmissiveMappedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "COLOR" ]
+}
+
+Deferred/EmissiveMappedBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "NORMALMAP" ]
+}
+
+Deferred/EmissiveMappedBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "NORMALMAP", "COLOR" ]
+}
+
+Deferred/EmissiveMappedSpecular: { // Specular
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "SPECULAR" ]
+}
+
+Deferred/EmissiveMappedSpecularColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSION", "SPECULAR", "COLOR" ]
+}
+
+Deferred/EmissiveMappedSpecularBumped: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "SPECULAR", "NORMALMAP" ]
+}
+
+Deferred/EmissiveMappedSpecularBumpedColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "EMISSIONMAP", "SPECULAR", "NORMALMAP", "COLOR" ]
+}
+
+// Transparent
+
+Deferred/Transparent/Diffuse: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "ALPHA" ]
+	Queue: 1000
+	BlendFactorSrc: "SrcAlpha"
+	BlendFactorDst: "OneMinusSrcAlpha"
+}
+
+// Transparent Cutout
+
+Deferred/Transparent/Cutout/Diffuse: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "ALPHATEST" ]
+}
+
+Deferred/Transparent/Cutout/DiffuseDualSided: { // Weird name
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "ALPHATEST" ]
+	CullMode: "Off"
+}
+
+Deferred/Transparent/Cutout/DiffuseColor: {
+	VertexShader: "BuiltInAssets/Shaders/Deferred/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Deferred/Default.frag"
+	ShaderDefines: [ "ALPHATEST", "COLOR" ]
 }
