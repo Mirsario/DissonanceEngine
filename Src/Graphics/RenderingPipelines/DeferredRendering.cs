@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Graphics
 {
 	public class DeferredRendering : RenderingPipeline
 	{
-		public override Shader DefaultGeometryShader { get; } = Resources.Find<Shader>("Deferred/Diffuse");
+		public override Asset<Shader> DefaultGeometryShader { get; } = Assets.Find<Shader>("Deferred/Diffuse");
 
 		public override void Setup(List<Framebuffer> framebuffers, List<RenderPass> renderPasses)
 		{
@@ -56,8 +56,8 @@ namespace Dissonance.Engine.Graphics
 				RenderPass.Create<DeferredLightingPass>("Lighting", p => {
 					p.Framebuffer = lightingFramebuffer;
 
-					p.ShadersByLightType[(int)Light.LightType.Point] = Resources.Find<Shader>("Deferred/Lighting/Point");
-					p.ShadersByLightType[(int)Light.LightType.Directional] = Resources.Find<Shader>("Deferred/Lighting/Directional");
+					p.ShadersByLightType[(int)Light.LightType.Point] = Assets.Find<Shader>("Deferred/Lighting/Point");
+					p.ShadersByLightType[(int)Light.LightType.Directional] = Assets.Find<Shader>("Deferred/Lighting/Directional");
 
 					p.PassedTextures = new[] {
 						positionBuffer,
@@ -68,7 +68,7 @@ namespace Dissonance.Engine.Graphics
 				
 				// Composite
 				RenderPass.Create<PostProcessPass>("Composite", p => {
-					p.PassShader = Resources.Find<Shader>("Deferred/Composite");
+					p.PassShader = Assets.Find<Shader>("Deferred/Composite");
 					p.PassedTextures = new[] {
 						colorBuffer,
 						normalBuffer, // temp.

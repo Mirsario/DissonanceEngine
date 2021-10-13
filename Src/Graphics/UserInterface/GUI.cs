@@ -6,15 +6,15 @@ using Dissonance.Engine.Input;
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Resources), typeof(Rendering))]
+	[ModuleDependency(typeof(Assets), typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{
 		public static Font Font { get; set; }
 		public static GUISkin Skin { get; set; }
-		public static Texture TexDefaultInactive { get; set; }
-		public static Texture TexDefault { get; set; }
-		public static Texture TexDefaultHover { get; set; }
-		public static Texture TexDefaultActive { get; set; }
+		public static Asset<Texture> TexDefaultInactive { get; set; }
+		public static Asset<Texture> TexDefault { get; set; }
+		public static Asset<Texture> TexDefaultHover { get; set; }
+		public static Asset<Texture> TexDefaultActive { get; set; }
 
 		internal static bool canDraw;
 
@@ -22,10 +22,10 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
-			TexDefaultInactive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
-			TexDefault = Resources.Import<Texture>("BuiltInAssets/GUI/Default.png");
-			TexDefaultHover = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultHover.png");
-			TexDefaultActive = Resources.Import<Texture>("BuiltInAssets/GUI/DefaultActive.png");
+			TexDefaultInactive = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
+			TexDefault = Assets.Get<Texture>("BuiltInAssets/GUI/Default.png");
+			TexDefaultHover = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultHover.png");
+			TexDefaultActive = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultActive.png");
 			Skin = new GUISkin();
 
 			textBufferMesh = new Mesh();
@@ -33,7 +33,9 @@ namespace Dissonance.Engine.Graphics
 
 		public static void Box(RectFloat rect, Vector4? color)
 		{
-			Draw(rect, Skin.BoxStyle.TexNormal, color, Skin.BoxStyle);
+			if (Skin.BoxStyle.TexNormal.TryGetOrRequestValue(out var boxStyleTexNormal)) {
+				Draw(rect, boxStyleTexNormal, color, Skin.BoxStyle);
+			}
 		}
 
 		public static bool Button(RectFloat rect, string text = null, bool active = true, Vector4? color = null)
@@ -42,9 +44,11 @@ namespace Dissonance.Engine.Graphics
 			bool anyPress = InputEngine.GetMouseButton(0);
 
 			var style = Skin.ButtonStyle;
-			var tex = active ? hover ? anyPress ? style.TexActive : style.TexHover : style.TexNormal : style.TexInactive;
+			var textureAsset = active ? hover ? anyPress ? style.TexActive : style.TexHover : style.TexNormal : style.TexInactive;
 
-			Draw(rect, tex, color, style);
+			if (textureAsset.TryGetOrRequestValue(out var texture)) {
+				Draw(rect, texture, color, style);
+			}
 
 			if (!string.IsNullOrEmpty(text)) {
 				var textRect = new RectFloat(
@@ -176,7 +180,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, font.Texture.Id);
+			GL.BindTexture(TextureTarget.Texture2D, font.Texture.TryGetOrRequestValue(out var tex) ? tex.Id : 0);
 			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
 
 			float scale = fontSize / font.CharSize.Y;

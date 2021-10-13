@@ -26,9 +26,13 @@
 					continue;
 				}
 
+				if (!renderer.Mesh.TryGetOrRequestValue(out var mesh) || !renderer.Material.TryGetOrRequestValue(out var material)) {
+					continue;
+				}
+
 				var layerMask = entity.Has<Layer>() ? entity.Get<Layer>().Mask : LayerMask.All;
 
-				geometryPassData.RenderEntries.Add(new(transform, renderer.Mesh, renderer.Material, layerMask));
+				geometryPassData.RenderEntries.Add(new(transform, mesh, material, layerMask));
 			}
 		}
 	}

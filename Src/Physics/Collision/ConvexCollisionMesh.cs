@@ -27,7 +27,7 @@ namespace Dissonance.Engine.Physics
 
 			tempHull.BuildHull(tempShape.Margin);
 
-			collisionShape = new ConvexHullShape(tempHull.Vertices);
+			CollisionShape = new ConvexHullShape(tempHull.Vertices);
 		}
 
 		public static explicit operator ConvexCollisionMesh(Mesh mesh)

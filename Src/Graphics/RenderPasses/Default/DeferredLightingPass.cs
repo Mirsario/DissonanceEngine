@@ -1,10 +1,11 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Dissonance.Engine.IO;
+using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
 	public class DeferredLightingPass : RenderPass
 	{
-		public readonly Shader[] ShadersByLightType = new Shader[2];
+		public readonly Asset<Shader>[] ShadersByLightType = new Asset<Shader>[2];
 
 		public override void Render()
 		{
@@ -35,9 +36,7 @@ namespace Dissonance.Engine.Graphics
 				var cameraPosition = cameraTransform.Position;
 
 				for (int i = 0; i < ShadersByLightType.Length; i++) {
-					var activeShader = ShadersByLightType[i];
-
-					if (activeShader == null) {
+					if (!ShadersByLightType[i].TryGetOrRequestValue(out var activeShader)) {
 						continue;
 					}
 
@@ -108,10 +107,10 @@ namespace Dissonance.Engine.Graphics
 
 						switch (lightType) {
 							case Light.LightType.Point:
-								PrimitiveMeshes.IcoSphere.Render();
+								PrimitiveMeshes.IcoSphere.Value.Render();
 								break;
 							case Light.LightType.Directional:
-								PrimitiveMeshes.ScreenQuad.Render();
+								PrimitiveMeshes.ScreenQuad.Value.Render();
 								break;
 						}
 					}

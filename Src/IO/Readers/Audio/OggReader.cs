@@ -1,19 +1,20 @@
 using System.IO;
+using System.Threading.Tasks;
 using Dissonance.Engine.Audio;
 using NVorbis;
 
 namespace Dissonance.Engine.IO
 {
-	public class OggManager : AssetManager<AudioClip>
+	public class OggReader : IAssetReader<AudioClip>
 	{
-		public override string[] Extensions { get; } = new[] { ".ogg" };
+		public string[] Extensions { get; } = { ".ogg" };
 
-		public override AudioClip Import(Stream stream, string filePath)
+		public async ValueTask<AudioClip> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			using var r = new VorbisReader(stream, true);
 
 			long bufferSize = r.TotalSamples * r.Channels;
-			var data = new float[bufferSize];
+			float[] data = new float[bufferSize];
 
 			r.ReadSamples(data, 0, (int)bufferSize);
 

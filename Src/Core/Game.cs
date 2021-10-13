@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing;
@@ -15,6 +14,8 @@ namespace Dissonance.Engine
 		private static volatile Game instance;
 
 		public static bool HasFocus { get; internal set; } = true;
+		public static Thread MainThread { get; private set; }
+
 		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
 		
 		/// <summary>
@@ -25,7 +26,6 @@ namespace Dissonance.Engine
 		internal bool shouldQuit;
 		internal bool preInitDone;
 		internal bool fixedUpdate;
-		internal string assetsPath;
 
 		private Stopwatch updateStopwatch;
 		private Stopwatch renderStopwatch;
@@ -82,6 +82,7 @@ namespace Dissonance.Engine
 			}
 
 			instance = this;
+			MainThread = Thread.CurrentThread;
 			Flags = flags;
 			StartArguments = Array.AsReadOnly(args);
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
@@ -94,26 +95,6 @@ namespace Dissonance.Engine
 
 			Debug.Log("Loading engine...");
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
-			Debug.Log($"Assets directory is '{assetsPath}'.");
-
-			//TODO: Move this.
-			assetsPath = "Assets" + Path.DirectorySeparatorChar;
-
-			if (args != null) {
-				string joinedArgs = string.Join(" ", args);
-				var matches = RegexCache.CommandArguments.Matches(joinedArgs);
-				var dict = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-
-				foreach (Match match in matches) {
-					dict[match.Groups[1].Value] = match.Groups[2].Value;
-				}
-
-				if (dict.TryGetValue("assetspath", out string path)) {
-					assetsPath = path ?? throw new ArgumentException("Expected a directory path after command line argument 'assetspath'.");
-				}
-			}
-
-			assetsPath = Path.GetFullPath(assetsPath);
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
 
@@ -194,11 +175,6 @@ namespace Dissonance.Engine
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
-
-			if (!Directory.Exists(assetsPath)) {
-				throw new DirectoryNotFoundException($"Unable to locate the Assets folder. Is the working directory set correctly?\nExpected it to be '{Path.GetFullPath(assetsPath)}'.");
-			}
-
 			CustomVertexBuffer.Initialize();
 			CustomVertexAttribute.Initialize();
 

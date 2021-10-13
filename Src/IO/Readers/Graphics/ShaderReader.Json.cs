@@ -7,7 +7,7 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
 {
-	public partial class ShaderManager
+	public partial class ShaderReader
 	{
 		[JsonObject]
 		private class JsonShaderProgram

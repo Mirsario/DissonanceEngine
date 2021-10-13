@@ -18,7 +18,7 @@
 		{
 			// Unregister colliders when their component is removed
 			foreach (var message in ReadMessages<ComponentRemovedMessage<MeshCollider>>()) {
-				var collisionShape = message.Value.CollisionMesh?.collisionShape;
+				var collisionShape = message.Value.CollisionMesh?.CollisionShape;
 
 				if (collisionShape != null) {
 					SendMessage(new RemoveCollisionShapeMessage(message.Entity, collisionShape));
@@ -33,7 +33,7 @@
 						SendMessage(new RemoveCollisionShapeMessage(entity, collider.lastCollisionShape));
 					}
 
-					var collisionShape = collider.CollisionMesh?.collisionShape;
+					var collisionShape = collider.CollisionMesh?.CollisionShape;
 
 					if (collisionShape != null) {
 						SendMessage(new AddCollisionShapeMessage(entity, collisionShape));

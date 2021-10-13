@@ -11,7 +11,7 @@ namespace Dissonance.Engine.Graphics
 
 			GL.Enable(EnableCap.DepthTest);
 
-			var shader = Resources.Find<Shader>("Debug");
+			var shader = Assets.Find<Shader>("Debug").GetValueImmediately();
 
 			Shader.SetShader(shader);
 

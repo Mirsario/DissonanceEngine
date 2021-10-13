@@ -1,31 +1,30 @@
 using System;
 using System.Runtime.InteropServices;
-using Dissonance.Engine.IO;
 using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
-	public class AudioClip : Asset
+	public sealed class AudioClip : IDisposable
 	{
-		internal uint bufferId;
-
-		protected int channelsNum;
-		protected int bytesPerSample;
-		protected int sampleRate;
+		private int channelsNum;
+		private int bytesPerSample;
+		private int sampleRate;
 
 		public float LengthInSeconds { get; private set; }
 
+		internal uint BufferId { get; private set; }
+
 		public AudioClip()
 		{
-			bufferId = AL.GenBuffer();
+			BufferId = AL.GenBuffer();
 		}
 
-		public override void Dispose()
+		public void Dispose()
 		{
-			if (bufferId > 0) {
-				AL.DeleteBuffer(bufferId);
+			if (BufferId > 0) {
+				AL.DeleteBuffer(BufferId);
 
-				bufferId = 0;
+				BufferId = 0;
 			}
 		}
 
@@ -44,7 +43,7 @@ namespace Dissonance.Engine.Audio
 			var format = GetSoundFormat(channelsNum, bytesPerSample);
 
 			fixed(T* ptr = data) {
-				AL.BufferData(bufferId, format, (IntPtr)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
+				AL.BufferData(BufferId, format, (IntPtr)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
 			}
 
 			AudioEngine.CheckALErrors();

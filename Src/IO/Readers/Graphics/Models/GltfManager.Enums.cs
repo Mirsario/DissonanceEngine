@@ -1,6 +1,6 @@
 namespace Dissonance.Engine.IO
 {
-	partial class GltfManager
+	partial class GltfReader
 	{
 		public enum ComponentType
 		{

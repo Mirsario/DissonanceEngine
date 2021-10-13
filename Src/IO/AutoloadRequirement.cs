@@ -5,7 +5,7 @@ namespace Dissonance.Engine.IO
 	[AttributeUsage(AttributeTargets.Class)]
 	public class AutoloadRequirement : Attribute
 	{
-		public Type[] requirements;
+		public readonly Type[] Requirements;
 
 		public AutoloadRequirement(params Type[] types)
 		{
@@ -13,7 +13,7 @@ namespace Dissonance.Engine.IO
 				throw new ArgumentException($"'{nameof(types)}' array cannot be null or empty");
 			}
 
-			requirements = types;
+			Requirements = types;
 		}
 	}
 }
