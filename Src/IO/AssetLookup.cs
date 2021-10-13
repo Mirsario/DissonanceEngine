@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Dissonance.Engine.IO
@@ -12,7 +13,7 @@ namespace Dissonance.Engine.IO
 
 	internal static class AssetLookup<T>
 	{
-		private static readonly Dictionary<string, Asset<T>> lookup = new();
+		private static readonly ConcurrentDictionary<string, Asset<T>> lookup = new();
 
 		public static int Count => lookup.Count;
 

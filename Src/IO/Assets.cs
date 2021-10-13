@@ -286,6 +286,7 @@ namespace Dissonance.Engine.IO
 			AddAssetReader(new MaterialReader());
 			AddAssetReader(new TextReader());
 			AddAssetReader(new HjsonReader());
+			AddAssetReader(new GltfReader());
 		}
 
 		private static void AutoloadAssets()

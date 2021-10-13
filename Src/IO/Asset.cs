@@ -100,6 +100,7 @@ namespace Dissonance.Engine.IO
 		{
 			if (!IsLoaded) {
 				Request(AssetRequestMode.ImmediateLoad);
+				Wait();
 			}
 
 			return Value;

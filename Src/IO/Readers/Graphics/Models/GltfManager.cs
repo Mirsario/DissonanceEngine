@@ -240,7 +240,7 @@ namespace Dissonance.Engine.IO
 
 					mesh.Apply();
 
-					meshes.Add(Assets.CreateUntracked(mesh.Name, mesh));
+					meshes.Add(Assets.CreateUntracked(mesh.Name ?? "Unnamed", mesh));
 				}
 
 				//TODO: Add proper material support, remove this hardcode.
