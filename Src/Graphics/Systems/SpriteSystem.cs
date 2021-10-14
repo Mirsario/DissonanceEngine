@@ -173,7 +173,7 @@ namespace Dissonance.Engine.Graphics
 
 				compoundMesh.Apply();
 
-				geometryPassData.RenderEntries.Add(new(Transform.Default, compoundMesh, batch.Material, batch.LayerMask));
+				geometryPassData.RenderEntries.Add(new(new Transform(), compoundMesh, batch.Material, batch.LayerMask));
 
 				batch.EntityCount = 0; // Reset entity count once again, will be used for disposing the batch in the next frame
 			}
