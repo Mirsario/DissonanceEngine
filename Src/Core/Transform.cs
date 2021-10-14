@@ -17,15 +17,13 @@ namespace Dissonance.Engine
 			All = Position | Rotation | Scale
 		}
 
-		public static Transform Default = new(Vector3.Zero);
-
 		public readonly IReadOnlyList<Transform> Children;
 
 		private readonly List<Transform> ChildrenInternal;
 
-		private Matrix4x4 matrix;
+		private Matrix4x4 matrix = Matrix4x4.Identity;
 
-		public Entity? Parent { get; set; }
+		public Entity? Parent { get; set; } = null;
 
 		public Transform Root => Parent.HasValue ? EnumerateParents().Last() : this;
 
@@ -241,7 +239,12 @@ namespace Dissonance.Engine
 			}
 		}
 
-		public event Action<Transform, UpdateFlags> OnModified;
+		public event Action<Transform, UpdateFlags> OnModified = null;
+
+		public Transform()
+		{
+			Children = (ChildrenInternal = new()).AsReadOnly();
+		}
 
 		public Transform(Vector3? position = null, Vector3? eulerRotation = null, Vector3? localScale = null) : this()
 		{
