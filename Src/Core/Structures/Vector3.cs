@@ -1,8 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
+using Dissonance.Engine.IO;
+using Newtonsoft.Json;
 
 namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(Vector3JsonConverter))]
 	public struct Vector3
 	{
 		public const float kEpsilon = 0.00001F;
