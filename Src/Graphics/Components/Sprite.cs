@@ -1,4 +1,5 @@
 using System;
+using Dissonance.Engine.IO;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -19,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 		private Vector2 origin;
 		private float pixelSize;
 		private Vector2 sizeInPixels;
-		private Material material;
+		private Asset<Material> material;
 
 		public RectFloat SourceRectangle { get; set; }
 		public SpriteEffects Effects { get; set; }
@@ -53,7 +54,7 @@ namespace Dissonance.Engine.Graphics
 				verticesNeedRecalculation = true;
 			}
 		}
-		public Material Material {
+		public Asset<Material> Material {
 			get => material;
 			set {
 				material = value;
@@ -66,7 +67,7 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		public Sprite(Material material) : this()
+		public Sprite(Asset<Material> material) : this()
 		{
 			vertices = new Vector4(-0.5f, -0.5f, 0.5f, 0.5f);
 			origin = new Vector2(0.5f, 0.5f);
