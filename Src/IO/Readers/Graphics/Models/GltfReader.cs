@@ -66,6 +66,8 @@ namespace Dissonance.Engine.IO
 				}
 			}
 
+			await switchToMainThread;
+
 			LoadMeshes(info);
 
 			return info.Scene;
