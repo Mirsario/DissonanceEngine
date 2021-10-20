@@ -5,7 +5,7 @@ namespace Dissonance.Engine.Graphics
 	public struct Camera
 	{
 		public RectFloat View { get; set; }
-		public float Fov { get; set; }
+		public float FieldOfView { get; set; }
 		public float NearClip { get; set; }
 		public float FarClip { get; set; }
 		public bool Orthographic { get; set; }
@@ -34,7 +34,7 @@ namespace Dissonance.Engine.Graphics
 
 		public Camera(bool orthographic = false, float fov = 90f, float nearClip = 0.01f, float farClip = 2000f, RectFloat? view = null, float ortographicSize = 16f)
 		{
-			Fov = fov;
+			FieldOfView = fov;
 			Orthographic = orthographic;
 			NearClip = nearClip;
 			FarClip = farClip;
