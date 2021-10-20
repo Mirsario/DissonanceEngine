@@ -6,8 +6,8 @@ namespace Dissonance.Engine.Graphics
 {
 	public struct MeshRenderer
 	{
-		private Bounds aabb;
-		private Matrix4x4 aabbLastMatrix;
+		private Bounds aabb = default;
+		private Matrix4x4 aabbLastMatrix = default;
 		private MeshLOD[] lodMeshes;
 
 		public MeshLOD[] LODMeshes {
@@ -59,10 +59,13 @@ namespace Dissonance.Engine.Graphics
 			set => lodMeshes[0].Material = value;
 		}
 
+		public MeshRenderer()
+		{
+			lodMeshes = new MeshLOD[1] { new MeshLOD(null, null) };
+		}
+
 		public MeshRenderer(Asset<Mesh> mesh, Asset<Material> material)
 		{
-			aabb = default;
-			aabbLastMatrix = default;
 			lodMeshes = new MeshLOD[1] { new MeshLOD(mesh, material) };
 		}
 
