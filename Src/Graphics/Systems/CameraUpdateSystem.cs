@@ -31,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 
 					camera.ProjectionMatrix = Matrix4x4.CreateOrthographic(Screen.Width / max * camera.OrthographicSize, Screen.Height / max * camera.OrthographicSize, camera.NearClip, camera.FarClip);
 				} else {
-					camera.ProjectionMatrix = Matrix4x4.CreatePerspectiveFOV(camera.Fov * MathHelper.Deg2Rad, aspectRatio, camera.NearClip, camera.FarClip);
+					camera.ProjectionMatrix = Matrix4x4.CreatePerspectiveFOV(camera.FieldOfView * MathHelper.Deg2Rad, aspectRatio, camera.NearClip, camera.FarClip);
 				}
 
 				camera.InverseViewMatrix = Matrix4x4.Invert(camera.ViewMatrix);
