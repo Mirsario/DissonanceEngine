@@ -4,18 +4,30 @@ namespace Dissonance.Engine.Graphics
 {
 	public struct Camera
 	{
-		public RectFloat View { get; set; }
-		public float FieldOfView { get; set; }
-		public float NearClip { get; set; }
-		public float FarClip { get; set; }
-		public bool Orthographic { get; set; }
-		public float OrthographicSize { get; set; }
+		public unsafe struct FrustumData
+		{
+			public const int Width = 6;
+			public const int Height = 4;
+			public const int Length = Width * Height;
 
-		public float[,] Frustum { get; internal set; }
-		public Matrix4x4 ViewMatrix { get; internal set; }
-		public Matrix4x4 ProjectionMatrix { get; internal set; }
-		public Matrix4x4 InverseViewMatrix { get; internal set; }
-		public Matrix4x4 InverseProjectionMatrix { get; internal set; }
+			private fixed float values[Length];
+
+			public ref float this[int i] => ref values[i];
+			public ref float this[int x, int y] => ref values[y + (x * 4)];
+		}
+
+		public RectFloat View { get; set; } = RectFloat.Default;
+		public float FieldOfView { get; set; } = 90f;
+		public float NearClip { get; set; } = 0.01f;
+		public float FarClip { get; set; } = 2000f;
+		public bool Orthographic { get; set; } = false;
+		public float OrthographicSize { get; set; } = 16f;
+		public FrustumData Frustum { get; set; } = default;
+
+		public Matrix4x4 ViewMatrix { get; internal set; } = default;
+		public Matrix4x4 ProjectionMatrix { get; internal set; } = default;
+		public Matrix4x4 InverseViewMatrix { get; internal set; } = default;
+		public Matrix4x4 InverseProjectionMatrix { get; internal set; } = default;
 
 		public RectInt ViewPixel {
 			get => new(
@@ -32,26 +44,9 @@ namespace Dissonance.Engine.Graphics
 			);
 		}
 
-		public Camera(bool orthographic = false, float fov = 90f, float nearClip = 0.01f, float farClip = 2000f, RectFloat? view = null, float ortographicSize = 16f)
-		{
-			FieldOfView = fov;
-			Orthographic = orthographic;
-			NearClip = nearClip;
-			FarClip = farClip;
-			View = view ?? RectFloat.Default;
-			OrthographicSize = ortographicSize;
-			Frustum = new float[6, 4];
-
-			ViewMatrix = default;
-			ProjectionMatrix = default;
-			InverseViewMatrix = default;
-			InverseProjectionMatrix = default;
-		}
-
+		//TODO: Move to a system.
 		public void CalculateFrustum(Matrix4x4 clip)
 		{
-			Frustum ??= new float[6, 4];
-
 			// Right
 			Frustum[0, 0] = clip[3] - clip[0];
 			Frustum[0, 1] = clip[7] - clip[4];
