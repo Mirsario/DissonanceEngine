@@ -1,15 +1,17 @@
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Hjson;
 using Newtonsoft.Json.Linq;
 
 namespace Dissonance.Engine.IO
 {
-	public class HjsonReader : IAssetReader<JObject>
+	public class HjsonReader : IAssetReader<JObject>, IAssetReader<JsonDocument>
 	{
 		public string[] Extensions { get; } = new[] { "*", ".hjson" };
 
-		public async ValueTask<JObject> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		// Newtonsoft.Json
+		async ValueTask<JObject> IAssetReader<JObject>.ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			string hjsonText = Assets.Get<string>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			using var hjsonReader = new StringReader(hjsonText);
@@ -18,6 +20,18 @@ namespace Dissonance.Engine.IO
 			var jsonObject = JObject.Parse(jsonText);
 
 			return jsonObject;
+		}
+
+		// System.Text.Json
+		async ValueTask<JsonDocument> IAssetReader<JsonDocument>.ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		{
+			string hjsonText = Assets.Get<string>(assetPath, AssetRequestMode.ImmediateLoad).Value;
+			using var hjsonReader = new StringReader(hjsonText);
+
+			string jsonText = HjsonValue.Load(hjsonReader).ToString();
+			var jsonDocument = JsonDocument.Parse(jsonText);
+
+			return jsonDocument;
 		}
 
 		/*
