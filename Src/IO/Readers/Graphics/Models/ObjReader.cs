@@ -7,7 +7,7 @@ using Dissonance.Engine.Graphics;
 
 namespace Dissonance.Engine.IO
 {
-	public class ObjManager : IAssetReader<Mesh>
+	public class ObjReader : IAssetReader<Mesh>
 	{
 		internal struct MeshInfo
 		{
@@ -24,7 +24,7 @@ namespace Dissonance.Engine.IO
 		{
 			string text;
 
-			using(var reader = new StreamReader(stream)) {
+			using (var reader = new StreamReader(stream)) {
 				text = reader.ReadToEnd();
 			}
 
@@ -50,6 +50,8 @@ namespace Dissonance.Engine.IO
 					newNormals[i] = meshInfo.normals[(int)v.Z - 1];
 				}
 			}
+
+			await switchToMainThread;
 
 			var mesh = new Mesh {
 				Name = Path.GetFileName(assetPath),
