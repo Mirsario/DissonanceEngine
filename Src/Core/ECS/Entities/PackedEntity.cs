@@ -19,6 +19,15 @@ namespace Dissonance.Engine
 		public void SetComponent<T>(T value) where T : struct
 			=> PackedComponents[typeof(T)] = value;
 
+		public void SetComponent(Type type, object value)
+		{
+			if (value is null || !value.GetType().IsValueType) {
+				throw new ArgumentException("Value cannot be of a by-reference type.");
+			}
+
+			PackedComponents[type] = value;
+		}
+
 		public Entity Unpack(World world)
 		{
 			var entity = world.CreateEntity();

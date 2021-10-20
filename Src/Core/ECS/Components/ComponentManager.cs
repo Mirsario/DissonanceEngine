@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
@@ -27,6 +28,47 @@ namespace Dissonance.Engine
 
 		internal static Action<Entity, Type> OnComponentAdded;
 		internal static Action<Entity, Type> OnComponentRemoved;
+
+		private static Dictionary<string, Type> structureTypesByName = new();
+
+		protected override void PreInit()
+		{
+			// By-name type lookups are used in prefab parsing.
+			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
+				foreach (var type in types) {
+					if (!type.IsValueType || type.IsAbstract || type.IsNested) {
+						continue;
+					}
+
+					if (!structureTypesByName.TryGetValue(type.Name, out var existingType)) {
+						structureTypesByName[type.Name] = type;
+					} else {
+						//TODO: Use minimal unique paths.
+						structureTypesByName[type.Name] = null;
+						structureTypesByName[type.FullName] = type;
+						structureTypesByName[existingType.FullName] = existingType;
+					}
+				}
+			};
+		}
+
+		public static Type GetComponentTypeFromName(string name)
+		{
+			if (structureTypesByName.TryGetValue(name, out var type)) {
+				if (type == null) {
+					throw new ArgumentException($"Component name '{name}' is ambiguous.");
+				}
+
+				return type;
+			}
+
+			throw new KeyNotFoundException($"Couldn't find component with the provided name '{name}'.");
+		}
+
+		public static bool TryGetComponentTypeFromName(string name, out Type type)
+		{
+			return structureTypesByName.TryGetValue(name, out type) && type != null;
+		}
 
 		internal static bool HasComponent<T>() where T : struct
 		{
