@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-
 namespace Dissonance.Engine.IO
 {
 	public sealed class EntityPrefabReader : IAssetReader<PackedEntity>
