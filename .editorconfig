@@ -11,6 +11,11 @@ root = true
 # C# files
 [*.cs]
 
+#### Diagnostic Rules ####
+
+# CS1998: Async method lacks 'await' operators and will run synchronously
+dotnet_diagnostic.CS1998.severity = silent
+
 #### Core EditorConfig Options ####
 
 # Indentation and spacing
