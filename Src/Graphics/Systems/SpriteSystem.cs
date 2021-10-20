@@ -44,9 +44,7 @@ namespace Dissonance.Engine.Graphics
 
 			// Enumerate entities to define batches and count entities for them
 			foreach (var entity in entitiesSpan) {
-				var material = entity.Get<Sprite>().Material;
-
-				if (material == null) {
+				if (entity.Get<Sprite>().Material?.TryGetOrRequestValue(out var material) != true) {
 					continue;
 				}
 
@@ -90,9 +88,7 @@ namespace Dissonance.Engine.Graphics
 
 			// Enumerate entities for the second time to fill batches' entity arrays
 			foreach (var entity in entitiesSpan) {
-				var material = entity.Get<Sprite>().Material;
-
-				if (material == null) {
+				if (entity.Get<Sprite>().Material?.TryGetOrRequestValue(out var material) != true) {
 					continue;
 				}
 
