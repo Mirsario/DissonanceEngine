@@ -16,23 +16,12 @@ namespace Dissonance.Engine.Graphics
 		private readonly List<KeyValuePair<string, Asset<Texture>>> Textures = new();
 		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat = new();
 
-		private Asset<Shader> shader;
-
 		internal List<IRenderer> rendererAttachments;
 
 		public int Id { get; }
 		public string Name { get; }
 
-		public Asset<Shader> Shader {
-			get => shader;
-			set {
-				if (shader == value) {
-					return;
-				}
-
-				shader = value;
-			}
-		}
+		public Asset<Shader> Shader { get; set; }
 
 		public Material(string name, Asset<Shader> shader)
 		{
