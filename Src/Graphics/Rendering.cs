@@ -110,14 +110,6 @@ namespace Dissonance.Engine.Graphics
 
 			CheckGLErrors($"After trying to enable debugging.");
 
-			// FontImport
-			//TODO: Add AssetManager for fonts and remove this hardcode
-			var tex = Assets.Get<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
-
-			GUI.Font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", tex, new Vector2(12f, 16f), 0) { Size = 16 };
-
-			CheckGLErrors($"After initializing a default font.");
-
 			InstantiateRenderingPipeline();
 
 			PrimitiveMeshes.Init();

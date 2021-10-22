@@ -22,6 +22,12 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
+			// FontImport
+			//TODO: Add AssetManager for fonts and remove this hardcode
+			var tex = Assets.Get<Texture>("BuiltInAssets/GUI/Fonts/DefaultFont.png");
+
+			GUI.Font = new Font(@" !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", tex, new Vector2(12f, 16f), 0) { Size = 16 };
+
 			TexDefaultInactive = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultInactive.png");
 			TexDefault = Assets.Get<Texture>("BuiltInAssets/GUI/Default.png");
 			TexDefaultHover = Assets.Get<Texture>("BuiltInAssets/GUI/DefaultHover.png");
