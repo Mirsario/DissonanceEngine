@@ -11,7 +11,7 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".program" };
 
-		public bool AutoloadAssets => true;
+		public bool AutoloadAssets => !Game.Instance.Flags.HasFlag(GameFlags.NoGraphics);
 
 		public async ValueTask<Asset<Shader>[]> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
