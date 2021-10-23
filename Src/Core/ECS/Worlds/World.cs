@@ -46,7 +46,7 @@ namespace Dissonance.Engine
 
 		// Messages
 
-		public ReadOnlySpan<T> ReadMessages<T>() where T : struct
+		public MessageEnumerator<T> ReadMessages<T>() where T : struct
 			=> MessageManager.ReadMessages<T>(Id);
 
 		public void SendMessage<T>(in T message) where T : struct

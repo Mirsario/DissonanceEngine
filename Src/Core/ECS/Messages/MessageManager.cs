@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
@@ -48,13 +47,13 @@ namespace Dissonance.Engine
 			MessageData<T>.messagesByWorld[worldId].Add(message);
 		}
 
-		internal static ReadOnlySpan<T> ReadMessages<T>(int worldId) where T : struct
+		internal static MessageEnumerator<T> ReadMessages<T>(int worldId) where T : struct
 		{
 			if (worldId >= MessageData<T>.messagesByWorld.Length) {
-				return ReadOnlySpan<T>.Empty;
+				return default;
 			}
 
-			return CollectionsMarshal.AsSpan(MessageData<T>.messagesByWorld[worldId]);
+			return new MessageEnumerator<T>(MessageData<T>.messagesByWorld[worldId]);
 		}
 
 		internal static void ClearMessages()

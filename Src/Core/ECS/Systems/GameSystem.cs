@@ -90,7 +90,7 @@ namespace Dissonance.Engine
 			World.SendMessage(message);
 		}
 
-		protected ReadOnlySpan<T> ReadMessages<T>() where T : struct
+		protected MessageEnumerator<T> ReadMessages<T>() where T : struct
 		{
 			if (!TypeData.ReceiveTypes.Contains(typeof(T))) {
 				throw new InvalidOperationException($"System {GetType().Name} tried to receive an undeclared message - '{typeof(T).Name}'.");
