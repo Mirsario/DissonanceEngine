@@ -8,6 +8,8 @@ namespace Dissonance.Engine.Graphics
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoWindow)]
 	public class GlfwWindowing : Windowing
 	{
+		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);
+
 		private static readonly object GlfwLock = new();
 
 		private Vector2Int windowSize;
@@ -50,6 +52,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			GLFW.SetWindowSize(WindowHandle, width, height);
+			UpdateValues();
 
 			return true;
 		}
@@ -82,6 +85,7 @@ namespace Dissonance.Engine.Graphics
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
+				GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
 				GLFW.MakeContextCurrent(WindowHandle);
 				GLFW.SwapInterval(1);
 

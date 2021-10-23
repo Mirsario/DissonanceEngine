@@ -9,6 +9,7 @@ namespace Dissonance.Engine.Graphics
 		public static bool lockCursor;
 
 		private static CursorState cursorState;
+		private static Windowing windowing;
 
 		// Framebuffer
 		public static int Width { get; private set; }
@@ -50,8 +51,6 @@ namespace Dissonance.Engine.Graphics
 			set => cursorState = Game.Instance.GetModule<Windowing>().CursorState = value;
 		}
 
-		private Windowing windowing;
-
 		protected override void Init() => UpdateValues();
 		protected override void PreRenderUpdate() => UpdateValues();
 
@@ -67,7 +66,7 @@ namespace Dissonance.Engine.Graphics
 			windowing = null;
 		}
 
-		private void UpdateValues()
+		internal static void UpdateValues()
 		{
 			if (windowing == null) {
 				return;
