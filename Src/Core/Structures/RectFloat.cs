@@ -1,5 +1,9 @@
+using Dissonance.Engine.IO;
+using Newtonsoft.Json;
+
 namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(RectFloatJsonConverter))]
 	public struct RectFloat
 	{
 		public static readonly RectFloat Default = new(0f, 0f, 1f, 1f);
