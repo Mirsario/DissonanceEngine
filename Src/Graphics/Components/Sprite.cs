@@ -14,17 +14,17 @@ namespace Dissonance.Engine.Graphics
 
 		public static float DefaultPixelSize { get; set; } = 1f;
 
-		internal Vector4 vertices;
-		internal bool verticesNeedRecalculation;
+		internal Vector4 vertices = new(-0.5f, -0.5f, 0.5f, 0.5f);
+		internal bool verticesNeedRecalculation = true;
 
-		private Vector2 origin;
-		private float pixelSize;
-		private Vector2 sizeInPixels;
-		private Asset<Material> material;
+		private Vector2 origin = new(0.5f, 0.5f);
+		private float pixelSize = DefaultPixelSize;
+		private Vector2 sizeInPixels = Vector2.One;
 
-		public RectFloat SourceRectangle { get; set; }
-		public SpriteEffects Effects { get; set; }
-		public Bounds AABB { get; private set; }
+		public Asset<Material> Material { get; set; } = null;
+		public RectFloat SourceRectangle { get; set; } = RectFloat.Default;
+		public SpriteEffects Effects { get; set; } = 0;
+		public Bounds AABB { get; private set; } = default;
 
 		public Vector2 FrameSize {
 			get => sizeInPixels;
@@ -54,27 +54,20 @@ namespace Dissonance.Engine.Graphics
 				verticesNeedRecalculation = true;
 			}
 		}
-		public Asset<Material> Material {
-			get => material;
-			set {
-				material = value;
 
-				//TODO: Maybe move into a system?
-				//if (material != null && material.GetTexture("mainTex", out var texture)) {
-				//	sizeInPixels = (Vector2)texture.Size;
-				//	verticesNeedRecalculation = true;
-				//}
-			}
+		//TODO: Maybe move into a system?
+		//if (material != null && material.GetTexture("mainTex", out var texture)) {
+		//	sizeInPixels = (Vector2)texture.Size;
+		//	verticesNeedRecalculation = true;
+		//}
+
+		public Sprite()
+		{
+
 		}
 
 		public Sprite(Asset<Material> material) : this()
 		{
-			vertices = new Vector4(-0.5f, -0.5f, 0.5f, 0.5f);
-			origin = new Vector2(0.5f, 0.5f);
-			sizeInPixels = Vector2.One;
-			pixelSize = DefaultPixelSize;
-
-			SourceRectangle = RectFloat.Default;
 			Material = material;
 		}
 	}
