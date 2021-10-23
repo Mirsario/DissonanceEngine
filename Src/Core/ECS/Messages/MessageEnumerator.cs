@@ -23,7 +23,7 @@ namespace Dissonance.Engine
 
 		public bool MoveNext()
 		{
-			if (++i < count || i < (count = list.Count)) {
+			if (++i < count || i < (count = list?.Count ?? 0)) {
 				current = list[i];
 
 				return true;
