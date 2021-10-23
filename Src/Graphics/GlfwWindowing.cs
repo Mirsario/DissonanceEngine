@@ -50,6 +50,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			GLFW.SetWindowSize(WindowHandle, width, height);
+			UpdateValues();
 
 			return true;
 		}
