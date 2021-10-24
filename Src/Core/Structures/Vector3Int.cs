@@ -73,9 +73,13 @@ namespace Dissonance.Engine
 
 		public static Vector3Int operator -(Vector3Int a) => new(-a.X, -a.Y, -a.Z);
 
+		public static Vector3Int operator *(Vector3Int a, Vector3Int b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
 		public static Vector3Int operator *(Vector3Int a, int d) => new(a.X * d, a.Y * d, a.Z * d);
 
 		public static Vector3Int operator *(int d, Vector3Int a) => new(a.X * d, a.Y * d, a.Z * d);
+
+		public static Vector3Int operator /(Vector3Int a, Vector3Int b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
 		public static Vector3Int operator /(Vector3Int a, int d) => new(a.X / d, a.Y / d, a.Z / d);
 
