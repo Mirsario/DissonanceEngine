@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
-	internal sealed class RectFloatJsonConverter : JsonConverter
+	internal sealed class Vector2UShortJsonConverter : JsonConverter
 	{
 		public override bool CanConvert(Type objectType)
-			=> objectType == typeof(RectFloat);
+			=> objectType == typeof(Vector2UShort);
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
@@ -15,15 +15,13 @@ namespace Dissonance.Engine.IO
 				throw new InvalidDataException("Expected a json array.");
 			}
 
-			var result = new RectFloat(
-				(float)reader.ReadAsDouble(),
-				(float)reader.ReadAsDouble(),
-				(float)reader.ReadAsDouble(),
-				(float)reader.ReadAsDouble()
+			var result = new Vector2UShort(
+				(ushort)reader.ReadAsInt32(),
+				(ushort)reader.ReadAsInt32()
 			);
 
 			if (!reader.Read() || reader.TokenType != JsonToken.EndArray) {
-				throw new InvalidDataException("Expected the json array to end after 4 values.");
+				throw new InvalidDataException("Expected the json array to end after 2 values.");
 			}
 
 			return result;
@@ -31,14 +29,12 @@ namespace Dissonance.Engine.IO
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{
-			var rect = (RectFloat)value;
+			var vector = (Vector2UShort)value;
 
 			writer.WriteStartArray();
 
-			writer.WriteValue(rect.X);
-			writer.WriteValue(rect.Y);
-			writer.WriteValue(rect.Width);
-			writer.WriteValue(rect.Height);
+			writer.WriteValue(vector.X);
+			writer.WriteValue(vector.Y);
 
 			writer.WriteEndArray();
 		}

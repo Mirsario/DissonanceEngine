@@ -6,9 +6,6 @@ namespace Dissonance.Engine.IO
 {
 	internal sealed class Vector3JsonConverter : JsonConverter
 	{
-		public override bool CanRead => true;
-		public override bool CanWrite => true;
-
 		public override bool CanConvert(Type objectType)
 			=> objectType == typeof(Vector3);
 
