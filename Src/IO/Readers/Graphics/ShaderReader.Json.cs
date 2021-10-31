@@ -27,6 +27,8 @@ namespace Dissonance.Engine.IO
 			public PolygonMode PolygonMode = PolygonMode.Fill;
 			public BlendingFactor BlendFactorSrc = BlendingFactor.One;
 			public BlendingFactor BlendFactorDst = BlendingFactor.Zero;
+			public DepthFunction DepthTest = DepthFunction.Less;
+			public bool DepthWrite = true;
 			// Uniforms
 			public Dictionary<string, float> Floats;
 			public Dictionary<string, float[]> Vectors;

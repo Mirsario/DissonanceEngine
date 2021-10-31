@@ -22,12 +22,25 @@ Forward/Unlit/TextureColor: {
 	ShaderDefines: [ "TEXTURE", "COLOR" ]
 }
 
+Forward/Unlit/TransparentCutoutTexture: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "ALPHATEST", "TEXTURE" ]
+}
+
+Forward/Unlit/TransparentCutoutTextureColor: {
+	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
+	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
+	ShaderDefines: [ "ALPHATEST", "TEXTURE", "COLOR" ]
+}
+
 Forward/Unlit/TransparentColor: {
 	VertexShader: "BuiltInAssets/Shaders/Forward/Default.vert"
 	FragmentShader: "BuiltInAssets/Shaders/Forward/Default.frag"
 	ShaderDefines: [ "COLOR" ]
 	BlendFactorSrc: "SrcAlpha"
 	BlendFactorDst: "OneMinusSrcAlpha"
+	DepthWrite: false
 	Queue: 1000
 }
 
@@ -37,6 +50,7 @@ Forward/Unlit/TransparentTexture: {
 	ShaderDefines: [ "TEXTURE" ]
 	BlendFactorSrc: "SrcAlpha"
 	BlendFactorDst: "OneMinusSrcAlpha"
+	DepthWrite: false
 	Queue: 1000
 }
 
@@ -46,5 +60,6 @@ Forward/Unlit/TransparentTextureColor: {
 	ShaderDefines: [ "TEXTURE", "COLOR" ]
 	BlendFactorSrc: "SrcAlpha"
 	BlendFactorDst: "OneMinusSrcAlpha"
+	DepthWrite: false
 	Queue: 1000
 }

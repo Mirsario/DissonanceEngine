@@ -23,8 +23,10 @@ namespace Dissonance.Engine.Graphics
 			// Render cache
 			Shader lastShader = null;
 			Material lastMaterial = null;
-			var lastCullMode = CullMode.Back;
-			var lastPolygonMode = PolygonMode.Fill;
+			CullMode? lastCullMode = null;
+			PolygonMode? lastPolygonMode = null;
+			bool? lastDepthWrite = null;
+			DepthFunction? lastDepthTest = null;
 
 			var renderViewData = GlobalGet<RenderViewData>();
 			var geometryPassData = GlobalGet<GeometryPassData>();
@@ -80,7 +82,23 @@ namespace Dissonance.Engine.Graphics
 
 						// Update PolygonMode
 						if (lastPolygonMode != shader.PolygonMode) {
-							GL.PolygonMode(MaterialFace.FrontAndBack, lastPolygonMode = shader.PolygonMode);
+							GL.PolygonMode(MaterialFace.FrontAndBack, shader.PolygonMode);
+
+							lastPolygonMode = shader.PolygonMode;
+						}
+
+						// Update depth testing
+						if (lastDepthTest != shader.DepthTest) {
+							GL.DepthFunc(shader.DepthTest);
+
+							lastDepthTest = shader.DepthTest;
+						}
+
+						// Update depth writing
+						if (lastDepthWrite != shader.DepthWrite) {
+							GL.DepthMask(shader.DepthWrite);
+
+							lastDepthWrite = shader.DepthWrite;
 						}
 
 						lastShader = shader;
