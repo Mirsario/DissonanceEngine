@@ -130,6 +130,13 @@ namespace Dissonance.Engine
 			systems.AddRange(sorted);
 		}
 
+		internal static void AddSystemToWorld<T>(World world, bool sortSystems = true) where T : GameSystem
+		{
+			var system = Activator.CreateInstance<T>();
+
+			AddSystemToWorld(world, system, sortSystems);
+		}
+
 		internal static void AddSystemToWorld(World world, GameSystem system, bool sortSystems = true)
 		{
 			var worldData = worldDataById[world.Id];
@@ -138,6 +145,8 @@ namespace Dissonance.Engine
 			if (!worldData.SystemsByType.TryGetValue(systemType, out var systemsOfThisType)) {
 				worldData.SystemsByType[systemType] = systemsOfThisType = new();
 			}
+
+			system.World = world;
 
 			worldData.Systems.Add(system);
 			systemsOfThisType.Add(system);
@@ -152,8 +161,6 @@ namespace Dissonance.Engine
 			for (int i = 0; i < SystemTypes.Count; i++) {
 				var type = SystemTypes[i];
 				var system = (GameSystem)Activator.CreateInstance(type);
-
-				system.World = world;
 
 				AddSystemToWorld(world, system, sortSystems: i == SystemTypes.Count - 1);
 			}
