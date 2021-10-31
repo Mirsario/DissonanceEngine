@@ -11,8 +11,7 @@ namespace Dissonance.Engine
 		internal const int DefaultWorldId = 2;
 
 		public static World DefaultWorld { get; private set; }
-
-		internal static World PrefabWorld { get; private set; }
+		public static World PrefabWorld { get; private set; }
 
 		internal static event Action<World, WorldCreationOptions> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
