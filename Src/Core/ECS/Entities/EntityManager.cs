@@ -135,7 +135,7 @@ namespace Dissonance.Engine
 			return entitySet;
 		}
 
-		private static void OnWorldCreated(World world)
+		private static void OnWorldCreated(World world, WorldCreationOptions options)
 		{
 			if (worldDataById.Length <= world.Id) {
 				Array.Resize(ref worldDataById, world.Id + 1);

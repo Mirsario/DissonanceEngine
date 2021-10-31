@@ -27,14 +27,16 @@ namespace Dissonance.Engine
 		{
 			AssemblyRegistrationModule.OnAssemblyRegistered += OnAssemblyRegistered;
 
-			WorldManager.OnWorldCreated += world => {
+			WorldManager.OnWorldCreated += (world, options) => {
 				if (worldDataById.Length <= world.Id) {
 					Array.Resize(ref worldDataById, world.Id + 1);
 				}
 
 				worldDataById[world.Id] = new();
 
-				AddDefaultSystemsToWorld(world);
+				if (options.AddDefaultSystems) {
+					AddDefaultSystemsToWorld(world);
+				}
 			};
 
 			WorldManager.OnWorldDestroyed += world => {
