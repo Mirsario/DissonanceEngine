@@ -6,13 +6,14 @@ namespace Dissonance.Engine
 	public sealed class EntitySpawningSystem : GameSystem
 	{
 		protected internal override void FixedUpdate() => Update();
+
 		protected internal override void RenderUpdate() => Update();
 
 		private void Update()
 		{
 			foreach (var message in ReadMessages<SpawnEntityMessage>()) {
-				var prefab = Assets.Get<PackedEntity>(message.PrefabAssetPath, AssetRequestMode.ImmediateLoad).Value;
-				var entity = prefab.Unpack(World);
+				var prefab = GameContent.Find<EntityPrefab>(message.PrefabName);
+				var entity = prefab.Clone(World);
 
 				message.Action?.Invoke(entity);
 			}

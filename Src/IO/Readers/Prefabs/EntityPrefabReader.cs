@@ -1,26 +1,38 @@
 ﻿using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace Dissonance.Engine.IO
 {
-	public sealed class EntityPrefabReader : IAssetReader<PackedEntity>
+	public sealed class EntityPrefabReader : IAssetReader<EntityPrefab>
 	{
+		private static readonly MethodInfo EntityPrefabSetMethod = typeof(EntityPrefab).GetMethod(nameof(EntityPrefab.Set), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
 		public string[] Extensions { get; } = { ".entity" };
 
-		public async ValueTask<PackedEntity> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public bool AutoloadAssets => true;
+
+		public async ValueTask<EntityPrefab> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
 		{
 			var json = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value;
-			var packedEntity = new PackedEntity();
+			var entity = WorldManager.PrefabWorld.CreateEntity();
+			var prefab = new EntityPrefab(entity.Id);
 
-			ParseComponents(packedEntity, json, assetPath);
+			ParseComponents(prefab, json, assetPath);
 
-			return packedEntity;
+			string contentName = Path.GetFileNameWithoutExtension(assetPath);
+
+			GameContent.Register(contentName, prefab);
+
+			return prefab;
 		}
 
-		private static void ParseComponents(PackedEntity packedEntity, JObject jsonContainer, string assetPath)
+		private static void ParseComponents(EntityPrefab prefab, JObject jsonContainer, string assetPath)
 		{
 			AssetJsonConverter.BaseAssetPath = Assets.FilterPath(Path.GetDirectoryName(assetPath));
+
+			object[] parameterArray = new object[1];
 
 			foreach (var pair in jsonContainer) {
 				var jsonElement = pair.Value;
@@ -31,7 +43,12 @@ namespace Dissonance.Engine.IO
 
 				var componentType = ComponentManager.GetComponentTypeFromName(pair.Key);
 
-				packedEntity.SetComponent(componentType, jsonElement.ToObject(componentType));
+				parameterArray[0] = jsonElement.ToObject(componentType);
+
+				//TODO: Optimize.
+				EntityPrefabSetMethod
+					.MakeGenericMethod(componentType)
+					.Invoke(prefab, parameterArray);
 			}
 		}
 	}

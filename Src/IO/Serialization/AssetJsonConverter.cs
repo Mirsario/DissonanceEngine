@@ -6,12 +6,12 @@ namespace Dissonance.Engine.IO
 {
 	internal sealed class AssetJsonConverter : JsonConverter
 	{
+		//TODO: Get rid of this somehow?
 		public static string BaseAssetPath { get; set; }
 
-		private static MethodInfo assetsGetMethodA = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(AssetRequestMode) });
-		private static MethodInfo assetsGetMethodB = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(string), typeof(AssetRequestMode) });
-
-		public override bool CanRead => true;
+		private static readonly MethodInfo AssetsGetMethodA = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(AssetRequestMode) });
+		private static readonly MethodInfo AssetsGetMethodB = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(string), typeof(AssetRequestMode) });
+		
 		public override bool CanWrite => false;
 
 		public override bool CanConvert(Type objectType)
@@ -23,9 +23,9 @@ namespace Dissonance.Engine.IO
 			var assetType = objectType.GetGenericArguments()[0];
 
 			if (BaseAssetPath == null) {
-				return assetsGetMethodA.MakeGenericMethod(assetType).Invoke(null, new object[] { assetPath, AssetRequestMode.DoNotLoad });
+				return AssetsGetMethodA.MakeGenericMethod(assetType).Invoke(null, new object[] { assetPath, AssetRequestMode.DoNotLoad });
 			} else {
-				return assetsGetMethodB.MakeGenericMethod(assetType).Invoke(null, new object[] { assetPath, BaseAssetPath, AssetRequestMode.DoNotLoad });
+				return AssetsGetMethodB.MakeGenericMethod(assetType).Invoke(null, new object[] { assetPath, BaseAssetPath, AssetRequestMode.DoNotLoad });
 			}
 		}
 
