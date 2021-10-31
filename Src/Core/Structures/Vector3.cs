@@ -324,32 +324,29 @@ namespace Dissonance.Engine
 		public static float SqrDistance(Vector3 a, Vector3 b)
 			=> (a - b).SqrMagnitude;
 
-		// Operations
-
 		// Vector3
-		public static Vector3 operator *(Vector3 a, Vector3 b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
-		public static Vector3 operator /(Vector3 a, Vector3 b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-
-		public static Vector3 operator +(Vector3 a, Vector3 b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		public static Vector3 operator -(Vector3 a) => new(-a.X, -a.Y, -a.Z);
 
 		public static Vector3 operator -(Vector3 a, Vector3 b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
-		public static Vector3 operator -(Vector3 a) => new(-a.X, -a.Y, -a.Z);
+		public static Vector3 operator +(Vector3 a, Vector3 b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+		public static Vector3 operator *(Vector3 a, Vector3 b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
+		public static Vector3 operator /(Vector3 a, Vector3 b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
 		public static bool operator ==(Vector3 a, Vector3 b) => (a - b).SqrMagnitude < 9.99999944E-11f;
 
 		public static bool operator !=(Vector3 a, Vector3 b) => (a - b).SqrMagnitude >= 9.99999944E-11f;
 
-		// Float
+		// float
 
 		public static Vector3 operator *(Vector3 a, float d) => new(a.X * d, a.Y * d, a.Z * d);
 
 		public static Vector3 operator *(float d, Vector3 a) => new(a.X * d, a.Y * d, a.Z * d);
 
 		public static Vector3 operator /(Vector3 a, float d) => new(a.X / d, a.Y / d, a.Z / d);
-
-		// Casts
 
 		// float*
 
