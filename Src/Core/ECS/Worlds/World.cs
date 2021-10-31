@@ -9,8 +9,8 @@ namespace Dissonance.Engine
 
 		internal Entity WorldEntity;
 
-		/// <summary> Whether or not this is the default engine-provided world. The default world cannot be removed. </summary>
-		public bool IsDefault => Id == WorldManager.DefaultWorldId;
+		/// <summary> Whether or not this is a default engine-provided world. Default worlds cannot be removed. </summary>
+		public bool IsDefault => Id == WorldManager.DefaultWorldId || Id == WorldManager.PrefabWorldId;
 
 		internal World(int id)
 		{

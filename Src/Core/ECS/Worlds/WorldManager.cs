@@ -6,10 +6,13 @@ namespace Dissonance.Engine
 {
 	public sealed class WorldManager : EngineModule
 	{
-		internal const int InvalidtWorldId = 0;
-		internal const int DefaultWorldId = 1;
+		internal const int InvalidWorldId = 0;
+		internal const int PrefabWorldId = 1;
+		internal const int DefaultWorldId = 2;
 
 		public static World DefaultWorld { get; private set; }
+
+		internal static World PrefabWorld { get; private set; }
 
 		internal static event Action<World, WorldCreationOptions> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
@@ -18,6 +21,7 @@ namespace Dissonance.Engine
 
 		protected override void Init()
 		{
+			PrefabWorld = CreateWorld(new WorldCreationOptions { AddDefaultSystems = false });
 			DefaultWorld = CreateWorld();
 
 			// Sanity check
