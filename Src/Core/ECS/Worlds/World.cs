@@ -19,13 +19,13 @@ namespace Dissonance.Engine
 
 		// Entities
 
-		public Entity CreateEntity()
-			=> EntityManager.CreateEntity(Id);
+		public Entity CreateEntity(bool activate = true)
+			=> EntityManager.CreateEntity(Id, activate);
 
 		public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
 			=> EntityManager.GetEntitySet(Id, expression);
 
-		public ReadOnlySpan<Entity> ReadEntities(bool? active = true)
+		public EntityEnumerator ReadEntities(bool? active = true)
 			=> EntityManager.ReadEntities(Id, active);
 
 		// Systems

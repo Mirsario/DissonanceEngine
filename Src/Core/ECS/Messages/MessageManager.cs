@@ -7,7 +7,7 @@ namespace Dissonance.Engine
 	{
 		private static class MessageData<T> where T : struct
 		{
-			public static List<T>[] messagesByWorld = Array.Empty<List<T>>();
+			public static List<T>[] MessagesByWorld = Array.Empty<List<T>>();
 
 			static MessageData()
 			{
@@ -16,8 +16,8 @@ namespace Dissonance.Engine
 
 			private static void Clear()
 			{
-				for (int i = WorldManager.DefaultWorldId; i < messagesByWorld.Length; i++) {
-					messagesByWorld[i].Clear();
+				for (int i = WorldManager.DefaultWorldId; i < MessagesByWorld.Length; i++) {
+					MessagesByWorld[i].Clear();
 				}
 			}
 		}
@@ -38,22 +38,28 @@ namespace Dissonance.Engine
 
 		internal static void SendMessage<T>(int worldId, in T message) where T : struct
 		{
-			if (worldId >= MessageData<T>.messagesByWorld.Length) {
-				Array.Resize(ref MessageData<T>.messagesByWorld, worldId + 1);
+			int oldArraySize = MessageData<T>.MessagesByWorld.Length;
 
-				MessageData<T>.messagesByWorld[worldId] = new List<T>();
+			if (worldId >= oldArraySize) {
+				int newArraySize = worldId + 1;
+
+				Array.Resize(ref MessageData<T>.MessagesByWorld, newArraySize);
+
+				for (int i = oldArraySize; i < newArraySize; i++) {
+					MessageData<T>.MessagesByWorld[i] = new List<T>();
+				}
 			}
 
-			MessageData<T>.messagesByWorld[worldId].Add(message);
+			MessageData<T>.MessagesByWorld[worldId].Add(message);
 		}
 
 		internal static MessageEnumerator<T> ReadMessages<T>(int worldId) where T : struct
 		{
-			if (worldId >= MessageData<T>.messagesByWorld.Length) {
+			if (worldId >= MessageData<T>.MessagesByWorld.Length) {
 				return default;
 			}
 
-			return new MessageEnumerator<T>(MessageData<T>.messagesByWorld[worldId]);
+			return new MessageEnumerator<T>(MessageData<T>.MessagesByWorld[worldId]);
 		}
 
 		internal static void ClearMessages()

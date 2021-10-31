@@ -25,12 +25,15 @@
 			=> ref ComponentManager.GetComponent<T>(WorldId, Id);
 
 		public void Set<T>(in T value) where T : struct
-			=> ComponentManager.SetComponent(this, value);
+			=> ComponentManager.SetComponent(WorldId, Id, value);
 
 		public void Remove<T>() where T : struct
-			=> ComponentManager.RemoveComponent<T>(this);
+			=> ComponentManager.RemoveComponent<T>(WorldId, Id);
 
 		public void Destroy()
-			=> EntityManager.RemoveEntity(this);
+			=> EntityManager.RemoveEntity(WorldId, Id);
+
+		public Entity Clone(World world)
+			=> EntityManager.CloneEntity(WorldId, Id, world.Id);
 	}
 }

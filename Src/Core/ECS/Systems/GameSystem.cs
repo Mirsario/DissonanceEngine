@@ -78,7 +78,7 @@ namespace Dissonance.Engine
 			world.Set(value);
 		}
 
-		protected ReadOnlySpan<Entity> ReadEntities(bool? active = true)
+		protected EntityEnumerator ReadEntities(bool? active = true)
 			=> World.ReadEntities(active);
 
 		protected void SendMessage<T>(in T message) where T : struct
