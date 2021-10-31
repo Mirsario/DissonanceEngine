@@ -60,46 +60,6 @@ namespace Dissonance.Engine
 		}
 
 		private static readonly List<ComponentTypeData> ComponentTypeDataById = new();
-		private static readonly Dictionary<string, Type> StructureTypesByName = new();
-
-		protected override void PreInit()
-		{
-			// By-name type lookups are used in prefab parsing.
-			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
-				foreach (var type in types) {
-					if (!type.IsValueType || type.IsAbstract || type.IsNested || type.IsByRefLike || type.IsGenericTypeDefinition) {
-						continue;
-					}
-
-					if (!StructureTypesByName.TryGetValue(type.Name, out var existingType)) {
-						StructureTypesByName[type.Name] = type;
-					} else {
-						//TODO: Use minimal unique paths.
-						StructureTypesByName[type.Name] = null;
-						StructureTypesByName[type.FullName] = type;
-						StructureTypesByName[existingType.FullName] = existingType;
-					}
-				}
-			};
-		}
-
-		public static Type GetComponentTypeFromName(string name)
-		{
-			if (StructureTypesByName.TryGetValue(name, out var type)) {
-				if (type == null) {
-					throw new ArgumentException($"Component name '{name}' is ambiguous.");
-				}
-
-				return type;
-			}
-
-			throw new KeyNotFoundException($"Couldn't find component with the provided name '{name}'.");
-		}
-
-		public static bool TryGetComponentTypeFromName(string name, out Type type)
-		{
-			return StructureTypesByName.TryGetValue(name, out type) && type != null;
-		}
 
 		internal static int GetComponentId<T>() where T : struct
 			=> ComponentData<T>.TypeId;
