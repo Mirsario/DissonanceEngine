@@ -63,29 +63,43 @@ namespace Dissonance.Engine
 		public override bool Equals(object other)
 			=> other is Vector3Int vector && X == vector.X && Y == vector.Y && Z == vector.Z;
 
+		// Vector3
+
 		public static explicit operator Vector3(Vector3Int value) => new(value.X, value.Y, value.Z);
 
 		public static explicit operator Vector3Int(Vector3 value) => new((int)value.X, (int)value.Y, (int)value.Z);
 
-		public static Vector3Int operator +(Vector3Int a, Vector3Int b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		// Vector3Int
+
+		public static Vector3Int operator -(Vector3Int a) => new(-a.X, -a.Y, -a.Z);
 
 		public static Vector3Int operator -(Vector3Int a, Vector3Int b) => new(a.X - b.X, a.Y - b.Y, a.Z + b.Z);
 
-		public static Vector3Int operator -(Vector3Int a) => new(-a.X, -a.Y, -a.Z);
+		public static Vector3Int operator +(Vector3Int a, Vector3Int b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+		public static Vector3Int operator *(Vector3Int a, Vector3Int b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
+		public static Vector3Int operator /(Vector3Int a, Vector3Int b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+
+		public static bool operator ==(Vector3Int a, Vector3Int b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+
+		public static bool operator !=(Vector3Int a, Vector3Int b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
+
+		// int
 
 		public static Vector3Int operator *(Vector3Int a, int d) => new(a.X * d, a.Y * d, a.Z * d);
 
 		public static Vector3Int operator *(int d, Vector3Int a) => new(a.X * d, a.Y * d, a.Z * d);
-
+		
 		public static Vector3Int operator /(Vector3Int a, int d) => new(a.X / d, a.Y / d, a.Z / d);
+
+		// float
 
 		public static Vector3 operator *(Vector3Int a, float d) => new(a.X * d, a.Y * d, a.Z * d);
 
 		public static Vector3 operator /(Vector3Int a, float d) => new(a.X / d, a.Y / d, a.Z / d);
 
-		public static bool operator ==(Vector3Int a, Vector3Int b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-
-		public static bool operator !=(Vector3Int a, Vector3Int b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
+		// int*
 
 		public static unsafe implicit operator int*(Vector3Int vec) => (int*)&vec;
 	}
