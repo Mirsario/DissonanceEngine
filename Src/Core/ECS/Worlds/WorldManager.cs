@@ -11,7 +11,7 @@ namespace Dissonance.Engine
 
 		public static World DefaultWorld { get; private set; }
 
-		internal static event Action<World> OnWorldCreated;
+		internal static event Action<World, WorldCreationOptions> OnWorldCreated;
 		internal static event Action<World> OnWorldDestroyed;
 
 		private static readonly List<World> Worlds = new() { null };
@@ -26,13 +26,14 @@ namespace Dissonance.Engine
 			}
 		}
 
-		public static World CreateWorld()
+		public static World CreateWorld(WorldCreationOptions? options = null)
 		{
 			var world = new World(Worlds.Count);
+			var usedOptions = options ?? new();
 
 			Worlds.Add(world);
 
-			OnWorldCreated?.Invoke(world);
+			OnWorldCreated?.Invoke(world, usedOptions);
 
 			world.Init();
 
