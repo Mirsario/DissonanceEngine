@@ -6,6 +6,9 @@
 #ifdef COLOR
 	uniform vec4 color = vec4(1f, 1f, 1f, 1f);
 #endif
+#ifdef ALPHATEST
+	uniform float cutoff = 1f;
+#endif
 
 #ifdef TEXTURE
 	in vec2 vUV;
@@ -22,6 +25,12 @@ void main (void)
 		oDiffuse = texture(mainTex, vUV);
 	#else
 		oDiffuse = vec4(1.0);
+	#endif
+	
+	#ifdef ALPHATEST
+		if (oDiffuse.a < cutoff) {
+			discard;
+		}
 	#endif
 	
 	#ifdef COLOR

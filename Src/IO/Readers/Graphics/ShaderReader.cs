@@ -40,6 +40,8 @@ namespace Dissonance.Engine.IO
 				shader.PolygonMode = jsonShader.PolygonMode;
 				shader.BlendFactorSrc = jsonShader.BlendFactorSrc;
 				shader.BlendFactorDst = jsonShader.BlendFactorDst;
+				shader.DepthTest = jsonShader.DepthTest;
+				shader.DepthWrite = jsonShader.DepthWrite;
 
 				var shaderAsset = Assets.CreateLoaded(name, shader);
 
