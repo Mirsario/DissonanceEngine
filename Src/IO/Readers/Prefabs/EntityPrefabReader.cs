@@ -36,11 +36,6 @@ namespace Dissonance.Engine.IO
 
 			foreach (var pair in jsonContainer) {
 				var jsonElement = pair.Value;
-
-				if (jsonElement.Type != JTokenType.Object) {
-					continue;
-				}
-
 				var componentType = ComponentManager.GetComponentTypeFromName(pair.Key);
 
 				parameterArray[0] = jsonElement.ToObject(componentType);
