@@ -33,6 +33,8 @@ namespace Dissonance.Engine.Graphics
 		public PolygonMode PolygonMode { get; set; } = PolygonMode.Fill;
 		public BlendingFactor BlendFactorSrc { get; set; } = BlendingFactor.One;
 		public BlendingFactor BlendFactorDst { get; set; } = BlendingFactor.Zero;
+		public DepthFunction DepthTest { get; set; } = DepthFunction.Less;
+		public bool DepthWrite { get; set; } = true;
 		public uint Id { get; private set; }
 		public string Name { get; private set; }
 		public SubShader VertexShader { get; private set; }

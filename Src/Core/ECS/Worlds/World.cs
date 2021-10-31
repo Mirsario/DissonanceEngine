@@ -30,8 +30,8 @@ namespace Dissonance.Engine
 
 		// Systems
 
-		public void AddSystem(GameSystem system)
-			=> SystemManager.AddSystemToWorld(this, system);
+		public void AddSystem<T>() where T : GameSystem
+			=> SystemManager.AddSystemToWorld<T>(this);
 
 		// Components
 
