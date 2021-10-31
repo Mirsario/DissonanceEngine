@@ -7,14 +7,22 @@ namespace Dissonance.Engine
 {
 	public sealed class EntityManager : EngineModule
 	{
+		//TODO: Reduce memory usage later?
+		private struct EntityData
+		{
+			public bool IsActive;
+			public List<int> PresentComponentTypes = new();
+		}
+
 		private class WorldData
 		{
 			// Entities
-			public readonly List<Entity> Entities = new();
-			public readonly List<Entity> ActiveEntities = new();
-			public readonly List<Entity> InactiveEntities = new();
-			public readonly List<int> FreeEntityIndices = new();
-			public readonly List<bool> EntityIsActive = new(); //TODO: Replace with BitArray, or a wrapping type.
+			public readonly List<int> AllEntityIds = new();
+			public readonly List<int> ActiveEntityIds = new();
+			public readonly List<int> InactiveEntityIds = new();
+			public readonly Queue<int> FreeEntityIndices = new();
+			public EntityData[] EntityData = Array.Empty<EntityData>();
+			public int NextEntityIndex;
 			// Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
 			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
@@ -26,53 +34,52 @@ namespace Dissonance.Engine
 		{
 			WorldManager.OnWorldCreated += OnWorldCreated;
 			WorldManager.OnWorldDestroyed += OnWorldDestroyed;
-			ComponentManager.OnComponentAdded += OnComponentPresenceModified;
-			ComponentManager.OnComponentRemoved += OnComponentPresenceModified;
 		}
 
 		protected override void OnDispose()
 		{
 			WorldManager.OnWorldCreated -= OnWorldCreated;
 			WorldManager.OnWorldDestroyed -= OnWorldDestroyed;
-			ComponentManager.OnComponentAdded -= OnComponentPresenceModified;
-			ComponentManager.OnComponentRemoved -= OnComponentPresenceModified;
 		}
 
-		internal static Entity CreateEntity(int worldId)
+		internal static Entity CreateEntity(int worldId, bool activate)
 		{
 			var worldData = worldDataById[worldId];
 
 			int id;
 
-			if (worldData.FreeEntityIndices.Count > 0) {
-				id = worldData.FreeEntityIndices[0];
-				worldData.FreeEntityIndices.RemoveAt(0);
+			if (worldData.FreeEntityIndices.TryDequeue(out int freeIndex)) {
+				id = freeIndex;
 			} else {
-				id = worldData.Entities.Count;
+				id = worldData.NextEntityIndex++;
 			}
 
 			var entity = new Entity(id, worldId);
 
-			if (id >= worldData.Entities.Count) {
-				worldData.Entities.Add(entity);
-				worldData.EntityIsActive.Add(true);
-			} else {
-				worldData.Entities[id] = entity;
-				worldData.EntityIsActive[id] = true;
+			if (id >= worldData.EntityData.Length) {
+				Array.Resize(ref worldData.EntityData, Math.Max(1, worldData.EntityData.Length * 2));
 			}
 
-			worldData.ActiveEntities.Add(entity);
+			worldData.EntityData[id] = new EntityData {
+				IsActive = activate
+			};
+
+			worldData.AllEntityIds.Add(id);
+
+			if (activate) {
+				worldData.ActiveEntityIds.Add(id);
+			}
 
 			return entity;
 		}
 
-		internal static bool RemoveEntity(in Entity entity)
+		internal static bool RemoveEntity(int worldId, int entityId)
 		{
-			if (entity.WorldId >= 0 && entity.WorldId < worldDataById.Length) {
-				var worldData = worldDataById[entity.WorldId];
+			if (worldId >= 0 && worldId < worldDataById.Length) {
+				var worldData = worldDataById[worldId];
 
 				if (worldData != null) {
-					worldData.Entities.Remove(entity);
+					worldData.AllEntityIds.Remove(entityId);
 
 					return true;
 				}
@@ -81,34 +88,51 @@ namespace Dissonance.Engine
 			return false;
 		}
 
+		internal static Entity CloneEntity(int sourceWorldId, int sourceEntityId, int destinationWorldId)
+		{
+			var entityData = worldDataById[sourceWorldId].EntityData[sourceEntityId];
+			var clone = CreateEntity(destinationWorldId, true);
+
+			foreach (int componentId in entityData.PresentComponentTypes) {
+				ComponentManager.CopyComponent(componentId, sourceWorldId, sourceEntityId, destinationWorldId, clone.Id);
+			}
+
+			return clone;
+		}
+
 		internal static bool GetEntityIsActive(in Entity entity)
-			=> worldDataById[entity.WorldId].EntityIsActive[entity.Id];
+			=> worldDataById[entity.WorldId].EntityData[entity.Id].IsActive;
 
 		internal static void SetEntityIsActive(in Entity entity, bool value)
 		{
-			var worldData = worldDataById[entity.WorldId];
-			bool isActive = worldData.EntityIsActive[entity.Id];
+			ref var worldData = ref worldDataById[entity.WorldId];
+			ref bool isActive = ref worldData.EntityData[entity.Id].IsActive;
 
 			if (value != isActive) {
 				if (value) {
-					worldData.InactiveEntities.Remove(entity);
-					worldData.ActiveEntities.Add(entity);
+					worldData.InactiveEntityIds.Remove(entity.Id);
+					worldData.ActiveEntityIds.Add(entity.Id);
 				} else {
-					worldData.ActiveEntities.Remove(entity);
-					worldData.InactiveEntities.Add(entity);
+					worldData.ActiveEntityIds.Remove(entity.Id);
+					worldData.InactiveEntityIds.Add(entity.Id);
 				}
 
-				worldData.EntityIsActive[entity.Id] = value;
+				isActive = value;
 
 				UpdateEntitySets(entity);
 			}
 		}
 
-		internal static ReadOnlySpan<Entity> ReadEntities(int worldId, bool? active = true)
+		internal static EntityEnumerator ReadEntities(int worldId, bool? active = true)
 		{
 			var worldData = worldDataById[worldId];
+			var entityIds = active switch {
+				true => worldData.ActiveEntityIds,
+				false => worldData.InactiveEntityIds,
+				null => worldData.AllEntityIds
+			};
 
-			return CollectionsMarshal.AsSpan(active.HasValue ? (active.Value ? worldData.ActiveEntities : worldData.InactiveEntities) : worldData.Entities);
+			return new EntityEnumerator(worldId, entityIds);
 		}
 
 		internal static EntitySet GetEntitySet(int worldId, Expression<Predicate<Entity>> predicate)
@@ -124,8 +148,8 @@ namespace Dissonance.Engine
 			var entitySet = new EntitySet(predicate.Compile());
 
 			//TODO: Be smarter about this. Deconstruct expressions, enumerate only entities that contain the least-common component.
-			foreach (var entity in worldData.Entities) {
-				entitySet.OnEntityUpdated(entity);
+			foreach (int entityId in worldData.AllEntityIds) {
+				entitySet.OnEntityUpdated(new Entity(entityId, worldId));
 			}
 
 			entitySetByExpression[predicate] = entitySet;
@@ -133,6 +157,22 @@ namespace Dissonance.Engine
 			worldData.EntitySets.Add(entitySet);
 
 			return entitySet;
+		}
+
+		internal static void OnEntityComponentAdded<T>(Entity entity) where T : struct
+		{
+			int componentId = ComponentManager.GetComponentId<T>();
+
+			worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes.Add(componentId);
+
+			UpdateEntitySets(entity);
+		}
+
+		internal static void OnEntityComponentRemoved<T>(Entity entity) where T : struct
+		{
+			worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes.Remove(ComponentManager.GetComponentId<T>());
+
+			UpdateEntitySets(entity);
 		}
 
 		private static void OnWorldCreated(World world, WorldCreationOptions options)
@@ -148,9 +188,6 @@ namespace Dissonance.Engine
 		{
 			worldDataById[world.Id] = null;
 		}
-
-		private static void OnComponentPresenceModified(Entity entity, Type componentType)
-			=> UpdateEntitySets(entity);
 
 		private static void UpdateEntitySets(in Entity entity)
 		{
