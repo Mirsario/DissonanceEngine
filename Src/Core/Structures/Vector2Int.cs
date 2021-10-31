@@ -34,8 +34,6 @@ namespace Dissonance.Engine
 		public override string ToString()
 			=> $"[{X}, {Y}]";
 
-		// Operations
-
 		// int
 
 		public static Vector2Int operator *(Vector2Int a, int d) => new(a.X * d, a.Y * d);
@@ -53,6 +51,8 @@ namespace Dissonance.Engine
 		public static Vector2 operator /(Vector2Int a, float d) => new(a.X / d, a.Y / d);
 
 		// Vector2Int
+
+		public static explicit operator Vector2Int(Vector2 value) => new((int)value.X, (int)value.Y);
 
 		public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
 
@@ -80,6 +80,8 @@ namespace Dissonance.Engine
 
 		// Vector2UShort
 
+		public static explicit operator Vector2Int(Vector2UShort value) => new(value.X, value.Y);
+
 		public static Vector2Int operator +(Vector2Int a, Vector2UShort b) => new(a.X + b.X, a.Y + b.Y);
 
 		public static Vector2Int operator +(Vector2UShort a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
@@ -96,8 +98,6 @@ namespace Dissonance.Engine
 
 		public static Vector2Int operator /(Vector2UShort a, Vector2Int b) => new(a.X / b.X, a.Y / b.Y);
 
-		// Casts
-
 		// int*
 		public static unsafe implicit operator int*(Vector2Int vec) => (int*)&vec;
 
@@ -106,14 +106,6 @@ namespace Dissonance.Engine
 		public static implicit operator System.Drawing.Point(Vector2Int value) => new(value.X, value.Y);
 
 		public static implicit operator Vector2Int(System.Drawing.Point value) => new(value.X, value.Y);
-
-		// Vector2Int
-
-		public static explicit operator Vector2Int(Vector2 value) => new((int)value.X, (int)value.Y);
-
-		// Vector2UShort
-
-		public static explicit operator Vector2Int(Vector2UShort value) => new(value.X, value.Y);
 	}
 }
 
