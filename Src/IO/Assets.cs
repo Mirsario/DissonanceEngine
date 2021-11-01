@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Dissonance.Engine.Input;
 
 namespace Dissonance.Engine.IO
 {
 	//TODO: Make a ton more threadsafe.
+	[ModuleDependency(true, typeof(InputEngine))] // Prefab autoloading may depend on input triggers. This solution may be temporary.
 	public sealed class Assets : EngineModule
 	{
 		internal static class ReadersByDataType<T>
