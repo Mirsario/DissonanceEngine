@@ -14,6 +14,9 @@ namespace Dissonance.Engine.Graphics
 				// Geometry, our everything
 				RenderPass.Create<GeometryPass>("Geometry"),
 
+				// Debug
+				RenderPass.Create<DebugPass>("Debug"),
+
 				// GUI
 				RenderPass.Create<GUIPass>("GUI")
 			});

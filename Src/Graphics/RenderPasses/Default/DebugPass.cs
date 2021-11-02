@@ -9,11 +9,26 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
-			GL.Enable(EnableCap.DepthTest);
+			GL.Disable(EnableCap.DepthTest);
 
 			var shader = Assets.Find<Shader>("Debug").GetValueImmediately();
 
 			Shader.SetShader(shader);
+
+			var renderViewData = GlobalGet<RenderViewData>();
+
+			// CameraLoop
+			foreach (var renderView in renderViewData.RenderViews) {
+				var viewport = renderView.Viewport;
+
+				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
+
+				var viewProj = renderView.ViewMatrix * renderView.ProjectionMatrix;
+
+				Shader.UniformMatrix4(shader.GetUniformLocation("viewProj"), in viewProj);
+
+				Debug.FlushRendering();
+			}
 
 			// CameraLoop
 			/*foreach (var cameraEntity in renderFrame.World.ReadEntities()) {
@@ -34,7 +49,7 @@ namespace Dissonance.Engine.Graphics
 			}*/
 
 			Shader.SetShader(null);
-			GL.Disable(EnableCap.DepthTest);
+			//GL.Disable(EnableCap.DepthTest);
 
 			Framebuffer.Bind(null);
 		}
