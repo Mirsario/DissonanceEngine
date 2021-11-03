@@ -9,7 +9,7 @@ namespace Dissonance.Engine.IO
 	{
 		private static readonly MethodInfo EntityPrefabSetMethod = typeof(EntityPrefab).GetMethod(nameof(EntityPrefab.Set), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-		public string[] Extensions { get; } = { ".entity" };
+		public string[] Extensions { get; } = { ".prefab" };
 
 		public bool AutoloadAssets => true;
 
