@@ -58,7 +58,7 @@ namespace Dissonance.Engine
 		internal static void FlushRendering()
 		{
 			bufferMesh.Apply();
-			bufferMesh.Render();
+			bufferMesh.Render(vertexIndex);
 		}
 
 		private static void AllocateSpace(int requiredLength)
