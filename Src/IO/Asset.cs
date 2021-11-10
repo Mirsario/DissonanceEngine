@@ -111,7 +111,7 @@ namespace Dissonance.Engine.IO
 			var asyncContext = new ContinuationScheduler(this);
 
 			string extension = Path.GetExtension(AssetPath);
-			var readerByExtension = Assets.ReadersByDataType<T>.ReaderByExtension;
+			var readerByExtension = Assets.AssetTypeData<T>.ReaderByExtension;
 
 			if (readerByExtension.Count == 0) {
 				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
