@@ -20,13 +20,13 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".obj" };
 
-		public async ValueTask<Mesh> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<Mesh> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
-			string text;
+			using var stream = assetFile.OpenStream();
+			using var reader = new StreamReader(stream);
 
-			using (var reader = new StreamReader(stream)) {
-				text = reader.ReadToEnd();
-			}
+			string assetPath = assetFile.Path;
+			string text = reader.ReadToEnd();
 
 			float scale = 1f;
 			var meshInfo = CreateOBJInfo(text);

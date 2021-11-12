@@ -13,7 +13,7 @@ namespace Dissonance.Engine.IO
 
 	internal static class AssetLookup<T>
 	{
-		private static readonly ConcurrentDictionary<string, Asset<T>> lookup = new();
+		private static readonly ConcurrentDictionary<string, (string assetPath, Asset<T> asset)> lookup = new();
 
 		public static int Count => lookup.Count;
 
@@ -24,21 +24,49 @@ namespace Dissonance.Engine.IO
 			};
 		}
 
-		public static void Register(string name, Asset<T> asset)
+		public static void Register(string name, string path, Asset<T> asset)
 		{
 			if (lookup.ContainsKey(name)) {
-				//throw new Exception($"Cannot register two {typeof(T).Name} with the same name: {name}.");
-
-				asset = null; // This marks the registry as ambiguous.
+				lookup[name] = (null, null); // This marks the registry as ambiguous.
+			} else {
+				lookup[name] = (path, asset);
 			}
-
-			lookup[name] = asset;
 		}
 
-		public static Asset<T> Get(string fullName)
-			=> lookup[fullName] ?? throw new ArgumentException($"Key '{fullName}' is ambiguous.");
+		public static Asset<T> Get(string fullName, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+		{
+			var tuple = lookup[fullName];
 
-		public static bool TryGetValue(string fullName, out Asset<T> value)
-			=> lookup.TryGetValue(fullName, out value) && value != null;
+			if (tuple.assetPath == null && tuple.asset == null) {
+				throw new ArgumentException($"Key '{fullName}' is ambiguous.");
+			}
+
+			if (tuple.asset == null) {
+				tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
+				lookup[fullName] = tuple;
+			}
+
+			return tuple.asset;
+		}
+
+		public static bool TryGet(string fullName, out Asset<T> result, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+		{
+			var tuple = lookup[fullName];
+
+			if (tuple.assetPath == null && tuple.asset == null) {
+				result = null;
+
+				return false;
+			}
+
+			if (tuple.asset == null) {
+				tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
+				lookup[fullName] = tuple;
+			}
+
+			result = tuple.asset;
+
+			return true;
+		}
 	}
 }

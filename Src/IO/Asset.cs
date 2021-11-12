@@ -20,8 +20,8 @@ namespace Dissonance.Engine.IO
 		/// <summary> The state of this asset. </summary>
 		public AssetState State { get; internal set; }
 
-		/// <summary> The source of this asset. Can be null. </summary>
-		public AssetSource Source { get; internal set; }
+		/// <summary> The file source of this asset. Can be null. </summary>
+		public AssetFileEntry? File { get; internal set; }
 
 		/// <summary> Whether or not this asset is currently being loaded. </summary>
 		public bool IsLoading => State == AssetState.Loading;
@@ -125,9 +125,7 @@ namespace Dissonance.Engine.IO
 				await Task.Yield(); // This transfers the method's execution to a worker thread.
 			}
 
-			using var stream = Source.OpenStream(AssetPath);
-
-			Value = await assetReader.ReadFromStream(stream, AssetPath, new MainThreadCreationContext(asyncContext));
+			Value = await assetReader.ReadAsset(File, new MainThreadCreationContext(asyncContext));
 
 			State = AssetState.Loaded;
 		}

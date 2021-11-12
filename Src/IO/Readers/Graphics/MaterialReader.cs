@@ -29,8 +29,9 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".material" };
 
-		public async ValueTask<Material> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<Material> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
 			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
 			var jsonMat = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<JsonMaterial>();

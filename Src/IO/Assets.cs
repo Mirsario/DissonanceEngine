@@ -26,6 +26,7 @@ namespace Dissonance.Engine.IO
 		internal static readonly ConcurrentQueue<Action> AssetTransferQueue = new();
 
 		private static readonly HashSet<AssetSource> sources = new();
+		private static readonly Dictionary<string, AssetFileEntry> assetFiles = new();
 		//private static readonly Dictionary<Type, IDictionary<string, Asset>> assets = new();
 
 		internal static bool IsMainThread => Thread.CurrentThread == Game.MainThread;
@@ -34,7 +35,7 @@ namespace Dissonance.Engine.IO
 		{
 			RegisterAssetSources();
 			RegisterAssetReaders();
-			RefreshAssets();
+			PrepareAssets();
 		}
 
 		protected override void PreRenderUpdate()
@@ -52,7 +53,7 @@ namespace Dissonance.Engine.IO
 		/// <param name="assetPath"> The path of the asset. This path is virtual and case-sensitive - system paths will not work. </param>
 		public static bool Exists<T>(string assetPath)
 		{
-			return AssetTypeData<T>.Assets.ContainsKey(assetPath);
+			return assetFiles.ContainsKey(assetPath);
 		}
 
 		/// <summary>
@@ -104,7 +105,7 @@ namespace Dissonance.Engine.IO
 				assetPath = assetPath.Substring(1);
 			}
 
-			return TryGet<T>(assetPath, out result, mode);
+			return TryGet(assetPath, out result, mode);
 		}
 
 		/// <summary>
@@ -125,7 +126,21 @@ namespace Dissonance.Engine.IO
 
 				result = cachedAssetResult;
 
-				if (mode == AssetRequestMode.ImmediateLoad) {
+				if (mode == AssetRequestMode.ImmediateLoad && result.State != AssetState.Loaded) {
+					result.Wait();
+				}
+
+				return true;
+			}
+
+			if (assetFiles.TryGetValue(assetPath, out var assetFile)) {
+				result = CreateAsset<T>(assetFile);
+
+				if (mode != AssetRequestMode.DoNotLoad) {
+					result.Request(mode);
+				}
+
+				if (mode == AssetRequestMode.ImmediateLoad && result.State != AssetState.Loaded) {
 					result.Wait();
 				}
 
@@ -145,16 +160,16 @@ namespace Dissonance.Engine.IO
 		/// <param name="assetName"> The case-sensitive name of the asset. This is not the same as its path. </param>
 		/// <returns> <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle. </returns>
 		/// <exception cref="KeyNotFoundException"> No registered asset could be found with the provided name. </exception>
-		public static Asset<T> Find<T>(string assetName)
-			=> AssetLookup<T>.Get(assetName);
+		public static Asset<T> Find<T>(string assetName, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+			=> AssetLookup<T>.Get(assetName, mode);
 
 		/// <summary> Safely attempts to find a registered asset using its case-sensitive name instead of a path. </summary>
 		/// <typeparam name="T"> The type of the asset. </typeparam>
 		/// <param name="assetName"> The case-sensitive name of the asset. This is not the same as its path. </param>
 		/// <param name="result"> The resulting <see cref="Asset"/>&lt;<typeparamref name="T"/>&gt; - an asset handle, if it was found. </param>
 		/// <returns> A boolean indicating whether the operation succeeded. </returns>
-		public static bool TryFind<T>(string assetName, out Asset<T> result)
-			=> AssetLookup<T>.TryGetValue(assetName, out result);
+		public static bool TryFind<T>(string assetName, out Asset<T> result, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+			=> AssetLookup<T>.TryGet(assetName, out result, mode);
 
 		/// <summary>
 		/// Creates, registers and returns a new pre-loaded asset object with the provided name and value.
@@ -168,7 +183,7 @@ namespace Dissonance.Engine.IO
 		{
 			var asset = CreateUntracked(name, value);
 
-			AssetLookup<T>.Register(name, asset);
+			AssetLookup<T>.Register(name, null, asset);
 
 			return asset;
 		}
@@ -229,20 +244,20 @@ namespace Dissonance.Engine.IO
 			}
 		}
 
-		/*private static Asset<T> RequestFromSource<T>(AssetSource source, string assetPath, AssetRequestMode mode = AssetRequestMode.AsyncLoad)
+		private static Asset<T> CreateAsset<T>(AssetFileEntry assetFile)
 		{
+			string assetPath = assetFile.Path;
 			string assetName = Path.GetFileNameWithoutExtension(assetPath);
+
 			var asset = new Asset<T>(assetName) {
 				AssetPath = assetPath,
-				Source = source
+				File = assetFile
 			};
 
-			AssetLookup<T>.Register(assetName, asset);
-
-			asset.Request(mode);
+			AssetLookup<T>.Register(assetName, assetFile.Path, asset);
 
 			return asset;
-		}*/
+		}
 
 		private static void RegisterAssetSources()
 		{
@@ -288,52 +303,86 @@ namespace Dissonance.Engine.IO
 			}
 		}
 
-		private static void RefreshAssets()
+		private static void PrepareAssets()
 		{
-			var refreshAssetsOfTypeMethod = typeof(Assets).GetMethod(nameof(RefreshAssetsOfType), BindingFlags.Static | BindingFlags.NonPublic);
+			PrepareAssetFileLists();
+			PrepareAssetLookup();
+			AutoloadAssets();
+		}
 
-			//object[] parameters = new object[] { avoidDuplicates };
+		private static void PrepareAssetFileLists()
+		{
+			assetFiles.Clear();
+
+			foreach (var source in sources) {
+				foreach (string assetPath in source.EnumerateAssets()) {
+					assetFiles[assetPath] = new AssetFileEntry(assetPath, source);
+				}
+			}
+		}
+
+		private static void PrepareAssetLookup()
+		{
+			var refreshAssetLookupMethod = typeof(Assets).GetMethod(nameof(RefreshAssetLookupOfType), BindingFlags.Static | BindingFlags.NonPublic);
 
 			foreach (var type in ReaderAssetTypes) {
-				refreshAssetsOfTypeMethod
+				refreshAssetLookupMethod
 					.MakeGenericMethod(type)
 					.Invoke(null, null);
 			}
 		}
 
-		private static void RefreshAssetsOfType<T>()
+		private static void RefreshAssetLookupOfType<T>()
 		{
-			var assetsOfThisType = AssetTypeData<T>.Assets;
-			bool avoidDuplicates = assetsOfThisType.Count != 0;
-			//bool hadNoAssetsOfThisType = assetsOfThisType.Count == 0;
+			foreach (var assetFile in assetFiles.Values) {
+				string assetPath = assetFile.Path;
+				string assetExtension = Path.GetExtension(assetPath);
 
-			foreach (var source in sources) {
-				foreach (string assetPath in source.EnumerateAssets()) {
-					string assetExtension = Path.GetExtension(assetPath);
+				if (!AssetTypeData<T>.ReaderByExtension.TryGetValue(assetExtension, out var assetReader)) {
+					continue;
+				}
 
-					if (!AssetTypeData<T>.ReaderByExtension.TryGetValue(assetExtension, out var assetReader)) {
-						continue;
+				string assetName = Path.GetFileNameWithoutExtension(assetPath);
+
+				AssetLookup<T>.Register(assetName, assetPath, null);
+			}
+		}
+
+		private static void AutoloadAssets()
+		{
+			var autoloadAssetsMethod = typeof(Assets).GetMethod(nameof(AutoloadAssetsGeneric), BindingFlags.Static | BindingFlags.NonPublic);
+
+			foreach (var type in ReaderAssetTypes) {
+				autoloadAssetsMethod
+					.MakeGenericMethod(type)
+					.Invoke(null, null);
+			}
+		}
+
+		private static void AutoloadAssetsGeneric<T>()
+		{
+			var loadingAssets = new Queue<Asset>();
+
+			foreach (var reader in AssetTypeData<T>.Readers) {
+				if (!reader.AutoloadAssets) {
+					continue;
+				}
+
+				foreach (var assetFile in assetFiles.Values) {
+					string extension = Path.GetExtension(assetFile.Path);
+
+					if (reader.Extensions.Contains(extension)) {
+						var asset = CreateAsset<T>(assetFile);
+
+						asset.Request(AssetRequestMode.AsyncLoad);
+						loadingAssets.Enqueue(asset);
 					}
+				}
 
-					if (avoidDuplicates && AssetTypeData<T>.Assets.TryGetValue(assetPath, out var existingAsset) && existingAsset.Source == source) {
-						continue;
-					}
-
-					string assetName = Path.GetFileNameWithoutExtension(assetPath);
-
-					var asset = new Asset<T>(assetName) {
-						AssetPath = assetPath,
-						Source = source
-					};
-
-					AssetLookup<T>.Register(assetName, asset);
-					assetsOfThisType.Add(assetPath, asset);
+				while (loadingAssets.TryDequeue(out var asset)) {
+					asset.Wait();
 				}
 			}
-
-			//if (hadNoAssetsOfThisType && assetsOfThisType.Count != 0) {
-			//	assets[typeof(T)] = (IDictionary<string, Asset>)assetsOfThisType;
-			//}
 		}
 	}
 }

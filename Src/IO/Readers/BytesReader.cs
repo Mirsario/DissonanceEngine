@@ -7,8 +7,10 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".bytes" };
 
-		public async ValueTask<byte[]> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<byte[]> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			using var stream = assetFile.OpenStream();
+
 			byte[] bytes = new byte[stream.Length];
 
 			stream.Read(bytes, 0, bytes.Length);
