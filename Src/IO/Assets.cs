@@ -380,7 +380,9 @@ namespace Dissonance.Engine.IO
 				}
 
 				while (loadingAssets.TryDequeue(out var asset)) {
-					asset.Wait();
+					if (asset.State == AssetState.Loading) {
+						asset.Wait();
+					}
 				}
 			}
 		}

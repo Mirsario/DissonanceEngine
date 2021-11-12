@@ -132,12 +132,17 @@ namespace Dissonance.Engine.IO
 
 		private void SafelyWaitForLoad(Task loadTask, bool tracked)
 		{
-			if (State == AssetState.Loaded)
+			if (State == AssetState.Loaded) {
 				return;
+			}
 
 			if (!loadTask.IsCompleted && Assets.IsMainThread) {
-				while (Continuation == null) {
+				while (Continuation == null && State != AssetState.Loaded) {
 					Thread.Yield();
+				}
+
+				if (State == AssetState.Loaded) {
+					return;
 				}
 
 				if (tracked) {

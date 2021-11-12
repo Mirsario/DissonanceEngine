@@ -26,7 +26,7 @@ namespace Dissonance.Engine.IO
 
 		public static void Register(string name, string path, Asset<T> asset)
 		{
-			if (lookup.ContainsKey(name)) {
+			if (lookup.TryGetValue(name, out var existingTuple) && existingTuple.assetPath == path) {
 				lookup[name] = (null, null); // This marks the registry as ambiguous.
 			} else {
 				lookup[name] = (path, asset);
