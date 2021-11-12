@@ -30,7 +30,10 @@ namespace Dissonance.Engine
 			=> EntityManager.CloneEntity(WorldManager.PrefabWorldId, Id, world.Id);
 
 		internal void Set<T>(in T value) where T : struct
-			=> ComponentManager.SetComponent(WorldManager.PrefabWorldId, Id, value);
+			=> ComponentManager.SetComponent(WorldManager.PrefabWorldId, Id, value, sendMessages: false);
+
+		internal void Remove<T>() where T : struct
+			=> ComponentManager.RemoveComponent<T>(WorldManager.PrefabWorldId, Id, sendMessages: false);
 
 		internal void Destroy()
 			=> EntityManager.RemoveEntity(WorldManager.PrefabWorldId, Id);

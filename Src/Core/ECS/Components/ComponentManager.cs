@@ -149,7 +149,7 @@ namespace Dissonance.Engine
 			ComponentData<T>.HasGlobalSingleton = true;
 		}
 
-		internal static void SetComponent<T>(int worldId, int entityId, T value) where T : struct
+		internal static void SetComponent<T>(int worldId, int entityId, T value, bool sendMessages = true) where T : struct
 		{
 			if (ComponentData<T>.DataByWorld.Length <= worldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.ComponentWorldData.Default);
@@ -176,13 +176,16 @@ namespace Dissonance.Engine
 				var entity = new Entity(entityId, worldId);
 
 				EntityManager.OnEntityComponentAdded<T>(entity);
-				MessageManager.SendMessage(worldId, new ComponentAddedMessage<T>(entity, value));
+
+				if (sendMessages) {
+					MessageManager.SendMessage(worldId, new ComponentAddedMessage<T>(entity, value));
+				}
 			} else {
 				worldData.Data[dataId] = value;
 			}
 		}
 
-		internal static void RemoveComponent<T>(int worldId, int entityId) where T : struct
+		internal static void RemoveComponent<T>(int worldId, int entityId, bool sendMessages = true) where T : struct
 		{
 			if (worldId < 0 || worldId >= ComponentData<T>.DataByWorld.Length) {
 				return;
