@@ -1,7 +1,10 @@
 using System.Runtime.InteropServices;
+using Dissonance.Engine.IO;
+using Newtonsoft.Json;
 
 namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(Vector2IntJsonConverter))]
 	public struct Vector2Int
 	{
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2Int));
