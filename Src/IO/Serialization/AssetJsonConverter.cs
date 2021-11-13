@@ -7,7 +7,8 @@ namespace Dissonance.Engine.IO
 	internal sealed class AssetJsonConverter : JsonConverter
 	{
 		//TODO: Get rid of this somehow?
-		public static string BaseAssetPath { get; set; }
+		[ThreadStatic]
+		public static string BaseAssetPath;
 
 		private static readonly MethodInfo AssetsGetMethodA = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(AssetRequestMode) });
 		private static readonly MethodInfo AssetsGetMethodB = typeof(Assets).GetMethod(nameof(Assets.Get), new[] { typeof(string), typeof(string), typeof(AssetRequestMode) });
