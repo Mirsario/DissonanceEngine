@@ -45,9 +45,12 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".gltf", ".glb" };
 
-		public async ValueTask<PackedScene> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<PackedScene> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
 			var info = new GltfInfo(assetPath);
+
+			using var stream = assetFile.OpenStream();
 
 			if (assetPath.EndsWith(".gltf")) {
 				byte[] textBytes = new byte[stream.Length - stream.Position];

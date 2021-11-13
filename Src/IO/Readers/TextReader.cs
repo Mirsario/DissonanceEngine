@@ -7,8 +7,9 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { "*", ".txt" };
 
-		public async ValueTask<string> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<string> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			using var stream = assetFile.OpenStream();
 			using var reader = new StreamReader(stream);
 
 			return reader.ReadToEnd();

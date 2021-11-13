@@ -11,8 +11,9 @@ namespace Dissonance.Engine.IO
 		public string[] Extensions { get; } = new[] { "*", ".hjson" };
 
 		// Newtonsoft.Json
-		async ValueTask<JObject> IAssetReader<JObject>.ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		async ValueTask<JObject> IAssetReader<JObject>.ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
 			string hjsonText = Assets.Get<string>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			using var hjsonReader = new StringReader(hjsonText);
 
@@ -23,8 +24,9 @@ namespace Dissonance.Engine.IO
 		}
 
 		// System.Text.Json
-		async ValueTask<JsonDocument> IAssetReader<JsonDocument>.ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		async ValueTask<JsonDocument> IAssetReader<JsonDocument>.ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
 			string hjsonText = Assets.Get<string>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			using var hjsonReader = new StringReader(hjsonText);
 

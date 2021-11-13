@@ -9,8 +9,9 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".wav" };
 
-		public async ValueTask<AudioClip> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<AudioClip> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			using var stream = assetFile.OpenStream();
 			using var reader = new BinaryReader(stream);
 
 			// RIFF header
