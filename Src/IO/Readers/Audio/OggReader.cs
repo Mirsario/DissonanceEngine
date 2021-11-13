@@ -9,18 +9,19 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".ogg" };
 
-		public async ValueTask<AudioClip> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<AudioClip> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
-			using var r = new VorbisReader(stream, true);
+			using var stream = assetFile.OpenStream();
+			using var reader = new VorbisReader(stream, true);
 
-			long bufferSize = r.TotalSamples * r.Channels;
+			long bufferSize = reader.TotalSamples * reader.Channels;
 			float[] data = new float[bufferSize];
 
-			r.ReadSamples(data, 0, (int)bufferSize);
+			reader.ReadSamples(data, 0, (int)bufferSize);
 
 			var clip = new AudioClip();
 
-			clip.SetData(data, r.Channels, sizeof(float), r.SampleRate);
+			clip.SetData(data, reader.Channels, sizeof(float), reader.SampleRate);
 
 			return clip;
 		}

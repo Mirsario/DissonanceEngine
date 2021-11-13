@@ -20,8 +20,8 @@ namespace Dissonance.Engine.IO
 		/// <summary> The state of this asset. </summary>
 		public AssetState State { get; internal set; }
 
-		/// <summary> The source of this asset. Can be null. </summary>
-		public AssetSource Source { get; internal set; }
+		/// <summary> The file source of this asset. Can be null. </summary>
+		public AssetFileEntry? File { get; internal set; }
 
 		/// <summary> Whether or not this asset is currently being loaded. </summary>
 		public bool IsLoading => State == AssetState.Loading;
@@ -111,7 +111,7 @@ namespace Dissonance.Engine.IO
 			var asyncContext = new ContinuationScheduler(this);
 
 			string extension = Path.GetExtension(AssetPath);
-			var readerByExtension = Assets.ReadersByDataType<T>.ReaderByExtension;
+			var readerByExtension = Assets.AssetTypeData<T>.ReaderByExtension;
 
 			if (readerByExtension.Count == 0) {
 				throw new InvalidOperationException($"No asset reader found with a return type of '{typeof(T).Name}'.");
@@ -125,21 +125,24 @@ namespace Dissonance.Engine.IO
 				await Task.Yield(); // This transfers the method's execution to a worker thread.
 			}
 
-			using var stream = Source.OpenStream(AssetPath);
-
-			Value = await assetReader.ReadFromStream(stream, AssetPath, new MainThreadCreationContext(asyncContext));
+			Value = await assetReader.ReadAsset(File, new MainThreadCreationContext(asyncContext));
 
 			State = AssetState.Loaded;
 		}
 
 		private void SafelyWaitForLoad(Task loadTask, bool tracked)
 		{
-			if (State == AssetState.Loaded)
+			if (State == AssetState.Loaded) {
 				return;
+			}
 
 			if (!loadTask.IsCompleted && Assets.IsMainThread) {
-				while (Continuation == null) {
+				while (Continuation == null && State != AssetState.Loaded) {
 					Thread.Yield();
+				}
+
+				if (State == AssetState.Loaded) {
+					return;
 				}
 
 				if (tracked) {
