@@ -14,7 +14,6 @@ namespace Dissonance.Engine.IO
 		internal static class AssetTypeData<T>
 		{
 			public static readonly Dictionary<string, Asset<T>> Assets = new();
-			public static readonly HashSet<IAssetManager<T>> Managers = new();
 			public static readonly HashSet<IAssetReader<T>> Readers = new();
 			public static readonly Dictionary<string, IAssetReader<T>> ReaderByExtension = new();
 		}
