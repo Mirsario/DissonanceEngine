@@ -11,19 +11,15 @@ namespace Dissonance.Engine.IO
 
 		public string[] Extensions { get; } = { ".prefab" };
 
-		public bool AutoloadAssets => true;
-
-		public async ValueTask<EntityPrefab> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<EntityPrefab> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
+
 			var json = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value;
 			var entity = WorldManager.PrefabWorld.CreateEntity();
 			var prefab = new EntityPrefab(entity.Id);
 
 			ParseComponents(prefab, json, assetPath);
-
-			string contentName = Path.GetFileNameWithoutExtension(assetPath);
-
-			GameContent.Register(contentName, prefab);
 
 			return prefab;
 		}

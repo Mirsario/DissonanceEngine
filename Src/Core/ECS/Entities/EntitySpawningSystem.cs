@@ -12,7 +12,7 @@ namespace Dissonance.Engine
 		private void Update()
 		{
 			foreach (var message in ReadMessages<SpawnEntityMessage>()) {
-				var prefab = GameContent.Find<EntityPrefab>(message.PrefabName);
+				var prefab = Assets.Find<EntityPrefab>(message.PrefabName).GetValueImmediately();
 				var entity = prefab.Clone(World);
 
 				message.Action?.Invoke(entity);

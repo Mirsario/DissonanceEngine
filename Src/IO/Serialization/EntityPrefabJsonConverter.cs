@@ -14,7 +14,7 @@ namespace Dissonance.Engine.IO
 		{
 			string contentName = (string)reader.Value;
 
-			return GameContent.Find<EntityPrefab>(contentName);
+			return Assets.Find<EntityPrefab>(contentName).GetValueImmediately();
 		}
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
