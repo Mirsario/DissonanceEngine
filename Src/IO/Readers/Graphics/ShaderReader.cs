@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dissonance.Engine.IO
@@ -13,9 +12,12 @@ namespace Dissonance.Engine.IO
 
 		public bool AutoloadAssets => !Game.Instance.Flags.HasFlag(GameFlags.NoGraphics);
 
-		public async ValueTask<Asset<Shader>[]> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<Asset<Shader>[]> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			string assetPath = assetFile.Path;
 			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
+
+			using var stream = assetFile.OpenStream();
 			using var reader = new StreamReader(stream);
 
 			string jsonText = reader.ReadToEnd();

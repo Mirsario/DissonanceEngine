@@ -12,8 +12,10 @@ namespace Dissonance.Engine.IO
 	{
 		public string[] Extensions { get; } = { ".png" };
 
-		public async ValueTask<Texture> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread)
+		public async ValueTask<Texture> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
+			using var stream = assetFile.OpenStream();
+
 			var (width, height, pixels) = LoadImageData<Rgba32>(stream);
 
 			await switchToMainThread; // Switches context to the main thread for texture uploading.

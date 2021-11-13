@@ -25,6 +25,6 @@ namespace Dissonance.Engine.IO
 		/// <param name="assetPath"> The path of the asset that's currently being loaded. </param>
 		/// <param name="switchToMainThread"> Await this to switch execution of the method to the main thread. </param>
 		/// <returns> A result of type <see cref="T"/>. </returns>
-		ValueTask<T> ReadFromStream(Stream stream, string assetPath, MainThreadCreationContext switchToMainThread);
+		ValueTask<T> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread);
 	}
 }
