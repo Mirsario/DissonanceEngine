@@ -1,4 +1,5 @@
 using Dissonance.Engine.IO;
+using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
@@ -26,6 +27,7 @@ namespace Dissonance.Engine.Audio
 		public float RefDistance { get; set; } = 0f;
 		public float MaxDistance { get; set; } = 32f;
 		public float PlaybackOffset { get; set; } = 0f;
+		public SourceState State { get; internal set; } = 0;
 
 		public AudioSource(Asset<AudioClip> clip) : this()
 		{
