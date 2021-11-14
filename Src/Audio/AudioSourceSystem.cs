@@ -116,6 +116,9 @@ namespace Dissonance.Engine.Audio
 
 					audioSource.wasLooped = audioSource.Loop;
 				}
+
+				// Update state.
+				audioSource.State = (SourceState)AL.GetSource(audioSource.sourceId, GetSourceInt.SourceState);
 			}
 
 			AudioEngine.CheckALErrors();
