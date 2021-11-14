@@ -1,5 +1,4 @@
-﻿using Dissonance.Engine.IO;
-using Dissonance.Framework.Audio;
+﻿using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
@@ -9,6 +8,7 @@ namespace Dissonance.Engine.Audio
 	[Receives<PlayAudioSourceMessage>]
 	[Receives<PauseAudioSourceMessage>]
 	[Receives<StopAudioSourceMessage>]
+	[Receives<ComponentRemovedMessage<AudioSource>>]
 	public sealed class AudioSourceSystem : GameSystem
 	{
 		private EntitySet entities;
@@ -24,6 +24,17 @@ namespace Dissonance.Engine.Audio
 
 		private void Update()
 		{
+			// Dispose sources
+			foreach (var message in ReadMessages<ComponentRemovedMessage<AudioSource>>()) {
+				uint sourceId = message.Value.sourceId;
+
+				if (sourceId > 0) {
+					AL.DeleteSource(message.Value.sourceId);
+				}
+			}
+
+			// Update sources' pending actions
+
 			foreach (var message in ReadMessages<StopAudioSourceMessage>()) {
 				if (message.Entity.Has<AudioSource>()) {
 					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Stop;
@@ -42,6 +53,7 @@ namespace Dissonance.Engine.Audio
 				}
 			}
 
+			// Update sources
 			foreach (var entity in entities.ReadEntities()) {
 				ref var audioSource = ref entity.Get<AudioSource>();
 

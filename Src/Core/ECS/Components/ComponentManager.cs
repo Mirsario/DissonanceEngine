@@ -33,10 +33,16 @@ namespace Dissonance.Engine
 
 				var typeData = new ComponentTypeData(
 					typeof(T),
+					&Remove,
 					&Copy
 				);
 
 				ComponentTypeDataById.Add(typeData);
+			}
+
+			public static void Remove(int worldId, int entityId)
+			{
+				RemoveComponent<T>(worldId, entityId);
 			}
 
 			public static void Copy(int sourceWorldId, int sourceEntityId, int destinationWorldId, int destinationEntityId)
@@ -48,11 +54,13 @@ namespace Dissonance.Engine
 		private readonly struct ComponentTypeData
 		{
 			public readonly Type Type;
+			public readonly delegate*<int, int, void> Remove;
 			public readonly delegate*<int, int, int, int, void> Copy;
 
-			public ComponentTypeData(Type type, delegate*<int, int, int, int, void> copy)
+			public ComponentTypeData(Type type, delegate*<int, int, void> remove, delegate*<int, int, int, int, void> copy)
 			{
 				Type = type;
+				Remove = remove;
 				Copy = copy;
 			}
 
@@ -184,6 +192,9 @@ namespace Dissonance.Engine
 				worldData.Data[dataId] = value;
 			}
 		}
+
+		internal static void RemoveComponent(int componentTypeId, int worldId, int entityId)
+			=> ComponentTypeDataById[componentTypeId].Remove(worldId, entityId);
 
 		internal static void RemoveComponent<T>(int worldId, int entityId, bool sendMessages = true) where T : struct
 		{
