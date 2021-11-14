@@ -79,7 +79,20 @@ namespace Dissonance.Engine
 				var worldData = worldDataById[worldId];
 
 				if (worldData != null) {
-					worldData.AllEntityIds.Remove(entityId);
+					if (worldData.AllEntityIds.Remove(entityId)) {
+						worldData.ActiveEntityIds.Remove(entityId);
+						worldData.InactiveEntityIds.Remove(entityId);
+
+						ref var entityData = ref worldData.EntityData[entityId];
+
+						foreach (int componentId in CollectionsMarshal.AsSpan(entityData.PresentComponentTypes)) {
+							ComponentManager.RemoveComponent(componentId, worldId, entityId);
+						}
+
+						entityData = default;
+
+						worldData.FreeEntityIndices.Enqueue(entityId);
+					}
 
 					return true;
 				}
