@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine
 {
@@ -17,9 +16,9 @@ namespace Dissonance.Engine
 			EntityIsActiveFilter = entityIsActiveFilter;
 		}
 
-		public ReadOnlySpan<Entity> ReadEntities()
+		public EntitySetEnumerator ReadEntities()
 		{
-			return CollectionsMarshal.AsSpan(Entities);
+			return new EntitySetEnumerator(Entities);
 		}
 
 		internal void OnEntityUpdated(in Entity entity)
