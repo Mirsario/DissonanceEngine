@@ -18,17 +18,17 @@ namespace Dissonance.Engine.Audio
 
 		protected internal override void RenderUpdate()
 		{
-			var entitySpan = entities.ReadEntities();
+			Entity entity = default;
+			bool hasEntity = false;
 
-			if (entitySpan.Length == 0) {
-				return;
+			foreach (var e in entities.ReadEntities()) {
+				if (!hasEntity) {
+					entity = e;
+					hasEntity = true;
+				} else {
+					throw new InvalidOperationException($"Only a single {nameof(AudioListener)} is allowed to exist in a world.");
+				}
 			}
-
-			if (entitySpan.Length > 1) {
-				throw new InvalidOperationException($"Only a single {nameof(AudioListener)} is allowed to exist in a world.");
-			}
-
-			var entity = entitySpan[0];
 
 			Vector3 position;
 
