@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Dissonance.Engine.IO
 {
@@ -43,6 +44,7 @@ namespace Dissonance.Engine.IO
 	}
 
 	/// <inheritdoc/>
+	[JsonConverter(typeof(AssetJsonConverter))]
 	public sealed class Asset<T> : Asset
 	{
 		private T value;

@@ -1,5 +1,9 @@
+using Dissonance.Engine.IO;
+using Newtonsoft.Json;
+
 namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(Vector2UShortJsonConverter))]
 	public struct Vector2UShort
 	{
 		public ushort X;

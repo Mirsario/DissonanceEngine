@@ -1,5 +1,9 @@
-﻿namespace Dissonance.Engine
+﻿using Dissonance.Engine.IO;
+using Newtonsoft.Json;
+
+namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(EntityPrefabJsonConverter))]
 	public readonly struct Entity : IEntity
 	{
 		internal readonly int Id;
