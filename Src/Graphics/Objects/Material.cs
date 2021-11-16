@@ -11,7 +11,6 @@ namespace Dissonance.Engine.Graphics
 	public sealed class Material : ICloneable
 	{
 		private static readonly List<Material> ById = new();
-		private static readonly Dictionary<string, Material> ByName = new();
 
 		private readonly List<KeyValuePair<string, Asset<Texture>>> Textures = new();
 		private readonly Dictionary<string, (byte size, float[] data)> UniformsFloat = new();
@@ -28,8 +27,6 @@ namespace Dissonance.Engine.Graphics
 			Name = name;
 			Id = InternalUtils.GenContentId(this, ById);
 			Shader = shader;
-
-			ByName[name] = this;
 		}
 
 		public Material Clone()
