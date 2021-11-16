@@ -68,6 +68,46 @@ namespace Dissonance.Engine
 		}
 
 		private static readonly List<ComponentTypeData> ComponentTypeDataById = new();
+		private static readonly Dictionary<string, Type> StructureTypesByName = new();
+
+		protected override void PreInit()
+		{
+			// By-name type lookups are used in prefab parsing.
+			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
+				foreach (var type in types) {
+					if (!type.IsValueType || type.IsAbstract || type.IsNested || type.IsByRefLike || type.IsGenericTypeDefinition) {
+						continue;
+					}
+
+					if (!StructureTypesByName.TryGetValue(type.Name, out var existingType)) {
+						StructureTypesByName[type.Name] = type;
+					} else {
+						//TODO: Use minimal unique paths.
+						StructureTypesByName[type.Name] = null;
+						StructureTypesByName[type.FullName] = type;
+						StructureTypesByName[existingType.FullName] = existingType;
+					}
+				}
+			};
+		}
+
+		public static Type GetComponentTypeFromName(string name)
+		{
+			if (StructureTypesByName.TryGetValue(name, out var type)) {
+				if (type == null) {
+					throw new ArgumentException($"Component name '{name}' is ambiguous.");
+				}
+
+				return type;
+			}
+
+			throw new KeyNotFoundException($"Couldn't find component with the provided name '{name}'.");
+		}
+
+		public static bool TryGetComponentTypeFromName(string name, out Type type)
+		{
+			return StructureTypesByName.TryGetValue(name, out type) && type != null;
+		}
 
 		internal static int GetComponentId<T>() where T : struct
 			=> ComponentData<T>.TypeId;
@@ -117,7 +157,7 @@ namespace Dissonance.Engine
 			ComponentData<T>.HasGlobalSingleton = true;
 		}
 
-		internal static void SetComponent<T>(int worldId, int entityId, T value) where T : struct
+		internal static void SetComponent<T>(int worldId, int entityId, T value, bool sendMessages = true) where T : struct
 		{
 			if (ComponentData<T>.DataByWorld.Length <= worldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.ComponentWorldData.Default);
@@ -144,7 +184,10 @@ namespace Dissonance.Engine
 				var entity = new Entity(entityId, worldId);
 
 				EntityManager.OnEntityComponentAdded<T>(entity);
-				MessageManager.SendMessage(worldId, new ComponentAddedMessage<T>(entity, value));
+
+				if (sendMessages) {
+					MessageManager.SendMessage(worldId, new ComponentAddedMessage<T>(entity, value));
+				}
 			} else {
 				worldData.Data[dataId] = value;
 			}
@@ -153,7 +196,7 @@ namespace Dissonance.Engine
 		internal static void RemoveComponent(int componentTypeId, int worldId, int entityId)
 			=> ComponentTypeDataById[componentTypeId].Remove(worldId, entityId);
 
-		internal static void RemoveComponent<T>(int worldId, int entityId) where T : struct
+		internal static void RemoveComponent<T>(int worldId, int entityId, bool sendMessages = true) where T : struct
 		{
 			if (worldId < 0 || worldId >= ComponentData<T>.DataByWorld.Length) {
 				return;
