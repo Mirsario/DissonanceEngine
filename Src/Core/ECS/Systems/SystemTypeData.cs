@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 				attribute.ModifySystemTypeData(this);
 			}
 
-			// A bit of hardcode. Receivers of engine-sent ComponentAddedMessage<T> and ComponentRemovedMessage<T> must be treated as readers of T, to depend on writers of it.
+			// Receivers of engine-sent ComponentAddedMessage<T> and ComponentRemovedMessage<T> must be treated as readers of T, to depend on writers of it.
 			foreach (var receiveType in ReceiveTypes) {
 				if (!receiveType.IsConstructedGenericType) {
 					continue;
