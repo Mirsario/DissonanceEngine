@@ -29,7 +29,9 @@ namespace Dissonance.Engine.Audio
 				uint sourceId = message.Value.sourceId;
 
 				if (sourceId > 0) {
-					AL.DeleteSource(message.Value.sourceId);
+					if (AL.IsSource(sourceId)) {
+						AL.DeleteSource(sourceId);
+					}
 				}
 			}
 
