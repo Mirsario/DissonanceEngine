@@ -62,7 +62,7 @@ namespace Dissonance.Engine
 					if (TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
 						//TODO: Unhardcode
 						if (assembly.FullName.StartsWith("BulletSharp,")) {
-							DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().GetName().Name}.dll.config");
+							DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().Location}.config");
 						}
 
 						return assembly;
