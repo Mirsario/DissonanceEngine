@@ -84,7 +84,7 @@ namespace Dissonance.Engine
 			instance = this;
 			MainThread = Thread.CurrentThread;
 			Flags = flags;
-			StartArguments = Array.AsReadOnly(args);
+			StartArguments = Array.AsReadOnly(args ?? Array.Empty<string>());
 			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
