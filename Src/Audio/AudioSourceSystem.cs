@@ -24,6 +24,11 @@ namespace Dissonance.Engine.Audio
 
 		private void Update()
 		{
+			//TODO: Replace with an attribute-based way of culling system autoloading.
+			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {
+				return;
+			}
+
 			// Dispose sources
 			foreach (var message in ReadMessages<ComponentRemovedMessage<AudioSource>>()) {
 				uint sourceId = message.Value.sourceId;
