@@ -42,9 +42,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <None Update="DissonanceEngine.dll.config">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	  <None Update="DissonanceEngine.dll.config" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 </Project>
