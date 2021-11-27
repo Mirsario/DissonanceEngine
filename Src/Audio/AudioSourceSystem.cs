@@ -9,7 +9,7 @@ namespace Dissonance.Engine.Audio
 	[Receives<PauseAudioSourceMessage>]
 	[Receives<StopAudioSourceMessage>]
 	[Receives<ComponentRemovedMessage<AudioSource>>]
-	public sealed class AudioSourceSystem : GameSystem
+	public sealed partial class AudioSourceSystem : GameSystem
 	{
 		private EntitySet entities;
 

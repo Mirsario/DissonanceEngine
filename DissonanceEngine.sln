@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DissonanceEngine", "Src\DissonanceEngine.csproj", "{0524F800-4A8D-4D94-8706-66F40352CDAE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DissonanceFramework", "Framework\Src\DissonanceFramework.csproj", "{B959EA7C-AB78-4CB0-BF20-9F821C2EABF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerators", "SourceGenerators\SourceGenerators.csproj", "{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B959EA7C-AB78-4CB0-BF20-9F821C2EABF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B959EA7C-AB78-4CB0-BF20-9F821C2EABF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B959EA7C-AB78-4CB0-BF20-9F821C2EABF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

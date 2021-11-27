@@ -7,6 +7,7 @@
 	<ItemGroup>
 		<ProjectReference Include="$(EnginePath)\Src\DissonanceEngine.csproj" />
 		<ProjectReference Include="$(EnginePath)\Framework\Src\DissonanceFramework.csproj" />
+		<ProjectReference Include="$(EnginePath)\SourceGenerators\SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 	
 	<ItemGroup>
