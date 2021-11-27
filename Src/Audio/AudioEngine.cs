@@ -17,7 +17,7 @@ namespace Dissonance.Engine.Audio
 				audioDevice = ALC.OpenDevice(null);
 				audioContext = ALC.CreateContext(audioDevice, null);
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				throw new AudioException("An issue occured during Audio initialization.", e);
 			}
 

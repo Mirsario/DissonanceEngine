@@ -18,6 +18,11 @@ namespace Dissonance.Engine.Audio
 
 		protected internal override void RenderUpdate()
 		{
+			//TODO: Replace with an attribute-based way of culling system autoloading.
+			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {
+				return;
+			}
+
 			Entity entity = default;
 			bool hasEntity = false;
 
