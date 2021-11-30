@@ -132,7 +132,7 @@ namespace SourceGenerators.Subsystems
 				code.AppendLine($"{{");
 				code.Indent();
 
-				code.AppendLine($"protected internal override void FixedUpdate()");
+				code.AppendLine($"protected {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void FixedUpdate()");
 				code.AppendLine($"{{");
 				code.Indent();
 
