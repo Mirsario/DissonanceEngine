@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SourceGenerators.Utilities
 {
-	internal readonly struct MethodPair
+	public readonly struct MethodPair
 	{
 		public readonly MethodDeclarationSyntax Syntax;
 		public readonly IMethodSymbol Symbol;

@@ -1,20 +1,25 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.Text;
 
 namespace SourceGenerators.Utilities
 {
-	internal sealed class CodeWriter
+	public sealed class CodeWriter
 	{
+		private static readonly Regex lineStartRegex = new(@"(^|\r\n|\n\r|\r|\n)", RegexOptions.Compiled);
+
 		public readonly StringBuilder StringBuilder;
 
 		private int numTabs;
 		private string tabs;
+		private string tabsReplacement;
 
 		public CodeWriter() : this(new StringBuilder()) { }
 
 		public CodeWriter(StringBuilder stringBuilder)
 		{
 			StringBuilder = stringBuilder ?? throw new ArgumentNullException(nameof(stringBuilder));
-			tabs = string.Empty;
+			tabsReplacement = tabs = string.Empty;
 		}
 
 		public override string ToString()
@@ -23,6 +28,7 @@ namespace SourceGenerators.Utilities
 		public void Indent()
 		{
 			tabs = new string('\t', ++numTabs);
+			tabsReplacement = "$1" + tabs;
 		}
 
 		public void Unindent()
@@ -32,12 +38,31 @@ namespace SourceGenerators.Utilities
 			}
 
 			tabs = new string('\t', --numTabs);
+			tabsReplacement = "$1" + tabs;
 		}
+
+		public void Append(string text)
+			=> StringBuilder.Append(lineStartRegex.Replace(text, tabsReplacement));
 
 		public void AppendLine()
 			=> StringBuilder.AppendLine(tabs);
 
-		public void AppendLine(string line)
-			=> StringBuilder.AppendLine($"{tabs}{line}");
+		public void AppendLine(string text)
+			=> StringBuilder.AppendLine(lineStartRegex.Replace(text, tabsReplacement));
+
+		public void AppendCode(CodeWriter code, bool omitEndLineBreak = true)
+		{
+			if (code.StringBuilder.Length == 0) {
+				return;
+			}
+
+			string text = code.ToString();
+
+			if (omitEndLineBreak) {
+				text = StringUtils.OmitEndLineBreak(text);
+			}
+
+			AppendLine(text);
+		}
 	}
 }

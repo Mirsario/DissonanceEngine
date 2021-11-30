@@ -11,130 +11,126 @@ namespace Dissonance.Engine.Audio
 	[Receives<ComponentRemovedMessage<AudioSource>>]
 	public sealed partial class AudioSourceSystem : GameSystem
 	{
-		private EntitySet entities;
+		protected internal override void RenderUpdate() => FixedUpdate();
 
-		protected internal override void Initialize()
+		// Dispose sources
+
+		[MessageSubsystem]
+		private static partial void DisposeSources(in ComponentRemovedMessage<AudioSource> message)
 		{
-			entities = World.GetEntitySet(e => e.Has<AudioSource>());
+			uint sourceId = message.Value.sourceId;
+
+			if (sourceId > 0) {
+				if (AL.IsSource(sourceId)) {
+					AL.DeleteSource(sourceId);
+				}
+			}
 		}
 
-		protected internal override void RenderUpdate() => Update();
+		// Update sources' pending actions
 
-		protected internal override void FixedUpdate() => Update();
-
-		private void Update()
+		[MessageSubsystem]
+		private static partial void StopAudioSources(in StopAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
 		{
-			// Dispose sources
-			foreach (var message in ReadMessages<ComponentRemovedMessage<AudioSource>>()) {
-				uint sourceId = message.Value.sourceId;
+			audioSource.PendingAction = AudioSource.PlaybackAction.Stop;
+		}
 
-				if (sourceId > 0) {
-					if (AL.IsSource(sourceId)) {
-						AL.DeleteSource(sourceId);
-					}
-				}
+		[MessageSubsystem]
+		private static partial void PauseAudioSources(in PauseAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
+		{
+			audioSource.PendingAction = AudioSource.PlaybackAction.Pause;
+		}
+
+		[MessageSubsystem]
+		private static partial void PlayAudioSources(in PlayAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
+		{
+			audioSource.PendingAction = AudioSource.PlaybackAction.Play;
+		}
+
+		// Update audio sources
+
+		[EntitySubsystem]
+		private static partial void UpdateAudioSources(Entity entity, ref AudioSource audioSource)
+		{
+			// Create source if needed.
+			if (audioSource.sourceId == 0) {
+				AL.GenSource(out audioSource.sourceId);
 			}
 
-			// Update sources' pending actions
+			// Load in clips
+			bool clipReady = audioSource.Clip != null && audioSource.Clip.TryGetOrRequestValue(out _);
 
-			foreach (var message in ReadMessages<StopAudioSourceMessage>()) {
-				if (message.Entity.Has<AudioSource>()) {
-					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Stop;
-				}
+			// Update buffer.
+			uint newBufferId = clipReady ? audioSource.Clip.Value.BufferId : 0;
+
+			if (audioSource.bufferId != newBufferId) {
+				AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
+
+				audioSource.bufferId = newBufferId;
 			}
 
-			foreach (var message in ReadMessages<PauseAudioSourceMessage>()) {
-				if (message.Entity.Has<AudioSource>()) {
-					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Pause;
-				}
-			}
-
-			foreach (var message in ReadMessages<PlayAudioSourceMessage>()) {
-				if (message.Entity.Has<AudioSource>()) {
-					message.Entity.Get<AudioSource>().PendingAction = AudioSource.PlaybackAction.Play;
-				}
-			}
-
-			// Update sources
-			foreach (var entity in entities.ReadEntities()) {
-				ref var audioSource = ref entity.Get<AudioSource>();
-
-				// Create source if needed.
-				if (audioSource.sourceId == 0) {
-					AL.GenSource(out audioSource.sourceId);
-				}
-
-				// Load in clips
-				bool clipReady = audioSource.Clip != null && audioSource.Clip.TryGetOrRequestValue(out _);
-
-				// Update buffer.
-				uint newBufferId = clipReady ? audioSource.Clip.Value.BufferId : 0;
-
-				if (audioSource.bufferId != newBufferId) {
-					AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
-
-					audioSource.bufferId = newBufferId;
-				}
-
-				if (audioSource.PendingAction != AudioSource.PlaybackAction.None) {
-					switch (audioSource.PendingAction) {
-						case AudioSource.PlaybackAction.Play:
-							if (audioSource.bufferId == 0) {
-								break;
-							}
-
-							AL.SourcePlay(audioSource.sourceId);
-							goto default;
-						case AudioSource.PlaybackAction.Pause:
-							AL.SourcePause(audioSource.sourceId);
-							goto default;
-						case AudioSource.PlaybackAction.Stop:
-							AL.SourceStop(audioSource.sourceId);
-							goto default;
-						default:
-							audioSource.PendingAction = 0;
+			if (audioSource.PendingAction != AudioSource.PlaybackAction.None) {
+				switch (audioSource.PendingAction) {
+					case AudioSource.PlaybackAction.Play:
+						if (audioSource.bufferId == 0) {
 							break;
-					}
+						}
+
+						AL.SourcePlay(audioSource.sourceId);
+						goto default;
+					case AudioSource.PlaybackAction.Pause:
+						AL.SourcePause(audioSource.sourceId);
+						goto default;
+					case AudioSource.PlaybackAction.Stop:
+						AL.SourceStop(audioSource.sourceId);
+						goto default;
+					default:
+						audioSource.PendingAction = 0;
+						break;
 				}
-
-				// Update volume.
-				AL.Source(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
-
-				// Update pitch.
-				AL.Source(audioSource.sourceId, SourceFloat.Pitch, audioSource.Pitch);
-
-				// Update 3D position.
-				if (!audioSource.Is2D && entity.Has<Transform>()) {
-					audioSource.was2D = false;
-
-					var transform = entity.Get<Transform>();
-					var position = transform.Position;
-
-					if (position == default) {
-						position.X = float.Epsilon;
-					}
-
-					AL.Source(audioSource.sourceId, SourceFloat3.Position, position.X, position.Y, position.Z);
-
-					AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
-					AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
-				} else if (!audioSource.was2D) {
-					audioSource.was2D = true;
-
-					AL.Source(audioSource.sourceId, SourceFloat3.Position, 0f, 0f, 0f);
-				}
-
-				// Update looping.
-				if (audioSource.Loop != audioSource.wasLooped) {
-					AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
-
-					audioSource.wasLooped = audioSource.Loop;
-				}
-
-				// Update state.
-				audioSource.State = (SourceState)AL.GetSource(audioSource.sourceId, GetSourceInt.SourceState);
 			}
 
+			// Update volume.
+			AL.Source(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
+
+			// Update pitch.
+			AL.Source(audioSource.sourceId, SourceFloat.Pitch, audioSource.Pitch);
+
+			// Update 3D position.
+			if (!audioSource.Is2D && entity.Has<Transform>()) {
+				audioSource.was2D = false;
+
+				var transform = entity.Get<Transform>();
+				var position = transform.Position;
+
+				if (position == default) {
+					position.X = float.Epsilon;
+				}
+
+				AL.Source(audioSource.sourceId, SourceFloat3.Position, position.X, position.Y, position.Z);
+
+				AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
+				AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
+			} else if (!audioSource.was2D) {
+				audioSource.was2D = true;
+
+				AL.Source(audioSource.sourceId, SourceFloat3.Position, 0f, 0f, 0f);
+			}
+
+			// Update looping.
+			if (audioSource.Loop != audioSource.wasLooped) {
+				AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
+
+				audioSource.wasLooped = audioSource.Loop;
+			}
+
+			// Update state.
+			audioSource.State = (SourceState)AL.GetSource(audioSource.sourceId, GetSourceInt.SourceState);
+		}
+
+		[Subsystem]
+		private static partial void CheckALErrors()
+		{
 			AudioEngine.CheckALErrors();
 		}
 	}

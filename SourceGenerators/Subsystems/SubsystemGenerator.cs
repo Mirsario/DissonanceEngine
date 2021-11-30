@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using SourceGenerators.Utilities;
@@ -8,17 +9,20 @@ namespace SourceGenerators.Subsystems
 	[Generator]
 	public sealed partial class SubsystemGenerator : ISourceGenerator
 	{
-		private static readonly Dictionary<string, MethodWriter> SubsystemMethodWritersByAttributeFullName = new();
-		private static readonly MethodWriter[] SubsystemMethodWriters = new MethodWriter[] {
-			new SubsystemMethodWriter(),
-			new EntitySubsystemMethodWriter(),
-			new MessageSubsystemMethodWriter(),
-		};
+		private static readonly Dictionary<string, ISubsystemWriter> SubsystemMethodWritersByAttributeFullName = new();
+		private static readonly List<ISubsystemWriter> SubsystemWriters = new();
 
 		static SubsystemGenerator()
 		{
-			foreach (var writer in SubsystemMethodWriters) {
-				SubsystemMethodWritersByAttributeFullName.Add(writer.AttributeName, writer);
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
+				if (type.IsAbstract || !typeof(ISubsystemWriter).IsAssignableFrom(type)) {
+					continue;
+				}
+
+				var subsystemWriter = (ISubsystemWriter)Activator.CreateInstance(type);
+
+				SubsystemWriters.Add(subsystemWriter);
+				SubsystemMethodWritersByAttributeFullName.Add(subsystemWriter.AttributeName, subsystemWriter);
 			}
 		}
 
@@ -39,10 +43,12 @@ namespace SourceGenerators.Subsystems
 				string systemNamespace = systemPair.Symbol.GetNamespace();
 				bool foundSubsystems = false;
 				bool errorsDetected = false;
-				var subsystemMethods = new List<(MethodPair methodPair, MethodWriter writer)>();
+				var subsystemMethods = new List<(MethodPair methodPair, ISubsystemWriter writer)>();
+
+				Console.WriteLine($"Enumerating type system: {systemPair.Symbol.Name}");
 
 				foreach (var systemMethodPair in systemMethods) {
-					MethodWriter? methodWriter = null;
+					ISubsystemWriter? methodWriter = null;
 					bool skipMethod = false;
 
 					foreach (var attributeSymbol in systemMethodPair.Symbol.GetAttributes()) {
@@ -83,6 +89,8 @@ namespace SourceGenerators.Subsystems
 					subsystemMethods.Add((systemMethodPair, methodWriter));
 				}
 
+				Console.WriteLine($"Found subsystems: {foundSubsystems}");
+
 				if (!foundSubsystems) {
 					continue;
 				}
@@ -94,8 +102,18 @@ namespace SourceGenerators.Subsystems
 					errorsDetected = true;
 				}
 
-				if (errorsDetected) {
+				/*if (errorsDetected) {
 					continue;
+				}*/
+
+				var system = new SystemData(context);
+
+				foreach (var (subsystemMethod, subsystemWriter) in subsystemMethods) {
+					var subsystem = new SubsystemData(system, subsystemMethod);
+
+					subsystemWriter.WriteData(subsystem, ref errorsDetected);
+
+					system.Subsystems.Add(subsystem);
 				}
 
 				//TODO: Check if 'partial' is present.
@@ -120,18 +138,15 @@ namespace SourceGenerators.Subsystems
 
 				bool insertNewLine = false;
 
-				foreach (var (subsystemMethod, methodWriter) in subsystemMethods) {
+				foreach (var subsystem in system.Subsystems) {
 					if (insertNewLine) {
 						code.AppendLine();
 					} else {
 						insertNewLine = true;
 					}
 
-					code.AppendLine($"// {subsystemMethod.Symbol.Name}");
-
-					if (!methodWriter.WriteCall(context, code, subsystemMethod)) {
-						errorsDetected = true;
-					}
+					code.AppendLine($"// {subsystem.Method.Symbol.Name}");
+					code.AppendCode(subsystem.InvocationCode);
 				}
 
 				code.Unindent();

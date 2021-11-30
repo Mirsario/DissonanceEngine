@@ -48,5 +48,14 @@ namespace SourceGenerators.Subsystems
 			DiagnosticSeverity.Error,
 			true
 		);
+
+		public static readonly DiagnosticDescriptor InvalidMessageEntityParameter = new(
+			"DE0106",
+			"Message does not contain an entity field",
+			"The argument for subsystem '{0}'s parameter '{1}' cannot come from an entity, because message '{2}' does not contain an 'Entity' Entity field",
+			"ECS",
+			DiagnosticSeverity.Error,
+			true
+		);
 	}
 }
