@@ -122,6 +122,7 @@ namespace SourceGenerators.Subsystems
 				var code = new CodeWriter();
 
 				code.AppendLine($"using System.Runtime.CompilerServices;");
+				code.AppendLine($"using Dissonance.Engine;");
 				code.AppendLine();
 
 				code.AppendLine($"namespace {systemNamespace}");
@@ -132,7 +133,30 @@ namespace SourceGenerators.Subsystems
 				code.AppendLine($"{{");
 				code.Indent();
 
-				code.AppendLine($"protected {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void FixedUpdate()");
+				foreach (var (memberCode, memberFlags) in system.Members.OrderBy(tuple => (int)tuple.flags)) {
+					code.AppendLine(memberCode);
+					code.AppendLine();
+				}
+
+				// Initialize()
+				bool hasInitCode = system.InitCode.StringBuilder.Length > 0;
+
+				code.AppendLine($"protected sealed {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void Initialize() {(hasInitCode ? null : " { }")}");
+
+				if (hasInitCode) {
+					code.AppendLine($"{{");
+					code.Indent();
+
+					code.AppendCode(system.InitCode);
+
+					code.Unindent();
+					code.AppendLine($"}}");
+				}
+
+				code.AppendLine();
+
+				// FixedUpdate()
+				code.AppendLine($"protected sealed {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void FixedUpdate()");
 				code.AppendLine($"{{");
 				code.Indent();
 

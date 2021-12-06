@@ -5,15 +5,33 @@ namespace SourceGenerators.Subsystems
 {
 	public sealed class EntitySubsystemWriter : BaseSubsystemWriter
 	{
+		private struct WriterData
+		{
+			public List<string> RequiredComponentTypes = new();
+		}
+
+		private WriterData writerData;
+
 		public override string AttributeName { get; } = "Dissonance.Engine.EntitySubsystemAttribute";
 
 		public override void WriteData(SubsystemData data, ref bool hasErrors)
 		{
+			writerData = new();
+
 			base.WriteData(data, ref hasErrors);
+
+			// Create an entity set
+			string entitySetName = $"entities{data.Method.Symbol.Name}";
+
+			data.SystemData.Members.Add(($"private EntitySet {entitySetName};", MemberFlag.Field | MemberFlag.Private));
+
+			data.SystemData.InitCode.Append($"{entitySetName} = World.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+
+			// Write update code
 
 			string argumentsCode = string.Join(", ", data.Parameters.Select(p => p.ArgumentCode.ToString()));
 
-			data.InvocationCode.AppendLine("foreach (var entity in ReadEntities()) {");
+			data.InvocationCode.AppendLine($"foreach (var entity in {entitySetName}.ReadEntities()) {{");
 			data.InvocationCode.Indent();
 
 			data.InvocationCode.AppendCode(data.ArgumentCheckCode);
@@ -34,26 +52,20 @@ namespace SourceGenerators.Subsystems
 			yield return EntityComponentParameterHandler;
 		}
 
-		public static void EntityParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
-		{
-			var parameter = parameterData.Parameter;
-
-			if (parameter.Type.GetFullName() == "Dissonance.Engine.Entity") {
-				parameterData.ArgumentCode.Append("entity");
-
-				handled = true;
-			}
-		}
-
-		private static void EntityComponentParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
+		private void EntityComponentParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
 		{
 			var parameter = parameterData.Parameter;
 
 			if (parameter.Type.IsValueType || true) {
-				parameterData.ArgumentCode.Append($"entity.Get<{parameter.Type.ToDisplayString()}>()");
+				string parameterTypeName = parameter.Type.ToDisplayString();
+
+				parameterData.ArgumentCode.Append($"entity.Get<{parameterTypeName}>()");
+
+				writerData.RequiredComponentTypes.Add(parameterTypeName);
 
 				handled = true;
 
+				/*
 				// Temporary checks.
 
 				var checkCode = parameterData.SubsystemData.ArgumentCheckCode;
@@ -67,6 +79,18 @@ namespace SourceGenerators.Subsystems
 				checkCode.Unindent();
 				checkCode.AppendLine("}");
 				checkCode.AppendLine();
+				*/
+			}
+		}
+
+		private static void EntityParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
+		{
+			var parameter = parameterData.Parameter;
+
+			if (parameter.Type.GetFullName() == "Dissonance.Engine.Entity") {
+				parameterData.ArgumentCode.Append("entity");
+
+				handled = true;
 			}
 		}
 	}
