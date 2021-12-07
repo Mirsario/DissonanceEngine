@@ -6,25 +6,19 @@ namespace Dissonance.Engine.Physics
 	[Reads<Rigidbody>]
 	[Reads<Transform>]
 	[Writes<Transform>]
-	public sealed class PhysicsSimulationSystem : GameSystem
+	public sealed partial class PhysicsSimulationSystem : GameSystem
 	{
-		private EntitySet rigidbodyEntities;
-
-		protected internal override void Initialize()
+		[Subsystem]
+		private static partial void StepSimulation([FromWorld] ref WorldPhysics physics)
 		{
-			rigidbodyEntities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
-		}
-
-		protected internal override void FixedUpdate()
-		{
-			ref var physics = ref WorldGet<WorldPhysics>();
-
 			physics.PhysicsWorld.Gravity = physics.Gravity;
 
 			physics.PhysicsWorld.StepSimulation(Time.FixedDeltaTime);
+		}
 
-			// Update collisions
-
+		[Subsystem]
+		private static partial void UpdateCollisions([FromWorld] ref WorldPhysics physics)
+		{
 			var collisionDispatcher = physics.CollisionDispatcher;
 			int numManifolds = collisionDispatcher.NumManifolds;
 
@@ -73,20 +67,19 @@ namespace Dissonance.Engine.Physics
 					thisRigidbody.collisions.Add(new Collision(otherEntity, contacts));
 				}
 			}
+		}
 
-			foreach (var entity in rigidbodyEntities.ReadEntities()) {
-				ref var rigidbody = ref entity.Get<Rigidbody>();
-				ref var transform = ref entity.Get<Transform>();
+		[EntitySubsystem]
+		private static partial void UpdateRigidbodies(ref Rigidbody rigidbody, ref Transform transform)
+		{
+			// Update transforms based on rigidbody positions
+			transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
 
-				// Update transforms based on rigidbody positions
-				transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
-
-				// And also clear collisions if needed
-				if (!rigidbody.collisionsHaveBeenModified) {
-					rigidbody.collisions?.Clear();
-				} else {
-					rigidbody.collisionsHaveBeenModified = false;
-				}
+			// And also clear collisions if needed
+			if (!rigidbody.collisionsHaveBeenModified) {
+				rigidbody.collisions?.Clear();
+			} else {
+				rigidbody.collisionsHaveBeenModified = false;
 			}
 		}
 	}

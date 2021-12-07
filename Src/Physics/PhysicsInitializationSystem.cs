@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using BulletSharp;
+﻿using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
