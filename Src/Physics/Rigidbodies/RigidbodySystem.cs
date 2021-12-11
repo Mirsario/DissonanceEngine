@@ -3,26 +3,19 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<Rigidbody>]
-	[Reads<WorldPhysics>]
-	[Reads<CollisionShapesInfo>]
-	[Writes<Rigidbody>]
-	[Receives<AddCollisionShapeMessage>]
-	[Receives<RemoveCollisionShapeMessage>]
-	[Receives<ActivateRigidbodyMessage>]
-	[Sends<ActivateRigidbodyMessage>]
+	[Callback<PhysicsUpdateGroup>]
 	public sealed class RigidbodySystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 		}
 
-		protected internal override void FixedUpdate()
+		protected override void Execute()
 		{
-			var physics = WorldGet<WorldPhysics>();
+			var physics = World.Get<WorldPhysics>();
 
 			// Set UpdateShapes to true whenever collision shapes have been modified.
 

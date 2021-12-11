@@ -3,20 +3,19 @@ using Dissonance.Framework.Audio;
 
 namespace Dissonance.Engine.Audio
 {
-	[Reads<AudioListener>]
-	[Reads<Transform>]
+	[Callback<LateRenderUpdateCallback>]
 	public sealed class AudioListenerSystem : GameSystem
 	{
 		private static readonly float[] OrientationArray = new float[6];
 
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<AudioListener>());
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
 			//TODO: Replace with an attribute-based way of culling system autoloading.
 			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {

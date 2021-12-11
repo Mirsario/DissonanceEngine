@@ -2,19 +2,17 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	[Reads<Camera>]
-	[Reads<Transform>]
-	[Writes<Camera>]
+	[Callback<LateRenderUpdateCallback>]
 	public sealed class CameraUpdateSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
 			// Calculate view and projection matrices, culling frustums
 			foreach (var entity in entities.ReadEntities()) {

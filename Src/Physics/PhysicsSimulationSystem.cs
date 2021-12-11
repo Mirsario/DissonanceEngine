@@ -2,22 +2,20 @@
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<WorldPhysics>]
-	[Reads<Rigidbody>]
-	[Reads<Transform>]
-	[Writes<Transform>]
+	[Callback<PhysicsUpdateGroup>]
+	[ExecuteAfter<PhysicsInitializationSystem>]
 	public sealed class PhysicsSimulationSystem : GameSystem
 	{
 		private EntitySet rigidbodyEntities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			rigidbodyEntities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 		}
 
-		protected internal override void FixedUpdate()
+		protected override void Execute()
 		{
-			ref var physics = ref WorldGet<WorldPhysics>();
+			ref var physics = ref World.Get<WorldPhysics>();
 
 			physics.PhysicsWorld.Gravity = physics.Gravity;
 

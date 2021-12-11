@@ -1,21 +1,18 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads<LightingPassData>]
-	[Reads<Light>]
-	[Reads<Transform>]
-	[Writes<LightingPassData>]
+	[Callback<LateRenderUpdateCallback>]
 	public sealed class LightSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Light>() && e.Has<Transform>());
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
-			ref var lightingPassData = ref GlobalGet<LightingPassData>();
+			ref var lightingPassData = ref Global.Get<LightingPassData>();
 
 			foreach (var entity in entities.ReadEntities()) {
 				var light = entity.Get<Light>();
