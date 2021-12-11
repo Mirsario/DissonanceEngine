@@ -4,6 +4,7 @@ using BulletSharp;
 namespace Dissonance.Engine.Physics
 {
 	[Callback<PhysicsUpdateGroup>]
+	[ExecuteAfter<ColliderUpdateGroup>]
 	public sealed class RigidbodySystem : GameSystem
 	{
 		private EntitySet entities;
