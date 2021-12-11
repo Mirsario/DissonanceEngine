@@ -12,7 +12,7 @@ namespace Dissonance.Engine
 
 		protected GameSystem()
 		{
-			TypeData = SystemManager.SystemTypeInfo[GetType()];
+			TypeData = SystemManager.GetSystemTypeData(GetType());
 		}
 
 		protected virtual void Initialize() { }

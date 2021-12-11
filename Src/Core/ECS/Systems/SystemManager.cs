@@ -15,7 +15,7 @@ namespace Dissonance.Engine
 			public readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
 		}
 
-		internal static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
+		private static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
 
 		private static readonly List<Type> SystemTypes = new();
 
@@ -58,6 +58,18 @@ namespace Dissonance.Engine
 			}
 		}
 
+		internal static SystemTypeData GetSystemTypeData<T>() where T : GameSystem
+			=> GetSystemTypeData(typeof(T));
+
+		internal static SystemTypeData GetSystemTypeData(Type type)
+		{
+			if (!SystemTypeInfo.TryGetValue(type, out var typeData)) {
+				SystemTypeInfo[type] = typeData = new(type);
+			}
+
+			return typeData;
+		}
+
 		internal static void AddSystemToWorld<T>(World world) where T : GameSystem
 		{
 			var system = Activator.CreateInstance<T>();
@@ -83,7 +95,7 @@ namespace Dissonance.Engine
 				}
 
 				foreach (CallbackSystem callback in callbacksOfThisType) {
-					callback.InvocationList.Add(system);
+					callback.AddSystem(system);
 				}
 			}
 
@@ -91,7 +103,7 @@ namespace Dissonance.Engine
 			if (system is CallbackSystem callbackSystem) {
 				foreach (var otherSystem in worldData.Systems) {
 					if (otherSystem.TypeData.Callbacks.Contains(systemType)) {
-						callbackSystem.InvocationList.Add(otherSystem);
+						callbackSystem.AddSystem(otherSystem);
 					}
 				}
 			}
@@ -162,8 +174,6 @@ namespace Dissonance.Engine
 				}
 
 				SystemTypes.Add(type);
-
-				SystemTypeInfo[type] = new SystemTypeData(type);
 			}
 		}
 

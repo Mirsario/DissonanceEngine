@@ -8,7 +8,7 @@ namespace Dissonance.Engine
 	{
 		public override void ModifySystemTypeData(SystemTypeData systemTypeData)
 		{
-			
+			SystemManager.GetSystemTypeData<T>().SortingDependencies.Add(systemTypeData.SystemType);
 		}
 	}
 }
