@@ -19,35 +19,43 @@ namespace SourceGenerators.Subsystems
 					return;
 				}
 
-				if (classDeclarationSyntax?.BaseList?.Types.Any(
-					baseTypeSyntax => baseTypeSyntax is SimpleBaseTypeSyntax {
-						Type: IdentifierNameSyntax {
-							Identifier.Value: "GameSystem"
-						}
-					}
-				) != true) {
+				var namedTypeSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
+
+				if (namedTypeSymbol == null) {
 					return;
 				}
 
-				INamedTypeSymbol? namedTypeSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
+				bool derivesFromGameSystem = false;
+				var baseType = namedTypeSymbol.BaseType;
 
-				if (namedTypeSymbol != null) {
-					var methods = new List<MethodPair>();
-
-					foreach (var member in classDeclarationSyntax.Members) {
-						if (member is not MethodDeclarationSyntax methodDeclarationSyntax) {
-							continue;
-						}
-
-						IMethodSymbol? methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclarationSyntax);
-
-						if (methodSymbol != null) {
-							methods.Add(new MethodPair(methodDeclarationSyntax, methodSymbol));
-						}
+				while (baseType != null) {
+					if (baseType.GetFullName() == "Dissonance.Engine.GameSystem") {
+						derivesFromGameSystem = true;
+						break;
 					}
 
-					SystemTypes.Add((new ClassPair(classDeclarationSyntax, namedTypeSymbol), methods));
+					baseType = baseType.BaseType;
 				}
+
+				if (!derivesFromGameSystem) {
+					return;
+				}
+
+				var methods = new List<MethodPair>();
+
+				foreach (var member in classDeclarationSyntax.Members) {
+					if (member is not MethodDeclarationSyntax methodDeclarationSyntax) {
+						continue;
+					}
+
+					IMethodSymbol? methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclarationSyntax);
+
+					if (methodSymbol != null) {
+						methods.Add(new MethodPair(methodDeclarationSyntax, methodSymbol));
+					}
+				}
+
+				SystemTypes.Add((new ClassPair(classDeclarationSyntax, namedTypeSymbol), methods));
 			}
 		}
 	}
