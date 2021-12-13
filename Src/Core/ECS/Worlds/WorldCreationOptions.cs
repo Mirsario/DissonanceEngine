@@ -3,5 +3,6 @@
 	public struct WorldCreationOptions
 	{
 		public bool AddDefaultSystems = true;
+		public bool AddDefaultCallbacks = true;
 	}
 }

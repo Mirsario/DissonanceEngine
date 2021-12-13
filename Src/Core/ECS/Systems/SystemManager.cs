@@ -32,9 +32,7 @@ namespace Dissonance.Engine
 
 				worldDataById[world.Id] = new();
 
-				if (options.AddDefaultSystems) {
-					AddDefaultSystemsToWorld(world);
-				}
+				AddDefaultSystemsToWorld(world, options.AddDefaultSystems, options.AddDefaultCallbacks);
 			};
 
 			WorldManager.OnWorldDestroyed += world => {
@@ -147,16 +145,24 @@ namespace Dissonance.Engine
 			}
 		}
 
-		private static void AddDefaultSystemsToWorld(World world)
+		private static void AddDefaultSystemsToWorld(World world, bool addSystems = true, bool addCallbacks = true)
 		{
-			for (int i = 0; i < SystemTypes.Count; i++) {
-				var type = SystemTypes[i];
-				var system = (GameSystem)Activator.CreateInstance(type);
-
-				AddSystemToWorld(world, system);
+			if (!addCallbacks && !addSystems) {
+				return;
 			}
 
-			Debug.Log("Configuration of the default world:");
+			for (int i = 0; i < SystemTypes.Count; i++) {
+				var type = SystemTypes[i];
+				bool isCallback = typeof(CallbackSystem).IsAssignableFrom(type);
+
+				if (isCallback ? addCallbacks : addSystems) {
+					var system = (GameSystem)Activator.CreateInstance(type);
+
+					AddSystemToWorld(world, system);
+				}
+			}
+
+			Debug.Log($"Configuration of world {world.Id}:");
 
 			var loggedCallbacks = new GameSystem[] {
 				world.GetSystem<RootFixedUpdateCallback>(),
