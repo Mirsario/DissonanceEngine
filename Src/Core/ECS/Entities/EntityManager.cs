@@ -28,6 +28,8 @@ namespace Dissonance.Engine
 			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
 		}
 
+		private static readonly object lockObject = new();
+
 		private static WorldData[] worldDataById = Array.Empty<WorldData>();
 
 		protected override void PreInit()
@@ -56,13 +58,15 @@ namespace Dissonance.Engine
 
 			var entity = new Entity(id, worldId);
 
-			if (id >= worldData.EntityData.Length) {
-				Array.Resize(ref worldData.EntityData, Math.Max(1, worldData.EntityData.Length * 2));
-			}
+			lock (lockObject) {
+				if (id >= worldData.EntityData.Length) {
+					Array.Resize(ref worldData.EntityData, Math.Max(1, worldData.EntityData.Length * 2));
+				}
 
-			worldData.EntityData[id] = new EntityData {
-				IsActive = activate
-			};
+				worldData.EntityData[id] = new EntityData {
+					IsActive = activate
+				};
+			}
 
 			worldData.AllEntityIds.Add(id);
 
