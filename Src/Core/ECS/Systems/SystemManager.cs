@@ -217,10 +217,19 @@ namespace Dissonance.Engine
 			Console.ForegroundColor = ConsoleColor.Gray;
 
 			if (system is CallbackSystem callbackSystem) {
-				var children = callbackSystem.InvocationList;
+				var enumerator = callbackSystem.InvocationList.GetEnumerator();
 
-				for (int i = 0; i < children.Count; i++) {
-					LogSystemCallbackTree(children[i], indent, i == children.Count - 1);
+				if (enumerator.MoveNext()) {
+					bool hasEntries;
+
+					do {
+						var entry = enumerator.Current;
+
+						hasEntries = enumerator.MoveNext();
+
+						LogSystemCallbackTree(entry, indent, !hasEntries);
+					}
+					while (hasEntries);
 				}
 			}
 		}

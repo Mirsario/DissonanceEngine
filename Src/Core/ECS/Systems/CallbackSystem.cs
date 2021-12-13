@@ -6,22 +6,16 @@ namespace Dissonance.Engine
 {
 	public abstract class CallbackSystem : GameSystem
 	{
-		private readonly List<GameSystem> invocationList;
-		private readonly IReadOnlyList<GameSystem> invocationListReadOnly;
+		private readonly LinkedList<GameSystem> invocationList = new();
 
 		private bool needsSorting;
 
-		public IReadOnlyList<GameSystem> InvocationList {
+		public IEnumerable<GameSystem> InvocationList {
 			get {
 				SortSystemsIfNeeded();
 
-				return invocationListReadOnly;
+				return invocationList;
 			}
-		}
-
-		public CallbackSystem()
-		{
-			invocationListReadOnly = (invocationList = new()).AsReadOnly();
 		}
 
 		protected sealed override void Execute()
@@ -35,7 +29,7 @@ namespace Dissonance.Engine
 
 		internal void AddSystem(GameSystem system)
 		{
-			invocationList.Add(system);
+			invocationList.AddLast(system);
 
 			needsSorting = true;
 		}
@@ -62,11 +56,16 @@ namespace Dissonance.Engine
 				}
 			}
 
-			// Performance could've been better.
-			var sortedArray = DependencyUtils.DependencySort(invocationList, GetDependencies, throwOnRecursion: true).ToArray();
+			lock (invocationList) {
+				// Performance could've been better.
+				var sortedArray = DependencyUtils.DependencySort(invocationList, GetDependencies, throwOnRecursion: true).ToArray();
 
-			invocationList.Clear();
-			invocationList.AddRange(sortedArray);
+				invocationList.Clear();
+
+				foreach (var entry in sortedArray) {
+					invocationList.AddLast(entry);
+				}
+			}
 		}
 	}
 }
