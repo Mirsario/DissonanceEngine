@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
 using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
@@ -11,15 +11,14 @@ namespace Dissonance.Engine
 		{
 			public struct ComponentWorldData
 			{
-				public static ComponentWorldData Default = new() {
-					Data = Array.Empty<T>(),
-					IndicesByEntity = Array.Empty<int>(),
-					GlobalDataIndex = -1
-				};
+				public readonly object DataResizingLock = new();
+				public readonly object IndicesByEntityResizingLock = new();
 
-				public T[] Data;
-				public int[] IndicesByEntity;
-				public int GlobalDataIndex;
+				public T[] Data = Array.Empty<T>();
+				public int[] IndicesByEntity = Array.Empty<int>();
+				public int GlobalDataIndex = -1;
+				public int NextDataIndex = 0;
+				public ConcurrentBag<int> FreeDataIndices = new();
 			}
 
 			public static T GlobalSingleton;
@@ -160,7 +159,7 @@ namespace Dissonance.Engine
 		internal static void SetComponent<T>(int worldId, int entityId, T value, bool sendMessages = true) where T : struct
 		{
 			if (ComponentData<T>.DataByWorld.Length <= worldId) {
-				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, ComponentData<T>.ComponentWorldData.Default);
+				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, new());
 			}
 
 			ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
@@ -168,17 +167,41 @@ namespace Dissonance.Engine
 			int dataId = -1;
 
 			if (entityId >= worldData.IndicesByEntity.Length) {
-				ArrayUtils.ResizeAndFillArray(ref worldData.IndicesByEntity, entityId + 1, -1);
+				lock (worldData.IndicesByEntityResizingLock) {
+					int newSize = Math.Max(1, worldData.IndicesByEntity.Length);
+
+					while (newSize <= entityId) {
+						newSize *= 2;
+					}
+
+					ArrayUtils.ResizeAndFillArray(ref worldData.IndicesByEntity, newSize, -1);
+				}
 			} else {
 				dataId = worldData.IndicesByEntity[entityId];
 			}
 
 			if (dataId < 0) {
-				dataId = worldData.Data.Length;
+				bool resized = false;
+
+				if (!worldData.FreeDataIndices.TryTake(out dataId)) {
+					lock (worldData.DataResizingLock) {
+						dataId = worldData.NextDataIndex++;
+
+						if (dataId >= worldData.Data.Length) {
+							int newSize = Math.Max(1, worldData.Data.Length);
+
+							while (newSize <= dataId) {
+								newSize *= 2;
+							}
+
+							Array.Resize(ref worldData.Data, newSize);
+
+							resized = true;
+						}
+					}
+				}
+
 				worldData.IndicesByEntity[entityId] = dataId;
-
-				Array.Resize(ref worldData.Data, dataId + 1);
-
 				worldData.Data[dataId] = value;
 
 				var entity = new Entity(entityId, worldId);
