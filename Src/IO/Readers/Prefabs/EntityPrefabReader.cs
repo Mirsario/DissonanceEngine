@@ -8,8 +8,12 @@ namespace Dissonance.Engine.IO
 	public sealed class EntityPrefabReader : IAssetReader<EntityPrefab>
 	{
 		private static readonly MethodInfo EntityPrefabSetMethod = typeof(EntityPrefab).GetMethod(nameof(EntityPrefab.Set), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+		
+		public static bool AutoloadAssets { get; set; }
 
 		public string[] Extensions { get; } = { ".prefab" };
+
+		bool IAssetReader<EntityPrefab>.AutoloadAssets => AutoloadAssets;
 
 		public async ValueTask<EntityPrefab> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 		{
