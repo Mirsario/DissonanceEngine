@@ -48,6 +48,7 @@ namespace SourceGenerators.Subsystems
 			yield return CommonParameterHandlers.RefKindHandler;
 			
 			yield return MessageParameterHandler;
+			yield return EntityParameterHandler;
 
 			yield return CommonParameterHandlers.WorldParameterHandler;
 			yield return CommonParameterHandlers.GlobalComponentParameterHandler;
@@ -79,6 +80,30 @@ namespace SourceGenerators.Subsystems
 
 					return memberType != null && memberType.GetFullName() == "Dissonance.Engine.Entity";
 				});
+
+				handled = true;
+			}
+		}
+
+		private void EntityParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
+		{
+			var parameter = parameterData.Parameter;
+
+			if (parameter.Type.GetFullName() == "Dissonance.Engine.Entity") {
+				if (!writerData.MessageContainsEntity) {
+					hasErrors = true;
+
+					parameterData.SubsystemData.ReportDiagnostic(
+						DiagnosticRules.InvalidMessageEntityParameter,
+						parameterData.SubsystemData.Method.Symbol.Name,
+						parameter.Name,
+						writerData.MessageParameter.Parameter.Type.Name
+					);
+
+					return;
+				}
+
+				parameterData.ArgumentCode.Append("message.Entity");
 
 				handled = true;
 			}
