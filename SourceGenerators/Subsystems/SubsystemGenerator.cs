@@ -121,6 +121,7 @@ namespace SourceGenerators.Subsystems
 
 				var code = new CodeWriter();
 
+				code.AppendLine($"using System.Diagnostics.CodeAnalysis;");
 				code.AppendLine($"using System.Runtime.CompilerServices;");
 				code.AppendLine($"using Dissonance.Engine;");
 				code.AppendLine();
@@ -182,8 +183,9 @@ namespace SourceGenerators.Subsystems
 					string modifiersCode = string.Join(" ", subsystemMethod.Syntax.Modifiers.Select(m => m.ToString()));
 					string parameterCode = string.Join(", ", subsystemMethod.Symbol.Parameters.Select(p => $"{p.ToDisplayString()} {p.Name}"));
 
-					code.AppendLine($"[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]");
-					code.AppendLine($"{modifiersCode} {subsystemMethod.Syntax.ReturnType} {subsystemMethod.Symbol.Name}({parameterCode});");
+					code.AppendLine($@"[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]");
+					code.AppendLine($@"[SuppressMessage(""Performance"", ""CA1822: Mark members as static"", Justification = ""Method will be inlined"")]");
+					code.AppendLine($@"{modifiersCode} {subsystemMethod.Syntax.ReturnType} {subsystemMethod.Symbol.Name}({parameterCode});");
 				}
 
 				code.Unindent();
