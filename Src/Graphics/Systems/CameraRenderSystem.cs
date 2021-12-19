@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Callback<LateRenderUpdateCallback>]
+	[Callback<RenderingCallback>]
 	[ExecuteAfter<CameraUpdateSystem>]
 	public sealed class CameraRenderSystem : GameSystem
 	{

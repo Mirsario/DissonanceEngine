@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Callback<LateRenderUpdateCallback>]
+	[Callback<RenderingCallback>]
 	public sealed class SpriteSystem : GameSystem
 	{
 		private class BatchData : IDisposable

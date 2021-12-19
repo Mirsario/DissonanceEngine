@@ -2,8 +2,8 @@
 
 namespace Dissonance.Engine
 {
-	[Callback<LateRenderUpdateCallback>]
-	[Callback<LateFixedUpdateCallback>]
+	[Callback<EndRenderUpdateCallback>]
+	[Callback<EndFixedUpdateCallback>]
 	public sealed class EntitySpawningSystem : GameSystem
 	{
 		protected override void Execute()

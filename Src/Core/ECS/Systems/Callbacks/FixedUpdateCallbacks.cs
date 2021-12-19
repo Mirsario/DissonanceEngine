@@ -6,21 +6,21 @@
 	}
 
 	[Callback<RootFixedUpdateCallback>]
-	public sealed class EarlyFixedUpdateCallback : CallbackSystem
+	[ExecuteBefore<FixedUpdateCallback>]
+	public sealed class BeginFixedUpdateCallback : CallbackSystem
 	{
 
 	}
 
 	[Callback<RootFixedUpdateCallback>]
-	[ExecuteAfter<EarlyFixedUpdateCallback>]
-	[ExecuteBefore<LateFixedUpdateCallback>]
 	public sealed class FixedUpdateCallback : CallbackSystem
 	{
 
 	}
 
 	[Callback<RootFixedUpdateCallback>]
-	public sealed class LateFixedUpdateCallback : CallbackSystem
+	[ExecuteAfter<FixedUpdateCallback>]
+	public sealed class EndFixedUpdateCallback : CallbackSystem
 	{
 
 	}

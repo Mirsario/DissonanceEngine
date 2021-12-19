@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Callback<LateRenderUpdateCallback>]
+	[Callback<RenderingCallback>]
 	public sealed class LightSystem : GameSystem
 	{
 		private EntitySet entities;

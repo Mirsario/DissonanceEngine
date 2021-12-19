@@ -2,8 +2,9 @@
 
 namespace Dissonance.Engine.Audio
 {
-	[Callback<LateFixedUpdateCallback>]
-	[Callback<LateRenderUpdateCallback>]
+	[Callback<EndFixedUpdateCallback>]
+	[Callback<EndRenderUpdateCallback>]
+	[ExecuteAfter<EntitySpawningSystem>]
 	public sealed class AudioSourceSystem : GameSystem
 	{
 		private EntitySet entities;

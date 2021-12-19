@@ -6,21 +6,21 @@
 	}
 
 	[Callback<RootRenderUpdateCallback>]
-	public sealed class EarlyRenderUpdateCallback : CallbackSystem
+	[ExecuteBefore<RenderUpdateCallback>]
+	public sealed class BeginRenderUpdateCallback : CallbackSystem
 	{
 
 	}
 
 	[Callback<RootRenderUpdateCallback>]
-	[ExecuteAfter<EarlyRenderUpdateCallback>]
-	[ExecuteBefore<LateRenderUpdateCallback>]
 	public sealed class RenderUpdateCallback : CallbackSystem
 	{
 
 	}
 
 	[Callback<RootRenderUpdateCallback>]
-	public sealed class LateRenderUpdateCallback : CallbackSystem
+	[ExecuteAfter<RenderUpdateCallback>]
+	public sealed class EndRenderUpdateCallback : CallbackSystem
 	{
 
 	}
