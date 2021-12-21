@@ -64,22 +64,6 @@ namespace SourceGenerators.Subsystems
 				writerData.RequiredComponentTypes.Add(parameterTypeName);
 
 				handled = true;
-
-				/*
-				// Temporary checks.
-
-				var checkCode = parameterData.SubsystemData.ArgumentCheckCode;
-
-				checkCode.AppendLine("// Temporary.");
-				checkCode.AppendLine($"if (!entity.Has<{parameter.Type.ToDisplayString()}>()) {{");
-				checkCode.Indent();
-
-				checkCode.AppendLine("continue;");
-
-				checkCode.Unindent();
-				checkCode.AppendLine("}");
-				checkCode.AppendLine();
-				*/
 			}
 		}
 

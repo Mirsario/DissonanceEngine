@@ -143,49 +143,5 @@ namespace SourceGenerators.Subsystems
 				checkCode.AppendLine();
 			}
 		}
-
-		/*public override bool WriteCall(GeneratorExecutionContext context, CodeWriter code, MethodPair methodPair)
-		{
-			bool MessageParameterHandler(ParameterHandling.ReportDiagnosticDelegate reportDiagnostic, IParameterSymbol parameter, StringBuilder callBuilder, ref bool hasErrors)
-			{
-				if (parameter.Type.IsValueType) {
-					callBuilder.Append($"entity.Get<{parameter.Type.ToDisplayString()}>()");
-
-					// Temporary checks.
-					code.AppendLine($"if (!entity.Has<{parameter.Type.ToDisplayString()}>()) {{");
-					code.Indent();
-
-					code.AppendLine("continue;");
-
-					code.Unindent();
-					code.AppendLine("}");
-					code.AppendLine();
-
-					return true;
-				}
-
-				return false;
-			}
-
-			bool hasErrors = false;
-			string parametersCode = ParameterHandling.HandleParameters(context, methodPair, ref hasErrors, ParameterHandlers);
-			var parameters = methodPair.Symbol.Parameters;
-
-			if (parameters.Length == 0) {
-				// TODO: Raise an error..
-
-				return false;
-			}
-
-			code.AppendLine($"foreach (var message in ReadMessages<{parameters[0].Type.ToDisplayString()}>()) {{");
-			code.Indent();
-
-			code.AppendLine($"{methodPair.Symbol.Name}({parametersCode});");
-
-			code.Unindent();
-			code.AppendLine("}");
-
-			return !hasErrors;
-		}*/
 	}
 }
