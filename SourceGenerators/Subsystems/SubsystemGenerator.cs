@@ -142,7 +142,7 @@ namespace SourceGenerators.Subsystems
 				// Initialize()
 				bool hasInitCode = system.InitCode.StringBuilder.Length > 0;
 
-				code.AppendLine($"protected sealed {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void Initialize() {(hasInitCode ? null : " { }")}");
+				code.AppendLine($"protected sealed override void Initialize() {(hasInitCode ? null : " { }")}");
 
 				if (hasInitCode) {
 					code.AppendLine($"{{");
@@ -156,8 +156,8 @@ namespace SourceGenerators.Subsystems
 
 				code.AppendLine();
 
-				// FixedUpdate()
-				code.AppendLine($"protected sealed {(context.Compilation.AssemblyName == "DissonanceEngine" ? "internal " : null)}override void FixedUpdate()");
+				// Execute()
+				code.AppendLine($"protected sealed override void Execute()");
 				code.AppendLine($"{{");
 				code.Indent();
 

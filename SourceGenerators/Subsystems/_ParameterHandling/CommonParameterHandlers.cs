@@ -42,7 +42,7 @@ namespace SourceGenerators.Subsystems
 			var parameter = parameterData.Parameter;
 
 			if (parameter.GetAttributes().Any(a => a.AttributeClass?.GetFullName() == "Dissonance.Engine.FromGlobalAttribute")) {
-				parameterData.ArgumentCode.Append($"GlobalGet<{parameter.Type.ToDisplayString()}>()");
+				parameterData.ArgumentCode.Append($"Global.Get<{parameter.Type.ToDisplayString()}>()");
 
 				handled = true;
 			}
@@ -53,7 +53,7 @@ namespace SourceGenerators.Subsystems
 			var parameter = parameterData.Parameter;
 
 			if (parameter.GetAttributes().Any(a => a.AttributeClass?.GetFullName() == "Dissonance.Engine.FromWorldAttribute")) {
-				parameterData.ArgumentCode.Append($"WorldGet<{parameter.Type.ToDisplayString()}>()");
+				parameterData.ArgumentCode.Append($"World.Get<{parameter.Type.ToDisplayString()}>()");
 
 				handled = true;
 			}
