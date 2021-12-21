@@ -2,27 +2,19 @@
 
 namespace Dissonance.Engine.Audio
 {
-	[Reads<AudioSource>]
-	[Reads<Transform>]
-	[Writes<AudioSource>]
-	[Receives<PlayAudioSourceMessage>]
-	[Receives<PauseAudioSourceMessage>]
-	[Receives<StopAudioSourceMessage>]
-	[Receives<ComponentRemovedMessage<AudioSource>>]
+	[Callback<EndFixedUpdateCallback>]
+	[Callback<EndRenderUpdateCallback>]
+	[ExecuteAfter<EntitySpawningSystem>]
 	public sealed class AudioSourceSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<AudioSource>());
 		}
 
-		protected internal override void RenderUpdate() => Update();
-
-		protected internal override void FixedUpdate() => Update();
-
-		private void Update()
+		protected override void Execute()
 		{
 			//TODO: Replace with an attribute-based way of culling system autoloading.
 			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {

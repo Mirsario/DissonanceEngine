@@ -15,11 +15,9 @@ namespace Dissonance.Engine
 			public readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
 		}
 
-		internal static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
+		private static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
 
 		private static readonly List<Type> SystemTypes = new();
-		private static readonly Dictionary<Type, List<Type>> ComponentTypeToWritingSystemTypes = new();
-		private static readonly Dictionary<Type, List<Type>> MessageTypeToSendingSystemTypes = new();
 
 		private static WorldData[] worldDataById = Array.Empty<WorldData>();
 
@@ -34,9 +32,7 @@ namespace Dissonance.Engine
 
 				worldDataById[world.Id] = new();
 
-				if (options.AddDefaultSystems) {
-					AddDefaultSystemsToWorld(world);
-				}
+				AddDefaultSystemsToWorld(world, options.AddDefaultSystems, options.AddDefaultCallbacks);
 			};
 
 			WorldManager.OnWorldDestroyed += world => {
@@ -49,95 +45,37 @@ namespace Dissonance.Engine
 		protected override void FixedUpdate()
 		{
 			foreach (var world in WorldManager.ReadWorlds()) {
-				var worldData = worldDataById[world.Id];
-
-				foreach (var system in worldData.Systems) {
-					if (!system.Initialized) {
-						system.Initialize();
-
-						system.Initialized = true;
-					}
-
-					system.FixedUpdate();
-				}
+				world.ExecuteCallbacks<RootFixedUpdateCallback>();
 			}
 		}
 
 		protected override void RenderUpdate()
 		{
 			foreach (var world in WorldManager.ReadWorlds()) {
-				var worldData = worldDataById[world.Id];
-
-				foreach (var system in worldData.Systems) {
-					system.RenderUpdate();
-				}
+				world.ExecuteCallbacks<RootRenderUpdateCallback>();
 			}
 		}
 
-		internal static void SortSystems(List<GameSystem> systems, Dictionary<Type, List<GameSystem>> systemsByType)
+		internal static SystemTypeData GetSystemTypeData<T>() where T : GameSystem
+			=> GetSystemTypeData(typeof(T));
+
+		internal static SystemTypeData GetSystemTypeData(Type type)
 		{
-			IEnumerable<GameSystem> GatherDependenciesBasedOnReadTypes(GameSystem system, IEnumerable<Type> readTypes, Dictionary<Type, List<Type>> typeToWritingSystemTypes)
-			{
-				foreach (var componentType in readTypes) {
-					if (!typeToWritingSystemTypes.TryGetValue(componentType, out var writingTypes)) {
-						continue;
-					}
-
-					foreach (var writingType in writingTypes) {
-						if (!systemsByType.TryGetValue(writingType, out var writingSystems)) {
-							continue;
-						}
-
-						foreach (var writingSystem in writingSystems) {
-							if (writingSystem != system) {
-								yield return writingSystem;
-							}
-						}
-					}
-				}
+			if (!SystemTypeInfo.TryGetValue(type, out var typeData)) {
+				SystemTypeInfo[type] = typeData = new(type);
 			}
 
-			var dependenciesBySystem = new Dictionary<GameSystem, List<GameSystem>>();
-
-			IEnumerable<GameSystem> GetGameSystemDependencies(GameSystem system)
-			{
-				if (!dependenciesBySystem.TryGetValue(system, out var dependencies)) {
-					dependenciesBySystem[system] = dependencies = new();
-
-					var typeData = system.TypeData;
-
-					if (typeData.ReadTypes?.Count > 0) {
-						// Add systems that write/modify component values as dependencies of systems that read them.
-						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReadTypes, ComponentTypeToWritingSystemTypes));
-					}
-
-					if (typeData.ReceiveTypes?.Count > 0) {
-						// Add systems that send messages as dependencies of systems that receive them.
-						dependencies.AddRange(GatherDependenciesBasedOnReadTypes(system, typeData.ReceiveTypes, MessageTypeToSendingSystemTypes));
-					}
-				}
-
-				return dependencies;
-			}
-
-			var sorted = systems.DependencySort(GetGameSystemDependencies, false).ToArray();
-
-#if DEBUG
-			Debug.Log($"System order: \r\n{string.Join("\r\n", sorted.Select(s => s.GetType().Name))}");
-#endif
-
-			systems.Clear();
-			systems.AddRange(sorted);
+			return typeData;
 		}
 
-		internal static void AddSystemToWorld<T>(World world, bool sortSystems = true) where T : GameSystem
+		internal static void AddSystemToWorld<T>(World world) where T : GameSystem
 		{
 			var system = Activator.CreateInstance<T>();
 
-			AddSystemToWorld(world, system, sortSystems);
+			AddSystemToWorld(world, system);
 		}
 
-		internal static void AddSystemToWorld(World world, GameSystem system, bool sortSystems = true)
+		internal static void AddSystemToWorld(World world, GameSystem system)
 		{
 			var worldData = worldDataById[world.Id];
 			var systemType = system.GetType();
@@ -148,22 +86,90 @@ namespace Dissonance.Engine
 
 			system.World = world;
 
+			// Subscribe this system to its type' callbacks
+			foreach (var callbackType in system.TypeData.Callbacks) {
+				if (!worldData.SystemsByType.TryGetValue(callbackType, out var callbacksOfThisType)) {
+					continue;
+				}
+
+				foreach (CallbackSystem callback in callbacksOfThisType) {
+					callback.AddSystem(system);
+				}
+			}
+
+			// Subscribe systems to this one if have it specified in its TypeData
+			if (system is CallbackSystem callbackSystem) {
+				foreach (var otherSystem in worldData.Systems) {
+					if (otherSystem.TypeData.Callbacks.Contains(systemType)) {
+						callbackSystem.AddSystem(otherSystem);
+					}
+				}
+			}
+
 			worldData.Systems.Add(system);
 			systemsOfThisType.Add(system);
+		}
 
-			if (sortSystems) {
-				SortSystems(worldData.Systems, worldData.SystemsByType);
+		internal static T GetWorldSystem<T>(World world) where T : GameSystem
+		{
+			if (TryGetWorldSystem<T>(world, out var result)) {
+				return result;
+			}
+
+			throw new KeyNotFoundException($"Unable to find any systems of type {typeof(T).Name} on the provided world.");
+		}
+
+		internal static bool TryGetWorldSystem<T>(World world, out T result) where T : GameSystem
+		{
+			var worldData = worldDataById[world.Id];
+
+			if (worldData.SystemsByType.TryGetValue(typeof(T), out var systems) && systems.Count > 0) {
+				result = (T)systems[0];
+
+				return true;
+			}
+
+			result = null;
+
+			return false;
+		}
+
+		internal static void ExecuteCallbacks<T>(World world) where T : CallbackSystem
+		{
+			var worldData = worldDataById[world.Id];
+
+			if (worldData.SystemsByType.TryGetValue(typeof(T), out var callbacks)) {
+				for (int i = 0; i < callbacks.Count; i++) {
+					callbacks[i].Update();
+				}
 			}
 		}
 
-		private static void AddDefaultSystemsToWorld(World world)
+		private static void AddDefaultSystemsToWorld(World world, bool addSystems = true, bool addCallbacks = true)
 		{
+			if (!addCallbacks && !addSystems) {
+				return;
+			}
+
 			for (int i = 0; i < SystemTypes.Count; i++) {
 				var type = SystemTypes[i];
-				var system = (GameSystem)Activator.CreateInstance(type);
+				bool isCallback = typeof(CallbackSystem).IsAssignableFrom(type);
 
-				AddSystemToWorld(world, system, sortSystems: i == SystemTypes.Count - 1);
+				if (isCallback ? addCallbacks : addSystems) {
+					var system = (GameSystem)Activator.CreateInstance(type);
+
+					AddSystemToWorld(world, system);
+				}
 			}
+
+			Debug.Log($"Configuration of world {world.Id}:");
+
+			var loggedCallbacks = new GameSystem[] {
+				world.GetSystem<RootFixedUpdateCallback>(),
+				world.GetSystem<RootRenderUpdateCallback>(),
+			};
+
+			LogSystemCallbackTree(loggedCallbacks);
 		}
 
 		private static void OnAssemblyRegistered(Assembly assembly, Type[] types)
@@ -174,28 +180,57 @@ namespace Dissonance.Engine
 				}
 
 				SystemTypes.Add(type);
+			}
+		}
 
-				var systemTypeInfo = new SystemTypeData(type);
+		private static void LogSystemCallbackTree(ReadOnlySpan<GameSystem> systems)
+		{
+			for (int i = 0; i < systems.Length; i++) {
+				LogSystemCallbackTree(systems[i], string.Empty, i == systems.Length - 1);
+			}
+		}
 
-				// Fill a dictionary that stores, by component type, lists of system types that write that component.
-				foreach (var writeType in systemTypeInfo.WriteTypes) {
-					if (!ComponentTypeToWritingSystemTypes.TryGetValue(writeType, out var writingSystems)) {
-						ComponentTypeToWritingSystemTypes[writeType] = writingSystems = new List<Type>();
+		private static void LogSystemCallbackTree(GameSystem system, string indent, bool last)
+		{
+			Console.Write(indent);
+
+			if (last) {
+				Console.Write("└─");
+
+				indent += "  ";
+			} else {
+				Console.Write("├─");
+
+				indent += "│ ";
+			}
+
+			var systemType = system.GetType();
+			bool isEngineSystem = systemType.Assembly == Assembly.GetExecutingAssembly();
+			bool isCallback = typeof(CallbackSystem).IsAssignableFrom(systemType);
+
+			Console.ForegroundColor = isEngineSystem
+				? (isCallback ? ConsoleColor.DarkGray : ConsoleColor.Gray)
+				: (isCallback ? ConsoleColor.DarkGreen : ConsoleColor.Green);
+
+			Console.WriteLine(system.GetType().Name);
+
+			Console.ForegroundColor = ConsoleColor.Gray;
+
+			if (system is CallbackSystem callbackSystem) {
+				var enumerator = callbackSystem.InvocationList.GetEnumerator();
+
+				if (enumerator.MoveNext()) {
+					bool hasEntries;
+
+					do {
+						var entry = enumerator.Current;
+
+						hasEntries = enumerator.MoveNext();
+
+						LogSystemCallbackTree(entry, indent, !hasEntries);
 					}
-
-					writingSystems.Add(type);
+					while (hasEntries);
 				}
-
-				// Fill a dictionary that stores, by message type, lists of system types that send that message type.
-				foreach (var sendType in systemTypeInfo.SendTypes) {
-					if (!MessageTypeToSendingSystemTypes.TryGetValue(sendType, out var sendingSystems)) {
-						MessageTypeToSendingSystemTypes[sendType] = sendingSystems = new List<Type>();
-					}
-
-					sendingSystems.Add(type);
-				}
-
-				SystemTypeInfo[type] = systemTypeInfo;
 			}
 		}
 	}

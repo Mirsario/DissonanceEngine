@@ -3,13 +3,11 @@ using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<CollisionShapesInfo>]
-	[Writes<CollisionShapesInfo>]
-	[Receives<AddCollisionShapeMessage>]
-	[Receives<RemoveCollisionShapeMessage>]
+	[Callback<PhysicsUpdateGroup>]
+	[ExecuteAfter<ColliderUpdateGroup>]
 	public sealed class CollisionShapesInfoSystem : GameSystem
 	{
-		protected internal override void FixedUpdate()
+		protected override void Execute()
 		{
 			// Remove collision shapes
 			foreach (var message in ReadMessages<RemoveCollisionShapeMessage>()) {

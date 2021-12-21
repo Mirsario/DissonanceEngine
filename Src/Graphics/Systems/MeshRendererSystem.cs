@@ -1,22 +1,18 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads<GeometryPassData>]
-	[Reads<Transform>]
-	[Reads<MeshRenderer>]
-	[Reads<Layer>]
-	[Writes<GeometryPassData>]
+	[Callback<RenderingCallback>]
 	public sealed class MeshRendererSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<MeshRenderer>() && e.Has<Transform>());
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
-			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
+			ref var geometryPassData = ref Global.Get<GeometryPassData>();
 
 			foreach (var entity in entities.ReadEntities()) {
 				var renderer = entity.Get<MeshRenderer>();
