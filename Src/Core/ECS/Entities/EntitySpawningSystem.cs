@@ -2,14 +2,11 @@
 
 namespace Dissonance.Engine
 {
-	[Receives<SpawnEntityMessage>]
+	[Callback<EndRenderUpdateCallback>]
+	[Callback<EndFixedUpdateCallback>]
 	public sealed class EntitySpawningSystem : GameSystem
 	{
-		protected internal override void FixedUpdate() => Update();
-
-		protected internal override void RenderUpdate() => Update();
-
-		private void Update()
+		protected override void Execute()
 		{
 			foreach (var message in ReadMessages<SpawnEntityMessage>()) {
 				var prefab = Assets.Find<EntityPrefab>(message.PrefabName).GetValueImmediately();

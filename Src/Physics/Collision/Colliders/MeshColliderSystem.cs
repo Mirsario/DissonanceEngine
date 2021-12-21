@@ -1,20 +1,16 @@
 ﻿namespace Dissonance.Engine.Physics
 {
-	[Reads<MeshCollider>]
-	[Writes<MeshCollider>]
-	[Receives<ComponentRemovedMessage<MeshCollider>>]
-	[Sends<AddCollisionShapeMessage>]
-	[Sends<RemoveCollisionShapeMessage>]
+	[Callback<ColliderUpdateGroup>]
 	public sealed class MeshColliderSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<MeshCollider>());
 		}
 
-		protected internal override void FixedUpdate()
+		protected override void Execute()
 		{
 			// Unregister colliders when their component is removed
 			foreach (var message in ReadMessages<ComponentRemovedMessage<MeshCollider>>()) {

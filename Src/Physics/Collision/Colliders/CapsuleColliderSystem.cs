@@ -2,21 +2,17 @@
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<CapsuleCollider>]
-	[Writes<CapsuleCollider>]
-	[Receives<ComponentRemovedMessage<CapsuleCollider>>]
-	[Sends<AddCollisionShapeMessage>]
-	[Sends<RemoveCollisionShapeMessage>]
+	[Callback<ColliderUpdateGroup>]
 	public sealed class CapsuleColliderSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<CapsuleCollider>());
 		}
 
-		protected internal override void FixedUpdate()
+		protected override void Execute()
 		{
 			// Unregister colliders when their component is removed
 			foreach (var message in ReadMessages<ComponentRemovedMessage<CapsuleCollider>>()) {

@@ -33,15 +33,24 @@ namespace Dissonance.Engine
 		public void AddSystem<T>() where T : GameSystem
 			=> SystemManager.AddSystemToWorld<T>(this);
 
+		public T GetSystem<T>() where T : GameSystem
+			=> SystemManager.GetWorldSystem<T>(this);
+
+		public bool TryGetSystem<T>(out T result) where T : GameSystem
+			=> SystemManager.TryGetWorldSystem<T>(this, out result);
+
+		public void ExecuteCallbacks<T>() where T : CallbackSystem
+			=> SystemManager.ExecuteCallbacks<T>(this);
+
 		// Components
 
-		internal bool Has<T>() where T : struct
+		public bool Has<T>() where T : struct
 			=> WorldEntity.Has<T>();
 
-		internal ref T Get<T>() where T : struct
+		public ref T Get<T>() where T : struct
 			=> ref WorldEntity.Get<T>();
 
-		internal void Set<T>(T value) where T : struct
+		public void Set<T>(T value) where T : struct
 			=> WorldEntity.Set(value);
 
 		// Messages

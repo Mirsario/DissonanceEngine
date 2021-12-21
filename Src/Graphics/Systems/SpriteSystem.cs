@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
 {
-	[Reads<GeometryPassData>]
-	[Reads<Transform>]
-	[Reads<Sprite>]
-	[Writes<GeometryPassData>]
+	[Callback<RenderingCallback>]
 	public sealed class SpriteSystem : GameSystem
 	{
 		private class BatchData : IDisposable
@@ -28,16 +26,16 @@ namespace Dissonance.Engine.Graphics
 		private EntitySet entities;
 		private Dictionary<ulong, BatchData> batches;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
 			batches = new();
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
 			var entitiesSpan = entities.ReadEntities();
-			ref var geometryPassData = ref GlobalGet<GeometryPassData>();
+			ref var geometryPassData = ref Global.Get<GeometryPassData>();
 
 			static ulong GetBatchIndex(uint materialId, uint layerId)
 				=> (layerId << 32) | materialId;

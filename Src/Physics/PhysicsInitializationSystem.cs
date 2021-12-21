@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
-using BulletSharp;
+﻿using BulletSharp;
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<WorldPhysics>]
-	[Writes<WorldPhysics>]
+	[Callback<PhysicsUpdateGroup>]
 	public sealed class PhysicsInitializationSystem : GameSystem
 	{
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
-			var physics = WorldHas<WorldPhysics>() ? WorldGet<WorldPhysics>() : WorldPhysics.Default;
+			var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
 
 			physics.CollisionDispatcher ??= new CollisionDispatcher(PhysicsEngine.collisionConf);
 			physics.PhysicsWorld ??= new DiscreteDynamicsWorld(physics.CollisionDispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
 				Gravity = physics.Gravity
 			};
 
-			WorldSet(physics);
+			World.Set(physics);
 		}
 	}
 }

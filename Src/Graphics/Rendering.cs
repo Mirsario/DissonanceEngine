@@ -133,6 +133,12 @@ namespace Dissonance.Engine.Graphics
 			// Clear the screen
 			ClearScreen();
 
+			// Execute rendering systems
+
+			foreach (var world in WorldManager.ReadWorlds()) {
+				world.ExecuteCallbacks<RootRenderingCallback>();
+			}
+
 			// RenderPasses
 			var pipeline = RenderingPipeline;
 
