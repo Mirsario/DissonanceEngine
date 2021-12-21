@@ -1,10 +1,6 @@
 ﻿namespace Dissonance.Engine.Physics
 {
-	[Reads<MeshCollider>]
-	[Writes<MeshCollider>]
-	[Receives<ComponentRemovedMessage<MeshCollider>>]
-	[Sends<AddCollisionShapeMessage>]
-	[Sends<RemoveCollisionShapeMessage>]
+	[Callback<ColliderUpdateGroup>]
 	public sealed partial class MeshColliderSystem : GameSystem
 	{
 		[MessageSubsystem]

@@ -2,17 +2,11 @@
 
 namespace Dissonance.Engine.Audio
 {
-	[Reads<AudioSource>]
-	[Reads<Transform>]
-	[Writes<AudioSource>]
-	[Receives<PlayAudioSourceMessage>]
-	[Receives<PauseAudioSourceMessage>]
-	[Receives<StopAudioSourceMessage>]
-	[Receives<ComponentRemovedMessage<AudioSource>>]
+	[Callback<EndFixedUpdateCallback>]
+	[Callback<EndRenderUpdateCallback>]
+	[ExecuteAfter<EntitySpawningSystem>]
 	public sealed partial class AudioSourceSystem : GameSystem
 	{
-		protected internal override void RenderUpdate() => FixedUpdate();
-
 		// Dispose sources
 
 		[MessageSubsystem]

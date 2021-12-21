@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
@@ -20,7 +21,7 @@ namespace Dissonance.Engine
 			public readonly List<int> AllEntityIds = new();
 			public readonly List<int> ActiveEntityIds = new();
 			public readonly List<int> InactiveEntityIds = new();
-			public readonly Queue<int> FreeEntityIndices = new();
+			public readonly ConcurrentBag<int> FreeEntityIndices = new();
 			public EntityData[] EntityData = Array.Empty<EntityData>();
 			public int NextEntityIndex;
 			// Entity Sets
@@ -50,7 +51,7 @@ namespace Dissonance.Engine
 
 			int id;
 
-			if (worldData.FreeEntityIndices.TryDequeue(out int freeIndex)) {
+			if (worldData.FreeEntityIndices.TryTake(out int freeIndex)) {
 				id = freeIndex;
 			} else {
 				id = worldData.NextEntityIndex++;
@@ -60,7 +61,13 @@ namespace Dissonance.Engine
 
 			lock (lockObject) {
 				if (id >= worldData.EntityData.Length) {
-					Array.Resize(ref worldData.EntityData, Math.Max(1, worldData.EntityData.Length * 2));
+					int newSize = Math.Max(1, worldData.EntityData.Length);
+
+					while (newSize <= id) {
+						newSize *= 2;
+					}
+
+					Array.Resize(ref worldData.EntityData, newSize);
 				}
 
 				worldData.EntityData[id] = new EntityData {
@@ -89,13 +96,15 @@ namespace Dissonance.Engine
 
 						ref var entityData = ref worldData.EntityData[entityId];
 
-						foreach (int componentId in CollectionsMarshal.AsSpan(entityData.PresentComponentTypes)) {
-							ComponentManager.RemoveComponent(componentId, worldId, entityId);
+						lock (entityData.PresentComponentTypes) {
+							foreach (int componentId in CollectionsMarshal.AsSpan(entityData.PresentComponentTypes)) {
+								ComponentManager.RemoveComponent(componentId, worldId, entityId);
+							}
 						}
 
 						entityData = default;
 
-						worldData.FreeEntityIndices.Enqueue(entityId);
+						worldData.FreeEntityIndices.Add(entityId);
 					}
 
 					return true;
@@ -179,15 +188,22 @@ namespace Dissonance.Engine
 		internal static void OnEntityComponentAdded<T>(Entity entity) where T : struct
 		{
 			int componentId = ComponentManager.GetComponentId<T>();
+			var presentComponentTypes = worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes;
 
-			worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes.Add(componentId);
+			lock (presentComponentTypes) {
+				presentComponentTypes.Add(componentId);
+			}
 
 			UpdateEntitySets(entity);
 		}
 
 		internal static void OnEntityComponentRemoved<T>(Entity entity) where T : struct
 		{
-			worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes.Remove(ComponentManager.GetComponentId<T>());
+			var presentComponentTypes = worldDataById[entity.WorldId].EntityData[entity.Id].PresentComponentTypes;
+
+			lock (presentComponentTypes) {
+				presentComponentTypes.Remove(ComponentManager.GetComponentId<T>());
+			}
 
 			UpdateEntitySets(entity);
 		}

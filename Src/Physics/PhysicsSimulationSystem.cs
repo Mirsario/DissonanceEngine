@@ -2,10 +2,8 @@
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<WorldPhysics>]
-	[Reads<Rigidbody>]
-	[Reads<Transform>]
-	[Writes<Transform>]
+	[Callback<PhysicsUpdateGroup>]
+	[ExecuteAfter<PhysicsInitializationSystem>]
 	public sealed partial class PhysicsSimulationSystem : GameSystem
 	{
 		[Subsystem]

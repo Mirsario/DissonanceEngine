@@ -1,21 +1,19 @@
 ﻿namespace Dissonance.Engine.Graphics
 {
-	[Reads<RenderViewData>]
-	[Reads<Camera>]
-	[Reads<Transform>]
-	[Writes<RenderViewData>]
+	[Callback<RenderingCallback>]
+	[ExecuteAfter<CameraUpdateSystem>]
 	public sealed class CameraRenderSystem : GameSystem
 	{
 		private EntitySet entities;
 
-		protected internal override void Initialize()
+		protected override void Initialize()
 		{
 			entities = World.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
 		}
 
-		protected internal override void RenderUpdate()
+		protected override void Execute()
 		{
-			ref var renderViewData = ref GlobalGet<RenderViewData>();
+			ref var renderViewData = ref Global.Get<RenderViewData>();
 
 			foreach (var entity in entities.ReadEntities()) {
 				var camera = entity.Get<Camera>();

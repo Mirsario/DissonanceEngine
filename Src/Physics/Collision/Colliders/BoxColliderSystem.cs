@@ -2,11 +2,7 @@
 
 namespace Dissonance.Engine.Physics
 {
-	[Reads<BoxCollider>]
-	[Writes<BoxCollider>]
-	[Receives<ComponentRemovedMessage<BoxCollider>>]
-	[Sends<AddCollisionShapeMessage>]
-	[Sends<RemoveCollisionShapeMessage>]
+	[Callback<ColliderUpdateGroup>]
 	public sealed partial class BoxColliderSystem : GameSystem
 	{
 		[MessageSubsystem]
