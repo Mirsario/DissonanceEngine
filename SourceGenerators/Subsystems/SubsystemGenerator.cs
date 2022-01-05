@@ -45,7 +45,7 @@ namespace SourceGenerators.Subsystems
 				bool errorsDetected = false;
 				var subsystemMethods = new List<(MethodPair methodPair, ISubsystemWriter writer)>();
 
-				Console.WriteLine($"Enumerating type system: {systemPair.Symbol.Name}");
+				//Console.WriteLine($"Enumerating type system: {systemPair.Symbol.Name}");
 
 				foreach (var systemMethodPair in systemMethods) {
 					ISubsystemWriter? methodWriter = null;
@@ -89,7 +89,7 @@ namespace SourceGenerators.Subsystems
 					subsystemMethods.Add((systemMethodPair, methodWriter));
 				}
 
-				Console.WriteLine($"Found subsystems: {foundSubsystems}");
+				//Console.WriteLine($"Found subsystems: {foundSubsystems}");
 
 				if (!foundSubsystems) {
 					continue;
