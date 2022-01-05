@@ -130,7 +130,7 @@ namespace SourceGenerators.Subsystems
 				code.AppendLine($"{{");
 				code.Indent();
 
-				code.AppendLine($"partial {systemPair.Symbol.TypeKind.ToString().ToLower()} {systemPair.Symbol.Name}");
+				code.AppendLine($"sealed partial {systemPair.Symbol.TypeKind.ToString().ToLower()} {systemPair.Symbol.Name}");
 				code.AppendLine($"{{");
 				code.Indent();
 
