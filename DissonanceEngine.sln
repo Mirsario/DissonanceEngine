@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DissonanceEngine", "Src\Dis
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DissonanceFramework", "Framework\Src\DissonanceFramework.csproj", "{B959EA7C-AB78-4CB0-BF20-9F821C2EABF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenerators", "SourceGenerators\SourceGenerators.csproj", "{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DissonanceSourceGen", "SourceGenerators\DissonanceSourceGen.csproj", "{52914A8B-BCFF-48D0-B7F0-5522D7BD1216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
