@@ -21,7 +21,7 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="../Framework/Src/DissonanceFramework.csproj" />
-		<ProjectReference Include="../SourceGenerators/SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="../SourceGenerators/DissonanceSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 	
 	<ItemGroup>
