@@ -59,9 +59,8 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void PreInit()
 		{
-			lock(GlfwLock) {
-				GLFW.SetErrorCallback((GLFWError code, string description) => Debug.Log(code switch
-				{
+			lock (GlfwLock) {
+				GLFW.SetErrorCallback((GLFWError code, string description) => Debug.Log(code switch {
 					GLFWError.VersionUnavailable => throw new GraphicsException(description),
 					_ => $"GLFW Error {code}: {description}"
 				}));
@@ -109,12 +108,20 @@ namespace Dissonance.Engine.Graphics
 
 		private void UpdateValues()
 		{
-			// Framebuffer
-			GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
+			// Don't change resolution when minimized
+			if (GLFW.GetWindowAttrib(WindowHandle, WindowAttribute.Iconified) == 0) {
+				// Framebuffer
+				GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
 
-			// Window
-			GLFW.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
-			GLFW.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
+				// Window
+				GLFW.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
+				GLFW.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
+			}
+
+			framebufferSize.X = Math.Max(1, framebufferSize.X);
+			framebufferSize.Y = Math.Max(1, framebufferSize.Y);
+			windowSize.X = Math.Max(1, windowSize.X);
+			windowSize.Y = Math.Max(1, windowSize.Y);
 		}
 
 		private void InitCallbacks()
