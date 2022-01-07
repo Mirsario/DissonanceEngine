@@ -22,9 +22,18 @@ namespace Dissonance.Engine
 			WorldId = worldId;
 		}
 
+		/// <summary>
+		/// Returns whether or not this entity contains a value for the specified component type.
+		/// </summary>
+		/// <typeparam name="T"> The component type. </typeparam>
 		public bool Has<T>() where T : struct
 			=> ComponentManager.HasComponent<T>(WorldId, Id);
 
+		/// <summary>
+		/// Returns a reference to this entity's value for the specified component type. Throws exceptions on failure.
+		/// </summary>
+		/// <typeparam name="T"> The component type. </typeparam>
+		/// <exception cref="IndexOutOfRangeException" />
 		public ref T Get<T>() where T : struct
 			=> ref ComponentManager.GetComponent<T>(WorldId, Id);
 

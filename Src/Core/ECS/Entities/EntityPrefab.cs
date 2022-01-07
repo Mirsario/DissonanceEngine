@@ -20,12 +20,26 @@ namespace Dissonance.Engine
 		public override int GetHashCode()
 			=> Id;
 
+		/// <summary>
+		/// Returns whether or not this entity prefab contains a value for the specified component type.
+		/// </summary>
+		/// <typeparam name="T"> The component type. </typeparam>
 		public bool Has<T>() where T : struct
 			=> ComponentManager.HasComponent<T>(WorldManager.PrefabWorldId, Id);
 
+		/// <summary>
+		/// Returns a reference to this entity prefab's value for the specified component type. Throws exceptions on failure.
+		/// </summary>
+		/// <typeparam name="T"> The component type. </typeparam>
+		/// <exception cref="IndexOutOfRangeException" />
 		public ref T Get<T>() where T : struct
 			=> ref ComponentManager.GetComponent<T>(WorldManager.PrefabWorldId, Id);
 
+		/// <summary>
+		/// Creates an entity in the provided world and copies this prefab's components into it, effectively instantiating the prefab.
+		/// </summary>
+		/// <param name="world"> The world to create a clone in. </param>
+		/// <returns> The clone entity. </returns>
 		public Entity Clone(World world)
 			=> EntityManager.CloneEntity(WorldManager.PrefabWorldId, Id, world.Id);
 
