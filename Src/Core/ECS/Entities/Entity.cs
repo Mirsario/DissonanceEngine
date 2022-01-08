@@ -46,6 +46,14 @@ namespace Dissonance.Engine
 		public void Destroy()
 			=> EntityManager.RemoveEntity(WorldId, Id);
 
+		/// <summary>
+		/// Copies this entity's components into the provided destination entity.
+		/// <br/> Components that were already present on the destination entity get fully overwritten in case of overlap, and remain untouched otherwise.
+		/// </summary>
+		/// <param name="destinationEntity"> The entity to copy components into. </param>
+		public void CopyInto(Entity destinationEntity)
+			=> EntityManager.CopyEntityComponents(WorldManager.PrefabWorldId, Id, destinationEntity.WorldId, destinationEntity.Id);
+
 		public Entity Clone(World world)
 			=> EntityManager.CloneEntity(WorldId, Id, world.Id);
 	}
