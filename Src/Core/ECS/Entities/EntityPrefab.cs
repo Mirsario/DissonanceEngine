@@ -57,5 +57,7 @@ namespace Dissonance.Engine
 
 		public static bool operator !=(EntityPrefab left, EntityPrefab right)
 			=> left.Id != right.Id;
+
+		public static explicit operator Entity(EntityPrefab prefab) => new(prefab.Id, WorldManager.PrefabWorldId);
 	}
 }
