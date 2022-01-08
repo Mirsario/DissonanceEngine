@@ -19,32 +19,13 @@ namespace Dissonance.Engine.IO
 		{
 			string assetPath = assetFile.Path;
 
-			var json = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value;
-			var entity = WorldManager.PrefabWorld.CreateEntity();
-			var prefab = new EntityPrefab(entity.Id);
-
-			ParseComponents(prefab, json, assetPath);
-
-			return prefab;
-		}
-
-		private static void ParseComponents(EntityPrefab prefab, JObject jsonContainer, string assetPath)
-		{
+			// A better design would be nice.
 			AssetJsonConverter.BaseAssetPath = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-			object[] parameterArray = new object[1];
+			var json = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value;
+			var prefab = json.ToObject<EntityPrefab>();
 
-			foreach (var pair in jsonContainer) {
-				var jsonElement = pair.Value;
-				var componentType = ComponentManager.GetComponentTypeFromName(pair.Key);
-
-				parameterArray[0] = jsonElement.ToObject(componentType);
-
-				//TODO: Optimize.
-				EntityPrefabSetMethod
-					.MakeGenericMethod(componentType)
-					.Invoke(prefab, parameterArray);
-			}
+			return prefab;
 		}
 	}
 }
