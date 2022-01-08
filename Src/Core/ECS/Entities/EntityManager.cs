@@ -116,14 +116,20 @@ namespace Dissonance.Engine
 
 		internal static Entity CloneEntity(int sourceWorldId, int sourceEntityId, int destinationWorldId)
 		{
-			var entityData = worldDataById[sourceWorldId].EntityData[sourceEntityId];
 			var clone = CreateEntity(destinationWorldId, true);
 
-			foreach (int componentId in entityData.PresentComponentTypes) {
-				ComponentManager.CopyComponent(componentId, sourceWorldId, sourceEntityId, destinationWorldId, clone.Id);
-			}
+			CopyEntityComponents(sourceWorldId, sourceEntityId, destinationWorldId, clone.Id);
 
 			return clone;
+		}
+
+		internal static void CopyEntityComponents(int sourceWorldId, int sourceEntityId, int destinationWorldId, int destinationEntityId)
+		{
+			var entityData = worldDataById[sourceWorldId].EntityData[sourceEntityId];
+
+			foreach (int componentId in entityData.PresentComponentTypes) {
+				ComponentManager.CopyComponent(componentId, sourceWorldId, sourceEntityId, destinationWorldId, destinationEntityId);
+			}
 		}
 
 		internal static bool GetEntityIsActive(in Entity entity)
