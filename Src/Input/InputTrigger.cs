@@ -39,6 +39,15 @@ namespace Dissonance.Engine.Input
 				CurrentInput.IsPressed = value != 0f;
 			}
 		}
+
+		public float PreviousValue {
+			get => CurrentInput.PrevAnalogInput;
+			internal set {
+				CurrentInput.PrevAnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
+				CurrentInput.WasPressed = value != 0f;
+			}
+		}
+
 		public InputBinding[] Bindings {
 			set {
 				if (value == null) {
