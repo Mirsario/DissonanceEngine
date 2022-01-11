@@ -11,7 +11,7 @@ namespace Dissonance.Engine
 		//TODO: Reduce memory usage later?
 		private struct EntityData
 		{
-			public bool IsActive;
+			public bool IsActive = default;
 			public List<int> PresentComponentTypes = new();
 		}
 
