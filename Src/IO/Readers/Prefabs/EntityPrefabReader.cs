@@ -19,6 +19,8 @@ namespace Dissonance.Engine.IO
 		{
 			string assetPath = assetFile.Path;
 
+			await switchToMainThread; // Thread-safety is quite bad for now.
+
 			// A better design would be nice.
 			AssetJsonConverter.BaseAssetPath = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
