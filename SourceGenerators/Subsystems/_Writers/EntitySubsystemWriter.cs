@@ -20,18 +20,26 @@ namespace SourceGenerators.Subsystems
 
 			base.WriteData(data, ref hasErrors);
 
-			// Create an entity set
-			string entitySetName = $"entities{data.Method.Symbol.Name}";
+			string readEntitiesCall;
 
-			data.SystemData.Members.Add(($"private EntitySet {entitySetName};", MemberFlag.Field | MemberFlag.Private));
+			if (writerData.RequiredComponentTypes.Count != 0) {
+				// Create an entity set
+				string entitySetName = $"entities{data.Method.Symbol.Name}";
 
-			data.SystemData.InitCode.Append($"{entitySetName} = World.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+				data.SystemData.Members.Add(($"private EntitySet {entitySetName};", MemberFlag.Field | MemberFlag.Private));
+
+				data.SystemData.InitCode.Append($"{entitySetName} = World.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+
+				readEntitiesCall = $"{entitySetName}.ReadEntities()";
+			} else {
+				readEntitiesCall = "World.ReadEntities()";
+			}
 
 			// Write update code
 
 			string argumentsCode = string.Join(", ", data.Parameters.Select(p => p.ArgumentCode.ToString()));
 
-			data.InvocationCode.AppendLine($"foreach (var entity in {entitySetName}.ReadEntities()) {{");
+			data.InvocationCode.AppendLine($"foreach (var entity in {readEntitiesCall}) {{");
 			data.InvocationCode.Indent();
 
 			data.InvocationCode.AppendCode(data.ArgumentCheckCode);
