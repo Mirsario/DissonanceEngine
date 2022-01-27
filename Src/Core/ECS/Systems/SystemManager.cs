@@ -56,6 +56,41 @@ namespace Dissonance.Engine
 			}
 		}
 
+		/// <summary>
+		/// Prints a tree of subscribers of the default callback systems on the provided world to the console.
+		/// </summary>
+		/// <param name="world"> The world to get default callback instances from. </param>
+		public static void LogDefaultSystemCallbacksTree(World world)
+		{
+			Debug.Log($"Configuration of world {world.Id}:");
+
+			var array = new CallbackSystem[] {
+				world.GetSystem<RootFixedUpdateCallback>(),
+				world.GetSystem<RootRenderUpdateCallback>(),
+			};
+
+			array = array.Where(s => s != null).ToArray();
+
+			LogSystemCallbacksTree(array);
+		}
+
+		/// <summary>
+		/// Prints a tree of subscribers of the provided callback systems to the console. Useful when debugging with no editor to help.
+		/// </summary>
+		/// <param name="callbackSystems"> The callback systems to make trees of. </param>
+		public static void LogSystemCallbacksTree(params CallbackSystem[] callbackSystems)
+			=> LogSystemCallbacksTree((ReadOnlySpan<CallbackSystem>)callbackSystems);
+
+		/// <inheritdoc cref="LogSystemCallbacksTree(CallbackSystem[])"/>
+		public static void LogSystemCallbacksTree(ReadOnlySpan<CallbackSystem> callbackSystems)
+		{
+			lock (Debug.LoggingLock) {
+				for (int i = 0; i < callbackSystems.Length; i++) {
+					LogSystemCallbacksTree(callbackSystems[i], string.Empty, i == callbackSystems.Length - 1);
+				}
+			}
+		}
+
 		internal static SystemTypeData GetSystemTypeData<T>() where T : GameSystem
 			=> GetSystemTypeData(typeof(T));
 
@@ -161,15 +196,6 @@ namespace Dissonance.Engine
 					AddSystemToWorld(world, system);
 				}
 			}
-
-			Debug.Log($"Configuration of world {world.Id}:");
-
-			var loggedCallbacks = new GameSystem[] {
-				world.GetSystem<RootFixedUpdateCallback>(),
-				world.GetSystem<RootRenderUpdateCallback>(),
-			};
-
-			LogSystemCallbackTree(loggedCallbacks);
 		}
 
 		private static void OnAssemblyRegistered(Assembly assembly, Type[] types)
@@ -183,14 +209,7 @@ namespace Dissonance.Engine
 			}
 		}
 
-		private static void LogSystemCallbackTree(ReadOnlySpan<GameSystem> systems)
-		{
-			for (int i = 0; i < systems.Length; i++) {
-				LogSystemCallbackTree(systems[i], string.Empty, i == systems.Length - 1);
-			}
-		}
-
-		private static void LogSystemCallbackTree(GameSystem system, string indent, bool last)
+		private static void LogSystemCallbacksTree(GameSystem system, string indent, bool last)
 		{
 			Console.Write(indent);
 
@@ -227,7 +246,7 @@ namespace Dissonance.Engine
 
 						hasEntries = enumerator.MoveNext();
 
-						LogSystemCallbackTree(entry, indent, !hasEntries);
+						LogSystemCallbacksTree(entry, indent, !hasEntries);
 					}
 					while (hasEntries);
 				}
