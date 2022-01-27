@@ -44,16 +44,20 @@ namespace Dissonance.Engine
 
 		protected override void FixedUpdate()
 		{
-			foreach (var world in WorldManager.ReadWorlds()) {
-				world.ExecuteCallbacks<RootFixedUpdateCallback>();
-			}
+			var worlds = WorldManager.ReadWorlds();
+
+			ExecuteCallbackOnWorlds<BeginFixedUpdateCallback>(worlds);
+			ExecuteCallbackOnWorlds<FixedUpdateCallback>(worlds);
+			ExecuteCallbackOnWorlds<EndFixedUpdateCallback>(worlds);
 		}
 
 		protected override void RenderUpdate()
 		{
-			foreach (var world in WorldManager.ReadWorlds()) {
-				world.ExecuteCallbacks<RootRenderUpdateCallback>();
-			}
+			var worlds = WorldManager.ReadWorlds();
+
+			ExecuteCallbackOnWorlds<BeginRenderUpdateCallback>(worlds);
+			ExecuteCallbackOnWorlds<RenderUpdateCallback>(worlds);
+			ExecuteCallbackOnWorlds<EndRenderUpdateCallback>(worlds);
 		}
 
 		/// <summary>
@@ -65,8 +69,12 @@ namespace Dissonance.Engine
 			Debug.Log($"Configuration of world {world.Id}:");
 
 			var array = new CallbackSystem[] {
-				world.GetSystem<RootFixedUpdateCallback>(),
-				world.GetSystem<RootRenderUpdateCallback>(),
+				world.GetSystem<BeginFixedUpdateCallback>(),
+				world.GetSystem<FixedUpdateCallback>(),
+				world.GetSystem<EndFixedUpdateCallback>(),
+				world.GetSystem<BeginRenderUpdateCallback>(),
+				world.GetSystem<RenderUpdateCallback>(),
+				world.GetSystem<EndRenderUpdateCallback>(),
 			};
 
 			array = array.Where(s => s != null).ToArray();
@@ -250,6 +258,13 @@ namespace Dissonance.Engine
 					}
 					while (hasEntries);
 				}
+			}
+		}
+
+		private static void ExecuteCallbackOnWorlds<T>(ReadOnlySpan<World> worlds) where T : CallbackSystem
+		{
+			foreach (var world in worlds) {
+				world.ExecuteCallbacks<T>();
 			}
 		}
 	}
