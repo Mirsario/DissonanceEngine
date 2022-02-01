@@ -8,9 +8,10 @@ namespace Dissonance.Engine.Physics
 			Gravity = new Vector3(0f, -9.81f, 0f)
 		};
 
-		public Vector3 Gravity { get; set; }
-
-		internal DiscreteDynamicsWorld PhysicsWorld { get; set; }
-		internal CollisionDispatcher CollisionDispatcher { get; set; }
+		public DbvtBroadphase Broadphase;
+		public CollisionConfiguration CollisionConfiguration;
+		public DiscreteDynamicsWorld PhysicsWorld;
+		public CollisionDispatcher CollisionDispatcher;
+		public Vector3 Gravity;
 	}
 }
