@@ -4,7 +4,5 @@
 	{
 		public bool AddDefaultSystems = true;
 		public bool AddDefaultCallbacks = true;
-
-		public WorldCreationOptions() { }
 	}
 }

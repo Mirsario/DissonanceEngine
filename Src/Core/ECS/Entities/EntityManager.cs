@@ -11,10 +11,8 @@ namespace Dissonance.Engine
 		//TODO: Reduce memory usage later?
 		private struct EntityData
 		{
-			public bool IsActive = default;
+			public bool IsActive;
 			public List<int> PresentComponentTypes = new();
-
-			public EntityData() { }
 		}
 
 		private class WorldData
@@ -29,8 +27,6 @@ namespace Dissonance.Engine
 			// Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
 			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
-
-			public WorldData() { }
 		}
 
 		private static readonly object lockObject = new();
