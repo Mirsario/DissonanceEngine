@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+#pragma warning disable CS0649
+
 namespace Dissonance.Engine.Input
 {
 	public abstract class SingletonInputTrigger : InputTrigger
