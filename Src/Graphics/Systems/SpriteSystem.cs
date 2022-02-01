@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using Dissonance.Framework.Graphics;
 
 namespace Dissonance.Engine.Graphics
@@ -11,7 +10,7 @@ namespace Dissonance.Engine.Graphics
 		private class BatchData : IDisposable
 		{
 			public int EntityCount;
-			public int NextEntityId;
+			///public int NextEntityId;
 			public Entity[] Entities;
 			public Material Material;
 			public LayerMask LayerMask;

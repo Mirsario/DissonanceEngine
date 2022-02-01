@@ -183,8 +183,6 @@ namespace Dissonance.Engine
 			}
 
 			if (dataId < 0) {
-				bool resized = false;
-
 				if (!worldData.FreeDataIndices.TryTake(out dataId)) {
 					lock (worldData.DataResizingLock) {
 						dataId = worldData.NextDataIndex++;
@@ -197,8 +195,6 @@ namespace Dissonance.Engine
 							}
 
 							Array.Resize(ref worldData.Data, newSize);
-
-							resized = true;
 						}
 					}
 				}

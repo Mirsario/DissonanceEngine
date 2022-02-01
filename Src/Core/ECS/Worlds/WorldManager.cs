@@ -14,7 +14,7 @@ namespace Dissonance.Engine
 		public static World PrefabWorld { get; private set; }
 
 		internal static event Action<World, WorldCreationOptions> OnWorldCreated;
-		internal static event Action<World> OnWorldDestroyed;
+		internal static event Action<World> OnWorldDestroyed; //TODO: Call this.
 
 		private static readonly List<World> Worlds = new() { null };
 

@@ -22,7 +22,7 @@ namespace Dissonance.Engine.IO
 		public AssetState State { get; internal set; }
 
 		/// <summary> The file source of this asset. Can be null. </summary>
-		public AssetFileEntry? File { get; internal set; }
+		public AssetFileEntry File { get; internal set; }
 
 		/// <summary> Whether or not this asset is currently being loaded. </summary>
 		public bool IsLoading => State == AssetState.Loading;
