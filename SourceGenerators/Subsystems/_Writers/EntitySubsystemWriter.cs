@@ -8,6 +8,8 @@ namespace SourceGenerators.Subsystems
 		private struct WriterData
 		{
 			public List<string> RequiredComponentTypes = new();
+
+			public WriterData() { }
 		}
 
 		private WriterData writerData;
