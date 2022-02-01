@@ -18,7 +18,6 @@ namespace Dissonance.Engine.Physics
 		public static readonly Rigidbody Default = new();
 
 		internal bool ownsCollisionShape = default;
-		internal bool collisionsHaveBeenModified = default;
 		internal UpdateFlags updateFlags = default;
 		internal RigidBody bulletRigidbody = default;
 		internal Vector3? pendingVelocity = default;

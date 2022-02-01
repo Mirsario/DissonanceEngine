@@ -15,6 +15,13 @@ namespace Dissonance.Engine.Physics
 			physics.PhysicsWorld.StepSimulation(Time.FixedDeltaTime);
 		}
 
+
+		[EntitySubsystem]
+		private static partial void UpdateRigidbodies(ref Rigidbody rigidbody)
+		{
+			rigidbody.collisions?.Clear(); //TODO: Optimize, avoid reallocations every frame...
+		}
+
 		[Subsystem]
 		private static partial void UpdateCollisions([FromWorld] ref WorldPhysics physics)
 		{
@@ -60,7 +67,6 @@ namespace Dissonance.Engine.Physics
 						);
 					}
 
-					thisRigidbody.collisionsHaveBeenModified = true;
 					thisRigidbody.collisions ??= new List<Collision>();
 
 					thisRigidbody.collisions.Add(new Collision(otherEntity, contacts));
@@ -69,17 +75,9 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[EntitySubsystem]
-		private static partial void UpdateRigidbodies(ref Rigidbody rigidbody, ref Transform transform)
+		private static partial void UpdateRigidbodyTransformations(ref Rigidbody rigidbody, ref Transform transform)
 		{
-			// Update transforms based on rigidbody positions
 			transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
-
-			// And also clear collisions if needed
-			if (!rigidbody.collisionsHaveBeenModified) {
-				rigidbody.collisions?.Clear();
-			} else {
-				rigidbody.collisionsHaveBeenModified = false;
-			}
 		}
 	}
 }
