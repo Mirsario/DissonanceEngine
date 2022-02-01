@@ -22,12 +22,12 @@ namespace Dissonance.Engine.Graphics
 		public float FarClip { get; set; } = 2000f;
 		public bool Orthographic { get; set; } = false;
 		public float OrthographicSize { get; set; } = 16f;
-		public FrustumData Frustum { get; set; } = default;
+		public FrustumData Frustum { get; set; }
 
-		public Matrix4x4 ViewMatrix { get; internal set; } = default;
-		public Matrix4x4 ProjectionMatrix { get; internal set; } = default;
-		public Matrix4x4 InverseViewMatrix { get; internal set; } = default;
-		public Matrix4x4 InverseProjectionMatrix { get; internal set; } = default;
+		public Matrix4x4 ViewMatrix { get; internal set; }
+		public Matrix4x4 ProjectionMatrix { get; internal set; }
+		public Matrix4x4 InverseViewMatrix { get; internal set; }
+		public Matrix4x4 InverseProjectionMatrix { get; internal set; }
 
 		public RectInt ViewPixel {
 			get => new(
@@ -43,8 +43,6 @@ namespace Dissonance.Engine.Graphics
 				value.Height / Screen.Height
 			);
 		}
-
-		public Camera() { }
 
 		//TODO: Move to a system.
 		public void CalculateFrustum(Matrix4x4 clip)
