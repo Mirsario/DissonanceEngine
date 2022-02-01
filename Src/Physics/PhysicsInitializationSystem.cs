@@ -3,18 +3,32 @@
 namespace Dissonance.Engine.Physics
 {
 	[Callback<PhysicsUpdateGroup>]
-	public sealed class PhysicsInitializationSystem : GameSystem
+	public sealed partial class PhysicsInitializationSystem : GameSystem
 	{
-		protected override void Initialize()
+		[Subsystem]
+		private partial void InitPhysics()
 		{
 			var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
 
-			physics.CollisionDispatcher ??= new CollisionDispatcher(PhysicsEngine.collisionConf);
-			physics.PhysicsWorld ??= new DiscreteDynamicsWorld(physics.CollisionDispatcher, PhysicsEngine.broadphase, null, PhysicsEngine.collisionConf) {
+			physics.CollisionConfiguration ??= new DefaultCollisionConfiguration();
+			physics.Broadphase ??= new DbvtBroadphase();
+			physics.CollisionDispatcher ??= new CollisionDispatcher(physics.CollisionConfiguration);
+			physics.PhysicsWorld ??= new DiscreteDynamicsWorld(physics.CollisionDispatcher, physics.Broadphase, null, physics.CollisionConfiguration) {
 				Gravity = physics.Gravity
 			};
 
 			World.Set(physics);
+		}
+
+		[MessageSubsystem]
+		private partial void DisposePhysics(in ComponentRemovedMessage<WorldPhysics> message)
+		{
+			ref readonly var physics = ref message.Value;
+
+			physics.PhysicsWorld?.Dispose();
+			physics.CollisionDispatcher?.Dispose();
+			physics.Broadphase?.Dispose();
+			physics.CollisionConfiguration?.Dispose();
 		}
 	}
 }
