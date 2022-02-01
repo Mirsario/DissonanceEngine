@@ -4,6 +4,7 @@ namespace Dissonance.Engine.Physics
 {
 	[Callback<PhysicsUpdateGroup>]
 	[ExecuteAfter<PhysicsInitializationSystem>]
+	[ExecuteAfter<RigidbodySystem>]
 	public sealed partial class PhysicsSimulationSystem : GameSystem
 	{
 		[Subsystem]
