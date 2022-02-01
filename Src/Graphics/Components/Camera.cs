@@ -44,6 +44,8 @@ namespace Dissonance.Engine.Graphics
 			);
 		}
 
+		public Camera() { }
+
 		//TODO: Move to a system.
 		public void CalculateFrustum(Matrix4x4 clip)
 		{

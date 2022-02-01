@@ -13,6 +13,8 @@ namespace Dissonance.Engine
 		{
 			public bool IsActive = default;
 			public List<int> PresentComponentTypes = new();
+
+			public EntityData() { }
 		}
 
 		private class WorldData
@@ -27,6 +29,8 @@ namespace Dissonance.Engine
 			// Entity Sets
 			public readonly List<EntitySet> EntitySets = new();
 			public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
+
+			public WorldData() { }
 		}
 
 		private static readonly object lockObject = new();
