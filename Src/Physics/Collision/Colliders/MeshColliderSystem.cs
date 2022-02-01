@@ -28,6 +28,7 @@
 					SendMessage(new AddCollisionShapeMessage(entity, collisionShape));
 				}
 
+				collider.lastCollisionShape = collisionShape;
 				collider.needsUpdate = false;
 			}
 		}
