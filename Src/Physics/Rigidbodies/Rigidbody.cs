@@ -77,6 +77,8 @@ namespace Dissonance.Engine.Physics
 			}
 		}
 
+		public Rigidbody() { }
+
 		/*public Rigidbody(RigidbodyType type) : this()
 		{
 			this.type = type;

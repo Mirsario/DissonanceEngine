@@ -19,6 +19,8 @@ namespace Dissonance.Engine
 				public int GlobalDataIndex = -1;
 				public int NextDataIndex = 0;
 				public ConcurrentBag<int> FreeDataIndices = new();
+
+				public ComponentWorldData() { }
 			}
 
 			public static T GlobalSingleton;
