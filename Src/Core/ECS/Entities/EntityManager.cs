@@ -133,7 +133,7 @@ namespace Dissonance.Engine
 		}
 
 		internal static bool GetEntityIsActive(in Entity entity)
-			=> worldDataById[entity.WorldId].EntityData[entity.Id].IsActive;
+			=> entity.WorldId > 0 && worldDataById[entity.WorldId].EntityData[entity.Id].IsActive;
 
 		internal static void SetEntityIsActive(in Entity entity, bool value)
 		{
