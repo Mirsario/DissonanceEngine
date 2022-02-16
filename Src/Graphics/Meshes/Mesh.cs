@@ -17,6 +17,9 @@ namespace Dissonance.Engine.Graphics
 		public readonly TangentBuffer TangentBuffer;
 		public readonly ColorBuffer ColorBuffer;
 		public readonly Uv0Buffer Uv0Buffer;
+		public readonly Uv1Buffer Uv1Buffer;
+		public readonly Uv2Buffer Uv2Buffer;
+		public readonly Uv3Buffer Uv3Buffer;
 		public readonly BoneWeightsBuffer BoneWeightsBuffer;
 
 		private readonly CustomVertexBuffer[] VertexBuffers;
@@ -38,6 +41,9 @@ namespace Dissonance.Engine.Graphics
 		public ref Vector4[] Tangents => ref TangentBuffer.data;
 		public ref Vector4[] Colors => ref ColorBuffer.data;
 		public ref Vector2[] Uv0 => ref Uv0Buffer.data;
+		public ref Vector2[] Uv1 => ref Uv1Buffer.data;
+		public ref Vector2[] Uv2 => ref Uv2Buffer.data;
+		public ref Vector2[] Uv3 => ref Uv3Buffer.data;
 		public ref BoneWeights[] BoneWeights => ref BoneWeightsBuffer.data;
 
 		public PrimitiveType PrimitiveType {
@@ -68,6 +74,9 @@ namespace Dissonance.Engine.Graphics
 			TangentBuffer = GetBuffer<TangentBuffer>();
 			ColorBuffer = GetBuffer<ColorBuffer>();
 			Uv0Buffer = GetBuffer<Uv0Buffer>();
+			Uv1Buffer = GetBuffer<Uv1Buffer>();
+			Uv2Buffer = GetBuffer<Uv2Buffer>();
+			Uv3Buffer = GetBuffer<Uv3Buffer>();
 			BoneWeightsBuffer = GetBuffer<BoneWeightsBuffer>();
 		}
 
