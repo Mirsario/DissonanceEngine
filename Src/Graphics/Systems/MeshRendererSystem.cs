@@ -26,7 +26,7 @@
 					continue;
 				}
 
-				var layerMask = entity.Has<Layer>() ? entity.Get<Layer>().Mask : LayerMask.All;
+				var layerMask = entity.Has<Layer>() ? entity.Get<Layer>().Mask : Layers.DefaultLayer.Mask;
 
 				geometryPassData.RenderEntries.Add(new(transform, mesh, material, layerMask));
 			}
