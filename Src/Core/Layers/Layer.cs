@@ -1,5 +1,9 @@
+using Dissonance.Engine.IO;
+using Newtonsoft.Json;
+
 namespace Dissonance.Engine
 {
+	[JsonConverter(typeof(LayerJsonConverter))]
 	public readonly struct Layer
 	{
 		private readonly byte id;
@@ -13,6 +17,7 @@ namespace Dissonance.Engine
 			this.id = id;
 		}
 
-		public override string ToString() => $"Layer {Index} - {Name}";
+		public override string ToString()
+			=> $"Layer {Index} - {Name}";
 	}
 }
