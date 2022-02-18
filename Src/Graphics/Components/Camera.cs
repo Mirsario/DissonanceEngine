@@ -17,6 +17,7 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		public RectFloat View { get; set; } = RectFloat.Default;
+		public LayerMask LayerMask { get; set; } = LayerMask.All;
 		public float FieldOfView { get; set; } = 90f;
 		public float NearClip { get; set; } = 0.01f;
 		public float FarClip { get; set; } = 2000f;

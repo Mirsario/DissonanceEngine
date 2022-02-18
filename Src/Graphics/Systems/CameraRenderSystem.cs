@@ -19,16 +19,17 @@
 				var camera = entity.Get<Camera>();
 				var transform = entity.Get<Transform>();
 
-				renderViewData.RenderViews.Add(new RenderViewData.RenderView(
-					transform,
-					camera.ViewPixel,
-					camera.NearClip,
-					camera.FarClip,
-					camera.ViewMatrix,
-					camera.ProjectionMatrix,
-					camera.InverseViewMatrix,
-					camera.InverseProjectionMatrix
-				));
+				renderViewData.RenderViews.Add(new RenderViewData.RenderView {
+					Transform = transform,
+					Viewport = camera.ViewPixel,
+					NearClip = camera.NearClip,
+					FarClip = camera.FarClip,
+					ViewMatrix = camera.ViewMatrix,
+					ProjectionMatrix = camera.ProjectionMatrix,
+					InverseViewMatrix = camera.InverseViewMatrix,
+					InverseProjectionMatrix = camera.InverseProjectionMatrix,
+					LayerMask = camera.LayerMask,
+				});
 			}
 		}
 	}

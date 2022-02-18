@@ -31,8 +31,6 @@ namespace Dissonance.Engine.Graphics
 			var renderViewData = GlobalGet<RenderViewData>();
 			var geometryPassData = GlobalGet<GeometryPassData>();
 
-			bool checkLayerMask = LayerMask != LayerMask.All;
-
 			// CameraLoop
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
@@ -42,11 +40,14 @@ namespace Dissonance.Engine.Graphics
 				var cameraTransform = renderView.Transform;
 				var cameraPos = cameraTransform.Position;
 
+				var usedLayerMask = LayerMask & renderView.LayerMask;
+				bool checkLayerMask = usedLayerMask != LayerMask.All;
+
 				// Render
 				for (int i = 0; i < geometryPassData.RenderEntries.Count; i++) {
 					var entry = geometryPassData.RenderEntries[i];
 
-					if (checkLayerMask && (entry.LayerMask & LayerMask) == LayerMask.None) {
+					if (checkLayerMask && (entry.LayerMask & usedLayerMask) == LayerMask.None) {
 						continue;
 					}
 
