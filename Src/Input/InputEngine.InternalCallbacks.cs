@@ -2,6 +2,8 @@
 using System.Text;
 using Dissonance.Engine.Graphics;
 using Dissonance.Framework.Windowing.Input;
+using GlfwKeys = Dissonance.Framework.Windowing.Input.Keys;
+using GlfwMouseButton = Dissonance.Framework.Windowing.Input.MouseButton;
 
 namespace Dissonance.Engine.Input
 {
@@ -15,7 +17,7 @@ namespace Dissonance.Engine.Input
 			renderInput.MousePosition = value;
 		}
 
-		private static void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods)
+		private static void MouseButtonCallback(GlfwMouseButton button, MouseAction action, KeyModifiers mods)
 		{
 			bool value = action == MouseAction.Press;
 
@@ -38,17 +40,19 @@ namespace Dissonance.Engine.Input
 			renderInput.InputString += text;
 		}
 
-		private static void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods)
+		private static void KeyCallback(GlfwKeys glfwKey, int scanCode, KeyAction action, KeyModifiers mods)
 		{
 			if (action == KeyAction.Repeat) {
 				return;
 			}
 
-			void InputAction(Action<InputVariables> action)
+			static void InputAction(Action<InputVariables> action)
 			{
 				action(fixedInput);
 				action(renderInput);
 			}
+
+			var key = (Keys)glfwKey;
 
 			switch (action) {
 				case KeyAction.Press:

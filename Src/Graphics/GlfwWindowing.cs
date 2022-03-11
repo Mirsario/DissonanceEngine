@@ -1,7 +1,8 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using System;
+using Dissonance.Framework.Graphics;
 using Dissonance.Framework.Windowing;
 using Dissonance.Framework.Windowing.Input;
-using System;
+using GlfwCursorState = Dissonance.Framework.Windowing.CursorState;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -30,7 +31,10 @@ namespace Dissonance.Engine.Graphics
 		public override CursorState CursorState {
 			get => cursorState;
 			set {
-				GLFW.SetInputMode(WindowHandle, InputMode.Cursor, (int)value);
+				// Maybe make switching extensions?
+				var glfwCursorState = Enum.Parse<GlfwCursorState>(Enum.GetName(value));
+
+				GLFW.SetInputMode(WindowHandle, InputMode.Cursor, (int)glfwCursorState);
 
 				cursorState = value;
 			}
