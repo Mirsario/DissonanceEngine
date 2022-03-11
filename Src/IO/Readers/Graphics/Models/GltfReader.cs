@@ -65,7 +65,9 @@ namespace Dissonance.Engine.IO
 			//TODO: Add extension support.
 			if (info.json.extensionsRequired != null) {
 				foreach (string requiredExtension in info.json.extensionsRequired) {
-					throw new FileLoadException($"glTF Error: Required extension '{requiredExtension}' is not supported.");
+					string message = $"glTF Error: Required extension '{requiredExtension}' is not supported.";
+
+					Debug.Log(message); //throw new FileLoadException(message);
 				}
 			}
 
