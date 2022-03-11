@@ -1,5 +1,6 @@
 ﻿using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -11,8 +12,8 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
-			GL.Enable(EnableCap.Blend);
-			GL.DepthMask(false);
+			OpenGL.Enable(EnableCap.Blend);
+			OpenGL.DepthMask(false);
 
 			var passShaderValue = PassShader.GetValueImmediately();
 
@@ -20,7 +21,7 @@ namespace Dissonance.Engine.Graphics
 
 			passShaderValue.SetupCommonUniforms();
 
-			GL.Viewport(0, 0, Screen.Width, Screen.Height);
+			OpenGL.Viewport(0, 0, (uint)Screen.Width, (uint)Screen.Height);
 
 			var renderViewData = GlobalGet<RenderViewData>();
 
@@ -34,10 +35,10 @@ namespace Dissonance.Engine.Graphics
 					for (int j = 0; j < PassedTextures.Length; j++) {
 						var texture = PassedTextures[j];
 
-						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
-						GL.BindTexture(TextureTarget.Texture2D, texture.Id);
+						OpenGL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
+						OpenGL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
-						GL.Uniform1(GL.GetUniformLocation(passShaderValue.Id, texture.Name), j);
+						OpenGL.Uniform1(OpenGL.GetUniformLocation(passShaderValue.Id, texture.Name), j);
 					}
 				}
 
@@ -52,8 +53,8 @@ namespace Dissonance.Engine.Graphics
 				DrawUtils.DrawQuadUv0(vpPointsB, vpPointsA);
 			}
 
-			GL.DepthMask(true);
-			GL.Disable(EnableCap.Blend);
+			OpenGL.DepthMask(true);
+			OpenGL.Disable(EnableCap.Blend);
 		}
 	}
 }

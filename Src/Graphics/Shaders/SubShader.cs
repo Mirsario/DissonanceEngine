@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -20,7 +21,7 @@ namespace Dissonance.Engine.Graphics
 		public SubShader(string name, ShaderType type)
 		{
 			Type = type;
-			Id = GL.CreateShader(Type);
+			Id = OpenGL.CreateShader(Type);
 			Name = name;
 
 			if (Name != null) {
@@ -28,7 +29,9 @@ namespace Dissonance.Engine.Graphics
 
 				//TODO: Add a way to check if a function is implemented. Maybe make internal delegates accessible with properrties?
 				try {
-					GL.ObjectLabel(GLConstants.SHADER, Id, Name.Length, namePtr);
+					unsafe {
+						OpenGL.ObjectLabel(ObjectIdentifier.Shader, Id, (uint)Name.Length, (byte*)namePtr);
+					}
 				}
 				catch { }
 			}
@@ -37,7 +40,7 @@ namespace Dissonance.Engine.Graphics
 		public void Dispose()
 		{
 			if (Id > 0) {
-				GL.DeleteShader(Id);
+				OpenGL.DeleteShader(Id);
 
 				Id = 0;
 			}
@@ -59,10 +62,10 @@ namespace Dissonance.Engine.Graphics
 			code = RegexFSuffixB.Replace(code, @"$1$2");
 			code = RegexFSuffixA.Replace(code, @"$1$2.0");
 
-			GL.ShaderSource(Id, code);
-			GL.CompileShader(Id);
+			OpenGL.ShaderSource(Id, code);
+			OpenGL.CompileShader(Id);
 
-			string info = GL.GetShaderInfoLog(Id);
+			string info = OpenGL.GetShaderInfoLog(Id);
 
 			if (!string.IsNullOrEmpty(info)) {
 				Debug.Log($"Error compilling {Type} '{Name}':\r\n{info}\r\n\r\n{code}");
@@ -71,7 +74,7 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if (Rendering.CheckGLErrors(throwException: false)) {
-				throw new GraphicsException($"Unable to compile {Type} '{Name}'.");
+				throw new Exception($"Unable to compile {Type} '{Name}'.");
 			}
 
 			return true;

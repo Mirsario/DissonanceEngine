@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Windowing.Input;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input
 {
@@ -15,9 +15,9 @@ namespace Dissonance.Engine.Input
 			renderInput.MousePosition = value;
 		}
 
-		private static void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods)
+		private static void MouseButtonCallback(MouseButton button, InputAction action, KeyModifiers mods)
 		{
-			bool value = action == MouseAction.Press;
+			bool value = action == InputAction.Press;
 
 			fixedInput.MouseButtons[(int)button] = value;
 			renderInput.MouseButtons[(int)button] = value;
@@ -38,28 +38,29 @@ namespace Dissonance.Engine.Input
 			renderInput.InputString += text;
 		}
 
-		private static void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods)
+		private static void KeyCallback(Keys key, int scanCode, InputAction action, KeyModifiers mods)
 		{
-			if (action == KeyAction.Repeat) {
+			if (action == InputAction.Repeat) {
 				return;
 			}
 
-			void InputAction(Action<InputVariables> action)
+			static void RunInputAction(Action<InputVariables> action)
 			{
 				action(fixedInput);
 				action(renderInput);
 			}
 
 			switch (action) {
-				case KeyAction.Press:
-					InputAction(inputs => inputs.PressedKeys[key] = 0);
+				case InputAction.Press:
+					RunInputAction(inputs => inputs.PressedKeys[key] = 0);
 					break;
-				case KeyAction.Release:
-					InputAction(inputs => {
+				case InputAction.Release:
+					RunInputAction(inputs => {
 						if (inputs.PressedKeys.TryGetValue(key, out byte release)) {
 							inputs.PressedKeys[key] = (byte)Math.Max(2, (int)release);
 						}
 					});
+
 					break;
 			}
 		}
@@ -82,11 +83,11 @@ namespace Dissonance.Engine.Input
 				return;
 			}
 
-			GLFW.SetCursorPosCallback(windowHandle, MousePositionCallback);
-			GLFW.SetMouseButtonCallback(windowHandle, MouseButtonCallback);
-			GLFW.SetScrollCallback(windowHandle, MouseScrollCallback);
-			GLFW.SetKeyCallback(windowHandle, KeyCallback);
-			GLFW.SetCharCallback(windowHandle, KeyStringCallback);*/
+			Glfw.Api.SetCursorPosCallback(windowHandle, MousePositionCallback);
+			Glfw.Api.SetMouseButtonCallback(windowHandle, MouseButtonCallback);
+			Glfw.Api.SetScrollCallback(windowHandle, MouseScrollCallback);
+			Glfw.Api.SetKeyCallback(windowHandle, KeyCallback);
+			Glfw.Api.SetCharCallback(windowHandle, KeyStringCallback);*/
 		}
 	}
 }

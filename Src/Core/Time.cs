@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {

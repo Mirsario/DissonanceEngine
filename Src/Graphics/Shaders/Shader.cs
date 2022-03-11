@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 using DSU = Dissonance.Engine.Graphics.DefaultShaderUniforms;
 
 namespace Dissonance.Engine.Graphics
@@ -24,8 +24,6 @@ namespace Dissonance.Engine.Graphics
 		internal bool[] hasDefaultUniform = new bool[DSU.Count];
 		internal int[] defaultUniformIndex = new int[DSU.Count];
 
-		private IntPtr namePtr;
-
 		public int Priority { get; set; }
 		public uint StencilMask { get; set; }
 		public string[] Defines { get; set; }
@@ -44,14 +42,12 @@ namespace Dissonance.Engine.Graphics
 		private Shader(string name = null)
 		{
 			Name = name;
-			Id = GL.CreateProgram();
+			Id = OpenGL.CreateProgram();
 
 			if (Name != null) {
-				namePtr = Marshal.StringToHGlobalAnsi(Name);
-
 				//TODO: Add a way to check if a function is implemented. Maybe make internal delegates accessible with properrties?
 				try {
-					GL.ObjectLabel(GLConstants.PROGRAM, Id, Name.Length, namePtr);
+					OpenGL.ObjectLabel(ObjectIdentifier.Program, Id, (uint)Name.Length, Name);
 				}
 				catch { }
 			}
@@ -63,7 +59,7 @@ namespace Dissonance.Engine.Graphics
 		public void Dispose()
 		{
 			if (Id > 0) {
-				GL.DeleteProgram(Id);
+				OpenGL.DeleteProgram(Id);
 
 				Id = 0;
 			}
@@ -75,13 +71,6 @@ namespace Dissonance.Engine.Graphics
 			VertexShader = null;
 			FragmentShader = null;
 			GeometryShader = null;
-
-			if (namePtr != IntPtr.Zero) {
-				Marshal.FreeHGlobal(namePtr);
-
-				namePtr = IntPtr.Zero;
-			}
-
 			Name = null;
 
 			GC.SuppressFinalize(this);
@@ -108,45 +97,45 @@ namespace Dissonance.Engine.Graphics
 		internal void SetupCommonUniforms()
 		{
 			if (hasDefaultUniform[DSU.ScreenWidth]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenWidth], Screen.Width);
+				OpenGL.Uniform1(defaultUniformIndex[DSU.ScreenWidth], Screen.Width);
 			}
 
 			if (hasDefaultUniform[DSU.ScreenHeight]) {
-				GL.Uniform1(defaultUniformIndex[DSU.ScreenHeight], Screen.Height);
+				OpenGL.Uniform1(defaultUniformIndex[DSU.ScreenHeight], Screen.Height);
 			}
 
 			if (hasDefaultUniform[DSU.ScreenResolution]) {
-				GL.Uniform2(defaultUniformIndex[DSU.ScreenResolution], Screen.Width, (float)Screen.Height);
+				OpenGL.Uniform2(defaultUniformIndex[DSU.ScreenResolution], Screen.Width, (float)Screen.Height);
 			}
 
 			if (hasDefaultUniform[DSU.Time]) {
-				GL.Uniform1(defaultUniformIndex[DSU.Time], Time.RenderGameTime);
+				OpenGL.Uniform1(defaultUniformIndex[DSU.Time], Time.RenderGameTime);
 			}
 
 			if (hasDefaultUniform[DSU.AmbientColor]) {
-				GL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.X, Rendering.AmbientColor.Y, Rendering.AmbientColor.Z);
+				OpenGL.Uniform3(defaultUniformIndex[DSU.AmbientColor], Rendering.AmbientColor.X, Rendering.AmbientColor.Y, Rendering.AmbientColor.Z);
 			}
 		}
 
 		internal void SetupCameraUniforms(float nearClip, float farClip, Vector3 cameraPos)
 		{
 			if (hasDefaultUniform[DSU.NearClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.NearClip], nearClip);
+				OpenGL.Uniform1(defaultUniformIndex[DSU.NearClip], nearClip);
 			}
 
 			if (hasDefaultUniform[DSU.FarClip]) {
-				GL.Uniform1(defaultUniformIndex[DSU.FarClip], farClip);
+				OpenGL.Uniform1(defaultUniformIndex[DSU.FarClip], farClip);
 			}
 
 			if (hasDefaultUniform[DSU.CameraPosition]) {
-				GL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.X, cameraPos.Y, cameraPos.Z);
+				OpenGL.Uniform3(defaultUniformIndex[DSU.CameraPosition], cameraPos.X, cameraPos.Y, cameraPos.Z);
 			}
 
 			if (hasDefaultUniform[DSU.CameraDirection]) {
 				//TODO:
 				// var forward = camera.Transform.Forward;
 				//
-				// GL.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
+				// OpenGL.Api.Uniform3(defaultUniformIndex[DSU.CameraDirection], forward.x, forward.y, forward.z);
 			}
 		}
 
@@ -252,14 +241,14 @@ namespace Dissonance.Engine.Graphics
 
 			Rendering.CheckGLErrors($"Start of {nameof(Shader)}.{nameof(Init)}()");
 
-			GL.GetProgram(Id, GetProgramParameter.ActiveUniforms, out int uniformCount);
+			OpenGL.GetProgram(Id, ProgramPropertyARB.ActiveUniforms, out int uniformCount);
 
 			const int MaxUniformNameLength = 32;
 
 			for (int i = 0; i < uniformCount; i++) {
-				GL.GetActiveUniform(Id, (uint)i, MaxUniformNameLength, out int length, out int size, out ActiveUniformType uniformType, out string uniformName);
+				OpenGL.GetActiveUniform(Id, (uint)i, MaxUniformNameLength, out uint length, out int size, out UniformType uniformType, out string uniformName);
 
-				int location = GL.GetUniformLocation(Id, uniformName); // Uniform location != uniform index, and that's pretty ridiculous and painful.
+				int location = OpenGL.GetUniformLocation(Id, uniformName); // Uniform location != uniform index, and that's pretty ridiculous and painful.
 
 				uniforms.Add(uniformName, new ShaderUniform(uniformName, uniformType, location));
 
@@ -278,13 +267,13 @@ namespace Dissonance.Engine.Graphics
 		public static void SetShader(Shader shader)
 		{
 			if (shader != null) {
-				GL.UseProgram(shader.Id);
+				OpenGL.UseProgram(shader.Id);
 				ActiveShader = shader;
 
 				Rendering.SetStencilMask(shader.StencilMask);
 				Rendering.SetBlendFunc(shader.BlendFactorSrc, shader.BlendFactorDst);
 			} else {
-				GL.UseProgram(0);
+				OpenGL.UseProgram(0);
 
 				ActiveShader = null;
 			}
@@ -334,7 +323,7 @@ namespace Dissonance.Engine.Graphics
 					if (subShader.CompileShader(code)) {
 						setter(shader, subShader);
 
-						GL.AttachShader(shader.Id, subShader.Id);
+						OpenGL.AttachShader(shader.Id, subShader.Id);
 					} else {
 						subShader.Dispose();
 					}
@@ -348,10 +337,10 @@ namespace Dissonance.Engine.Graphics
 			for (int i = 0; i < CustomVertexAttribute.Count; i++) {
 				var attribute = CustomVertexAttribute.GetInstance(i);
 
-				GL.BindAttribLocation(shader.Id, (uint)i, attribute.NameId);
+				OpenGL.BindAttribLocation(shader.Id, (uint)i, attribute.NameId);
 			}
 
-			GL.LinkProgram(shader.Id);
+			OpenGL.LinkProgram(shader.Id);
 
 			shader.Init();
 
@@ -361,7 +350,7 @@ namespace Dissonance.Engine.Graphics
 		internal static unsafe void UniformMatrix4(int location, in Matrix4x4 matrix, bool transpose = false)
 		{
 			fixed(float* matrix_ptr = &matrix.m00) {
-				GL.UniformMatrix4(location, 1, transpose, matrix_ptr);
+				OpenGL.UniformMatrix4(location, 1, transpose, matrix_ptr);
 			}
 		}
 	}

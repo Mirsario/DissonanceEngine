@@ -1,6 +1,4 @@
-﻿using Dissonance.Framework.Graphics;
-
-namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics
 {
 	/*public class Light2DPass : RenderPass
 	{
@@ -8,9 +6,9 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(framebuffer);
 
-			GL.Enable(EnableCap.Blend);
-			GL.Enable(EnableCap.CullFace);
-			GL.DepthMask(false);
+			OpenGL.Api.Enable(EnableCap.Blend);
+			OpenGL.Api.Enable(EnableCap.CullFace);
+			OpenGL.Api.DepthMask(false);
 
 			Matrix4x4 worldInverse = default,
 			worldView = default, worldViewInverse = default,
@@ -22,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 
 			foreach (var camera in ComponentManager.EnumerateComponents<Camera>()) {
 				var viewport = GetViewport(camera);
-				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+				OpenGL.Api.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
 				var cameraPos = camera.Transform.Position;
 
@@ -30,17 +28,17 @@ namespace Dissonance.Engine.Graphics
 
 				if (passedTextures != null) {
 					for (int j = 0; j < passedTextures.Length; j++) {
-						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
-						GL.BindTexture(TextureTarget.Texture2D, passedTextures[j].Id);
+						OpenGL.Api.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
+						OpenGL.Api.BindTexture(TextureTarget.Texture2D, passedTextures[j].Id);
 
-						GL.Uniform1(GL.GetUniformLocation(passShader.Id, passedTextures[j].name), j);
+						OpenGL.Api.Uniform1(OpenGL.Api.GetUniformLocation(passShader.Id, passedTextures[j].name), j);
 					}
 				}
 
-				int uniformLightRange = GL.GetUniformLocation(passShader.Id, "lightRange");
-				int uniformLightPosition = GL.GetUniformLocation(passShader.Id, "lightPosition");
-				int uniformLightIntensity = GL.GetUniformLocation(passShader.Id, "lightIntensity");
-				int uniformLightColor = GL.GetUniformLocation(passShader.Id, "lightColor");
+				int uniformLightRange = OpenGL.Api.GetUniformLocation(passShader.Id, "lightRange");
+				int uniformLightPosition = OpenGL.Api.GetUniformLocation(passShader.Id, "lightPosition");
+				int uniformLightIntensity = OpenGL.Api.GetUniformLocation(passShader.Id, "lightIntensity");
+				int uniformLightColor = OpenGL.Api.GetUniformLocation(passShader.Id, "lightColor");
 
 				foreach (var light in ComponentManager.EnumerateComponents<Light2D>()) {
 					var lightPos = light.Transform.Position;
@@ -57,21 +55,21 @@ namespace Dissonance.Engine.Graphics
 					);
 
 					unsafe {
-						GL.Uniform1(uniformLightRange, light.range);
-						GL.Uniform1(uniformLightIntensity, light.intensity);
-						GL.Uniform3(uniformLightPosition, lightPos.x, lightPos.y, lightPos.z);
-						GL.Uniform3(uniformLightColor, light.color.x, light.color.y, light.color.z);
+						OpenGL.Api.Uniform1(uniformLightRange, light.range);
+						OpenGL.Api.Uniform1(uniformLightIntensity, light.intensity);
+						OpenGL.Api.Uniform3(uniformLightPosition, lightPos.x, lightPos.y, lightPos.z);
+						OpenGL.Api.Uniform3(uniformLightColor, light.color.x, light.color.y, light.color.z);
 					}
 
 					PrimitiveMeshes.ScreenQuad.Render();
 				}
 			}
 
-			GL.DepthMask(true);
-			GL.Disable(EnableCap.Blend);
-			GL.Disable(EnableCap.CullFace);
+			OpenGL.Api.DepthMask(true);
+			OpenGL.Api.Disable(EnableCap.Blend);
+			OpenGL.Api.Disable(EnableCap.CullFace);
 			Shader.SetShader(null);
-			GL.BindTexture(TextureTarget.Texture2D, 0);
+			OpenGL.Api.BindTexture(TextureTarget.Texture2D, 0);
 		}
 	}*/
 }

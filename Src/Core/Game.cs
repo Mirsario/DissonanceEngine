@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Windowing;
 
 namespace Dissonance.Engine
 {
@@ -140,7 +139,7 @@ namespace Dissonance.Engine
 
 			while (numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
 				if (!NoWindow) {
-					GLFW.PollEvents();
+					Glfw.Api.PollEvents();
 				}
 
 				FixedUpdateInternal();
@@ -193,12 +192,12 @@ namespace Dissonance.Engine
 
 			moduleHooks.PreFixedUpdate?.Invoke();
 
-			/*bool isFocused = GLFW.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
+			/*bool isFocused = Glfw.Api.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
 
 			if (Screen.lockCursor && isFocused) {
 				var center = Screen.Center;
 
-				GLFW.SetCursorPos(window,center.x,center.y);
+				Glfw.Api.SetCursorPos(window,center.x,center.y);
 			}*/
 
 			moduleHooks.FixedUpdate?.Invoke();

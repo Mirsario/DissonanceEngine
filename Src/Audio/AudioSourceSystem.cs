@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Audio;
+﻿using Silk.NET.OpenAL;
+using static Dissonance.Engine.Audio.OpenALApi;
 
 namespace Dissonance.Engine.Audio
 {
@@ -15,8 +16,8 @@ namespace Dissonance.Engine.Audio
 			uint sourceId = message.Value.sourceId;
 
 			if (sourceId > 0) {
-				if (AL.IsSource(sourceId)) {
-					AL.DeleteSource(sourceId);
+				if (OpenAL.IsSource(sourceId)) {
+					OpenAL.DeleteSource(sourceId);
 				}
 			}
 		}
@@ -48,7 +49,7 @@ namespace Dissonance.Engine.Audio
 		{
 			// Create source if needed.
 			if (audioSource.sourceId == 0) {
-				AL.GenSource(out audioSource.sourceId);
+				audioSource.sourceId = OpenAL.GenSource();
 			}
 
 			// Load in clips
@@ -58,7 +59,7 @@ namespace Dissonance.Engine.Audio
 			uint newBufferId = clipReady ? audioSource.Clip.Value.BufferId : 0;
 
 			if (audioSource.bufferId != newBufferId) {
-				AL.Source(audioSource.sourceId, SourceInt.Buffer, (int)newBufferId);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceInteger.Buffer, (int)newBufferId);
 
 				audioSource.bufferId = newBufferId;
 			}
@@ -70,13 +71,13 @@ namespace Dissonance.Engine.Audio
 							break;
 						}
 
-						AL.SourcePlay(audioSource.sourceId);
+						OpenAL.SourcePlay(audioSource.sourceId);
 						goto default;
 					case AudioSource.PlaybackAction.Pause:
-						AL.SourcePause(audioSource.sourceId);
+						OpenAL.SourcePause(audioSource.sourceId);
 						goto default;
 					case AudioSource.PlaybackAction.Stop:
-						AL.SourceStop(audioSource.sourceId);
+						OpenAL.SourceStop(audioSource.sourceId);
 						goto default;
 					default:
 						audioSource.PendingAction = 0;
@@ -85,10 +86,10 @@ namespace Dissonance.Engine.Audio
 			}
 
 			// Update volume.
-			AL.Source(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
+			OpenAL.SetSourceProperty(audioSource.sourceId, SourceFloat.Gain, audioSource.Volume);
 
 			// Update pitch.
-			AL.Source(audioSource.sourceId, SourceFloat.Pitch, audioSource.Pitch);
+			OpenAL.SetSourceProperty(audioSource.sourceId, SourceFloat.Pitch, audioSource.Pitch);
 
 			// Update 3D position.
 			if (!audioSource.Is2D && entity.Has<Transform>()) {
@@ -101,25 +102,27 @@ namespace Dissonance.Engine.Audio
 					position.X = float.Epsilon;
 				}
 
-				AL.Source(audioSource.sourceId, SourceFloat3.Position, position.X, position.Y, position.Z);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceVector3.Position, position.X, position.Y, position.Z);
 
-				AL.Source(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
-				AL.Source(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceFloat.ReferenceDistance, audioSource.RefDistance);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceFloat.MaxDistance, audioSource.MaxDistance);
 			} else if (!audioSource.was2D) {
 				audioSource.was2D = true;
 
-				AL.Source(audioSource.sourceId, SourceFloat3.Position, 0f, 0f, 0f);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceVector3.Position, 0f, 0f, 0f);
 			}
 
 			// Update looping.
 			if (audioSource.Loop != audioSource.wasLooped) {
-				AL.Source(audioSource.sourceId, SourceBool.Looping, audioSource.Loop);
+				OpenAL.SetSourceProperty(audioSource.sourceId, SourceBoolean.Looping, audioSource.Loop);
 
 				audioSource.wasLooped = audioSource.Loop;
 			}
 
 			// Update state.
-			audioSource.State = (SourceState)AL.GetSource(audioSource.sourceId, GetSourceInt.SourceState);
+			OpenAL.GetSourceProperty(audioSource.sourceId, GetSourceInteger.SourceState, out int sourceStateInt);
+
+			audioSource.State = (SourceState)sourceStateInt;
 		}
 
 		[Subsystem]

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
-using Dissonance.Framework.Audio;
+using Silk.NET.OpenAL;
+using static Dissonance.Engine.Audio.OpenALApi;
 
 namespace Dissonance.Engine.Audio
 {
@@ -16,13 +17,13 @@ namespace Dissonance.Engine.Audio
 
 		public AudioClip()
 		{
-			BufferId = AL.GenBuffer();
+			BufferId = OpenAL.GenBuffer();
 		}
 
 		public void Dispose()
 		{
 			if (BufferId > 0) {
-				AL.DeleteBuffer(BufferId);
+				OpenAL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}
@@ -42,15 +43,14 @@ namespace Dissonance.Engine.Audio
 
 			var format = GetSoundFormat(channelsNum, bytesPerSample);
 
-			fixed(T* ptr = data) {
-				AL.BufferData(BufferId, format, (IntPtr)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
+			fixed (T* ptr = data) {
+				OpenAL.BufferData(BufferId, format, (void*)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
 			}
 
 			AudioEngine.CheckALErrors();
 		}
 
-		public static BufferFormat GetSoundFormat(int channels, int bitsPerSample) => bitsPerSample switch
-		{
+		public static BufferFormat GetSoundFormat(int channels, int bitsPerSample) => bitsPerSample switch {
 			1 => channels == 1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
 			2 => channels == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
 			4 => channels == 1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,

@@ -20,7 +20,6 @@
 	<Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
 	
 	<ItemGroup>
-		<ProjectReference Include="../Framework/Src/DissonanceFramework.csproj" />
 		<ProjectReference Include="../SourceGenerators/DissonanceSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 	
@@ -39,6 +38,9 @@
     	<PackageReference Include="NVorbis" Version="0.10.4" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 		<PackageReference Include="Hjson" Version="3.0.0" />
+		<PackageReference Include="Silk.NET.GLFW" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenGL" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL " Version="2.13.0" />
 	</ItemGroup>
 	
 	<ItemGroup>

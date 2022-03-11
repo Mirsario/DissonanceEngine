@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -31,7 +32,7 @@ namespace Dissonance.Engine.Graphics
 
 		public string Name { get; set; }
 		public Bounds Bounds { get; set; }
-		public BufferUsageHint BufferUsage { get; set; }
+		public BufferUsageARB BufferUsage { get; set; }
 		public bool IsReady { get; private set; }
 
 		// Shortcut refs to buffers' arrays
@@ -53,7 +54,7 @@ namespace Dissonance.Engine.Graphics
 
 		public Mesh()
 		{
-			BufferUsage = BufferUsageHint.StaticDraw;
+			BufferUsage = BufferUsageARB.StaticDraw;
 
 			IndexBuffer = new IndexBuffer {
 				Mesh = this
@@ -82,23 +83,23 @@ namespace Dissonance.Engine.Graphics
 
 		public void Render(int? numElements = null)
 		{
-			GL.BindVertexArray(vertexArrayId);
+			OpenGL.BindVertexArray(vertexArrayId);
 
 			int indexCount = (int)IndexBuffer.DataLength;
 
 			if (indexCount > 0) {
-				GL.DrawElements(currentPrimitiveType, numElements ?? indexCount, DrawElementsType.UnsignedInt, 0);
+				OpenGL.DrawElements(currentPrimitiveType, (uint)(numElements ?? indexCount), DrawElementsType.UnsignedInt, 0);
 			} else {
-				GL.DrawArrays(currentPrimitiveType, 0, numElements ?? (int)VertexBuffer.DataLength);
+				OpenGL.DrawArrays(currentPrimitiveType, 0, (uint)(numElements ?? (int)VertexBuffer.DataLength));
 			}
 
-			GL.BindVertexArray(0);
+			OpenGL.BindVertexArray(0);
 		}
 
 		public void Dispose()
 		{
 			if (vertexArrayId != 0) {
-				GL.DeleteVertexArray(vertexArrayId);
+				OpenGL.DeleteVertexArray(vertexArrayId);
 
 				vertexArrayId = 0;
 			}
@@ -128,10 +129,10 @@ namespace Dissonance.Engine.Graphics
 			// Bind vertex array object (and generate one if needed).
 
 			if (vertexArrayId == 0) {
-				vertexArrayId = GL.GenVertexArray();
+				vertexArrayId = OpenGL.GenVertexArray();
 			}
 
-			GL.BindVertexArray(vertexArrayId);
+			OpenGL.BindVertexArray(vertexArrayId);
 
 			// Bind and push indices.
 
@@ -153,9 +154,9 @@ namespace Dissonance.Engine.Graphics
 
 			Rendering.CheckGLErrors();
 
-			GL.BindVertexArray(0);
-			GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+			OpenGL.BindVertexArray(0);
+			OpenGL.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+			OpenGL.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
 
 			Rendering.CheckGLErrors();
 

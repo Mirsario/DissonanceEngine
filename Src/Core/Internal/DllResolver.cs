@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Dissonance.Framework;
 
 namespace Dissonance.Engine
 {
@@ -62,7 +61,9 @@ namespace Dissonance.Engine
 					if (TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
 						//TODO: Unhardcode
 						if (assembly.FullName.StartsWith("BulletSharp,")) {
-							DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().Location}.config");
+							throw new NotImplementedException();
+
+							//DllMapResolver.SetForAssembly(assembly, $"{Assembly.GetExecutingAssembly().Location}.config");
 						}
 
 						return assembly;

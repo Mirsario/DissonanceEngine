@@ -1,5 +1,5 @@
 using Dissonance.Engine.IO;
-using Dissonance.Framework.Audio;
+using Silk.NET.OpenAL;
 
 namespace Dissonance.Engine.Audio
 {

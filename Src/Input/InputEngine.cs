@@ -1,6 +1,6 @@
 using System;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Windowing.Input;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input
 {
@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Input
 
 		private static void CheckSpecialCombinations()
 		{
-			if (GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
+			if (GetKeyDown(Keys.F4) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
 				Game.Quit();
 			}
 

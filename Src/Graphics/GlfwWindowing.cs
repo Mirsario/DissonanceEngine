@@ -1,12 +1,10 @@
-﻿using Dissonance.Framework.Graphics;
-using Dissonance.Framework.Windowing;
-using Dissonance.Framework.Windowing.Input;
-using System;
+﻿using System;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoWindow)]
-	public class GlfwWindowing : Windowing
+	public unsafe class GlfwWindowing : Windowing
 	{
 		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);
 
@@ -15,22 +13,22 @@ namespace Dissonance.Engine.Graphics
 		private Vector2Int windowSize;
 		private Vector2Int windowLocation;
 		private Vector2Int framebufferSize;
-		private CursorState cursorState;
+		private CursorModeValue cursorState;
 
-		public IntPtr WindowHandle { get; private set; }
+		public WindowHandle* WindowHandle { get; private set; }
 
 		public override Vector2Int WindowSize => windowSize;
 		public override Vector2Int WindowLocation => windowLocation;
 		public override Vector2Int FramebufferSize => framebufferSize;
 
 		public override bool ShouldClose {
-			get => GLFW.WindowShouldClose(WindowHandle) == 1;
-			set => GLFW.SetWindowShouldClose(WindowHandle, value ? 1 : 0);
+			get => Glfw.Api.WindowShouldClose(WindowHandle);
+			set => Glfw.Api.SetWindowShouldClose(WindowHandle, value);
 		}
-		public override CursorState CursorState {
+		public override CursorModeValue CursorState {
 			get => cursorState;
 			set {
-				GLFW.SetInputMode(WindowHandle, InputMode.Cursor, (int)value);
+				Glfw.Api.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, value);
 
 				cursorState = value;
 			}
@@ -43,7 +41,7 @@ namespace Dissonance.Engine.Graphics
 		public override event CharCallback OnCharCallback;
 
 		public override void SwapBuffers()
-			=> GLFW.SwapBuffers(WindowHandle);
+			=> Glfw.Api.SwapBuffers(WindowHandle);
 
 		public override bool SetVideoMode(int width, int height)
 		{
@@ -51,7 +49,7 @@ namespace Dissonance.Engine.Graphics
 				throw new ArgumentException($"'{nameof(width)}' and '{nameof(height)}' cannot be less than or equal to zero.");
 			}
 
-			GLFW.SetWindowSize(WindowHandle, width, height);
+			Glfw.Api.SetWindowSize(WindowHandle, width, height);
 			UpdateValues();
 
 			return true;
@@ -60,33 +58,32 @@ namespace Dissonance.Engine.Graphics
 		protected override void PreInit()
 		{
 			lock (GlfwLock) {
-				GLFW.SetErrorCallback((GLFWError code, string description) => Debug.Log(code switch {
-					GLFWError.VersionUnavailable => throw new GraphicsException(description),
+				Glfw.Api.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
+					ErrorCode.VersionUnavailable => throw new GraphicsException(description),
 					_ => $"GLFW Error {code}: {description}"
 				}));
 
-				if (GLFW.Init() == 0) {
+				if (!Glfw.Api.Init()) {
 					throw new Exception("Unable to initialize GLFW!");
 				}
 
-				GLFW.WindowHint(WindowHint.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
-				GLFW.WindowHint(WindowHint.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
-				GLFW.WindowHint(WindowHint.OpenGLForwardCompat, 1);
-				GLFW.WindowHint(WindowHint.OpenGLProfile, GLFW.OPENGL_CORE_PROFILE);
+				Glfw.Api.WindowHint(WindowHintInt.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
+				Glfw.Api.WindowHint(WindowHintInt.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
+				Glfw.Api.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+				Glfw.Api.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
 
-				IntPtr monitor = IntPtr.Zero;
 				int resolutionWidth = 800;
 				int resolutionHeight = 600;
 
-				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, monitor, IntPtr.Zero);
+				WindowHandle = Glfw.Api.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
 
-				if (WindowHandle == IntPtr.Zero) {
+				if (WindowHandle == default) {
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
-				GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
-				GLFW.MakeContextCurrent(WindowHandle);
-				GLFW.SwapInterval(1);
+				Glfw.Api.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
+				Glfw.Api.MakeContextCurrent(WindowHandle);
+				Glfw.Api.SwapInterval(1);
 
 				InitCallbacks();
 				UpdateValues();
@@ -95,9 +92,9 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void OnDispose()
 		{
-			if (WindowHandle != IntPtr.Zero) {
-				GLFW.DestroyWindow(WindowHandle);
-				GLFW.Terminate();
+			if (WindowHandle != null) {
+				Glfw.Api.DestroyWindow(WindowHandle);
+				Glfw.Api.Terminate();
 			}
 
 			OnKeyCallback = null;
@@ -109,13 +106,13 @@ namespace Dissonance.Engine.Graphics
 		private void UpdateValues()
 		{
 			// Don't change resolution when minimized
-			if (GLFW.GetWindowAttrib(WindowHandle, WindowAttribute.Iconified) == 0) {
+			if (!Glfw.Api.GetWindowAttrib(WindowHandle, WindowAttributeGetter.Iconified)) {
 				// Framebuffer
-				GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
+				Glfw.Api.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
 
 				// Window
-				GLFW.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
-				GLFW.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
+				Glfw.Api.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
+				Glfw.Api.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
 			}
 
 			framebufferSize.X = Math.Max(1, framebufferSize.X);
@@ -126,26 +123,26 @@ namespace Dissonance.Engine.Graphics
 
 		private void InitCallbacks()
 		{
-			GLFW.SetCursorPosCallback(WindowHandle, InternalCursorPositionCallback);
-			GLFW.SetMouseButtonCallback(WindowHandle, InternalMouseButtonCallback);
-			GLFW.SetScrollCallback(WindowHandle, InternalScrollCallback);
-			GLFW.SetKeyCallback(WindowHandle, InternalKeyCallback);
-			GLFW.SetCharCallback(WindowHandle, InternalCharCallback);
+			Glfw.Api.SetCursorPosCallback(WindowHandle, InternalCursorPositionCallback);
+			Glfw.Api.SetMouseButtonCallback(WindowHandle, InternalMouseButtonCallback);
+			Glfw.Api.SetScrollCallback(WindowHandle, InternalScrollCallback);
+			Glfw.Api.SetKeyCallback(WindowHandle, InternalKeyCallback);
+			Glfw.Api.SetCharCallback(WindowHandle, InternalCharCallback);
 		}
 
-		private static void InternalCursorPositionCallback(IntPtr windowHandle, double x, double y)
+		private static void InternalCursorPositionCallback(WindowHandle* windowHandle, double x, double y)
 			=> Game.Instance.GetModule<GlfwWindowing>().OnCursorPositionCallback?.Invoke(x, y);
 
-		private static void InternalMouseButtonCallback(IntPtr windowHandle, MouseButton button, MouseAction action, KeyModifiers mods)
+		private static void InternalMouseButtonCallback(WindowHandle* windowHandle, MouseButton button, InputAction action, KeyModifiers mods)
 			=> Game.Instance.GetModule<GlfwWindowing>().OnMouseButtonCallback?.Invoke(button, action, mods);
 
-		private static void InternalScrollCallback(IntPtr windowHandle, double xOffset, double yOffset)
+		private static void InternalScrollCallback(WindowHandle* windowHandle, double xOffset, double yOffset)
 			=> Game.Instance.GetModule<GlfwWindowing>().OnScrollCallback?.Invoke(xOffset, yOffset);
 
-		private static void InternalKeyCallback(IntPtr windowHandle, Keys key, int scanCode, KeyAction action, KeyModifiers mods)
+		private static void InternalKeyCallback(WindowHandle* windowHandle, Keys key, int scanCode, InputAction action, KeyModifiers mods)
 			=> Game.Instance.GetModule<GlfwWindowing>().OnKeyCallback?.Invoke(key, scanCode, action, mods);
 
-		private static void InternalCharCallback(IntPtr windowHandle, uint codePoint)
+		private static void InternalCharCallback(WindowHandle* windowHandle, uint codePoint)
 			=> Game.Instance.GetModule<GlfwWindowing>().OnCharCallback?.Invoke(codePoint);
 	}
 }
