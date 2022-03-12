@@ -10,7 +10,7 @@ namespace Dissonance.Engine.Audio
 		// Dispose sources
 
 		[MessageSubsystem]
-		private static partial void DisposeSources(in ComponentRemovedMessage<AudioSource> message)
+		partial void DisposeSources(in ComponentRemovedMessage<AudioSource> message)
 		{
 			uint sourceId = message.Value.sourceId;
 
@@ -24,19 +24,19 @@ namespace Dissonance.Engine.Audio
 		// Update sources' pending actions
 
 		[MessageSubsystem]
-		private static partial void StopAudioSources(in StopAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
+		partial void StopAudioSources(in StopAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
 		{
 			audioSource.PendingAction = AudioSource.PlaybackAction.Stop;
 		}
 
 		[MessageSubsystem]
-		private static partial void PauseAudioSources(in PauseAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
+		partial void PauseAudioSources(in PauseAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
 		{
 			audioSource.PendingAction = AudioSource.PlaybackAction.Pause;
 		}
 
 		[MessageSubsystem]
-		private static partial void PlayAudioSources(in PlayAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
+		partial void PlayAudioSources(in PlayAudioSourceMessage message, [FromEntity] ref AudioSource audioSource)
 		{
 			audioSource.PendingAction = AudioSource.PlaybackAction.Play;
 		}
@@ -44,7 +44,7 @@ namespace Dissonance.Engine.Audio
 		// Update audio sources
 
 		[EntitySubsystem]
-		private static partial void UpdateAudioSources(Entity entity, ref AudioSource audioSource)
+		partial void UpdateAudioSources(Entity entity, ref AudioSource audioSource)
 		{
 			// Create source if needed.
 			if (audioSource.sourceId == 0) {
@@ -123,7 +123,7 @@ namespace Dissonance.Engine.Audio
 		}
 
 		[Subsystem]
-		private static partial void CheckALErrors()
+		partial void CheckALErrors()
 		{
 			AudioEngine.CheckALErrors();
 		}
