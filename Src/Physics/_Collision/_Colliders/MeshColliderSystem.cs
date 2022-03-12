@@ -4,7 +4,7 @@
 	public sealed partial class MeshColliderSystem : GameSystem
 	{
 		[MessageSubsystem]
-		private partial void DisposeColliders(in ComponentRemovedMessage<MeshCollider> message)
+		partial void DisposeColliders(in ComponentRemovedMessage<MeshCollider> message)
 		{
 			// Unregister colliders when their component is removed
 			var collisionShape = message.Value.CollisionMesh?.CollisionShape;
@@ -15,7 +15,7 @@
 		}
 
 		[EntitySubsystem]
-		private partial void UpdateColliders(Entity entity, ref MeshCollider collider)
+		partial void UpdateColliders(Entity entity, ref MeshCollider collider)
 		{
 			if (collider.needsUpdate) {
 				if (collider.lastCollisionShape != null) {
