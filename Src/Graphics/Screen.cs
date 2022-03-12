@@ -1,13 +1,9 @@
-﻿using Dissonance.Framework.Windowing;
-
-namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(true, typeof(Windowing))]
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
-		public static bool lockCursor;
-
 		private static CursorState cursorState;
 		private static Windowing windowing;
 
