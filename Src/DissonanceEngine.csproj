@@ -41,6 +41,8 @@
 		<PackageReference Include="Silk.NET.GLFW" Version="2.13.0" />
 		<PackageReference Include="Silk.NET.OpenGL" Version="2.13.0" />
 		<PackageReference Include="Silk.NET.OpenAL " Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL.Extensions.EXT" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.1" />
 	</ItemGroup>
 	
 	<ItemGroup>

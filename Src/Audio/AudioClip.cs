@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using Silk.NET.OpenAL;
+using Silk.NET.OpenAL.Extensions.EXT;
+using Silk.NET.OpenAL.Extensions.EXT.Enumeration;
 using static Dissonance.Engine.Audio.OpenALApi;
 
 namespace Dissonance.Engine.Audio
@@ -31,6 +33,8 @@ namespace Dissonance.Engine.Audio
 
 		public unsafe void SetData<T>(T[] data, int channelsNum, int bytesPerSample, int sampleRate) where T : unmanaged
 		{
+			AudioEngine.CheckALErrors();
+
 			if (data == null) {
 				throw new ArgumentNullException(nameof(data));
 			}
@@ -44,7 +48,7 @@ namespace Dissonance.Engine.Audio
 			var format = GetSoundFormat(channelsNum, bytesPerSample);
 
 			fixed (T* ptr = data) {
-				OpenAL.BufferData(BufferId, format, (void*)ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
+				OpenAL.BufferData(BufferId, format, ptr, data.Length * Marshal.SizeOf<T>(), sampleRate);
 			}
 
 			AudioEngine.CheckALErrors();
@@ -53,7 +57,7 @@ namespace Dissonance.Engine.Audio
 		public static BufferFormat GetSoundFormat(int channels, int bitsPerSample) => bitsPerSample switch {
 			1 => channels == 1 ? BufferFormat.Mono8 : BufferFormat.Stereo8,
 			2 => channels == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16,
-			4 => channels == 1 ? (BufferFormat)0x10010 : (BufferFormat)0x10011,
+			4 => channels == 1 ? (BufferFormat)FloatBufferFormat.Mono : (BufferFormat)FloatBufferFormat.Stereo,
 			_ => throw new NotSupportedException("The specified sound format is not supported."),
 		};
 	}

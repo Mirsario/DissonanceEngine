@@ -89,7 +89,7 @@ namespace Dissonance.Engine.Graphics
 			return pixels;
 		}
 
-		public void SetPixels(IntPtr pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, InternalFormat pixelInternalFormat = DefaultPixelInternalFormat)
+		public unsafe void SetPixels(IntPtr pixels, PixelType pixelType = DefaultPixelType, PixelFormat pixelFormat = DefaultPixelFormat, InternalFormat pixelInternalFormat = DefaultPixelInternalFormat)
 		{
 			OpenGL.ActiveTexture(TextureUnit.Texture0);
 			OpenGL.BindTexture(TextureTarget.Texture2D, Id);
@@ -98,7 +98,7 @@ namespace Dissonance.Engine.Graphics
 			PixelFormat = pixelFormat;
 			PixelInternalFormat = pixelInternalFormat;
 
-			OpenGL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, (uint)Width, (uint)Height, 0, PixelFormat, PixelType, pixels);
+			OpenGL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, (uint)Width, (uint)Height, 0, PixelFormat, PixelType, (void*)pixels);
 			
 			SetupFiltering(FilterMode, WrapMode, UseMipmaps);
 		}

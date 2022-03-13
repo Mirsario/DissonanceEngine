@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using Dissonance.Engine.IO;
 using Silk.NET.OpenGL;
 using static Dissonance.Engine.Graphics.OpenGLApi;
+using static Dissonance.Engine.Graphics.GlfwApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -52,7 +52,7 @@ namespace Dissonance.Engine.Graphics
 			renderingPipelineType = typeof(ForwardRendering);
 
 			if (!Game.Flags.HasFlag(GameFlags.NoWindow)) {
-				PrepareOpenGL();
+				InitOpenGL(GLFW);
 			}
 
 			// Prepare the delegate for resetting render components. Could be moved somewhere else...
@@ -181,11 +181,6 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		private static void PrepareOpenGL()
-		{
-			GLInit();
-		}
-		
 		private static void InstantiateRenderingPipeline()
 		{
 			RenderingPipeline?.Dispose();

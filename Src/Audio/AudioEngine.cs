@@ -14,6 +14,11 @@ namespace Dissonance.Engine.Audio
 		internal static ALDevice* audioDevice;
 		internal static ALContext* audioContext;
 
+		protected override void PreInit()
+		{
+			InitOpenAL(softwareAL: true);
+		}
+
 		protected override void Init()
 		{
 			try {
@@ -26,6 +31,10 @@ namespace Dissonance.Engine.Audio
 
 			if (!OpenALContext.MakeContextCurrent(audioContext)) {
 				throw new AudioException("An issue occured during Audio initialization: Unable to make the audio context current.");
+			}
+
+			if (!OpenAL.IsExtensionPresent("AL_EXT_float32")) {
+				throw new AudioException("No float32 audio support extension found!");
 			}
 
 			CheckALErrors();

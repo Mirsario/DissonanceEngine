@@ -1,5 +1,6 @@
 ﻿using System;
 using Silk.NET.GLFW;
+using static Dissonance.Engine.Graphics.GlfwApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -22,8 +23,8 @@ namespace Dissonance.Engine.Graphics
 		public override Vector2Int FramebufferSize => framebufferSize;
 
 		public override bool ShouldClose {
-			get => Glfw.Api.WindowShouldClose(WindowHandle);
-			set => Glfw.Api.SetWindowShouldClose(WindowHandle, value);
+			get => GLFW.WindowShouldClose(WindowHandle);
+			set => GLFW.SetWindowShouldClose(WindowHandle, value);
 		}
 		public override CursorState CursorState {
 			get => cursorState;
@@ -36,7 +37,7 @@ namespace Dissonance.Engine.Graphics
 					_ => throw new IndexOutOfRangeException(),
 				};
 
-				Glfw.Api.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, glfwCursorState);
+				GLFW.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, glfwCursorState);
 
 				cursorState = value;
 			}
@@ -49,7 +50,7 @@ namespace Dissonance.Engine.Graphics
 		public override event CharCallback OnCharCallback;
 
 		public override void SwapBuffers()
-			=> Glfw.Api.SwapBuffers(WindowHandle);
+			=> GLFW.SwapBuffers(WindowHandle);
 
 		public override bool SetVideoMode(int width, int height)
 		{
@@ -57,7 +58,7 @@ namespace Dissonance.Engine.Graphics
 				throw new ArgumentException($"'{nameof(width)}' and '{nameof(height)}' cannot be less than or equal to zero.");
 			}
 
-			Glfw.Api.SetWindowSize(WindowHandle, width, height);
+			GLFW.SetWindowSize(WindowHandle, width, height);
 			UpdateValues();
 
 			return true;
@@ -66,32 +67,34 @@ namespace Dissonance.Engine.Graphics
 		protected override void PreInit()
 		{
 			lock (GlfwLock) {
-				Glfw.Api.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
+				InitGlfw();
+
+				GLFW.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
 					ErrorCode.VersionUnavailable => throw new GraphicsException(description),
 					_ => $"GLFW Error {code}: {description}"
 				}));
 
-				if (!Glfw.Api.Init()) {
+				if (!GLFW.Init()) {
 					throw new Exception("Unable to initialize GLFW!");
 				}
 
-				Glfw.Api.WindowHint(WindowHintInt.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
-				Glfw.Api.WindowHint(WindowHintInt.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
-				Glfw.Api.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
-				Glfw.Api.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+				GLFW.WindowHint(WindowHintInt.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
+				GLFW.WindowHint(WindowHintInt.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
+				GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+				GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
 
 				int resolutionWidth = 800;
 				int resolutionHeight = 600;
 
-				WindowHandle = Glfw.Api.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
+				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
 
 				if (WindowHandle == default) {
 					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
-				Glfw.Api.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
-				Glfw.Api.MakeContextCurrent(WindowHandle);
-				Glfw.Api.SwapInterval(1);
+				GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
+				GLFW.MakeContextCurrent(WindowHandle);
+				GLFW.SwapInterval(1);
 
 				InitCallbacks();
 				UpdateValues();
@@ -101,8 +104,8 @@ namespace Dissonance.Engine.Graphics
 		protected override void OnDispose()
 		{
 			if (WindowHandle != null) {
-				Glfw.Api.DestroyWindow(WindowHandle);
-				Glfw.Api.Terminate();
+				GLFW.DestroyWindow(WindowHandle);
+				GLFW.Terminate();
 			}
 
 			OnKeyCallback = null;
@@ -114,13 +117,13 @@ namespace Dissonance.Engine.Graphics
 		private void UpdateValues()
 		{
 			// Don't change resolution when minimized
-			if (!Glfw.Api.GetWindowAttrib(WindowHandle, WindowAttributeGetter.Iconified)) {
+			if (!GLFW.GetWindowAttrib(WindowHandle, WindowAttributeGetter.Iconified)) {
 				// Framebuffer
-				Glfw.Api.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
+				GLFW.GetFramebufferSize(WindowHandle, out framebufferSize.X, out framebufferSize.Y);
 
 				// Window
-				Glfw.Api.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
-				Glfw.Api.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
+				GLFW.GetWindowSize(WindowHandle, out windowSize.X, out windowSize.Y);
+				GLFW.GetWindowPos(WindowHandle, out windowLocation.X, out windowLocation.Y);
 			}
 
 			framebufferSize.X = Math.Max(1, framebufferSize.X);
@@ -131,11 +134,11 @@ namespace Dissonance.Engine.Graphics
 
 		private void InitCallbacks()
 		{
-			Glfw.Api.SetCursorPosCallback(WindowHandle, InternalCursorPositionCallback);
-			Glfw.Api.SetMouseButtonCallback(WindowHandle, InternalMouseButtonCallback);
-			Glfw.Api.SetScrollCallback(WindowHandle, InternalScrollCallback);
-			Glfw.Api.SetKeyCallback(WindowHandle, InternalKeyCallback);
-			Glfw.Api.SetCharCallback(WindowHandle, InternalCharCallback);
+			GLFW.SetCursorPosCallback(WindowHandle, InternalCursorPositionCallback);
+			GLFW.SetMouseButtonCallback(WindowHandle, InternalMouseButtonCallback);
+			GLFW.SetScrollCallback(WindowHandle, InternalScrollCallback);
+			GLFW.SetKeyCallback(WindowHandle, InternalKeyCallback);
+			GLFW.SetCharCallback(WindowHandle, InternalCharCallback);
 		}
 
 		private static void InternalCursorPositionCallback(WindowHandle* windowHandle, double x, double y)

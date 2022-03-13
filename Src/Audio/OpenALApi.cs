@@ -7,12 +7,10 @@ namespace Dissonance.Engine.Audio
 		public static AL OpenAL { get; private set; }
 		public static ALContext OpenALContext { get; private set; }
 
-		internal static void Initialize()
+		internal static void InitOpenAL(bool softwareAL)
 		{
-			const bool SoftwareAL = true;
-
-			OpenAL = AL.GetApi(soft: SoftwareAL);
-			OpenALContext = ALContext.GetApi(soft: SoftwareAL);
+			OpenAL = AL.GetApi(soft: softwareAL);
+			OpenALContext = ALContext.GetApi(soft: softwareAL);
 		}
 	}
 }
