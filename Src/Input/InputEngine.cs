@@ -86,7 +86,7 @@ namespace Dissonance.Engine.Input
 
 		private static void CheckSpecialCombinations()
 		{
-			if (GetKeyDown(Keys.F4) && (GetKey(Keys.AltLeft) || GetKey(Keys.AltRight))) {
+			if (GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
 				Game.Quit();
 			}
 

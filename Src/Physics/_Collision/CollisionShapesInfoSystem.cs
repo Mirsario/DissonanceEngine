@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class CollisionShapesInfoSystem : GameSystem
 	{
 		[MessageSubsystem]
-		private static partial void RemoveCollisionShapes(in RemoveCollisionShapeMessage message, [FromEntity] ref CollisionShapesInfo collisionShapesInfo)
+		partial void RemoveCollisionShapes(in RemoveCollisionShapeMessage message, [FromEntity] ref CollisionShapesInfo collisionShapesInfo)
 		{
 			var shapes = collisionShapesInfo.collisionShapes;
 
@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[MessageSubsystem]
-		private static partial void RegisterCollisionShapes(in AddCollisionShapeMessage message)
+		partial void RegisterCollisionShapes(in AddCollisionShapeMessage message)
 		{
 			List<CollisionShape> shapes;
 

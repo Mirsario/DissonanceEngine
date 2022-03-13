@@ -1,14 +1,9 @@
-﻿using Silk.NET.GLFW;
-
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(true, typeof(Windowing))]
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
-		public static bool lockCursor;
-
-		private static CursorModeValue cursorState;
 		private static Windowing windowing;
 
 		// Framebuffer
@@ -46,9 +41,9 @@ namespace Dissonance.Engine.Graphics
 			}
 		}*/
 
-		public static CursorModeValue CursorState {
-			get => cursorState;
-			set => cursorState = Game.Instance.GetModule<Windowing>().CursorState = value;
+		public static CursorState CursorState {
+			get => Game.Instance.GetModule<Windowing>().CursorState;
+			set => Game.Instance.GetModule<Windowing>().CursorState = value;
 		}
 
 		protected override void Init() => UpdateValues();

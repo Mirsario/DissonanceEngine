@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class BoxColliderSystem : GameSystem
 	{
 		[MessageSubsystem]
-		private partial void DisposeColliders(in ComponentRemovedMessage<BoxCollider> message)
+		partial void DisposeColliders(in ComponentRemovedMessage<BoxCollider> message)
 		{
 			// Unregister colliders when their component is removed
 			if (message.Value.boxShape != null) {
@@ -16,7 +16,7 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[EntitySubsystem]
-		private partial void Update(Entity entity, ref BoxCollider collider)
+		partial void Update(Entity entity, ref BoxCollider collider)
 		{
 			bool noShape = collider.boxShape == null;
 

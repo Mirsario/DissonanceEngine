@@ -5,6 +5,7 @@ namespace Dissonance.Engine.Physics
 {
 	[Callback<PhysicsUpdateGroup>]
 	[ExecuteAfter<ColliderUpdateGroup>]
+	[ExecuteAfter<CollisionShapesInfoSystem>]
 	public sealed class RigidbodySystem : GameSystem
 	{
 		private EntitySet entities;

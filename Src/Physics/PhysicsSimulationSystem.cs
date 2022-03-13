@@ -8,7 +8,7 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class PhysicsSimulationSystem : GameSystem
 	{
 		[Subsystem]
-		private static partial void StepSimulation([FromWorld] ref WorldPhysics physics)
+		partial void StepSimulation([FromWorld] ref WorldPhysics physics)
 		{
 			physics.PhysicsWorld.Gravity = physics.Gravity;
 
@@ -17,13 +17,13 @@ namespace Dissonance.Engine.Physics
 
 
 		[EntitySubsystem]
-		private static partial void UpdateRigidbodies(ref Rigidbody rigidbody)
+		partial void UpdateRigidbodies(ref Rigidbody rigidbody)
 		{
 			rigidbody.collisions?.Clear(); //TODO: Optimize, avoid reallocations every frame...
 		}
 
 		[Subsystem]
-		private static partial void UpdateCollisions([FromWorld] ref WorldPhysics physics)
+		partial void UpdateCollisions([FromWorld] ref WorldPhysics physics)
 		{
 			var collisionDispatcher = physics.CollisionDispatcher;
 			int numManifolds = collisionDispatcher.NumManifolds;
@@ -75,7 +75,7 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[EntitySubsystem]
-		private static partial void UpdateRigidbodyTransformations(ref Rigidbody rigidbody, ref Transform transform)
+		partial void UpdateRigidbodyTransformations(ref Rigidbody rigidbody, ref Transform transform)
 		{
 			transform.WorldMatrix = rigidbody.bulletRigidbody.WorldTransform;
 		}

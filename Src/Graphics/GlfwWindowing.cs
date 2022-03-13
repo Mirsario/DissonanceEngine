@@ -13,7 +13,7 @@ namespace Dissonance.Engine.Graphics
 		private Vector2Int windowSize;
 		private Vector2Int windowLocation;
 		private Vector2Int framebufferSize;
-		private CursorModeValue cursorState;
+		private CursorState cursorState;
 
 		public WindowHandle* WindowHandle { get; private set; }
 
@@ -25,10 +25,18 @@ namespace Dissonance.Engine.Graphics
 			get => Glfw.Api.WindowShouldClose(WindowHandle);
 			set => Glfw.Api.SetWindowShouldClose(WindowHandle, value);
 		}
-		public override CursorModeValue CursorState {
+		public override CursorState CursorState {
 			get => cursorState;
 			set {
-				Glfw.Api.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, value);
+				// Maybe make switching extensions?
+				var glfwCursorState = value switch {
+					CursorState.Normal => CursorModeValue.CursorNormal,
+					CursorState.Hidden => CursorModeValue.CursorHidden,
+					CursorState.Disabled => CursorModeValue.CursorDisabled,
+					_ => throw new IndexOutOfRangeException(),
+				};
+
+				Glfw.Api.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, glfwCursorState);
 
 				cursorState = value;
 			}

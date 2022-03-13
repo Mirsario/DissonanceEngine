@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class PhysicsInitializationSystem : GameSystem
 	{
 		[Subsystem]
-		private partial void InitPhysics()
+		partial void InitPhysics()
 		{
 			var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
 
@@ -21,7 +21,7 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[MessageSubsystem]
-		private partial void DisposePhysics(in ComponentRemovedMessage<WorldPhysics> message)
+		partial void DisposePhysics(in ComponentRemovedMessage<WorldPhysics> message)
 		{
 			ref readonly var physics = ref message.Value;
 

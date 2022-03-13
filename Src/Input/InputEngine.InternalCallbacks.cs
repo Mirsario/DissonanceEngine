@@ -2,6 +2,8 @@
 using System.Text;
 using Dissonance.Engine.Graphics;
 using Silk.NET.GLFW;
+using GlfwKeys = Silk.NET.GLFW.Keys;
+using GlfwMouseButton = Silk.NET.GLFW.MouseButton;
 
 namespace Dissonance.Engine.Input
 {
@@ -15,7 +17,7 @@ namespace Dissonance.Engine.Input
 			renderInput.MousePosition = value;
 		}
 
-		private static void MouseButtonCallback(MouseButton button, InputAction action, KeyModifiers mods)
+		private static void MouseButtonCallback(GlfwMouseButton button, InputAction action, KeyModifiers mods)
 		{
 			bool value = action == InputAction.Press;
 
@@ -38,7 +40,7 @@ namespace Dissonance.Engine.Input
 			renderInput.InputString += text;
 		}
 
-		private static void KeyCallback(Keys key, int scanCode, InputAction action, KeyModifiers mods)
+		private static void KeyCallback(GlfwKeys glfwKey, int scanCode, InputAction action, KeyModifiers mods)
 		{
 			if (action == InputAction.Repeat) {
 				return;
@@ -49,6 +51,8 @@ namespace Dissonance.Engine.Input
 				action(fixedInput);
 				action(renderInput);
 			}
+
+			var key = (Keys)glfwKey;
 
 			switch (action) {
 				case InputAction.Press:

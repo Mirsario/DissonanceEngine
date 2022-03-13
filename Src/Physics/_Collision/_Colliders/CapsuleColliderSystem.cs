@@ -6,7 +6,7 @@ namespace Dissonance.Engine.Physics
 	public sealed partial class CapsuleColliderSystem : GameSystem
 	{
 		[MessageSubsystem]
-		private partial void DisposeColliders(in ComponentRemovedMessage<CapsuleCollider> message)
+		partial void DisposeColliders(in ComponentRemovedMessage<CapsuleCollider> message)
 		{
 			// Unregister colliders when their component is removed
 			if (message.Value.capsuleShape != null) {
@@ -16,7 +16,7 @@ namespace Dissonance.Engine.Physics
 		}
 
 		[EntitySubsystem]
-		private partial void Update(Entity entity, ref CapsuleCollider collider)
+		partial void Update(Entity entity, ref CapsuleCollider collider)
 		{
 			bool noShape = collider.capsuleShape == null;
 

@@ -22,7 +22,7 @@ namespace Dissonance.Engine.Graphics
 		public abstract Vector2Int WindowSize { get; }
 		public abstract Vector2Int WindowLocation { get; }
 		public abstract Vector2Int FramebufferSize { get; }
-		public abstract CursorModeValue CursorState { get; set; }
+		public abstract CursorState CursorState { get; set; }
 		public abstract bool ShouldClose { get; set; }
 
 		public abstract void SwapBuffers();
