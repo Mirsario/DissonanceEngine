@@ -81,14 +81,14 @@ namespace Dissonance.Engine.Graphics
 			BoneWeightsBuffer = GetBuffer<BoneWeightsBuffer>();
 		}
 
-		public void Render(int? numElements = null)
+		public unsafe void Render(int? numElements = null)
 		{
 			OpenGL.BindVertexArray(vertexArrayId);
 
 			int indexCount = (int)IndexBuffer.DataLength;
 
 			if (indexCount > 0) {
-				OpenGL.DrawElements(currentPrimitiveType, (uint)(numElements ?? indexCount), DrawElementsType.UnsignedInt, 0);
+				OpenGL.DrawElements(currentPrimitiveType, (uint)(numElements ?? indexCount), DrawElementsType.UnsignedInt, null);
 			} else {
 				OpenGL.DrawArrays(currentPrimitiveType, 0, (uint)(numElements ?? (int)VertexBuffer.DataLength));
 			}
