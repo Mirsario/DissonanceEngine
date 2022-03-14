@@ -147,7 +147,7 @@ namespace Dissonance.Engine
 
 				string targetPath = map.Attribute("target").Value;
 				string usedConfigDirectory = Path.GetDirectoryName(usedConfigPath);
-				string nativeLibraryPath = Path.GetFullPath(Path.Combine(usedConfigDirectory, targetPath));
+				string nativeLibraryPath = Path.GetFullPath(Path.Combine(".", targetPath));
 
 				return NativeLibrary.Load(nativeLibraryPath);
 			});

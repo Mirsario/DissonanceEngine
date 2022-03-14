@@ -1,7 +1,14 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
 	<PropertyGroup>
 		<EnginePath>$(MSBuildThisFileDirectory)</EnginePath>
 		<AssetsPath>$(MSBuildProjectDirectory)</AssetsPath>
+		<LibrariesDirectory>Libraries</LibrariesDirectory>
+		
+		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+		
+		<!-- A default that can be overridden -->
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly> 
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -42,4 +49,73 @@
 		<MakeDir Directories="$(TargetDir)\Assets" />
 		<Copy SourceFiles="@(Assets)" DestinationFolder="$(TargetAssetsPath)\%(RecursiveDir)" SkipUnchangedFiles="False" />
 	</Target>
+	
+	<Target Name="BuildRedirectNugetFilesToLibraries" AfterTargets="ResolveLockFileCopyLocalFiles">
+		<Message Text="Redirecting nuget references to Libraries..." Importance="high" />
+		
+		<ItemGroup>
+			<ReferenceCopyLocalPaths>
+				<DirectoryInPackage>$([System.String]::Copy('%(PathInPackage)').Remove($([System.String]::Copy('%(PathInPackage)').LastIndexOf('/'))).Replace('/', '\'))</DirectoryInPackage>
+			</ReferenceCopyLocalPaths>
+		</ItemGroup>
+		
+		<ItemGroup>
+			<ReferenceCopyLocalPaths>
+				<DestinationSubDirectory>$(LibrariesDirectory)\$([System.String]::Copy('%(NuGetPackageID)'))\%(NuGetPackageVersion)\%(DirectoryInPackage)\</DestinationSubDirectory>
+			</ReferenceCopyLocalPaths>
+		</ItemGroup>
+	</Target>
+	
+	<Target Name="RedirectProjectReferencesToLib" AfterTargets="ResolveAssemblyReferences">
+		<Message Text="Redirecting project references to '$(LibrariesDirectory)'..." Importance="high" />
+		
+		<ItemGroup>
+			<!--Version is bugged in deps.json for ProjectReferences, doesn't reflect AssemblyVersion for whatever reason. Uses 1.0.0-->
+			<!--As well, FusionName isn't available, so alternate string manipulation to get Name-->
+			<ReferenceCopyLocalPaths Condition="%(ReferenceCopyLocalPaths.ReferenceSourceTarget) == 'ProjectReference'">
+				<VersionHack>1.0.0</VersionHack>
+				<DllName>$([System.String]::Copy('%(ReferenceCopyLocalPaths.ResolvedFrom)').Remove($([System.String]::Copy('%(ReferenceCopyLocalPaths.ResolvedFrom)').IndexOf(".dll"))).SubString($([System.String]::Copy('%(ReferenceCopyLocalPaths.ResolvedFrom)').LastIndexOf("\"))).Substring(1))</DllName>
+			</ReferenceCopyLocalPaths>
+			
+			<ReferenceCopyLocalPaths Condition="%(ReferenceCopyLocalPaths.ReferenceSourceTarget) == 'ProjectReference'">
+				<DestinationSubDirectory>$(LibrariesDirectory)\%(ReferenceCopyLocalPaths.DllName)\%(ReferenceCopyLocalPaths.VersionHack)\</DestinationSubDirectory>
+			</ReferenceCopyLocalPaths>
+		</ItemGroup>
+	</Target>
+	
+	<Target Name="RedirectAssemblyReferencesToLibraries" AfterTargets="ResolveAssemblyReferences">
+		<Message Text="Redirecting DLL assembly references to '$(LibrariesDirectory)'..." Importance="high" />
+	
+		<ItemGroup>
+			<!--To match deps.json for runtime resolving, paths must be of the form Libraries/<name>/<version>-->
+			<!--Note that associated files, like pdbs/xmls won't be resolved properly here. Prefer nuget packages for that-->
+			<ReferenceCopyLocalPaths Condition="%(ReferenceCopyLocalPaths.ReferenceSourceTarget) == 'ResolveAssemblyReference'">
+				<DirectoryVersion>$([System.String]::Copy('%(ReferenceCopyLocalPaths.FusionName)').Remove($([System.String]::Copy('%(ReferenceCopyLocalPaths.FusionName)').IndexOf(", C"))).Substring($([System.String]::Copy('%(ReferenceCopyLocalPaths.FusionName)').IndexOf(","))).Substring(10))</DirectoryVersion>
+			</ReferenceCopyLocalPaths>
+
+			<ReferenceCopyLocalPaths Condition="%(ReferenceCopyLocalPaths.ReferenceSourceTarget) == 'ResolveAssemblyReference'">
+				<DestinationSubDirectory>$(LibrariesDirectory)\%(ReferenceCopyLocalPaths.OriginalItemSpec)\%(ReferenceCopyLocalPaths.DirectoryVersion)\</DestinationSubDirectory>
+			</ReferenceCopyLocalPaths>
+		</ItemGroup>
+	</Target>
+	
+	<!-- This solution is temporary. Best to modify the contents of the main runtimeconfig file instead... -->
+	<Target Name="OverwriteDevRuntimeTargets" AfterTargets="GenerateBuildRuntimeConfigurationFiles" Condition="$(GenerateRuntimeConfigDevFile) == 'true'">
+		<Message Text="Overriding runtime config dev file ('$(ProjectRuntimeConfigDevFilePath)')..." Importance="high" />
+
+		<PropertyGroup>
+			<DevRuntimeConfig>
+{
+	"runtimeOptions": {
+		"additionalProbingPaths": [
+			"Libraries"
+		]
+	}
+}
+			</DevRuntimeConfig>
+		</PropertyGroup>
+
+		<WriteLinesToFile File="$(ProjectRuntimeConfigDevFilePath)" Lines="$(DevRuntimeConfig)" Overwrite="true" Encoding="UTF-8" />
+	</Target>
+
 </Project>
