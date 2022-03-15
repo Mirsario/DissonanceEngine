@@ -10,11 +10,6 @@ namespace Dissonance.Engine
 {
 	internal static class DllResolver
 	{
-		//TODO: Unhardcode
-		private static readonly string[] EmbeddedAssemblies = {
-			"BulletSharp"
-		};
-
 		private static Dictionary<string, Assembly> assemblyCache;
 		private static bool initCalled;
 
@@ -66,6 +61,7 @@ namespace Dissonance.Engine
 					return assembly;
 				}
 
+				/*
 				for (int i = 0; i < EmbeddedAssemblies.Length; i++) {
 					if (TryGetAssembly(EmbeddedAssemblies[i], argsName, out assembly)) {
 						//TODO: Unhardcode
@@ -78,6 +74,7 @@ namespace Dissonance.Engine
 						return assembly;
 					}
 				}
+				*/
 
 				return null;
 			};
