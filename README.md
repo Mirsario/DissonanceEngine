@@ -10,7 +10,7 @@ A game template repository can be found here:
 Fork it, clone it, ensure that submodules were downloaded correctly, and rename whatever you want to.
 
 ## Used libraries
-* [DissonanceFramework](https://github.com/Mirsario/DissonanceFramework)
+* [Silk.NET](https://github.com/dotnet/Silk.NET)
   * [OpenGL](https://www.khronos.org/opengl)
   * [GLFW](https://www.glfw.org)
   * [OpenAL Soft](https://github.com/kcat/openal-soft)
