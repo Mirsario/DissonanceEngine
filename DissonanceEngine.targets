@@ -43,9 +43,9 @@
 	
 	<!-- Manage libraries -->
 	
-	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
+	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" Condition="$(OutputType) != 'Library'" />
 
-	<Target Name="MoveDependencies" AfterTargets="CopyAssets" >
+	<Target Name="MoveDependencies" AfterTargets="CopyAssets" Condition="$(OutputType) != 'Library'">
 		<Message Text="Moving dependencies..." Importance="high" />
 
 		<MoveProjectDependencies
@@ -57,7 +57,7 @@
 		/>
 	</Target>
 	
-	<Target Name="CopyNatives" AfterTargets="MoveDependencies">
+	<Target Name="CopyNatives" AfterTargets="MoveDependencies" Condition="$(OutputType) != 'Library'">
 		<ItemGroup>
 			<NativeFiles Include="$(EnginePath)\References\Native\**" />
 		</ItemGroup>

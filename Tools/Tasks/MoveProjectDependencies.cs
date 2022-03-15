@@ -127,14 +127,18 @@ namespace Dissonance.BuildTools.Tasks
 
 				string dllKey = dllPair.Key;
 				string dllFileName = Path.GetFileName(dllKey);
-				string dllPath = Path.Combine(OutputPath, dllFileName);
+				string dllPath = Path.GetFullPath(Path.Combine(OutputPath, dllFileName));
 
 				if (!File.Exists(dllPath)) {
 					continue;
 				}
 
-				string dllDestinationPath = Path.Combine(OutputPath, LibrariesDir, libraryName, libraryVersion, dllFileName);
+				string dllDestinationPath = Path.GetFullPath(Path.Combine(OutputPath, LibrariesDir, libraryName, libraryVersion, dllFileName));
 				string dllDestinationDir = Path.GetDirectoryName(dllDestinationPath);
+
+				if (dllPath == dllDestinationPath) {
+					continue;
+				}
 
 				Log.LogMessage(MessageImportance.Low, $"Moving library: '{dllFileName}' to '{dllDestinationPath}'...");
 
@@ -196,7 +200,7 @@ namespace Dissonance.BuildTools.Tasks
 
 				string dllKey = dllPair.Key;
 				string dllFileName = Path.GetFileName(dllKey);
-				string dllPath = Path.Combine(OutputPath, dllKey);
+				string dllPath = Path.GetFullPath(Path.Combine(OutputPath, dllKey));
 
 				if (!File.Exists(dllPath)) {
 					continue;
@@ -204,10 +208,14 @@ namespace Dissonance.BuildTools.Tasks
 
 				string newDllKey = $"{LibrariesDir}/Native/{runtimeId}/{dllFileName}";
 
-				string dllDestinationPath = Path.Combine(OutputPath, newDllKey.Replace('/', Path.DirectorySeparatorChar));
+				string dllDestinationPath = Path.GetFullPath(Path.Combine(OutputPath, newDllKey.Replace('/', Path.DirectorySeparatorChar)));
 				string dllDestinationDir = Path.GetDirectoryName(dllDestinationPath);
 
-				Log.LogMessage(MessageImportance.Low, $"Moving native library: '{dllFileName}' to '{dllDestinationPath}'...");
+				if (dllDestinationPath == dllPath) {
+					continue;
+				}
+
+				Log.LogMessage(MessageImportance.High, $"Moving native library: '{dllPath}' to '{dllDestinationPath}'...");
 
 				if (File.Exists(dllDestinationPath)) {
 					File.Delete(dllDestinationPath);
