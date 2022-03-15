@@ -17,8 +17,10 @@ namespace Dissonance.Engine
 				public T[] Data = Array.Empty<T>();
 				public int[] IndicesByEntity = Array.Empty<int>();
 				public int GlobalDataIndex = -1;
-				public int NextDataIndex;
+				public int NextDataIndex = default;
 				public ConcurrentBag<int> FreeDataIndices = new();
+
+				public ComponentWorldData() { }
 			}
 
 			public static T GlobalSingleton;

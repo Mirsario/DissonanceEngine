@@ -21,10 +21,10 @@ namespace Dissonance.Engine.Graphics
 		private float pixelSize = DefaultPixelSize;
 		private Vector2 sizeInPixels = Vector2.One;
 
-		public Asset<Material> Material { get; set; }
+		public Asset<Material> Material { get; set; } = default;
 		public RectFloat SourceRectangle { get; set; } = RectFloat.Default;
-		public SpriteEffects Effects { get; set; }
-		public Bounds AABB { get; private set; }
+		public SpriteEffects Effects { get; set; } = default;
+		public Bounds AABB { get; private set; } = default;
 
 		public Vector2 FrameSize {
 			get => sizeInPixels;
@@ -60,5 +60,7 @@ namespace Dissonance.Engine.Graphics
 		//	sizeInPixels = (Vector2)texture.Size;
 		//	verticesNeedRecalculation = true;
 		//}
+
+		public Sprite() { }
 	}
 }
