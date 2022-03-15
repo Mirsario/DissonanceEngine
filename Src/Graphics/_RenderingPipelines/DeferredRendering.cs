@@ -1,5 +1,5 @@
 ﻿using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
 using System.Collections.Generic;
 
 namespace Dissonance.Engine.Graphics
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Graphics
 						specularBuffer
 					);
 
-					fb.AttachRenderTexture(depthBuffer,FramebufferAttachment.DepthAttachment);
+					fb.AttachRenderTexture(depthBuffer, FramebufferAttachment.DepthAttachment);
 				}),
 
 				lightingFramebuffer = Framebuffer.Create("Lighting", fb => fb.AttachRenderTextures(

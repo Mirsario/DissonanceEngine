@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -8,9 +10,9 @@ namespace Dissonance.Engine.Graphics
 	{
 		private static readonly Regex RegexGLVersion = new(@".*?([\d.]+).*", RegexOptions.Compiled);
 
-		public static Version GetOpenGLVersion()
+		public unsafe static Version GetOpenGLVersion()
 		{
-			string versionStr = GL.GetString(StringName.Version);
+			string versionStr = Marshal.PtrToStringAnsi((IntPtr)OpenGL.GetString(StringName.Version));
 
 			var match = RegexGLVersion.Match(versionStr);
 
@@ -27,16 +29,16 @@ namespace Dissonance.Engine.Graphics
 
 		public static bool CheckGLErrors(string context = null, bool throwException = true)
 		{
-			GraphicsError error = GL.GetError();
+			GLEnum error = OpenGL.GetError();
 
 			switch (error) {
-				case GraphicsError.NoError:
+				case GLEnum.NoError:
 					return false;
 				default:
 					string message = $"Error: '{error}'. Context: '{context ?? "Not provided"}'.";
 
 					if (throwException) {
-						throw new GraphicsException(message);
+						throw new Exception(message);
 					} else {
 						Debug.Log(message, stackframeOffset: 2);
 					}
@@ -47,7 +49,7 @@ namespace Dissonance.Engine.Graphics
 
 		internal static void CheckFramebufferStatus()
 		{
-			switch (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) {
+			switch ((FramebufferStatus)OpenGL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) {
 				case FramebufferStatus.FramebufferComplete:
 					return;
 
@@ -57,11 +59,11 @@ namespace Dissonance.Engine.Graphics
 				case FramebufferStatus.FramebufferIncompleteMissingAttachment:
 					throw new Exception("Attachments are missing! At least one image (texture) must be bound to the frame buffer object!");
 
-				case FramebufferStatus.FramebufferIncompleteDimensionsExt:
-					throw new Exception("The dimensions of the buffers attached to the currently used frame buffer object do not match!");
+				//case GLEnum.FramebufferIncompleteDimensionsExt:
+				//	throw new Exception("The dimensions of the buffers attached to the currently used frame buffer object do not match!");
 
-				case FramebufferStatus.FramebufferIncompleteFormatsExt:
-					throw new Exception("The formats of the currently used frame buffer object are not supported or do not fit together!");
+				//case FramebufferStatus.FramebufferIncompleteFormatsExt:
+				//	throw new Exception("The formats of the currently used frame buffer object are not supported or do not fit together!");
 
 				case FramebufferStatus.FramebufferIncompleteDrawBuffer:
 					throw new Exception("A Draw buffer is incomplete or undefinied. All draw buffers must specify attachment points that have images attached.");
@@ -86,7 +88,7 @@ namespace Dissonance.Engine.Graphics
 		internal static void SetStencilMask(uint stencilMask)
 		{
 			if (stencilMask != currentStencilMask) {
-				GL.StencilMask(currentStencilMask = stencilMask);
+				OpenGL.StencilMask(currentStencilMask = stencilMask);
 			}
 		}
 
@@ -96,7 +98,7 @@ namespace Dissonance.Engine.Graphics
 				currentBlendFactorSrc = blendFactorSrc;
 				currentBlendFactorDst = blendFactorDst;
 
-				GL.BlendFunc(blendFactorSrc, blendFactorDst);
+				OpenGL.BlendFunc(blendFactorSrc, blendFactorDst);
 			}
 		}
 	}

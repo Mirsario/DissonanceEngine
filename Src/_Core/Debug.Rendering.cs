@@ -1,6 +1,6 @@
 using System;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine
 {

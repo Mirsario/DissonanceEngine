@@ -1,4 +1,5 @@
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -9,21 +10,21 @@ namespace Dissonance.Engine.Graphics
 		public readonly uint Id;
 		public readonly string Name;
 
-		internal RenderbufferStorage storageType;
+		internal InternalFormat storageType;
 
-		public Renderbuffer(string name, RenderbufferStorage storageType)
+		public Renderbuffer(string name, InternalFormat storageType)
 		{
 			Name = name;
-			Id = GL.GenRenderbuffer();
+			Id = OpenGL.GenRenderbuffer();
 			this.storageType = storageType;
 
-			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, Id);
-			GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, this.storageType, Screen.Width, Screen.Height);
+			OpenGL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, Id);
+			OpenGL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, this.storageType, (uint)Screen.Width, (uint)Screen.Height);
 		}
 
 		public static void Bind(Renderbuffer newBuffer)
 		{
-			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, newBuffer?.Id ?? 0);
+			OpenGL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, newBuffer?.Id ?? 0);
 
 			ActiveBuffer = newBuffer;
 		}

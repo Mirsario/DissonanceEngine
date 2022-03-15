@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Utilities;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -53,37 +54,39 @@ namespace Dissonance.Engine.Graphics
 
 					uint textureId = textureAsset.TryGetOrRequestValue(out var texture) ? texture.Id : 0;
 
-					GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
-					GL.BindTexture(TextureTarget.Texture2D, textureId);
-					GL.Uniform1(uniform.Location, i);
+					OpenGL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + i));
+					OpenGL.BindTexture(TextureTarget.Texture2D, textureId);
+					OpenGL.Uniform1(uniform.Location, i);
 				}
 			} else if (shader.uniforms.TryGetValue("mainTex", out uniform)) {
-				GL.ActiveTexture(TextureUnit.Texture0);
-				GL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
-				GL.Uniform1(uniform.Location, 0);
+				OpenGL.ActiveTexture(TextureUnit.Texture0);
+				OpenGL.BindTexture(TextureTarget.Texture2D, Rendering.whiteTexture.Id);
+				OpenGL.Uniform1(uniform.Location, 0);
 			}
 		}
 
-		internal void ApplyUniforms(Shader shader)
+		internal unsafe void ApplyUniforms(Shader shader)
 		{
 			foreach (var pair in UniformsFloat) {
-				(byte vecSize, var data) = pair.Value;
+				(byte vecSize, float[] data) = pair.Value;
 
 				int location = shader.uniforms[pair.Key].Location;
 
-				switch (vecSize) {
-					case 1:
-						GL.Uniform1(location, data.Length, data);
-						break;
-					case 2:
-						GL.Uniform2(location, data.Length / 2, data);
-						break;
-					case 3:
-						GL.Uniform3(location, data.Length / 3, data);
-						break;
-					case 4:
-						GL.Uniform4(location, data.Length / 4, data);
-						break;
+				fixed (float* dataPtr = data) {
+					switch (vecSize) {
+						case 1:
+							OpenGL.Uniform1(location, (uint)data.Length, dataPtr);
+							break;
+						case 2:
+							OpenGL.Uniform2(location, (uint)data.Length / 2, dataPtr);
+							break;
+						case 3:
+							OpenGL.Uniform3(location, (uint)data.Length / 3, dataPtr);
+							break;
+						case 4:
+							OpenGL.Uniform4(location, (uint)data.Length / 4, dataPtr);
+							break;
+					}
 				}
 			}
 		}

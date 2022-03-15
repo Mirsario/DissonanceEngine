@@ -17,21 +17,16 @@
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 	
-	<Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
-	
 	<ItemGroup>
-		<ProjectReference Include="../Framework/Src/DissonanceFramework.csproj" />
 		<ProjectReference Include="../SourceGenerators/DissonanceSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		
+		<Reference Include="BulletSharp" HintPath="..\References\BulletSharp.dll" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<EmbeddedResource Include="..\References\*.dll" />
 		<EmbeddedResource Include="BuiltInAssets\**" />
+		
 		<None Remove="BuiltInAssets\**" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Reference Include="BulletSharp" HintPath="..\References\BulletSharp.dll" Private="false" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -39,10 +34,11 @@
     	<PackageReference Include="NVorbis" Version="0.10.4" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 		<PackageReference Include="Hjson" Version="3.0.0" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Update="DissonanceEngine.dll.config" CopyToOutputDirectory="PreserveNewest" />
+		<PackageReference Include="Silk.NET.GLFW" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenGL" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL " Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL.Extensions.EXT" Version="2.13.0" />
+		<PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.1" />
 	</ItemGroup>
 
 </Project>

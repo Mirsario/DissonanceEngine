@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -10,10 +11,10 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
-			GL.Enable(EnableCap.CullFace);
-			GL.Enable(EnableCap.DepthTest);
-			GL.Enable(EnableCap.Blend);
-			GL.CullFace(CullFaceMode.Back);
+			OpenGL.Enable(EnableCap.CullFace);
+			OpenGL.Enable(EnableCap.DepthTest);
+			OpenGL.Enable(EnableCap.Blend);
+			OpenGL.CullFace(CullFaceMode.Back);
 
 			bool[] uniformComputed = new bool[DefaultShaderUniforms.Count];
 			Matrix4x4 worldMatrix = default, inverseWorldMatrix = default,
@@ -35,7 +36,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
+				OpenGL.Viewport(viewport.X, viewport.Y, (uint)viewport.Width, (uint)viewport.Height);
 
 				var cameraTransform = renderView.Transform;
 				var cameraPos = cameraTransform.Position;
@@ -69,13 +70,13 @@ namespace Dissonance.Engine.Graphics
 						// Update CullMode
 						if (lastCullMode != shader.CullMode) {
 							if (shader.CullMode == CullMode.Off) {
-								GL.Disable(EnableCap.CullFace);
+								OpenGL.Disable(EnableCap.CullFace);
 							} else {
 								if (lastCullMode == CullMode.Off) {
-									GL.Enable(EnableCap.CullFace);
+									OpenGL.Enable(EnableCap.CullFace);
 								}
 
-								GL.CullFace((CullFaceMode)shader.CullMode);
+								OpenGL.CullFace((CullFaceMode)shader.CullMode);
 							}
 
 							lastCullMode = shader.CullMode;
@@ -83,21 +84,21 @@ namespace Dissonance.Engine.Graphics
 
 						// Update PolygonMode
 						if (lastPolygonMode != shader.PolygonMode) {
-							GL.PolygonMode(MaterialFace.FrontAndBack, shader.PolygonMode);
+							OpenGL.PolygonMode(MaterialFace.FrontAndBack, shader.PolygonMode);
 
 							lastPolygonMode = shader.PolygonMode;
 						}
 
 						// Update depth testing
 						if (lastDepthTest != shader.DepthTest) {
-							GL.DepthFunc(shader.DepthTest);
+							OpenGL.DepthFunc(shader.DepthTest);
 
 							lastDepthTest = shader.DepthTest;
 						}
 
 						// Update depth writing
 						if (lastDepthWrite != shader.DepthWrite) {
-							GL.DepthMask(shader.DepthWrite);
+							OpenGL.DepthMask(shader.DepthWrite);
 
 							lastDepthWrite = shader.DepthWrite;
 						}
@@ -136,12 +137,12 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-			GL.CullFace(CullFaceMode.Back);
+			OpenGL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+			OpenGL.CullFace(CullFaceMode.Back);
 
-			GL.Disable(EnableCap.CullFace);
-			GL.Disable(EnableCap.DepthTest);
-			GL.Disable(EnableCap.Blend);
+			OpenGL.Disable(EnableCap.CullFace);
+			OpenGL.Disable(EnableCap.DepthTest);
+			OpenGL.Disable(EnableCap.Blend);
 
 			Framebuffer.Bind(null);
 		}

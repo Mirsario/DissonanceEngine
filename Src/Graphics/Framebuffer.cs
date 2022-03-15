@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Dissonance.Engine.Utilities;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -21,7 +22,7 @@ namespace Dissonance.Engine.Graphics
 		public List<RenderTexture> renderTextures;
 		public Renderbuffer[] renderbuffers;
 
-		private DrawBuffersEnum[] drawBuffers;
+		private DrawBufferMode[] drawBuffers;
 
 		internal FramebufferAttachment nextDefaultAttachment = FramebufferAttachment.ColorAttachment0;
 		internal int maxTextureWidth;
@@ -30,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 		protected Framebuffer(string name)
 		{
 			Name = name;
-			Id = GL.GenFramebuffer();
+			Id = OpenGL.GenFramebuffer();
 
 			renderTextures = new List<RenderTexture>();
 
@@ -45,15 +46,15 @@ namespace Dissonance.Engine.Graphics
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 
-			GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture.Id, 0);
+			OpenGL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture.Id, 0);
 
 			renderTextures.Add(texture);
 
 			textureToAttachment[texture] = attachment;
 
-			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+			var drawBuffersEnum = (DrawBufferMode)attachment;
 
-			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(typeof(DrawBufferMode), drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 
@@ -81,15 +82,15 @@ namespace Dissonance.Engine.Graphics
 
 			var attachment = attachmentType ?? nextDefaultAttachment++;
 
-			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, attachment, RenderbufferTarget.Renderbuffer, Id);
+			OpenGL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, attachment, RenderbufferTarget.Renderbuffer, Id);
 
 			Rendering.CheckFramebufferStatus();
 
 			ArrayUtils.Add(ref renderbuffers, renderbuffer);
 
-			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+			var drawBuffersEnum = (DrawBufferMode)attachment;
 
-			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(drawBuffersEnum)) {
 				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 			}
 		}
@@ -102,14 +103,14 @@ namespace Dissonance.Engine.Graphics
 
 			Bind(this);
 
-			GL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, 0, 0);
+			OpenGL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, 0, 0);
 
 			renderTextures.Remove(texture);
 			textureToAttachment.Remove(texture);
 
-			var drawBuffersEnum = (DrawBuffersEnum)attachment;
+			var drawBuffersEnum = (DrawBufferMode)attachment;
 
-			if (Enum.IsDefined(typeof(DrawBuffersEnum), drawBuffersEnum)) {
+			if (Enum.IsDefined(drawBuffersEnum)) {
 				int index = Array.IndexOf(drawBuffers, drawBuffersEnum);
 
 				if (index >= 0) {
@@ -154,7 +155,7 @@ namespace Dissonance.Engine.Graphics
 
 		public void Dispose()
 		{
-			GL.DeleteFramebuffer(Id);
+			OpenGL.DeleteFramebuffer(Id);
 
 			renderTextures = null;
 			renderbuffers = null;
@@ -176,7 +177,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			fb ??= DefaultFramebuffer;
 
-			GL.BindFramebuffer(target, fb?.Id ?? 0);
+			OpenGL.BindFramebuffer(target, fb?.Id ?? 0);
 
 			if (target == FramebufferTarget.Framebuffer) {
 				ActiveBuffer = fb;
@@ -188,7 +189,7 @@ namespace Dissonance.Engine.Graphics
 			Bind(fb, target);
 
 			if (fb != null) {
-				GL.DrawBuffers(fb.drawBuffers.Length, fb.drawBuffers);
+				OpenGL.DrawBuffers((uint)fb.drawBuffers.Length, fb.drawBuffers);
 			}
 		}
 	}

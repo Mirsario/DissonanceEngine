@@ -1,5 +1,6 @@
 ﻿using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -9,7 +10,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
-			GL.Disable(EnableCap.DepthTest);
+			OpenGL.Disable(EnableCap.DepthTest);
 
 			var shader = Assets.Find<Shader>("Debug").GetValueImmediately();
 
@@ -21,7 +22,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
+				OpenGL.Viewport(viewport.X, viewport.Y, (uint)viewport.Width, (uint)viewport.Height);
 
 				var viewProj = renderView.ViewMatrix * renderView.ProjectionMatrix;
 
@@ -39,7 +40,7 @@ namespace Dissonance.Engine.Graphics
 				var camera = cameraEntity.Get<Camera>();
 				var viewport = GetViewport(camera);
 
-				GL.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+				OpenGL.Api.Viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
 				var viewProj = camera.ViewMatrix * camera.ProjectionMatrix;
 
@@ -49,7 +50,7 @@ namespace Dissonance.Engine.Graphics
 			}*/
 
 			Shader.SetShader(null);
-			//GL.Disable(EnableCap.DepthTest);
+			//OpenGL.Api.Disable(EnableCap.DepthTest);
 
 			Framebuffer.Bind(null);
 		}

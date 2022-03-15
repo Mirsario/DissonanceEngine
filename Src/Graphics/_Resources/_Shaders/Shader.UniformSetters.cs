@@ -1,4 +1,4 @@
-using Dissonance.Framework.Graphics;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -11,7 +11,7 @@ namespace Dissonance.Engine.Graphics
 			SetShader(this);
 
 			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				GL.Uniform1(uniform.Location, value);
+				OpenGL.Uniform1(uniform.Location, value);
 			}
 		}
 
@@ -20,7 +20,7 @@ namespace Dissonance.Engine.Graphics
 			SetShader(this);
 
 			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				GL.Uniform2(uniform.Location, value.X, value.Y);
+				OpenGL.Uniform2(uniform.Location, value.X, value.Y);
 			}
 		}
 	}

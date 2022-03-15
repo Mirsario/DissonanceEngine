@@ -1,7 +1,8 @@
-using Dissonance.Framework.Graphics;
 using System.Linq;
 using Dissonance.Engine.IO;
 using Dissonance.Engine.Input;
+using static Dissonance.Engine.Graphics.OpenGLApi;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -96,11 +97,11 @@ namespace Dissonance.Engine.Graphics
 			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
+				OpenGL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
 			}
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, texture.Id);
+			OpenGL.ActiveTexture(TextureUnit.Texture0);
+			OpenGL.BindTexture(TextureTarget.Texture2D, texture.Id);
 
 			if (style == null || style.Border.Left == 0) {
 				DrawUtils.DrawQuadUv0(
@@ -182,12 +183,12 @@ namespace Dissonance.Engine.Graphics
 			if (Shader.ActiveShader.hasDefaultUniform[DefaultShaderUniforms.Color]) {
 				var col = color ?? Vector4.One;
 
-				GL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
+				OpenGL.Uniform4(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.Color], col.X, col.Y, col.Z, col.W);
 			}
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, font.Texture.TryGetOrRequestValue(out var tex) ? tex.Id : 0);
-			GL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
+			OpenGL.ActiveTexture(TextureUnit.Texture0);
+			OpenGL.BindTexture(TextureTarget.Texture2D, font.Texture.TryGetOrRequestValue(out var tex) ? tex.Id : 0);
+			OpenGL.Uniform1(Shader.ActiveShader.defaultUniformIndex[DefaultShaderUniforms.MainTex], 0);
 
 			float scale = fontSize / font.CharSize.Y;
 			var position = new Vector2(rect.X, rect.Y);

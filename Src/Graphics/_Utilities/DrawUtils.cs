@@ -1,4 +1,4 @@
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -38,7 +38,7 @@ namespace Dissonance.Engine.Graphics
 					0,1,2,
 					0,2,3
 				},
-				BufferUsage = BufferUsageHint.StreamDraw
+				BufferUsage = BufferUsageARB.StreamDraw
 			};
 		}
 	}

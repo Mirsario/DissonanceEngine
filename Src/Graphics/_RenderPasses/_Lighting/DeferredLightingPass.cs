@@ -1,5 +1,6 @@
 ﻿using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -11,14 +12,14 @@ namespace Dissonance.Engine.Graphics
 		{
 			Framebuffer.BindWithDrawBuffers(Framebuffer);
 
-			GL.Enable(EnableCap.Blend);
-			GL.Enable(EnableCap.CullFace);
-			GL.CullFace(CullFaceMode.Back);
-			GL.DepthMask(false);
+			OpenGL.Enable(EnableCap.Blend);
+			OpenGL.Enable(EnableCap.CullFace);
+			OpenGL.CullFace(CullFaceMode.Back);
+			OpenGL.DepthMask(false);
 
 			// test if it equals 1
-			// GL.StencilFunc(StencilFunction.Notequal, 0x01, 0x01);
-			// GL.StencilMask(0);
+			// OpenGL.Api.StencilFunc(StencilFunction.Notequal, 0x01, 0x01);
+			// OpenGL.Api.StencilMask(0);
 
 			Matrix4x4 worldMatrix, inverseWorldMatrix = default,
 			worldViewMatrix = default, inverseWorldViewMatrix = default,
@@ -30,7 +31,7 @@ namespace Dissonance.Engine.Graphics
 			foreach (var renderView in renderViewData.RenderViews) {
 				var viewport = renderView.Viewport;
 
-				GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
+				OpenGL.Viewport(viewport.X, viewport.Y, (uint)viewport.Width, (uint)viewport.Height);
 
 				var cameraTransform = renderView.Transform;
 				var cameraPosition = cameraTransform.Position;
@@ -51,11 +52,11 @@ namespace Dissonance.Engine.Graphics
 					for (int j = 0; j < PassedTextures.Length; j++) {
 						var tex = PassedTextures[j];
 
-						GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
-						GL.BindTexture(TextureTarget.Texture2D, tex.Id);
+						OpenGL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + j));
+						OpenGL.BindTexture(TextureTarget.Texture2D, tex.Id);
 
 						if (activeShader.TryGetUniformLocation(tex.Name, out int location)) {
-							GL.Uniform1(location, j);
+							OpenGL.Uniform1(location, j);
 						}
 					}
 
@@ -82,27 +83,27 @@ namespace Dissonance.Engine.Graphics
 						);
 
 						if (uniformLightRange != -1 && light.Range.HasValue) {
-							GL.Uniform1(uniformLightRange, light.Range.Value);
+							OpenGL.Uniform1(uniformLightRange, light.Range.Value);
 						}
 
 						if (uniformLightPosition != -1 && light.Position.HasValue) {
 							var position = light.Position.Value;
 
-							GL.Uniform3(uniformLightPosition, position.X, position.Y, position.Z);
+							OpenGL.Uniform3(uniformLightPosition, position.X, position.Y, position.Z);
 						}
 
 						if (uniformLightDirection != -1 && light.Direction.HasValue) {
 							var direction = light.Direction.Value;
 
-							GL.Uniform3(uniformLightDirection, direction.X, direction.Y, direction.Z);
+							OpenGL.Uniform3(uniformLightDirection, direction.X, direction.Y, direction.Z);
 						}
 
 						if (uniformLightIntensity != -1) {
-							GL.Uniform1(uniformLightIntensity, light.Intensity);
+							OpenGL.Uniform1(uniformLightIntensity, light.Intensity);
 						}
 
 						if (uniformLightColor != -1) {
-							GL.Uniform3(uniformLightColor, light.Color.X, light.Color.Y, light.Color.Z);
+							OpenGL.Uniform3(uniformLightColor, light.Color.X, light.Color.Y, light.Color.Z);
 						}
 
 						switch (lightType) {
@@ -117,13 +118,13 @@ namespace Dissonance.Engine.Graphics
 				}
 			}
 
-			GL.DepthMask(true);
-			GL.Disable(EnableCap.Blend);
-			GL.Disable(EnableCap.CullFace);
+			OpenGL.DepthMask(true);
+			OpenGL.Disable(EnableCap.Blend);
+			OpenGL.Disable(EnableCap.CullFace);
 
 			Shader.SetShader(null);
 
-			GL.BindTexture(TextureTarget.Texture2D, 0);
+			OpenGL.BindTexture(TextureTarget.Texture2D, 0);
 		}
 	}
 }
