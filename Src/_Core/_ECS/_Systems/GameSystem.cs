@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Dissonance.Engine
+﻿namespace Dissonance.Engine
 {
 	public abstract class GameSystem
 	{

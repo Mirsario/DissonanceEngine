@@ -1,14 +1,13 @@
-﻿using Dissonance.Framework.Windowing;
-using Dissonance.Framework.Windowing.Input;
+﻿using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Graphics
 {
 	public abstract class Windowing : EngineModule
 	{
-		public delegate void KeyCallback(Keys key, int scanCode, KeyAction action, KeyModifiers mods);
+		public delegate void KeyCallback(Keys key, int scanCode, InputAction action, KeyModifiers mods);
 		public delegate void CharCallback(uint codePoint);
 		public delegate void ScrollCallback(double xOffset, double yOffset);
-		public delegate void MouseButtonCallback(MouseButton button, MouseAction action, KeyModifiers mods);
+		public delegate void MouseButtonCallback(MouseButton button, InputAction action, KeyModifiers mods);
 		public delegate void CursorPositionCallback(double x, double y);
 
 		public Vector2 WindowCenter => WindowLocation + WindowSize * 0.5f;

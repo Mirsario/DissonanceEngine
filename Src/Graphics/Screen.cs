@@ -1,10 +1,9 @@
-﻿namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(true, typeof(Windowing))]
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
-		private static CursorState cursorState;
 		private static Windowing windowing;
 
 		// Framebuffer
@@ -23,9 +22,9 @@
 		public static Vector2 WindowCenter { get; internal set; }
 
 		/*public static bool Fullscreen {
-			get => GLFW.GetWindowMonitor(Rendering.window)!=IntPtr.Zero;
+			get => Glfw.Api.GetWindowMonitor(Rendering.window)!=IntPtr.Zero;
 			set {
-				var monitor = GLFW.GetWindowMonitor(Rendering.window);
+				var monitor = Glfw.Api.GetWindowMonitor(Rendering.window);
 				bool isFullscreen = monitor!=IntPtr.Zero;
 
 				if (value!=isFullscreen) {
@@ -33,18 +32,18 @@
 				}
 
 				if (value) {
-					GLFW.SetWindowMonitor(Rendering.window,GLFW.GetPrimaryMonitor(),0,0,800,600,144);
+					Glfw.Api.SetWindowMonitor(Rendering.window,Glfw.Api.GetPrimaryMonitor(),0,0,800,600,144);
 				} else {
-					var videoMode = GLFW.GetVideoMode(monitor);
+					var videoMode = Glfw.Api.GetVideoMode(monitor);
 
-					GLFW.SetWindowMonitor(Rendering.window,IntPtr.Zero,0,0,videoMode.width,videoMode.height,videoMode.refreshRate);
+					Glfw.Api.SetWindowMonitor(Rendering.window,IntPtr.Zero,0,0,videoMode.width,videoMode.height,videoMode.refreshRate);
 				}
 			}
 		}*/
 
 		public static CursorState CursorState {
-			get => cursorState;
-			set => cursorState = Game.Instance.GetModule<Windowing>().CursorState = value;
+			get => Game.Instance.GetModule<Windowing>().CursorState;
+			set => Game.Instance.GetModule<Windowing>().CursorState = value;
 		}
 
 		protected override void Init() => UpdateValues();

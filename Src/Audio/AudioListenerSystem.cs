@@ -1,13 +1,12 @@
 ﻿using System;
-using Dissonance.Framework.Audio;
+using Silk.NET.OpenAL;
+using static Dissonance.Engine.Audio.OpenALApi;
 
 namespace Dissonance.Engine.Audio
 {
 	[Callback<EndRenderUpdateCallback>]
 	public sealed class AudioListenerSystem : GameSystem
 	{
-		private static readonly float[] OrientationArray = new float[6];
-
 		private EntitySet entities;
 
 		protected override void Initialize()
@@ -15,7 +14,7 @@ namespace Dissonance.Engine.Audio
 			entities = World.GetEntitySet(e => e.Has<AudioListener>());
 		}
 
-		protected override void Execute()
+		protected unsafe override void Execute()
 		{
 			//TODO: Replace with an attribute-based way of culling system autoloading.
 			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {
@@ -34,7 +33,10 @@ namespace Dissonance.Engine.Audio
 				}
 			}
 
+			const int OrientationLength = 6;
+
 			Vector3 position;
+			float* orientationPtr = stackalloc float[OrientationLength];
 
 			if (entity.Has<Transform>()) {
 				var transform = entity.Get<Transform>();
@@ -43,22 +45,22 @@ namespace Dissonance.Engine.Audio
 
 				position = transform.Position;
 
-				OrientationArray[0] = lookAt.X;
-				OrientationArray[1] = lookAt.Y;
-				OrientationArray[2] = lookAt.Z;
-				OrientationArray[3] = up.X;
-				OrientationArray[4] = up.Y;
-				OrientationArray[5] = up.Z;
+				orientationPtr[0] = lookAt.X;
+				orientationPtr[1] = lookAt.Y;
+				orientationPtr[2] = lookAt.Z;
+				orientationPtr[3] = up.X;
+				orientationPtr[4] = up.Y;
+				orientationPtr[5] = up.Z;
 			} else {
 				position = Vector3.Zero;
 
-				for (int i = 0; i < OrientationArray.Length; i++) {
-					OrientationArray[i] = 0f;
+				for (int i = 0; i < OrientationLength; i++) {
+					orientationPtr[i] = 0f;
 				}
 			}
 
-			AL.Listener3(ListenerFloat3.Position, position.X, position.Y, position.Z);
-			AL.Listener(ListenerFloatArray.Orientation, OrientationArray);
+			OpenAL.SetListenerProperty(ListenerVector3.Position, position.X, position.Y, position.Z);
+			OpenAL.SetListenerProperty(ListenerFloatArray.Orientation, orientationPtr);
 
 			AudioEngine.CheckALErrors();
 		}

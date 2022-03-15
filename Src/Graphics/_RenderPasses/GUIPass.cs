@@ -1,4 +1,5 @@
-﻿using Dissonance.Framework.Graphics;
+﻿using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -10,9 +11,9 @@ namespace Dissonance.Engine.Graphics
 
 			Shader.SetShader(Rendering.GUIShader.GetValueImmediately());
 
-			GL.Enable(EnableCap.Blend);
-			GL.Enable(EnableCap.CullFace);
-			GL.CullFace(CullFaceMode.Back);
+			OpenGL.Enable(EnableCap.Blend);
+			OpenGL.Enable(EnableCap.CullFace);
+			OpenGL.CullFace(CullFaceMode.Back);
 
 			GUI.canDraw = true;
 
@@ -21,8 +22,8 @@ namespace Dissonance.Engine.Graphics
 
 			GUI.canDraw = false;
 
-			GL.Disable(EnableCap.Blend);
-			GL.Disable(EnableCap.CullFace);
+			OpenGL.Disable(EnableCap.Blend);
+			OpenGL.Disable(EnableCap.CullFace);
 		}
 	}
 }

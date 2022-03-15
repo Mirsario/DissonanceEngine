@@ -1,5 +1,5 @@
 ﻿using System;
-using Dissonance.Framework.Windowing.Input;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input
 {

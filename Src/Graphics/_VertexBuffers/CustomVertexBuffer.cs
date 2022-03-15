@@ -1,9 +1,10 @@
-﻿using Dissonance.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 #pragma warning disable CS0649 // Value is never assigned to.
 
@@ -16,7 +17,7 @@ namespace Dissonance.Engine.Graphics
 			public static int id;
 		}
 
-		protected const BufferTarget Target = BufferTarget.ArrayBuffer;
+		protected const BufferTargetARB Target = BufferTargetARB.ArrayBuffer;
 
 		public static IReadOnlyList<Type> TypeById { get; private set; }
 		public static IReadOnlyList<IReadOnlyList<int>> AttributeAttachmentsById { get; internal set; }
@@ -62,49 +63,51 @@ namespace Dissonance.Engine.Graphics
 	{
 		public T[] data;
 
-		public override void Apply()
+		public unsafe override void Apply()
 		{
 			var attributes = AttributeAttachmentsById[TypeId];
 
 			if (data == null) {
 				if (BufferId != 0) {
-					GL.DeleteBuffer(BufferId);
+					OpenGL.DeleteBuffer(BufferId);
 
 					BufferId = 0;
 				}
 
 				foreach (uint attributeId in attributes) {
-					GL.DisableVertexAttribArray(attributeId);
+					OpenGL.DisableVertexAttribArray(attributeId);
 				}
 
 				return;
 			}
 
 			if (BufferId == 0) {
-				BufferId = GL.GenBuffer();
+				BufferId = OpenGL.GenBuffer();
 			}
 
 			int tSize = Marshal.SizeOf<T>();
 
-			GL.BindBuffer(Target, BufferId);
+			OpenGL.BindBuffer(Target, BufferId);
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(Target, (int)(DataLength * tSize), data, Mesh.BufferUsage);
+			fixed (T* dataPtr = data) {
+				OpenGL.BufferData(Target, (uint)(DataLength * tSize), dataPtr, Mesh.BufferUsage);
+			}
 
 			foreach (uint attributeId in attributes) {
-				GL.EnableVertexAttribArray(attributeId);
+				OpenGL.EnableVertexAttribArray(attributeId);
 
 				var attribute = CustomVertexAttribute.GetInstance((int)attributeId);
 
-				GL.VertexAttribPointer(attributeId, attribute.Size, attribute.PointerType, attribute.IsNormalized, attribute.Stride, (IntPtr)attribute.Offset);
+				OpenGL.VertexAttribPointer(attributeId, attribute.Size, attribute.PointerType, attribute.IsNormalized, attribute.Stride, (void*)attribute.Offset);
 			}
 		}
 
 		public override void Dispose()
 		{
 			if (BufferId != 0) {
-				GL.DeleteBuffer(BufferId);
+				OpenGL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}

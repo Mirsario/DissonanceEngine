@@ -1,5 +1,6 @@
 using System;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -17,20 +18,20 @@ namespace Dissonance.Engine.Graphics
 		public RenderTexture(string name, int width, int height, FilterMode? filterMode = null, TextureWrapMode? wrapMode = null, bool useMipmaps = true, TextureFormat textureFormat = TextureFormat.RGBA8)
 			: base(name, width, height, filterMode, wrapMode, useMipmaps, textureFormat) { }
 
-		protected override void SetupTexture()
+		protected unsafe override void SetupTexture()
 		{
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, Id);
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, Width, Height, 0, PixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
+			OpenGL.ActiveTexture(TextureUnit.Texture0);
+			OpenGL.BindTexture(TextureTarget.Texture2D, Id);
+			OpenGL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat, (uint)Width, (uint)Height, 0, PixelFormat, PixelType.UnsignedByte, null);
 
 			SetupFiltering(FilterMode, WrapMode, UseMipmaps);
 		}
 
 		public void GenerateMipmaps()
 		{
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, Id);
-			GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+			OpenGL.ActiveTexture(TextureUnit.Texture0);
+			OpenGL.BindTexture(TextureTarget.Texture2D, Id);
+			OpenGL.GenerateMipmap(TextureTarget.Texture2D);
 		}
 
 		public void Resize(int width, int height)

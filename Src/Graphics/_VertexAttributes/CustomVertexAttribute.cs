@@ -1,8 +1,8 @@
-﻿using Dissonance.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Silk.NET.OpenGL;
 
 #pragma warning disable CS0649 // Value is never assigned to.
 
@@ -25,7 +25,7 @@ namespace Dissonance.Engine.Graphics
 		public VertexAttribPointerType PointerType { get; protected set; }
 		public bool IsNormalized { get; protected set; }
 		public int Size { get; protected set; }
-		public int Stride { get; protected set; }
+		public uint Stride { get; protected set; }
 		public int Offset { get; protected set; }
 
 		public abstract Type BufferType { get; }
@@ -96,7 +96,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			// This is quite weird.
 
-			Init(out string nameId, out var pointerType, out bool isNormalized, out int size, out int stride, out int offset);
+			Init(out string nameId, out var pointerType, out bool isNormalized, out int size, out uint stride, out int offset);
 
 			NameId = nameId;
 			PointerType = pointerType;
@@ -106,6 +106,6 @@ namespace Dissonance.Engine.Graphics
 			Offset = offset;
 		}
 
-		public abstract void Init(out string nameId, out VertexAttribPointerType pointerType, out bool isNormalized, out int size, out int stride, out int offset);
+		public abstract void Init(out string nameId, out VertexAttribPointerType pointerType, out bool isNormalized, out int size, out uint stride, out int offset);
 	}
 }

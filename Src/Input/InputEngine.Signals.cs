@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dissonance.Framework.Windowing.Input;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input
 {

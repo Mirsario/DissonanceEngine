@@ -2,16 +2,17 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Dissonance.Engine.IO;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
+using static Dissonance.Engine.Graphics.GlfwApi;
 
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
-	public sealed partial class Rendering : EngineModule
+	public sealed unsafe partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new(3, 2);
-		public static readonly Version[] SupportedOpenGLVersions = GL.SupportedVersions.Where(v => v >= MinOpenGLVersion).ToArray();
 
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static Type renderingPipelineType;
@@ -21,7 +22,7 @@ namespace Dissonance.Engine.Graphics
 		internal static Windowing windowing;
 
 		private static Version openGLVersion = MinOpenGLVersion;
-		private static GL.DebugCallback debugCallback;
+		private static DebugProc debugCallback;
 		private static Asset<Shader> guiShader; //TODO: To be moved
 		private Action resetRenderComponents;
 
@@ -40,10 +41,6 @@ namespace Dissonance.Engine.Graphics
 					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
 				}
 
-				if (!GL.SupportedVersions.Contains(value)) {
-					throw new ArgumentException($"OpenGL version '{value}' is unknown or not supported. The following versions are supported:\r\n{string.Join("\r\n", SupportedOpenGLVersions.Select(v => $"{v};"))}.");
-				}
-
 				openGLVersion = value;
 			}
 		}
@@ -55,7 +52,7 @@ namespace Dissonance.Engine.Graphics
 			renderingPipelineType = typeof(ForwardRendering);
 
 			if (!Game.Flags.HasFlag(GameFlags.NoWindow)) {
-				PrepareOpenGL();
+				InitOpenGL(GLFW);
 			}
 
 			// Prepare the delegate for resetting render components. Could be moved somewhere else...
@@ -184,17 +181,6 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		private static void PrepareOpenGL()
-		{
-			Debug.Log("Preparing OpenGL...");
-
-			GL.Load(OpenGLVersion);
-
-			CheckGLErrors("Post GL.Load()");
-
-			Debug.Log($"Initialized OpenGL {GL.GetString(StringName.Version)}");
-		}
-		
 		private static void InstantiateRenderingPipeline()
 		{
 			RenderingPipeline?.Dispose();
@@ -208,7 +194,7 @@ namespace Dissonance.Engine.Graphics
 		
 		private static void ClearScreen()
 		{
-			GL.Viewport(0, 0, Screen.Width, Screen.Height);
+			OpenGL.Viewport(0, 0, (uint)Screen.Width, (uint)Screen.Height);
 
 			var pipeline = RenderingPipeline;
 			var clearColor = ClearColor;
@@ -223,9 +209,9 @@ namespace Dissonance.Engine.Graphics
 
 					Framebuffer.BindWithDrawBuffers(framebuffer);
 
-					GL.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, clearColor.W);
-					// GL.StencilMask(~0);
-					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+					OpenGL.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, clearColor.W);
+					// OpenGL.Api.StencilMask(~0);
+					OpenGL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 				}
 			}
 
@@ -274,12 +260,12 @@ namespace Dissonance.Engine.Graphics
 						continue;
 					}
 
-					GL.ReadBuffer(ReadBufferMode.ColorAttachment0 + j);
+					OpenGL.ReadBuffer(ReadBufferMode.ColorAttachment0 + j);
 
 					int wSize = Screen.Width / size;
 					int hSize = Screen.Height / size;
 
-					GL.BlitFramebuffer(
+					OpenGL.BlitFramebuffer(
 						0, 0, tex.Width, tex.Height,
 						x * wSize, (size - y - 1) * hSize, (x + 1) * wSize, (size - y) * hSize,
 						ClearBufferMask.ColorBufferBit,

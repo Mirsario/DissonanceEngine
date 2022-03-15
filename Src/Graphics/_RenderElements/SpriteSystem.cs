@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {
@@ -97,7 +97,7 @@ namespace Dissonance.Engine.Graphics
 
 				if (batch.CompoundMesh == null) {
 					batch.CompoundMesh = new Mesh() {
-						BufferUsage = BufferUsageHint.DynamicDraw
+						BufferUsage = BufferUsageARB.DynamicDraw
 					};
 				}
 

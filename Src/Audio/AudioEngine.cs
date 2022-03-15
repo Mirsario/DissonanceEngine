@@ -1,33 +1,45 @@
 using System;
 using Dissonance.Engine.Graphics;
-using Dissonance.Framework.Audio;
+using static Dissonance.Engine.Audio.OpenALApi;
+using ALDevice = Silk.NET.OpenAL.Device;
+using ALContext = Silk.NET.OpenAL.Context;
+using Silk.NET.OpenAL;
 
 namespace Dissonance.Engine.Audio
 {
 	[ModuleDependency(true, typeof(Windowing))]
 	[ModuleAutoload(DisablingGameFlags = GameFlags.NoAudio)]
-	public sealed class AudioEngine : EngineModule
+	public unsafe sealed class AudioEngine : EngineModule
 	{
-		internal static IntPtr audioDevice;
-		internal static IntPtr audioContext;
+		internal static ALDevice* audioDevice;
+		internal static ALContext* audioContext;
+
+		protected override void PreInit()
+		{
+			InitOpenAL(softwareAL: true);
+		}
 
 		protected override void Init()
 		{
 			try {
-				audioDevice = ALC.OpenDevice(null);
-				audioContext = ALC.CreateContext(audioDevice, null);
+				audioDevice = OpenALContext.OpenDevice(null);
+				audioContext = OpenALContext.CreateContext(audioDevice, null);
 			}
 			catch (Exception e) {
-				throw new AudioException("An issue occured during Audio initialization.", e);
+				throw new AudioException($"An issue occured during Audio initialization: {e}");
 			}
 
-			if (!ALC.MakeContextCurrent(audioContext)) {
+			if (!OpenALContext.MakeContextCurrent(audioContext)) {
 				throw new AudioException("An issue occured during Audio initialization: Unable to make the audio context current.");
+			}
+
+			if (!OpenAL.IsExtensionPresent("AL_EXT_float32")) {
+				throw new AudioException("No float32 audio support extension found!");
 			}
 
 			CheckALErrors();
 
-			AL.DistanceModel(DistanceModel.LinearDistanceClamped);
+			OpenAL.DistanceModel(DistanceModel.LinearDistanceClamped);
 
 			CheckALErrors();
 		}
@@ -39,7 +51,7 @@ namespace Dissonance.Engine.Audio
 
 		public static void CheckALErrors()
 		{
-			var error = AL.GetError();
+			var error = OpenAL.GetError();
 
 			if (error != AudioError.NoError) {
 				throw new Exception("AudioError: " + error);

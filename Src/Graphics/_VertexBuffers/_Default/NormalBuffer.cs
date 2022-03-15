@@ -1,5 +1,5 @@
 ﻿using System;
-using Dissonance.Framework.Graphics;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {

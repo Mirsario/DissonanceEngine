@@ -1,13 +1,12 @@
 ﻿using System;
-using Dissonance.Framework.Graphics;
-
-#pragma warning disable CS0649 // Value is never assigned to.
+using Silk.NET.OpenGL;
+using static Dissonance.Engine.Graphics.OpenGLApi;
 
 namespace Dissonance.Engine.Graphics
 {
-	public class IndexBuffer : MeshBuffer, IMeshBuffer<uint>
+	public unsafe class IndexBuffer : MeshBuffer, IMeshBuffer<uint>
 	{
-		protected const BufferTarget Target = BufferTarget.ElementArrayBuffer;
+		protected const BufferTargetARB Target = BufferTargetARB.ElementArrayBuffer;
 
 		public uint[] data;
 
@@ -15,7 +14,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			if (data == null) {
 				if (BufferId != 0) {
-					GL.DeleteBuffer(BufferId);
+					OpenGL.DeleteBuffer(BufferId);
 
 					BufferId = 0;
 				}
@@ -24,20 +23,22 @@ namespace Dissonance.Engine.Graphics
 			}
 
 			if (BufferId == 0) {
-				BufferId = GL.GenBuffer();
+				BufferId = OpenGL.GenBuffer();
 			}
 
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, BufferId);
+			OpenGL.BindBuffer(BufferTargetARB.ElementArrayBuffer, BufferId);
 
 			DataLength = (uint)data.Length;
 
-			GL.BufferData(BufferTarget.ElementArrayBuffer, (int)(DataLength * sizeof(int)), data, Mesh.BufferUsage);
+			fixed (void* dataPtr = data) {
+				OpenGL.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(DataLength * sizeof(int)), dataPtr, Mesh.BufferUsage);
+			}
 		}
 
 		public override void Dispose()
 		{
 			if (BufferId != 0) {
-				GL.DeleteBuffer(BufferId);
+				OpenGL.DeleteBuffer(BufferId);
 
 				BufferId = 0;
 			}

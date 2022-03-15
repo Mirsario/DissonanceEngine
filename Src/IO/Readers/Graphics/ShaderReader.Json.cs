@@ -1,7 +1,7 @@
-﻿using Dissonance.Framework.Graphics;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using Dissonance.Engine.Graphics;
+using Silk.NET.OpenGL;
 
 #pragma warning disable CS0649 // Field is never assigned to
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Dissonance.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.IO
 {
