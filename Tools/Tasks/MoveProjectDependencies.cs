@@ -21,6 +21,8 @@ namespace Dissonance.BuildTools.Tasks
 		[Required]
 		public string AssemblyName { get; set; } = string.Empty;
 
+		// Is there a way to get these properties without making a parameter? Please PR an improvement if so.
+		// -- Mirsario.
 		[Required]
 		public string ProjectDepsFilePath { get; set; } = string.Empty;
 

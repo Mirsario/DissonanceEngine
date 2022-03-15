@@ -46,7 +46,7 @@
 	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
 
 	<Target Name="MoveDependencies" AfterTargets="CopyAssets" >
-		<Message Text="Running moving files task..." Importance="high" />
+		<Message Text="Moving dependencies..." Importance="high" />
 
 		<MoveProjectDependencies
 			OutputPath="$(OutputPath)"
