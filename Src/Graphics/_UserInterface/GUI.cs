@@ -6,7 +6,7 @@ using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {
-	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Assets), typeof(Rendering))]
 	public sealed class GUI : EngineModule
 	{

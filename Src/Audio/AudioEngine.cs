@@ -8,7 +8,7 @@ using Silk.NET.OpenAL;
 namespace Dissonance.Engine.Audio
 {
 	[ModuleDependency(true, typeof(Windowing))]
-	[ModuleAutoload(DisablingGameFlags = GameFlags.NoAudio)]
+	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
 	public unsafe sealed class AudioEngine : EngineModule
 	{
 		internal static ALDevice* audioDevice;

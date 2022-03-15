@@ -5,9 +5,9 @@ using System.Reflection;
 namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	public class ModuleAutoloadAttribute : Attribute
+	public class AutoloadAttribute : Attribute
 	{
-		private static readonly ModuleAutoloadAttribute Default = new();
+		private static readonly AutoloadAttribute Default = new();
 
 		public readonly bool Enabled;
 
@@ -16,14 +16,14 @@ namespace Dissonance.Engine
 
 		public bool NeedsAutoloading => Enabled && (Game.Instance.Flags & RequiredGameFlags) >= RequiredGameFlags && (Game.Instance.Flags & DisablingGameFlags) == 0;
 
-		public ModuleAutoloadAttribute(bool enabled = true)
+		public AutoloadAttribute(bool enabled = true)
 		{
 			Enabled = enabled;
 		}
 
 		public static bool TypeNeedsAutoloading(Type type)
 		{
-			return (type.GetCustomAttribute<ModuleAutoloadAttribute>(true) ?? Default).NeedsAutoloading;
+			return (type.GetCustomAttribute<AutoloadAttribute>(true) ?? Default).NeedsAutoloading;
 		}
 	}
 }

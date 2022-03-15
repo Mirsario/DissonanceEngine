@@ -8,7 +8,7 @@ using static Dissonance.Engine.Graphics.GlfwApi;
 
 namespace Dissonance.Engine.Graphics
 {
-	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
 	public sealed unsafe partial class Rendering : EngineModule
 	{
