@@ -5,7 +5,7 @@ using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Dissonance.BuildTools
+namespace Dissonance.BuildTools.Tasks
 {
 	/// <summary>
 	/// The goal of this task is to organize output folders by moving both managed and native references into a subdirectory, modifying deps.json and runtimeconfig.json files in the process.

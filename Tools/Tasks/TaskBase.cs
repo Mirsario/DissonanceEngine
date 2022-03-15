@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Build.Utilities;
 
-namespace Dissonance.BuildTools
+namespace Dissonance.BuildTools.Tasks
 {
 	public abstract class TaskBase : Task
 	{

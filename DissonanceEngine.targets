@@ -4,6 +4,7 @@
 		<EnginePath>$(MSBuildThisFileDirectory)</EnginePath>
 		<AssetsPath>$(MSBuildProjectDirectory)</AssetsPath>
 		<LibrariesDirectory>Libraries</LibrariesDirectory>
+		<DissonanceBuildToolsAssemblyFile>$(EnginePath)\Tools\Build\netstandard2.0\Dissonance.BuildTools.dll</DissonanceBuildToolsAssemblyFile>
 		
 		<!-- A default that can be overridden -->
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly> 
@@ -26,17 +27,7 @@
 		<Assets Remove="**\*.csproj" />
 	</ItemGroup>
 	
-	<!--
-	<Target Name="CopyNatives" AfterTargets="Build">
-		<ItemGroup>
-			<NativeFiles Include="$(EnginePath)\References\Native\**" />
-		</ItemGroup>
-		
-		<Message Text="Copying natives from '$(EnginePath)\References\Native' to '$(TargetDir)\Libraries\Native'" Importance="High" />
-	
-		<Copy SourceFiles="@(NativeFiles)" DestinationFolder="$(TargetDir)\Libraries\Native\%(RecursiveDir)" SkipUnchangedFiles="False" />
-	</Target>
-	-->
+	<!-- Manage assets -->
 	
 	<Target Name="CopyAssets" AfterTargets="Build">
 		<PropertyGroup>
@@ -50,7 +41,9 @@
 		<Copy SourceFiles="@(Assets)" DestinationFolder="$(TargetAssetsPath)\%(RecursiveDir)" SkipUnchangedFiles="False" />
 	</Target>
 	
-	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(EnginePath)\Tools\Build\netstandard2.0\Dissonance.BuildTools.dll" />
+	<!-- Manage libraries -->
+	
+	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
 
 	<Target Name="MoveDependencies" AfterTargets="Build" >
 		<Message Text="Running moving files task..." Importance="high" />
@@ -62,6 +55,26 @@
 			ProjectDepsFilePath="$(ProjectDepsFilePath)"
 			ProjectRuntimeConfigFilePath="$(ProjectRuntimeConfigFilePath)"
 		/>
+	</Target>
+	
+	<!--
+	<Target Name="CopyNatives" AfterTargets="Build">
+		<ItemGroup>
+			<NativeFiles Include="$(EnginePath)\References\Native\**" />
+		</ItemGroup>
+		
+		<Message Text="Copying natives from '$(EnginePath)\References\Native' to '$(TargetDir)\Libraries\Native'" Importance="High" />
+	
+		<Copy SourceFiles="@(NativeFiles)" DestinationFolder="$(TargetDir)\Libraries\Native\%(RecursiveDir)" SkipUnchangedFiles="False" />
+	</Target>
+	-->
+	
+	<!-- Final cleanups -->
+	
+	<UsingTask TaskName="DeleteEmptyDirectories" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
+	
+	<Target Name="DeleteEmptyDirectories" AfterTargets="MoveDependencies" >
+		<DeleteEmptyDirectories Path="$(OutputPath)" />
 	</Target>
 
 </Project>
