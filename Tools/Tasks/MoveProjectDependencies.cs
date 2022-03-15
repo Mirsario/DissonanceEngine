@@ -215,7 +215,7 @@ namespace Dissonance.BuildTools.Tasks
 					continue;
 				}
 
-				Log.LogMessage(MessageImportance.High, $"Moving native library: '{dllPath}' to '{dllDestinationPath}'...");
+				Log.LogMessage(MessageImportance.Low, $"Moving native library: '{dllPath}' to '{dllDestinationPath}'...");
 
 				if (File.Exists(dllDestinationPath)) {
 					File.Delete(dllDestinationPath);
