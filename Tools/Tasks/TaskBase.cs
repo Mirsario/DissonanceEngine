@@ -11,7 +11,7 @@ namespace Dissonance.BuildTools.Tasks
 				Run();
 			}
 			catch (Exception e) {
-				Log.LogErrorFromException(e);
+				Log.LogErrorFromException(e, true);
 			}
 
 			return !Log.HasLoggedErrors;

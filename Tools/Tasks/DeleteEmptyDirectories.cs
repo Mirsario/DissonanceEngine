@@ -27,8 +27,6 @@ namespace Dissonance.BuildTools.Tasks
 				Recursion(subDirectory);
 
 				if (subDirectory.GetFiles().Length == 0 && subDirectory.GetDirectories().Length == 0) {
-					Log.LogMessage(MessageImportance.High, $"Deleting folder '{subDirectory.Name}'...");
-
 					subDirectory.Delete(true);
 				}
 			}

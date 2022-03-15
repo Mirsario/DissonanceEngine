@@ -45,7 +45,7 @@
 	
 	<UsingTask TaskName="MoveProjectDependencies" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
 
-	<Target Name="MoveDependencies" AfterTargets="Build" >
+	<Target Name="MoveDependencies" AfterTargets="CopyAssets" >
 		<Message Text="Running moving files task..." Importance="high" />
 
 		<MoveProjectDependencies
@@ -57,8 +57,7 @@
 		/>
 	</Target>
 	
-	<!--
-	<Target Name="CopyNatives" AfterTargets="Build">
+	<Target Name="CopyNatives" AfterTargets="MoveDependencies">
 		<ItemGroup>
 			<NativeFiles Include="$(EnginePath)\References\Native\**" />
 		</ItemGroup>
@@ -67,13 +66,12 @@
 	
 		<Copy SourceFiles="@(NativeFiles)" DestinationFolder="$(TargetDir)\Libraries\Native\%(RecursiveDir)" SkipUnchangedFiles="False" />
 	</Target>
-	-->
 	
 	<!-- Final cleanups -->
 	
 	<UsingTask TaskName="DeleteEmptyDirectories" AssemblyFile="$(DissonanceBuildToolsAssemblyFile)" />
 	
-	<Target Name="DeleteEmptyDirectories" AfterTargets="MoveDependencies" >
+	<Target Name="DeleteEmptyDirectories" AfterTargets="CopyNatives" >
 		<DeleteEmptyDirectories Path="$(OutputPath)" />
 	</Target>
 
