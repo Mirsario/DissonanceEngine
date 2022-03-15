@@ -33,12 +33,20 @@ namespace Dissonance.BuildTools.Tasks
 		{
 			Log.LogMessage(MessageImportance.Low, $"Executing {nameof(MoveProjectDependencies)}...");
 
-			AddProbingPaths();
+			if (!AddProbingPaths()) {
+				Log.LogMessage(MessageImportance.High, $"'{Path.GetFileName(ProjectRuntimeConfigFilePath)}' is missing, skipping dependency reorganization.");
+				return;
+			}
+
 			MoveFiles();
 		}
 
-		private void AddProbingPaths()
+		private bool AddProbingPaths()
 		{
+			if (!File.Exists(ProjectRuntimeConfigFilePath)) {
+				return false;
+			}
+
 			var runtimeConfigJson = JObject.Parse(File.ReadAllText(ProjectRuntimeConfigFilePath));
 
 			const string RuntimeOptionsKey = "runtimeOptions";
@@ -57,10 +65,16 @@ namespace Dissonance.BuildTools.Tasks
 			}
 
 			File.WriteAllText(ProjectRuntimeConfigFilePath, runtimeConfigJson.ToString());
+
+			return true;
 		}
 
 		private void MoveFiles()
 		{
+			if (!File.Exists(ProjectDepsFilePath)) {
+				return;
+			}
+
 			var depsJson = JObject.Parse(File.ReadAllText(ProjectDepsFilePath));
 
 			if (depsJson["targets"] is not JObject targetsObject) {
