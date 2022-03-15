@@ -62,7 +62,6 @@ namespace Dissonance.Engine
 
 		// Casts
 
-		/*
 		public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new(
 			v.M11, v.M12, v.M13, v.M14,
 			v.M21, v.M22, v.M23, v.M24,
@@ -88,7 +87,6 @@ namespace Dissonance.Engine
 			M43 = v.m32,
 			M44 = v.m33
 		};
-		*/
 
 		public static implicit operator double[](Matrix4x4 value)
 		{

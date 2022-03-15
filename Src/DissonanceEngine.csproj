@@ -7,7 +7,6 @@
 		<Platforms>AnyCPU</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
-		<IncludeContentInPack>true</IncludeContentInPack>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -20,20 +19,14 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="../SourceGenerators/DissonanceSourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		
+		<Reference Include="BulletSharp" HintPath="..\References\BulletSharp.dll" />
 	</ItemGroup>
 	
 	<ItemGroup>
 		<EmbeddedResource Include="BuiltInAssets\**" />
-		<None Remove="BuiltInAssets\**" />
-	</ItemGroup>
-	
-	<!-- TEMPORARY -->
-	<ItemGroup>
-		<Compile Remove="Physics\**" />
 		
-		<!--
-		<Reference Include="BulletSharp" HintPath="..\References\BulletSharp.dll" Private="true" />
-		-->
+		<None Remove="BuiltInAssets\**" />
 	</ItemGroup>
 	
 	<ItemGroup>

@@ -1,4 +1,3 @@
-/*
 using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 using Dissonance.Engine.Physics;
@@ -21,4 +20,3 @@ namespace Dissonance.Engine.IO
 		}
 	}
 }
-*/

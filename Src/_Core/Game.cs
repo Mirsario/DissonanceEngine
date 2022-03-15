@@ -88,7 +88,6 @@ namespace Dissonance.Engine
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
-			DllResolver.Init();
 			AssemblyCache.Init();
 			InitializeModules();
 
