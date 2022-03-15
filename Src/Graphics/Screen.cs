@@ -1,7 +1,7 @@
 namespace Dissonance.Engine.Graphics
 {
 	[ModuleDependency(true, typeof(Windowing))]
-	[ModuleAutoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	public sealed class Screen : EngineModule
 	{
 		private static Windowing windowing;

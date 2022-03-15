@@ -198,11 +198,17 @@ namespace Dissonance.Engine
 				var type = SystemTypes[i];
 				bool isCallback = typeof(CallbackSystem).IsAssignableFrom(type);
 
-				if (isCallback ? addCallbacks : addSystems) {
-					var system = (GameSystem)Activator.CreateInstance(type);
-
-					AddSystemToWorld(world, system);
+				if (!(isCallback ? addCallbacks : addSystems)) {
+					continue;
 				}
+
+				if (!AutoloadAttribute.TypeNeedsAutoloading(type)) {
+					continue;
+				}
+
+				var system = (GameSystem)Activator.CreateInstance(type);
+
+				AddSystemToWorld(world, system);
 			}
 		}
 
