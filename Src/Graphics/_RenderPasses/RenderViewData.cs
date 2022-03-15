@@ -6,15 +6,17 @@ namespace Dissonance.Engine.Graphics
 	{
 		public struct RenderView
 		{
-			public float NearClip;
-			public float FarClip;
-			public RectInt Viewport;
-			public Transform Transform;
-			public Matrix4x4 ViewMatrix;
-			public Matrix4x4 ProjectionMatrix;
-			public Matrix4x4 InverseViewMatrix;
-			public Matrix4x4 InverseProjectionMatrix;
+			public float NearClip = default;
+			public float FarClip = default;
+			public RectInt Viewport = default;
+			public Transform Transform = default;
+			public Matrix4x4 ViewMatrix = default;
+			public Matrix4x4 ProjectionMatrix = default;
+			public Matrix4x4 InverseViewMatrix = default;
+			public Matrix4x4 InverseProjectionMatrix = default;
 			public LayerMask LayerMask = LayerMask.All;
+
+			public RenderView() { }
 		}
 
 		public List<RenderView> RenderViews { get; private set; }

@@ -17,13 +17,13 @@ namespace Dissonance.Engine.Physics
 
 		public static readonly Rigidbody Default = new();
 
-		internal bool ownsCollisionShape;
-		internal UpdateFlags updateFlags;
-		internal RigidBody bulletRigidbody;
-		internal Vector3? pendingVelocity;
-		internal Vector3? pendingAngularVelocity;
-		internal Vector3? pendingAngularFactor;
-		internal List<Collision> collisions;
+		internal bool ownsCollisionShape = default;
+		internal UpdateFlags updateFlags = default;
+		internal RigidBody bulletRigidbody = default;
+		internal Vector3? pendingVelocity = default;
+		internal Vector3? pendingAngularVelocity = default;
+		internal Vector3? pendingAngularFactor = default;
+		internal List<Collision> collisions = default;
 
 		private float mass = 1f;
 		private RigidbodyType type = RigidbodyType.Dynamic;
@@ -76,6 +76,8 @@ namespace Dissonance.Engine.Physics
 				}
 			}
 		}
+
+		public Rigidbody() { }
 
 		/*public Rigidbody(RigidbodyType type) : this()
 		{
