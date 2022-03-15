@@ -3,6 +3,7 @@ using static Dissonance.Engine.Audio.OpenALApi;
 
 namespace Dissonance.Engine.Audio
 {
+	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
 	[Callback<EndFixedUpdateCallback>]
 	[Callback<EndRenderUpdateCallback>]
 	[ExecuteAfter<EntitySpawningSystem>]
