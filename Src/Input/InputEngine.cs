@@ -26,7 +26,7 @@ namespace Dissonance.Engine.Input
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
 
-		protected override void Init()
+		protected override void PreInit()
 		{
 			Game.TryGetModule(out windowing);
 
@@ -38,8 +38,6 @@ namespace Dissonance.Engine.Input
 			InitSignals();
 			InitTriggers();
 			InitCallbacks();
-
-			SingletonInputTrigger.StaticInit();
 		}
 
 		protected override void PreFixedUpdate()

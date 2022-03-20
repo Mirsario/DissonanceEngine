@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Dissonance.Engine.Input
 {
 	partial class InputEngine
 	{
+		internal static class SingletonTriggerIds<T> where T : SingletonInputTrigger
+		{
+#pragma warning disable CS0649
+			public static int Id;
+#pragma warning restore CS0649
+		}
+
 		private static InputTrigger[] triggers;
 		private static Dictionary<string, InputTrigger> triggersByName;
 
@@ -14,6 +22,20 @@ namespace Dissonance.Engine.Input
 		{
 			triggers = new InputTrigger[0];
 			triggersByName = new Dictionary<string, InputTrigger>();
+
+			AssemblyRegistrationModule.OnAssemblyRegistered += static (assembly, types) => {
+				foreach (var type in types) {
+					if (type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
+						continue;
+					}
+
+					var trigger = RegisterTrigger(type, type.Name, null);
+
+					typeof(SingletonTriggerIds<>).MakeGenericType(type)
+						.GetField(nameof(SingletonTriggerIds<SingletonInputTrigger>.Id), BindingFlags.Static | BindingFlags.Public)
+						.SetValue(null, trigger.Id);
+				}
+			};
 		}
 
 		private static void UpdateTriggers()
@@ -37,7 +59,7 @@ namespace Dissonance.Engine.Input
 			=> RegisterTrigger(typeof(InputTrigger), name, bindings, minValue, maxValue);
 
 		public static T GetTrigger<T>() where T : SingletonInputTrigger
-			=> (T)triggers[SingletonInputTrigger.Info<T>.id];
+			=> (T)triggers[SingletonTriggerIds<T>.Id];
 
 		internal static InputTrigger RegisterTrigger(Type type, string name, InputBinding[] bindings, float? minValue = null, float? maxValue = null)
 		{
