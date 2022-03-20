@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 
 namespace Dissonance.Engine.Graphics
 {
 	public abstract class RenderPass : IDisposable
 	{
-		internal static Dictionary<string, Type> fullNameToType;
-
 		private RenderTexture[] passedTextures;
 
 		public string Name { get; set; }
@@ -75,17 +72,6 @@ namespace Dissonance.Engine.Graphics
 			initializer?.Invoke(pass);
 
 			return pass;
-		}
-
-		internal static void Init()
-		{
-			fullNameToType = new Dictionary<string, Type>();
-
-			foreach (var type in AssemblyCache.EngineTypes) {
-				if (!type.IsAbstract && typeof(RenderPass).IsAssignableFrom(type)) {
-					fullNameToType[type.FullName] = type;
-				}
-			}
 		}
 	}
 }
