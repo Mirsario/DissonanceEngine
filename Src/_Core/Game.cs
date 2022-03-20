@@ -173,8 +173,6 @@ namespace Dissonance.Engine
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
 			RenderPass.Init();
-			CustomVertexBuffer.Initialize();
-			CustomVertexAttribute.Initialize();
 
 			moduleHooks.Init?.Invoke();
 
