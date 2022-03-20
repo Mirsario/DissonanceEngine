@@ -172,8 +172,6 @@ namespace Dissonance.Engine
 		{
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-			RenderPass.Init();
-
 			moduleHooks.Init?.Invoke();
 
 			Debug.Log("Loading game...");
