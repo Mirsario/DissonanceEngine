@@ -237,7 +237,7 @@ namespace Dissonance.Engine.IO
 							continue;
 						}
 
-						var attribute = CustomVertexAttribute.GetInstance(attributeType);
+						var attribute = VertexAttributes.GetInstance(attributeType);
 						var buffer = mesh.GetBuffer(attribute.BufferType);
 
 						byte[] data = GetAccessorData(info, jsonAccessor);

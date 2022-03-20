@@ -334,8 +334,8 @@ namespace Dissonance.Engine.Graphics
 			TryCompileShader(shader, ShaderType.FragmentShader, fragmentCode, (shader, subShader) => shader.FragmentShader = subShader);
 			TryCompileShader(shader, ShaderType.GeometryShader, geometryCode, (shader, subShader) => shader.GeometryShader = subShader);
 
-			for (int i = 0; i < CustomVertexAttribute.Count; i++) {
-				var attribute = CustomVertexAttribute.GetInstance(i);
+			for (int i = 0; i < VertexAttributes.Count; i++) {
+				var attribute = VertexAttributes.GetInstance(i);
 
 				OpenGL.BindAttribLocation(shader.Id, (uint)i, attribute.NameId);
 			}

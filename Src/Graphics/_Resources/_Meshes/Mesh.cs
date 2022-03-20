@@ -60,10 +60,10 @@ namespace Dissonance.Engine.Graphics
 				Mesh = this
 			};
 
-			VertexBuffers = new CustomVertexBuffer[CustomVertexBuffer.Count];
+			VertexBuffers = new CustomVertexBuffer[Graphics.VertexBuffers.Count];
 
 			for (int i = 0; i < VertexBuffers.Length; i++) {
-				var instance = CustomVertexBuffer.CreateInstance(i);
+				var instance = Graphics.VertexBuffers.CreateInstance(i);
 
 				instance.Mesh = this;
 
@@ -169,14 +169,14 @@ namespace Dissonance.Engine.Graphics
 			=> VertexBuffers[id];
 
 		public CustomVertexBuffer GetBuffer(Type type)
-			=> VertexBuffers[CustomVertexBuffer.GetId(type)];
+			=> VertexBuffers[Graphics.VertexBuffers.GetId(type)];
 
 		public T GetBuffer<T>() where T : CustomVertexBuffer
-			=> (T)VertexBuffers[CustomVertexBuffer.GetId<T>()];
+			=> (T)VertexBuffers[Graphics.VertexBuffers.GetId<T>()];
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ref TData[] VertexData<TBuffer, TData>() where TBuffer : CustomVertexBuffer<TData> where TData : unmanaged
-			=> ref ((TBuffer)VertexBuffers[CustomVertexBuffer.IDs<TBuffer>.id]).data;
+			=> ref ((TBuffer)VertexBuffers[Graphics.VertexBuffers.IDs<TBuffer>.Id]).data;
 
 		public static Mesh CombineMeshes(params Mesh[] meshes)
 			=> CombineMeshesInternal(meshes);
