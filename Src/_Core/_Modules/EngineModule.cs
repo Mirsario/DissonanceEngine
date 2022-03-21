@@ -7,6 +7,9 @@ namespace Dissonance.Engine
 {
 	public abstract class EngineModule : IDisposable
 	{
+		private bool preInitialized;
+		private bool initialized;
+
 		public DependencyInfo[] Dependencies { get; internal set; }
 		public int DependencyIndex { get; internal set; }
 
@@ -20,15 +23,40 @@ namespace Dissonance.Engine
 				.ToArray();
 		}
 
-		public void Dispose() => OnDispose();
+		public void Dispose()
+		{
+			GC.SuppressFinalize(this);
+			OnDispose();
+		}
+
+		internal void InvokePreInitialize()
+		{
+			if (!preInitialized) {
+				preInitialized = true;
+
+				PreInit();
+			}
+		}
+
+		internal void InvokeInitialize()
+		{
+			if (!initialized) {
+				initialized = true;
+
+				Init();
+			}
+		}
+
+		internal void InvokeInitializeForAssembly(Assembly assembly)
+			=> InitializeForAssembly(assembly);
 
 		// Init
 
-		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.PreInit), false, true)]
 		protected virtual void PreInit() { }
 
-		[VirtualMethodHook(typeof(EngineModuleHooks), nameof(EngineModuleHooks.Init), false, true)]
 		protected virtual void Init() { }
+
+		protected virtual void InitializeForAssembly(Assembly assembly) { }
 
 		// Fixed Update
 

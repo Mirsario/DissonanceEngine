@@ -20,7 +20,7 @@ namespace Dissonance.Engine
 		/// <summary> The current amount of registered layers. </summary>
 		public static int LayerCount => layers.Count;
 
-		protected override void PreInit()
+		protected override void Init()
 		{
 			DefaultLayer = AddLayer("Default");
 		}

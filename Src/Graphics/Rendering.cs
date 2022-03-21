@@ -9,18 +9,18 @@ using static Dissonance.Engine.Graphics.GlfwApi;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Windowing), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
+	[ModuleDependency(typeof(Windowing), typeof(OpenGLApi), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
 	public sealed unsafe partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new(3, 2);
 
 		internal static Texture whiteTexture; //TODO: Move this
-		internal static Type renderingPipelineType;
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
 		internal static uint currentStencilMask;
 		internal static Windowing windowing;
 
+		private static Type renderingPipelineType = typeof(ForwardRendering);
 		private static Version openGLVersion = MinOpenGLVersion;
 		private static DebugProc debugCallback;
 		private static Asset<Shader> guiShader; //TODO: To be moved
@@ -37,7 +37,7 @@ namespace Dissonance.Engine.Graphics
 		public static Version OpenGLVersion {
 			get => openGLVersion;
 			set {
-				if (Game.Instance?.preInitDone != false) {
+				if (Game.Instance?.modulesPreInitialized != false) {
 					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
 				}
 
@@ -45,56 +45,48 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
-		protected override void PreInit()
+		protected override void InitializeForAssembly(Assembly assembly)
 		{
-			Game.TryGetModule(out windowing);
-
-			renderingPipelineType = typeof(ForwardRendering);
-
-			if (!Game.Flags.HasFlag(GameFlags.NoWindow)) {
-				InitOpenGL(GLFW);
-			}
-
 			// Prepare the delegate for resetting render components. Could be moved somewhere else...
-			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
-				foreach (var type in types) {
-					if (type.IsClass || type.IsInterface || !typeof(IRenderComponent).IsAssignableFrom(type)) {
-						continue;
+			foreach (var type in assembly.GetTypes()) {
+				if (type.IsClass || type.IsInterface || !typeof(IRenderComponent).IsAssignableFrom(type)) {
+					continue;
+				}
+
+				var methods = typeof(ComponentManager).GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
+
+				var hasComponentMethod = methods
+					.First(m => m.Name == nameof(ComponentManager.HasComponent) && m.GetParameters().Length == 0)
+					.MakeGenericMethod(type);
+
+				var getComponentMethod = methods
+					.First(m => m.Name == nameof(ComponentManager.GetComponent) && m.GetParameters().Length == 0)
+					.MakeGenericMethod(type);
+
+				var setComponentMethod = methods
+					.First(m => m.Name == nameof(ComponentManager.SetComponent) && m.GetParameters().Length == 1)
+					.MakeGenericMethod(type);
+
+				resetRenderComponents += () => {
+					IRenderComponent component;
+
+					if ((bool)hasComponentMethod?.Invoke(null, null)) {
+						component = (IRenderComponent)getComponentMethod.Invoke(null, null);
+					} else {
+						component = (IRenderComponent)Activator.CreateInstance(type);
 					}
 
-					var methods = typeof(ComponentManager).GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
+					component.Reset();
 
-					var hasComponentMethod = methods
-						.First(m => m.Name == nameof(ComponentManager.HasComponent) && m.GetParameters().Length == 0)
-						.MakeGenericMethod(type);
-
-					var getComponentMethod = methods
-						.First(m => m.Name == nameof(ComponentManager.GetComponent) && m.GetParameters().Length == 0)
-						.MakeGenericMethod(type);
-
-					var setComponentMethod = methods
-						.First(m => m.Name == nameof(ComponentManager.SetComponent) && m.GetParameters().Length == 1)
-						.MakeGenericMethod(type);
-
-					resetRenderComponents += () => {
-						IRenderComponent component;
-
-						if ((bool)hasComponentMethod?.Invoke(null, null)) {
-							component = (IRenderComponent)getComponentMethod.Invoke(null, null);
-						} else {
-							component = (IRenderComponent)Activator.CreateInstance(type);
-						}
-
-						component.Reset();
-
-						setComponentMethod.Invoke(null, new object[] { component });
-					};
-				}
-			};
+					setComponentMethod.Invoke(null, new object[] { component });
+				};
+			}
 		}
 
 		protected override void Init()
 		{
+			Game.TryGetModule(out windowing);
+
 			var glVersion = GetOpenGLVersion();
 
 			if (glVersion < openGLVersion) {

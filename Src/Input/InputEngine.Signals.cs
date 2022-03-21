@@ -6,14 +6,11 @@ namespace Dissonance.Engine.Input
 {
 	partial class InputEngine
 	{
-		private static Dictionary<string, int> signalIdByName;
-		private static List<(Func<object, float> getter, object arg)> signals;
+		private static Dictionary<string, int> signalIdByName = new(StringComparer.InvariantCultureIgnoreCase);
+		private static List<(Func<object, float> getter, object arg)> signals = new();
 
 		private static void InitSignals()
 		{
-			signalIdByName = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
-			signals = new List<(Func<object, float>, object)>();
-
 			// Register key signals
 			foreach (Keys key in Enum.GetValues(typeof(Keys))) {
 				RegisterSignal(key.ToString(), arg => GetKey((Keys)arg) ? 1f : 0f, key);

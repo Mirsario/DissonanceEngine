@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Dissonance.Engine
 {
-	public sealed class AssemblyRegistrationModule : EngineModule
+	public static class AssemblyManagement
 	{
 		public delegate void AssemblyRegistrationCallback(Assembly assembly, Type[] types);
 
@@ -14,10 +14,28 @@ namespace Dissonance.Engine
 
 		private static bool ready;
 
-		protected override void Init()
+		public static void RegisterAssembly(Assembly assembly)
 		{
-			RegisterAssembly(GetType().Assembly);
-			RegisterAssembly(Game.GetType().Assembly);
+			if (ready) {
+				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
+			} else {
+				Assemblies.Add(new WeakReference<Assembly>(assembly));
+			}
+		}
+
+		public static IEnumerable<Assembly> EnumerateAssemblies()
+		{
+			foreach (var weakRef in Assemblies) {
+				if (weakRef.TryGetTarget(out var assembly)) {
+					yield return assembly;
+				}
+			}
+		}
+
+		internal static void Initialize()
+		{
+			RegisterAssembly(typeof(AssemblyManagement).Assembly);
+			RegisterAssembly(Game.Instance.GetType().Assembly);
 
 			ready = true;
 
@@ -30,15 +48,6 @@ namespace Dissonance.Engine
 				}
 
 				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
-			}
-		}
-
-		public static void RegisterAssembly(Assembly assembly)
-		{
-			if (ready) {
-				OnAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
-			} else {
-				Assemblies.Add(new WeakReference<Assembly>(assembly));
 			}
 		}
 	}

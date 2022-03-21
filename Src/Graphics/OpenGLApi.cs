@@ -5,13 +5,21 @@ using Silk.NET.OpenGL;
 
 namespace Dissonance.Engine.Graphics
 {
-	public static class OpenGLApi
+	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
+	[ModuleDependency(typeof(GlfwApi), typeof(GlfwWindowing))]
+	public sealed class OpenGLApi : EngineModule
 	{
 		public static GL OpenGL { get; private set; }
 
-		internal unsafe static void InitOpenGL(Glfw glfw)
+		protected unsafe override void Init()
 		{
 			Debug.Log("Preparing OpenGL...");
+
+			var glfw = GlfwApi.GLFW;
+
+			if (glfw == null) {
+				throw new InvalidOperationException("Cannot get a GLFW Api instance to initialize OpenGL.");
+			}
 
 			var context = new GlfwContext(glfw, Game.Instance.GetModule<GlfwWindowing>().WindowHandle);
 
@@ -20,7 +28,7 @@ namespace Dissonance.Engine.Graphics
 			Debug.Log($"Initialized OpenGL {Marshal.PtrToStringAnsi((IntPtr)OpenGL.GetString(StringName.Version))}");
 		}
 
-		internal static void CleanupOpenGL()
+		protected override void OnDispose()
 		{
 			if (OpenGL != null) {
 				OpenGL.Dispose();

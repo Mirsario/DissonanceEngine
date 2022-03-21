@@ -2,16 +2,16 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public static class GlfwApi
+	public sealed class GlfwApi : EngineModule
 	{
 		public static Glfw GLFW { get; private set; }
 
-		internal static void InitGlfw()
+		protected override void Init()
 		{
 			GLFW = Glfw.GetApi();
 		}
 
-		internal static void CleanupGlfw()
+		protected override void OnDispose()
 		{
 			if (GLFW != null) {
 				GLFW.Dispose();

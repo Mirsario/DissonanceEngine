@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
@@ -71,25 +72,23 @@ namespace Dissonance.Engine
 		private static readonly List<ComponentTypeData> ComponentTypeDataById = new();
 		private static readonly Dictionary<string, Type> StructureTypesByName = new();
 
-		protected override void PreInit()
+		protected override void InitializeForAssembly(Assembly assembly)
 		{
 			// By-name type lookups are used in prefab parsing.
-			AssemblyRegistrationModule.OnAssemblyRegistered += (assembly, types) => {
-				foreach (var type in types) {
-					if (!type.IsValueType || type.IsAbstract || type.IsNested || type.IsByRefLike || type.IsGenericTypeDefinition) {
-						continue;
-					}
-
-					if (!StructureTypesByName.TryGetValue(type.Name, out var existingType)) {
-						StructureTypesByName[type.Name] = type;
-					} else {
-						//TODO: Use minimal unique paths.
-						StructureTypesByName[type.Name] = null;
-						StructureTypesByName[type.FullName] = type;
-						StructureTypesByName[existingType.FullName] = existingType;
-					}
+			foreach (var type in assembly.GetTypes()) {
+				if (!type.IsValueType || type.IsAbstract || type.IsNested || type.IsByRefLike || type.IsGenericTypeDefinition) {
+					continue;
 				}
-			};
+
+				if (!StructureTypesByName.TryGetValue(type.Name, out var existingType)) {
+					StructureTypesByName[type.Name] = type;
+				} else {
+					//TODO: Use minimal unique paths.
+					StructureTypesByName[type.Name] = null;
+					StructureTypesByName[type.FullName] = type;
+					StructureTypesByName[existingType.FullName] = existingType;
+				}
+			}
 		}
 
 		public static Type GetComponentTypeFromName(string name)
