@@ -6,7 +6,7 @@ using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
 {
-	[ModuleDependency(typeof(WorldManager))]
+	[ModuleDependency<WorldManager>]
 	public class SystemManager : EngineModule
 	{
 		private class WorldData

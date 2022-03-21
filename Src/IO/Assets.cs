@@ -10,8 +10,9 @@ using Dissonance.Engine.Input;
 
 namespace Dissonance.Engine.IO
 {
-	//TODO: Make a ton more threadsafe.
-	[ModuleDependency(true, typeof(InputEngine), typeof(OpenGLApi))] // Prefab autoloading may depend on graphics and input triggers. This solution may be temporary.
+	// Prefab autoloading may depend on graphics and input triggers. This solution may be temporary.
+	[ModuleDependency<OpenGLApi>(isOptional: true)]
+	[ModuleDependency<InputEngine>(isOptional: true)]
 	public sealed class Assets : EngineModule
 	{
 		internal static class AssetTypeData<T>

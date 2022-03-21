@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(VertexBuffers))]
+	[ModuleDependency<VertexBuffers>]
 	public sealed class VertexAttributes : EngineModule
 	{
 		private static class IDs<T> where T : CustomVertexAttribute

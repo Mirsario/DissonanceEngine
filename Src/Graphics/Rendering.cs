@@ -9,7 +9,11 @@ using static Dissonance.Engine.Graphics.GlfwApi;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Windowing), typeof(OpenGLApi), typeof(Screen), typeof(Assets), typeof(ComponentManager))]
+	[ModuleDependency<Windowing>]
+	[ModuleDependency<OpenGLApi>]
+	[ModuleDependency<Screen>]
+	[ModuleDependency<Assets>]
+	[ModuleDependency<ComponentManager>]
 	public sealed unsafe partial class Rendering : EngineModule
 	{
 		public static readonly Version MinOpenGLVersion = new(3, 2);

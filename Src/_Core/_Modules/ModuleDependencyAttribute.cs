@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Linq;
+using System.ComponentModel;
 
 namespace Dissonance.Engine
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	public class ModuleDependencyAttribute : Attribute
+	[EditorBrowsable(EditorBrowsableState.Never)] // Hide in autocompletion when possible.
+	public abstract class ModuleDependencyAttribute : Attribute
 	{
-		public readonly DependencyInfo[] Dependencies;
+		public readonly DependencyInfo Info;
 
-		public ModuleDependencyAttribute(params Type[] dependencies) : this(false, dependencies) { }
-
-		public ModuleDependencyAttribute(bool optional, params Type[] dependencies)
+		internal ModuleDependencyAttribute(Type type, bool isOptional)
 		{
-			foreach (var type in dependencies) {
-				if (!typeof(EngineModule).IsAssignableFrom(type)) {
-					throw new ArgumentException($"Dependency type '{type.Name}' is invalid, as it does not derive from '{nameof(EngineModule)}'.");
-				}
-			}
-
-			Dependencies = dependencies
-				.Select(type => new DependencyInfo(type, optional))
-				.ToArray();
+			Info = new DependencyInfo(type, isOptional);
 		}
+	}
+
+	public class ModuleDependencyAttribute<T> : ModuleDependencyAttribute
+		where T : EngineModule
+	{
+		public ModuleDependencyAttribute(bool isOptional = false) : base(typeof(T), isOptional) { }
 	}
 }
