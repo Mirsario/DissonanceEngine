@@ -46,15 +46,15 @@ namespace Dissonance.Engine.Graphics
 			set => Game.Instance.GetModule<Windowing>().CursorState = value;
 		}
 
-		protected override void Init() => UpdateValues();
-		protected override void PreRenderUpdate() => UpdateValues();
-
-		protected override void PreInit()
+		protected override void Init()
 		{
 			windowing = Game.GetModule<Windowing>(false);
 
 			UpdateValues();
 		}
+
+		protected override void PreRenderUpdate()
+			=> UpdateValues();
 
 		protected override void OnDispose()
 		{

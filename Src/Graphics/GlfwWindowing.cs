@@ -5,6 +5,7 @@ using static Dissonance.Engine.Graphics.GlfwApi;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
+	[ModuleDependency(typeof(GlfwApi))]
 	public unsafe class GlfwWindowing : Windowing
 	{
 		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);
@@ -64,11 +65,9 @@ namespace Dissonance.Engine.Graphics
 			return true;
 		}
 
-		protected override void PreInit()
+		protected override void Init()
 		{
 			lock (GlfwLock) {
-				InitGlfw();
-
 				GLFW.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
 					ErrorCode.VersionUnavailable => throw new GraphicsException(description),
 					_ => $"GLFW Error {code}: {description}"

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Dissonance.Engine.Utilities;
 
 namespace Dissonance.Engine
@@ -26,6 +27,14 @@ namespace Dissonance.Engine
 
 			if (modulesReady) {
 				RefreshModules();
+			}
+
+			if (modulesPreInitialized) {
+				module.InvokePreInitialize();
+			}
+
+			if (modulesInitialized) {
+				module.InvokeInitialize();
 			}
 		}
 
@@ -83,17 +92,47 @@ namespace Dissonance.Engine
 			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{type.Name}' engine module.");
 		}
 
+		internal List<EngineModule> AutoloadModules(Assembly assembly)
+		{
+			var newModules = new List<EngineModule>();
+
+			foreach (var type in assembly.GetTypes()) {
+				if (type.IsAbstract || !typeof(EngineModule).IsAssignableFrom(type)) {
+					continue;
+				}
+
+				if (!AutoloadAttribute.TypeNeedsAutoloading(type)) {
+					continue;
+				}
+
+				var module = (EngineModule)Activator.CreateInstance(type, nonPublic: true);
+
+				AddModule(module);
+
+				newModules.Add(module);
+			}
+
+			RefreshModules();
+
+			return newModules;
+		}
+
 		private void InitializeModules()
 		{
-			lock(AssemblyCache.EngineTypes) {
-				foreach (var type in AssemblyCache.EngineTypes.Where(t => !t.IsAbstract && typeof(EngineModule).IsAssignableFrom(t))) {
-					if (AutoloadAttribute.TypeNeedsAutoloading(type)) {
-						AddModule((EngineModule)Activator.CreateInstance(type));
+			void LoadAssemblyModules(Assembly assembly, Type[] types)
+			{
+				Instance.AutoloadModules(assembly);
+
+				if (modulesPreInitialized) {
+					foreach (var module in modules) {
+						module.InvokeInitializeForAssembly(assembly);
 					}
 				}
 			}
 
-			RefreshModules();
+			AssemblyManagement.OnAssemblyRegistered += LoadAssemblyModules;
+
+			AssemblyManagement.Initialize();
 
 			modulesReady = true;
 		}

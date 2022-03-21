@@ -4,9 +4,6 @@ namespace Dissonance.Engine
 {
 	public class EngineModuleHooks
 	{
-		// Init
-		public Action PreInit { get; private set; }
-		public Action Init { get; private set; }
 		// Fixed Update
 		public Action PreFixedUpdate { get; private set; }
 		public Action FixedUpdate { get; private set; }

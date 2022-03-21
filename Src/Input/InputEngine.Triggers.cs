@@ -13,29 +13,29 @@ namespace Dissonance.Engine.Input
 #pragma warning restore CS0649
 		}
 
-		private static InputTrigger[] triggers;
-		private static Dictionary<string, InputTrigger> triggersByName;
+		private static InputTrigger[] triggers = Array.Empty<InputTrigger>();
+		private static Dictionary<string, InputTrigger> triggersByName = new();
 
 		public static InputTrigger[] Triggers => triggers;
 
 		private static void InitTriggers()
 		{
-			triggers = new InputTrigger[0];
-			triggersByName = new Dictionary<string, InputTrigger>();
+			
+		}
 
-			AssemblyRegistrationModule.OnAssemblyRegistered += static (assembly, types) => {
-				foreach (var type in types) {
-					if (type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
-						continue;
-					}
-
-					var trigger = RegisterTrigger(type, type.Name, null);
-
-					typeof(SingletonTriggerIds<>).MakeGenericType(type)
-						.GetField(nameof(SingletonTriggerIds<SingletonInputTrigger>.Id), BindingFlags.Static | BindingFlags.Public)
-						.SetValue(null, trigger.Id);
+		private static void InitTriggersForAssembly(Assembly assembly)
+		{
+			foreach (var type in assembly.GetTypes()) {
+				if (type.IsAbstract || !typeof(SingletonInputTrigger).IsAssignableFrom(type)) {
+					continue;
 				}
-			};
+
+				var trigger = RegisterTrigger(type, type.Name, null);
+
+				typeof(SingletonTriggerIds<>).MakeGenericType(type)
+					.GetField(nameof(SingletonTriggerIds<SingletonInputTrigger>.Id), BindingFlags.Static | BindingFlags.Public)
+					.SetValue(null, trigger.Id);
+			}
 		}
 
 		private static void UpdateTriggers()

@@ -16,38 +16,30 @@ namespace Dissonance.Engine.Graphics
 #pragma warning restore CS0649
 		}
 
-		private static List<Type> typeById;
-		private static Dictionary<Type, int> idByType;
-		private static List<int>[] attributeAttachmentIdsByBufferIds;
+		private static List<Type> typeById = new();
+		private static Dictionary<Type, int> idByType = new();
+		private static List<int>[] attributeAttachmentIdsByBufferIds = Array.Empty<List<int>>();
 
-		public static int Count { get; private set; }
+		public static int Count => typeById?.Count ?? 0;
 
 		public static IReadOnlyList<IReadOnlyList<int>> AttributeAttachmentIdsByBufferIds => attributeAttachmentIdsByBufferIds;
 
-		protected override void PreInit()
+		protected override void InitializeForAssembly(Assembly assembly)
 		{
-			typeById = new();
-			idByType = new();
-			attributeAttachmentIdsByBufferIds = Array.Empty<List<int>>();
-
-			AssemblyRegistrationModule.OnAssemblyRegistered += static (assembly, types) => {
-				foreach (var type in types) {
-					if (type.IsAbstract || !typeof(CustomVertexBuffer).IsAssignableFrom(type)) {
-						continue;
-					}
-
-					typeof(IDs<>)
-						.MakeGenericType(type)
-						.GetField(nameof(IDs<CustomVertexBuffer>.Id), BindingFlags.Public | BindingFlags.Static)
-						.SetValue(null, typeById.Count);
-
-					idByType[type] = typeById.Count;
-
-					typeById.Add(type);
+			foreach (var type in assembly.GetTypes()) {
+				if (type.IsAbstract || !typeof(CustomVertexBuffer).IsAssignableFrom(type)) {
+					continue;
 				}
 
-				Count = typeById.Count;
-			};
+				typeof(IDs<>)
+					.MakeGenericType(type)
+					.GetField(nameof(IDs<CustomVertexBuffer>.Id), BindingFlags.Public | BindingFlags.Static)
+					.SetValue(null, typeById.Count);
+
+				idByType[type] = typeById.Count;
+
+				typeById.Add(type);
+			}
 		}
 
 		public static int GetId<T>() where T : CustomVertexBuffer

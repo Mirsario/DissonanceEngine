@@ -23,8 +23,6 @@ namespace Dissonance.Engine
 
 		protected override void PreInit()
 		{
-			AssemblyRegistrationModule.OnAssemblyRegistered += OnAssemblyRegistered;
-
 			WorldManager.OnWorldCreated += (world, options) => {
 				if (worldDataById.Length <= world.Id) {
 					Array.Resize(ref worldDataById, world.Id + 1);
@@ -40,6 +38,17 @@ namespace Dissonance.Engine
 
 				ArrayUtils.TryShrinking(ref worldDataById);
 			};
+		}
+
+		protected override void InitializeForAssembly(Assembly assembly)
+		{
+			foreach (var type in assembly.GetTypes()) {
+				if (type.IsAbstract || !typeof(GameSystem).IsAssignableFrom(type)) {
+					continue;
+				}
+
+				SystemTypes.Add(type);
+			}
 		}
 
 		protected override void FixedUpdate()
@@ -209,17 +218,6 @@ namespace Dissonance.Engine
 				var system = (GameSystem)Activator.CreateInstance(type);
 
 				AddSystemToWorld(world, system);
-			}
-		}
-
-		private static void OnAssemblyRegistered(Assembly assembly, Type[] types)
-		{
-			foreach (var type in types) {
-				if (type.IsAbstract || !typeof(GameSystem).IsAssignableFrom(type)) {
-					continue;
-				}
-
-				SystemTypes.Add(type);
 			}
 		}
 

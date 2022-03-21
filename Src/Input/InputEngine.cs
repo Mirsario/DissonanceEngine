@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Dissonance.Engine.Graphics;
 using Silk.NET.GLFW;
 
@@ -26,7 +27,7 @@ namespace Dissonance.Engine.Input
 		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
 		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
 
-		protected override void PreInit()
+		protected override void Init()
 		{
 			Game.TryGetModule(out windowing);
 
@@ -39,6 +40,9 @@ namespace Dissonance.Engine.Input
 			InitTriggers();
 			InitCallbacks();
 		}
+
+		protected override void InitializeForAssembly(Assembly assembly)
+			=> InitTriggersForAssembly(assembly);
 
 		protected override void PreFixedUpdate()
 			=> PreUpdate();

@@ -23,7 +23,8 @@ namespace Dissonance.Engine
 		public static Game Instance => instance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
 
 		internal bool shouldQuit;
-		internal bool preInitDone;
+		internal bool modulesPreInitialized;
+		internal bool modulesInitialized;
 		internal bool fixedUpdate;
 
 		private Stopwatch updateStopwatch;
@@ -88,7 +89,6 @@ namespace Dissonance.Engine
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
-			AssemblyCache.Init();
 			InitializeModules();
 
 			Debug.Log("Loading engine...");
@@ -96,10 +96,19 @@ namespace Dissonance.Engine
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
 
-			moduleHooks.PreInit?.Invoke();
+			foreach (var module in modules) {
+				module.InvokePreInitialize();
+			}
+
+			modulesPreInitialized = true;
+
 			PreInit();
 
-			preInitDone = true;
+			foreach (var assembly in AssemblyManagement.EnumerateAssemblies()) {
+				foreach (var module in modules) {
+					module.InvokeInitializeForAssembly(assembly);
+				}
+			}
 
 			Init();
 
@@ -172,7 +181,9 @@ namespace Dissonance.Engine
 		{
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-			moduleHooks.Init?.Invoke();
+			foreach (var module in modules) {
+				module.InvokeInitialize();
+			}
 
 			Debug.Log("Loading game...");
 
