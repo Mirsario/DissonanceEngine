@@ -18,8 +18,8 @@ namespace Dissonance.Engine
 		public EngineModule()
 		{
 			Dependencies = GetType()
-				.GetCustomAttributes<ModuleDependencyAttribute>()
-				.SelectMany(a => a.Dependencies)
+				.GetCustomAttributes<ModuleDependencyAttribute>(true)
+				.Select(a => a.Info)
 				.ToArray();
 		}
 

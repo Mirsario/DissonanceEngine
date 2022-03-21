@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(Rendering))]
+	[ModuleDependency<Rendering>]
 	public sealed class VertexBuffers : EngineModule
 	{
 		internal static class IDs<T> where T : CustomVertexBuffer

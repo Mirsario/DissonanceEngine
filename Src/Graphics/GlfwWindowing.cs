@@ -5,7 +5,7 @@ using static Dissonance.Engine.Graphics.GlfwApi;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
-	[ModuleDependency(typeof(GlfwApi))]
+	[ModuleDependency<GlfwApi>]
 	public unsafe class GlfwWindowing : Windowing
 	{
 		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);

@@ -6,7 +6,8 @@ using Silk.NET.OpenGL;
 namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
-	[ModuleDependency(typeof(GlfwApi), typeof(GlfwWindowing))]
+	[ModuleDependency<GlfwApi>]
+	[ModuleDependency<GlfwWindowing>]
 	public sealed class OpenGLApi : EngineModule
 	{
 		public static GL OpenGL { get; private set; }
