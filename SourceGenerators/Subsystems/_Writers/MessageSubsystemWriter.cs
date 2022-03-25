@@ -35,7 +35,14 @@ namespace SourceGenerators.Subsystems
 			data.InvocationCode.AppendLine($"foreach (var message in ReadMessages<{messageParameterData.Parameter.Type.ToDisplayString()}>()) {{");
 			data.InvocationCode.Indent();
 
-			data.InvocationCode.AppendCode(data.ArgumentCheckCode);
+			foreach (string predicate in data.ExecutionPredicates) {
+				data.InvocationCode.AppendLine($"if (!({predicate})) {{");
+				data.InvocationCode.Indent();
+				data.InvocationCode.AppendLine("continue;");
+				data.InvocationCode.Unindent();
+				data.InvocationCode.AppendLine("}");
+				data.InvocationCode.AppendLine();
+			}
 
 			data.InvocationCode.AppendLine($"{data.Method.Symbol.Name}({argumentsCode});");
 
@@ -128,19 +135,9 @@ namespace SourceGenerators.Subsystems
 				}
 
 				parameterData.ArgumentCode.Append($"message.Entity.Get<{parameter.Type.ToDisplayString()}>()");
+				parameterData.SubsystemData.ExecutionPredicates.Add($"message.Entity.Has<{parameter.Type.ToDisplayString()}>()");
 
 				handled = true;
-
-				var checkCode = parameterData.SubsystemData.ArgumentCheckCode;
-
-				checkCode.AppendLine($"if (!message.Entity.Has<{parameter.Type.ToDisplayString()}>()) {{");
-				checkCode.Indent();
-
-				checkCode.AppendLine("continue;");
-
-				checkCode.Unindent();
-				checkCode.AppendLine("}");
-				checkCode.AppendLine();
 			}
 		}
 	}

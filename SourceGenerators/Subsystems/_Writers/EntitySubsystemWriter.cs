@@ -44,7 +44,14 @@ namespace SourceGenerators.Subsystems
 			data.InvocationCode.AppendLine($"foreach (var entity in {readEntitiesCall}) {{");
 			data.InvocationCode.Indent();
 
-			data.InvocationCode.AppendCode(data.ArgumentCheckCode);
+			foreach (string predicate in data.ExecutionPredicates) {
+				data.InvocationCode.AppendLine($"if (!({predicate})) {{");
+				data.InvocationCode.Indent();
+				data.InvocationCode.AppendLine("continue;");
+				data.InvocationCode.Unindent();
+				data.InvocationCode.AppendLine("}");
+				data.InvocationCode.AppendLine();
+			}
 
 			data.InvocationCode.AppendLine($"{data.Method.Symbol.Name}({argumentsCode});");
 
