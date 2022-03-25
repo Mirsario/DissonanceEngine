@@ -10,7 +10,7 @@ namespace SourceGenerators.Subsystems
 		public readonly MethodPair Method;
 		public readonly ParameterData[] Parameters;
 		public readonly CodeWriter InvocationCode = new();
-		public readonly CodeWriter ArgumentCheckCode = new();
+		public readonly List<string> ExecutionPredicates = new();
 
 		public SubsystemData(SystemData systemData, MethodPair method)
 		{
