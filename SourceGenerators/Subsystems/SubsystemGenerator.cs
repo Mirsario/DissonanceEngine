@@ -194,7 +194,10 @@ namespace SourceGenerators.Subsystems
 				code.Unindent();
 				code.AppendLine($"}}");
 
-				context.AddSource($"{systemPair.Symbol.Name}.Generated.cs", SourceText.From(code.ToString(), Encoding.UTF8));
+				try {
+					context.AddSource($"{systemPair.Symbol.Name}.Generated.cs", SourceText.From(code.ToString(), Encoding.UTF8));
+				}
+				catch (ArgumentException) { }
 			}
 		}
 	}
