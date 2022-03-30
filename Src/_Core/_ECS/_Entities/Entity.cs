@@ -7,8 +7,8 @@ namespace Dissonance.Engine
 	[JsonConverter(typeof(EntityPrefabJsonConverter))]
 	public readonly struct Entity : IEntity
 	{
-		internal readonly int Id;
-		internal readonly int WorldId;
+		public readonly int Id;
+		public readonly int WorldId;
 
 		public World World => WorldManager.GetWorld(WorldId);
 

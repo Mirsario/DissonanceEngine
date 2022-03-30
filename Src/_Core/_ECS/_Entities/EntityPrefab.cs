@@ -7,7 +7,7 @@ namespace Dissonance.Engine
 	[JsonConverter(typeof(EntityPrefabJsonConverter))]
 	public readonly struct EntityPrefab
 	{
-		internal readonly int Id;
+		public readonly int Id;
 
 		internal EntityPrefab(int id)
 		{
