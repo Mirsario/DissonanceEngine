@@ -1,4 +1,5 @@
-﻿using Dissonance.Engine.IO;
+﻿using System;
+using Dissonance.Engine.IO;
 using Newtonsoft.Json;
 
 namespace Dissonance.Engine
@@ -37,8 +38,11 @@ namespace Dissonance.Engine
 		public ref T Get<T>() where T : struct
 			=> ref ComponentManager.GetComponent<T>(WorldId, Id);
 
-		public void Set<T>(in T value) where T : struct
-			=> ComponentManager.SetComponent(WorldId, Id, value);
+		public ref T Set<T>(in T value) where T : struct
+			=> ref ComponentManager.SetComponent(WorldId, Id, value);
+
+		public ref T GetOrSet<T>(Func<T> valueGetter) where T : struct
+			=> ref ComponentManager.GetOrSetComponent(WorldId, Id, valueGetter);
 
 		public void Remove<T>() where T : struct
 			=> ComponentManager.RemoveComponent<T>(WorldId, Id);

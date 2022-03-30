@@ -151,13 +151,34 @@ namespace Dissonance.Engine
 			return ref worldData.Data[worldData.IndicesByEntity[entityId]];
 		}
 
-		internal static void SetComponent<T>(T value) where T : struct
+		internal static ref T GetOrSetComponent<T>(Func<T> valueGetter) where T : struct
+		{
+			if (!ComponentData<T>.HasGlobalSingleton) {
+				ComponentData<T>.GlobalSingleton = valueGetter();
+				ComponentData<T>.HasGlobalSingleton = true;
+			}
+
+			return ref ComponentData<T>.GlobalSingleton;
+		}
+
+		internal static ref T GetOrSetComponent<T>(int worldId, int entityId, Func<T> valueGetter, bool sendMessages = true) where T : struct
+		{
+			if (!HasComponent<T>(worldId, entityId)) {
+				return ref SetComponent(worldId, entityId, valueGetter(), sendMessages);
+			}
+
+			return ref GetComponent<T>(worldId, entityId);
+		}
+
+		internal static ref T SetComponent<T>(T value) where T : struct
 		{
 			ComponentData<T>.GlobalSingleton = value;
 			ComponentData<T>.HasGlobalSingleton = true;
+
+			return ref ComponentData<T>.GlobalSingleton;
 		}
 
-		internal static void SetComponent<T>(int worldId, int entityId, T value, bool sendMessages = true) where T : struct
+		internal static ref T SetComponent<T>(int worldId, int entityId, T value, bool sendMessages = true) where T : struct
 		{
 			if (ComponentData<T>.DataByWorld.Length <= worldId) {
 				ArrayUtils.ResizeAndFillArray(ref ComponentData<T>.DataByWorld, worldId + 1, new());
@@ -211,6 +232,8 @@ namespace Dissonance.Engine
 			} else {
 				worldData.Data[dataId] = value;
 			}
+
+			return ref worldData.Data[dataId];
 		}
 
 		internal static void RemoveComponent(int componentTypeId, int worldId, int entityId)

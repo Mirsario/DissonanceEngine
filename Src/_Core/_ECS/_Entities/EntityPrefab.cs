@@ -51,8 +51,11 @@ namespace Dissonance.Engine
 		public void CopyInto(Entity destinationEntity)
 			=> EntityManager.CopyEntityComponents(WorldManager.PrefabWorldId, Id, destinationEntity.WorldId, destinationEntity.Id);
 
-		internal void Set<T>(in T value) where T : struct
-			=> ComponentManager.SetComponent(WorldManager.PrefabWorldId, Id, value, sendMessages: false);
+		internal ref T Set<T>(in T value) where T : struct
+			=> ref ComponentManager.SetComponent(WorldManager.PrefabWorldId, Id, value, sendMessages: false);
+
+		internal ref T GetOrSet<T>(Func<T> valueGetter) where T : struct
+			=> ref ComponentManager.GetOrSetComponent(WorldManager.PrefabWorldId, Id, valueGetter, sendMessages: false);
 
 		internal void Remove<T>() where T : struct
 			=> ComponentManager.RemoveComponent<T>(WorldManager.PrefabWorldId, Id, sendMessages: false);
