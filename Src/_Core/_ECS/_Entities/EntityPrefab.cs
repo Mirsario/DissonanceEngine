@@ -9,7 +9,7 @@ namespace Dissonance.Engine
 	{
 		public readonly int Id;
 
-		internal EntityPrefab(int id)
+		public EntityPrefab(int id)
 		{
 			Id = id;
 		}
