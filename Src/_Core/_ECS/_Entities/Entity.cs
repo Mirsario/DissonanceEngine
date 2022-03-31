@@ -17,7 +17,7 @@ namespace Dissonance.Engine
 			set => EntityManager.SetEntityIsActive(this, value);
 		}
 
-		internal Entity(int id, int worldId)
+		public Entity(int id, int worldId)
 		{
 			Id = id;
 			WorldId = worldId;
