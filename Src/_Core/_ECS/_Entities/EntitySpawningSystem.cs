@@ -2,15 +2,18 @@
 {
 	[Callback<EndRenderUpdateCallback>]
 	[Callback<EndFixedUpdateCallback>]
-	public sealed class EntitySpawningSystem : GameSystem
+	public sealed partial class EntitySpawningSystem : GameSystem
 	{
-		protected override void Execute()
+		[MessageSubsystem]
+		partial void ReadMessages(in SpawnEntityMessage message)
 		{
-			foreach (var message in ReadMessages<SpawnEntityMessage>()) {
-				var entity = message.SourceEntity.Clone(World);
+			var entity = message.SourceEntity.Clone(World);
 
-				message.Action?.Invoke(entity);
+			if (message.WritePrefab && message.SourceEntity.WorldId == WorldManager.PrefabWorldId) {
+				entity.Set(new EntityPrefab(message.SourceEntity.Id));
 			}
+			
+			message.Action?.Invoke(entity);
 		}
 	}
 }
