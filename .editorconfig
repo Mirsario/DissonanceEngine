@@ -83,8 +83,8 @@ dotnet_diagnostic.CS1998.severity = silent
 	csharp_style_var_when_type_is_apparent = true:none
 
 # Expression-bodied members
-	csharp_style_expression_bodied_lambdas = when_on_single_line:suggestion
-	csharp_style_expression_bodied_local_functions = when_on_single_line:suggestion
+	csharp_style_expression_bodied_lambdas = when_on_single_line:none
+	csharp_style_expression_bodied_local_functions = when_on_single_line:none
 	csharp_style_expression_bodied_operators = when_on_single_line:suggestion
 	csharp_style_expression_bodied_constructors = when_on_single_line:silent
 	csharp_style_expression_bodied_methods = when_on_single_line:silent
