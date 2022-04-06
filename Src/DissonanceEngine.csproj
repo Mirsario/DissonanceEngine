@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<OutputType>Library</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>DissonanceEngine</AssemblyName>
 		<RootNamespace>Dissonance.Engine</RootNamespace>
 		<Platforms>AnyCPU</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>preview</LangVersion>
+
+		<!-- Setting this property to true causes nuget packegs to be placed as .dll files in the output directory, as usually happens with Exe projects. -->
+		<!-- This is very useful for editors -->
+		<HasRuntimeOutput>true</HasRuntimeOutput>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
