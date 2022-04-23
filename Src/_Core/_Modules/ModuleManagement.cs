@@ -13,9 +13,9 @@ namespace Dissonance.Engine
 	{
 		internal static readonly EngineModuleHooks Hooks = new();
 		
+		private static readonly List<EngineModule> modules = new();
 		private static readonly Dictionary<Type, List<EngineModule>> modulesByExactOrDerivingType = new();
 		
-		private static List<EngineModule> modules = new();
 		private static bool modulesReady;
 		private static bool modulesPreInitialized;
 		private static bool modulesInitialized;
@@ -162,16 +162,26 @@ namespace Dissonance.Engine
 
 		private static void SortModules()
 		{
-			IEnumerable<EngineModule> GetDirectDependencies(EngineModule module)
-				=> module.Dependencies?.Select(dependency => {
-					if (!TryGetModule(dependency.Type, out var result) && !dependency.Optional) {
-						throw new Exception($"Unable to find module of type '{dependency.Type.Name}', required by module '{module.GetType().Name}'.");
+			static IEnumerable<int> GetDirectDependencyIndices(EngineModule module)
+			{
+				if (module.Dependencies == null) {
+					yield break;
+				}
+
+				foreach (var dependency in module.Dependencies) {
+					if (!TryGetModule(dependency.Type, out var result)) {
+						if (!dependency.Optional) {
+							throw new Exception($"Unable to find module of type '{dependency.Type.Name}', required by module '{module.GetType().Name}'.");
+						}
+
+						continue;
 					}
+					
+					yield return result.DependencyIndex;
+				}
+			}
 
-					return result;
-				});
-
-			modules = modules.DependencySort(GetDirectDependencies, true).ToList();
+			modules.DependencySort(GetDirectDependencyIndices, true);
 
 			for (int i = 0; i < modules.Count; i++) {
 				modules[i].DependencyIndex = i;

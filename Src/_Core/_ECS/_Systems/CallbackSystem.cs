@@ -45,25 +45,36 @@ namespace Dissonance.Engine
 
 		private void SortSystems()
 		{
-			IEnumerable<GameSystem> GetDependencies(GameSystem system)
+			IEnumerable<int> GetDependencyIndices(GameSystem system)
 			{
 				foreach (var systemType in system.TypeData.SortingDependencies) {
+					int index = 0;
+
 					foreach (var invokedSystem in invocationList) {
 						if (invokedSystem.GetType() == systemType) {
-							yield return invokedSystem;
+							yield return index;
 						}
+
+						index++;
 					}
 				}
 			}
 
 			lock (invocationList) {
 				// Performance could've been better.
-				var sortedArray = DependencyUtils.DependencySort(invocationList, GetDependencies, throwOnRecursion: true).ToArray();
+				var sortedArray = new GameSystem[invocationList.Count];
+				int index = 0;
+
+				foreach (var system in invocationList) {
+					sortedArray[index++] = system;
+				}
+
+				sortedArray.DependencySort(GetDependencyIndices, throwOnRecursion: true);
 
 				invocationList.Clear();
 
-				foreach (var entry in sortedArray) {
-					invocationList.AddLast(entry);
+				for (int i = 0; i < sortedArray.Length; i++) {
+					invocationList.AddLast(sortedArray[i]);
 				}
 			}
 		}
