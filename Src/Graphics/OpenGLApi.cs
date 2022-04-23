@@ -22,11 +22,21 @@ namespace Dissonance.Engine.Graphics
 				throw new InvalidOperationException("Cannot get a GLFW Api instance to initialize OpenGL.");
 			}
 
-			var context = new GlfwContext(glfw, Game.Instance.GetModule<GlfwWindowing>().WindowHandle);
+			if (!ModuleManagement.TryGetModule(out GlfwWindowing glfwWindowing)) {
+				throw new InvalidOperationException("Cannot get a GLFW Windowing instance to initialize OpenGL.");
+			}
+
+			var context = new GlfwContext(glfw, glfwWindowing.WindowHandle);
 
 			OpenGL = GL.GetApi(context);
 
-			Debug.Log($"Initialized OpenGL {Marshal.PtrToStringAnsi((IntPtr)OpenGL.GetString(StringName.Version))}");
+			var glVersion = Rendering.GetOpenGLVersion();
+
+			Debug.Log($"Initialized OpenGL {glVersion}");
+
+			if (glVersion < glfwWindowing.OpenGLVersion) {
+				throw new GraphicsException($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {glfwWindowing.OpenGLVersion}\r\nYour OpenGL version is: {glVersion}");
+			}
 		}
 
 		protected override void OnDispose()

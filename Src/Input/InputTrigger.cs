@@ -63,7 +63,7 @@ namespace Dissonance.Engine.Input
 			}
 		}
 
-		internal ref SummInput CurrentInput => ref (Game.Instance?.modulesPreInitialized != false ? ref fixedInput : ref renderInput);
+		internal ref SummInput CurrentInput => ref (Engine.InFixedUpdate ? ref fixedInput : ref renderInput);
 
 		internal InputTrigger() { }
 

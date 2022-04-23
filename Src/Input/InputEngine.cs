@@ -1,10 +1,9 @@
-using System;
 using System.Reflection;
 using Dissonance.Engine.Graphics;
-using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input
 {
+	[ModuleDependency<Windowing>(isOptional: true)]
 	public sealed partial class InputEngine : EngineModule
 	{
 		public const int MaxMouseButtons = 12;
@@ -24,12 +23,12 @@ namespace Dissonance.Engine.Input
 		// Keyboard
 		public static string InputString => CurrentInput.InputString;
 
-		internal static InputVariables CurrentInput => Game.IsFixedUpdate ? fixedInput : renderInput;
-		internal static InputVariables PrevInput => Game.IsFixedUpdate ? prevFixedInput : prevRenderInput;
+		internal static InputVariables CurrentInput => Engine.InFixedUpdate ? fixedInput : renderInput;
+		internal static InputVariables PrevInput => Engine.InFixedUpdate ? prevFixedInput : prevRenderInput;
 
 		protected override void Init()
 		{
-			Game.TryGetModule(out windowing);
+			ModuleManagement.TryGetModule(out windowing);
 
 			fixedInput = new InputVariables();
 			renderInput = new InputVariables();
