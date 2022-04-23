@@ -1,45 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+#nullable enable
 
 namespace Dissonance.Engine.Utilities
 {
 	public static class DependencyUtils
 	{
-		public static IEnumerable<T> DependencySort<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> dependencies, bool throwOnRecursion = true)
-		{
-			var sorted = new List<T>();
-			var visited = new HashSet<T>();
+		public delegate IEnumerable<int>? DependencyIndexGetter<T>(T arg);
 
-			foreach (var item in source) {
-				DependencySortRecursion(item, visited, sorted, dependencies, throwOnRecursion);
+		public static void DependencySort<T>(this List<T> source, DependencyIndexGetter<T> dependencyIndicesGetter, bool throwOnRecursion = true)
+			=> DependencySort(CollectionsMarshal.AsSpan(source), dependencyIndicesGetter, throwOnRecursion);
+
+		public static void DependencySort<T>(this T[] source, DependencyIndexGetter<T> dependencyIndicesGetter, bool throwOnRecursion = true)
+			=> DependencySort((Span<T>)source, dependencyIndicesGetter, throwOnRecursion);
+
+		public static unsafe void DependencySort<T>(this Span<T> source, DependencyIndexGetter<T> dependencyIndicesGetter, bool throwOnRecursion = true)
+		{
+			// Up to 8KB total
+			const int MaxStackAllocationForBools = 1024 * 2;
+			const int MaxStackAllocationForEntries = 1024 * 6;
+
+			int length = source.Length;
+			int tAllocationSize = Unsafe.SizeOf<T>() * length;
+			Span<T> sorted;
+
+			if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>() && tAllocationSize < MaxStackAllocationForEntries) {
+				byte* byteAllocation = stackalloc byte[tAllocationSize];
+
+				sorted = new Span<T>(byteAllocation, length);
+			} else {
+				sorted = new T[length];
 			}
 
-			return sorted;
+			Span<bool> boolAllocation = length * 2 < MaxStackAllocationForBools ? stackalloc bool[length * 2] : new bool[length * 2];
+			Span<bool> visited = boolAllocation.Slice(0, length);
+			Span<bool> isDefined = boolAllocation.Slice(length, length);
+
+			int nextIndex = 0;
+
+			for (int i = 0; i < length; i++) {
+				DependencySortRecursion(source, i, ref nextIndex, sorted, visited, isDefined, dependencyIndicesGetter, throwOnRecursion);
+			}
+
+			sorted.CopyTo(source);
 		}
 
-		private static void DependencySortRecursion<T>(T item, HashSet<T> visited, List<T> sorted, Func<T, IEnumerable<T>> dependencies, bool throwOnRecursion)
+		private static void DependencySortRecursion<T>(ReadOnlySpan<T> source, int index, ref int nextIndex, Span<T> sorted, Span<bool> visited, Span<bool> isDefined, DependencyIndexGetter<T> dependencyIndicesGetter, bool throwOnRecursion)
 		{
-			if (visited.Contains(item)) {
-				if (throwOnRecursion && !sorted.Contains(item)) {
-					throw new Exception($"Recursive dependency found in type '{item.GetType().Name}'");
+			var item = source[index];
+
+			if (visited[index]) {
+				if (throwOnRecursion && !isDefined[index]) {
+					throw new Exception($"Recursive dependency found in type '{item?.GetType().Name ?? "null"}'");
 				}
 
 				return;
 			}
 
-			visited.Add(item);
+			visited[index] = true;
 
-			var dependenciesList = dependencies(item);
+			var dependencyIndices = dependencyIndicesGetter(item);
 
-			if (dependenciesList != null) {
-				foreach (var dep in dependenciesList) {
-					if (dep != null) {
-						DependencySortRecursion(dep, visited, sorted, dependencies, throwOnRecursion);
-					}
+			if (dependencyIndices != null) {
+				foreach (int dependencyIndex in dependencyIndices) {
+					DependencySortRecursion(source, dependencyIndex, ref nextIndex, sorted, visited, isDefined, dependencyIndicesGetter, throwOnRecursion);
 				}
 			}
 
-			sorted.Add(item);
+			sorted[nextIndex++] = item;
+			isDefined[index] = true;
 		}
 	}
 }
