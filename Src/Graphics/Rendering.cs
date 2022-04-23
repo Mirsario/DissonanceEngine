@@ -16,8 +16,6 @@ namespace Dissonance.Engine.Graphics
 	[ModuleDependency<ComponentManager>]
 	public sealed unsafe partial class Rendering : EngineModule
 	{
-		public static readonly Version MinOpenGLVersion = new(3, 2);
-
 		internal static Texture whiteTexture; //TODO: Move this
 		internal static BlendingFactor currentBlendFactorSrc;
 		internal static BlendingFactor currentBlendFactorDst;
@@ -25,7 +23,6 @@ namespace Dissonance.Engine.Graphics
 		internal static Windowing windowing;
 
 		private static Type renderingPipelineType = typeof(ForwardRendering);
-		private static Version openGLVersion = MinOpenGLVersion;
 		private static DebugProc debugCallback;
 		private static Asset<Shader> guiShader; //TODO: To be moved
 		private Action resetRenderComponents;
@@ -37,17 +34,6 @@ namespace Dissonance.Engine.Graphics
 		public static bool DebugFramebuffers { get; set; }
 
 		public static Asset<Shader> GUIShader => guiShader ??= Assets.Find<Shader>("Gui/Default"); //TODO: To be moved
-
-		public static Version OpenGLVersion {
-			get => openGLVersion;
-			set {
-				if (Game.Instance?.modulesPreInitialized != false) {
-					throw new InvalidOperationException($"OpenGL version can only be set in '{nameof(Game)}.{nameof(Game.PreInit)}()'.");
-				}
-
-				openGLVersion = value;
-			}
-		}
 
 		protected override void InitializeForAssembly(Assembly assembly)
 		{
@@ -89,12 +75,8 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
-			Game.TryGetModule(out windowing);
-
-			var glVersion = GetOpenGLVersion();
-
-			if (glVersion < openGLVersion) {
-				throw new Exception($"Please update your graphics drivers.\r\nMinimum OpenGL version required to run this application is: {openGLVersion}\r\nYour OpenGL version is: {glVersion}");
+			if (!ModuleManagement.TryGetModule(out windowing)) {
+				throw new InvalidOperationException("Windowing module is not loaded!");
 			}
 
 			CheckGLErrors("After checking GL version");

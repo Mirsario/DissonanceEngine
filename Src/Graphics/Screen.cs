@@ -42,13 +42,13 @@ namespace Dissonance.Engine.Graphics
 		}*/
 
 		public static CursorState CursorState {
-			get => Game.Instance.GetModule<Windowing>().CursorState;
-			set => Game.Instance.GetModule<Windowing>().CursorState = value;
+			get => ModuleManagement.GetModule<Windowing>().CursorState;
+			set => ModuleManagement.GetModule<Windowing>().CursorState = value;
 		}
 
 		protected override void Init()
 		{
-			windowing = Game.GetModule<Windowing>(false);
+			ModuleManagement.TryGetModule(out windowing);
 
 			UpdateValues();
 		}

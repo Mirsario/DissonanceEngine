@@ -9,6 +9,7 @@ namespace Dissonance.Engine.Graphics
 	public unsafe class GlfwWindowing : Windowing
 	{
 		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);
+		private static readonly Version DefaultOpenGLVersion = new(3, 2);
 
 		private static readonly object GlfwLock = new();
 
@@ -16,8 +17,21 @@ namespace Dissonance.Engine.Graphics
 		private Vector2Int windowLocation;
 		private Vector2Int framebufferSize;
 		private CursorState cursorState;
+		private Version openGLVersion = DefaultOpenGLVersion;
+		private bool isInitialized;
 
 		public WindowHandle* WindowHandle { get; private set; }
+		
+		public Version OpenGLVersion {
+			get => openGLVersion;
+			set {
+				if (isInitialized) {
+					throw new InvalidOperationException($"OpenGL version cannot be set after the windowing module has been initialized.");
+				}
+
+				openGLVersion = value;
+			}
+		}
 
 		public override Vector2Int WindowSize => windowSize;
 		public override Vector2Int WindowLocation => windowLocation;
@@ -77,8 +91,8 @@ namespace Dissonance.Engine.Graphics
 					throw new Exception("Unable to initialize GLFW!");
 				}
 
-				GLFW.WindowHint(WindowHintInt.ContextVersionMajor, Rendering.OpenGLVersion.Major); // Targeted major version
-				GLFW.WindowHint(WindowHintInt.ContextVersionMinor, Rendering.OpenGLVersion.Minor); // Targeted minor version
+				GLFW.WindowHint(WindowHintInt.ContextVersionMajor, OpenGLVersion.Major); // Targeted major version
+				GLFW.WindowHint(WindowHintInt.ContextVersionMinor, OpenGLVersion.Minor); // Targeted minor version
 				GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
 				GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
 
@@ -88,7 +102,7 @@ namespace Dissonance.Engine.Graphics
 				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
 
 				if (WindowHandle == default) {
-					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {Rendering.OpenGLVersion}, and try updating your graphics card drivers.");
+					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {OpenGLVersion}, and try updating your graphics card drivers.");
 				}
 
 				GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
@@ -97,6 +111,8 @@ namespace Dissonance.Engine.Graphics
 
 				InitCallbacks();
 				UpdateValues();
+			
+				isInitialized = true;
 			}
 		}
 
@@ -141,18 +157,18 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		private static void InternalCursorPositionCallback(WindowHandle* windowHandle, double x, double y)
-			=> Game.Instance.GetModule<GlfwWindowing>().OnCursorPositionCallback?.Invoke(x, y);
+			=> ModuleManagement.GetModule<GlfwWindowing>().OnCursorPositionCallback?.Invoke(x, y);
 
 		private static void InternalMouseButtonCallback(WindowHandle* windowHandle, MouseButton button, InputAction action, KeyModifiers mods)
-			=> Game.Instance.GetModule<GlfwWindowing>().OnMouseButtonCallback?.Invoke(button, action, mods);
+			=> ModuleManagement.GetModule<GlfwWindowing>().OnMouseButtonCallback?.Invoke(button, action, mods);
 
 		private static void InternalScrollCallback(WindowHandle* windowHandle, double xOffset, double yOffset)
-			=> Game.Instance.GetModule<GlfwWindowing>().OnScrollCallback?.Invoke(xOffset, yOffset);
+			=> ModuleManagement.GetModule<GlfwWindowing>().OnScrollCallback?.Invoke(xOffset, yOffset);
 
 		private static void InternalKeyCallback(WindowHandle* windowHandle, Keys key, int scanCode, InputAction action, KeyModifiers mods)
-			=> Game.Instance.GetModule<GlfwWindowing>().OnKeyCallback?.Invoke(key, scanCode, action, mods);
+			=> ModuleManagement.GetModule<GlfwWindowing>().OnKeyCallback?.Invoke(key, scanCode, action, mods);
 
 		private static void InternalCharCallback(WindowHandle* windowHandle, uint codePoint)
-			=> Game.Instance.GetModule<GlfwWindowing>().OnCharCallback?.Invoke(codePoint);
+			=> ModuleManagement.GetModule<GlfwWindowing>().OnCharCallback?.Invoke(codePoint);
 	}
 }

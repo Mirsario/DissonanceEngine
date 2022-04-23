@@ -15,16 +15,12 @@ namespace Dissonance.Engine
 		public static bool HasFocus { get; internal set; } = true;
 		public static Thread MainThread { get; private set; }
 
-		public static bool IsFixedUpdate => Instance?.fixedUpdate ?? false;
-		
 		/// <summary>
-		/// The current running game instance. Will be null before <see cref="Game.Run(GameFlags, string[])"/> is called.
+		/// The current running game instance. Will be null before <see cref="Run(GameFlags, string[])"/> is called.
 		/// </summary>
 		public static Game Instance => instance ?? throw new InvalidOperationException($"No active Game instance currently exists.");
 
 		internal bool shouldQuit;
-		internal bool modulesPreInitialized;
-		internal bool modulesInitialized;
 		internal bool fixedUpdate;
 
 		private Stopwatch updateStopwatch;
@@ -89,26 +85,13 @@ namespace Dissonance.Engine
 			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
 			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
-			InitializeModules();
-
-			Debug.Log("Loading engine...");
-			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
-
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
-
-			foreach (var module in modules) {
-				module.InvokePreInitialize();
-			}
-
-			modulesPreInitialized = true;
 
 			PreInit();
 
-			foreach (var assembly in AssemblyManagement.EnumerateAssemblies()) {
-				foreach (var module in modules) {
-					module.InvokeInitializeForAssembly(assembly);
-				}
-			}
+			Engine.Initialize();
+
+			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 
 			Init();
 
@@ -122,13 +105,7 @@ namespace Dissonance.Engine
 		{
 			OnDispose();
 
-			if (modules != null) {
-				for (int i = 0; i < modules.Count; i++) {
-					modules[i]?.Dispose();
-				}
-
-				modules = null;
-			}
+			Engine.Terminate();
 
 			if (instance == this) {
 				instance = null;
@@ -181,10 +158,6 @@ namespace Dissonance.Engine
 		{
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-			foreach (var module in modules) {
-				module.InvokeInitialize();
-			}
-
 			Debug.Log("Loading game...");
 
 			Start();
@@ -196,30 +169,14 @@ namespace Dissonance.Engine
 		{
 			fixedUpdate = true;
 
-			moduleHooks.PreFixedUpdate?.Invoke();
-
-			/*bool isFocused = Glfw.Api.GetWindowAttrib(window,WindowAttribute.Focused)!=0;
-
-			if (Screen.lockCursor && isFocused) {
-				var center = Screen.Center;
-
-				Glfw.Api.SetCursorPos(window,center.x,center.y);
-			}*/
-
-			moduleHooks.FixedUpdate?.Invoke();
-
-			moduleHooks.PostFixedUpdate?.Invoke();
+			Engine.FixedUpdate();
 		}
 
 		internal void RenderUpdateInternal()
 		{
 			fixedUpdate = false;
 
-			moduleHooks.PreRenderUpdate?.Invoke();
-
-			moduleHooks.RenderUpdate?.Invoke();
-
-			moduleHooks.PostRenderUpdate?.Invoke();
+			Engine.RenderUpdate();
 		}
 
 		internal void ApplicationQuit(object sender, EventArgs e)
@@ -229,9 +186,9 @@ namespace Dissonance.Engine
 
 		private void UpdateLoop()
 		{
-			var windowing = GetModule<Windowing>(false);
+			ModuleManagement.TryGetModule(out Windowing windowing);
 
-			while (!shouldQuit && (NoWindow || !windowing.ShouldClose)) {
+			while (!shouldQuit && (NoWindow || windowing?.ShouldClose == false)) {
 				Update();
 			}
 		}
@@ -249,7 +206,8 @@ namespace Dissonance.Engine
 			instance.shouldQuit = true;
 		}
 
-		private static void OnFocusChange(IntPtr _, int isFocused) => HasFocus = isFocused != 0;
+		private static void OnFocusChange(IntPtr _, int isFocused)
+			=> HasFocus = isFocused != 0;
 
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) // Move this somewhere
 		{
