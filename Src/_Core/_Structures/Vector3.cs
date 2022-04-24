@@ -141,31 +141,9 @@ namespace Dissonance.Engine
 
 		public void NormalizeEuler()
 		{
-			//TODO: Rewrite without loops, sigh.
-
-			while (X >= 360f) {
-				X -= 360f;
-			}
-
-			while (X < 0f) {
-				X += 360f;
-			}
-
-			while (Y >= 360f) {
-				Y -= 360f;
-			}
-
-			while (Y < 0f) {
-				Y += 360f;
-			}
-
-			while (Z >= 360f) {
-				Z -= 360f;
-			}
-
-			while (Z < 0f) {
-				Z += 360f;
-			}
+			X = MathHelper.Repeat(X, 360f);
+			Y = MathHelper.Repeat(Y, 360f);
+			Z = MathHelper.Repeat(Z, 360f);
 		}
 
 		//TODO: Rewrite without matrices.
