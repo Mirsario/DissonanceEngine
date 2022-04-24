@@ -35,7 +35,6 @@ namespace Dissonance.Engine
 		internal static void Initialize()
 		{
 			RegisterAssembly(typeof(AssemblyManagement).Assembly);
-			RegisterAssembly(Game.Instance.GetType().Assembly);
 
 			ready = true;
 

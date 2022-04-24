@@ -87,11 +87,13 @@ namespace Dissonance.Engine
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
 
+			Debug.Log($"Working directory: '{Directory.GetCurrentDirectory()}'.");
+
 			PreInit();
 
-			GameEngine.Initialize();
-
-			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
+			// Initialization of the assembly will be delayed, but registration has to be done before engine initialization.
+			AssemblyManagement.RegisterAssembly(GetType().Assembly);
+			GameEngine.Initialize(flags);
 
 			Init();
 
