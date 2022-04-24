@@ -36,9 +36,9 @@ namespace Dissonance.Engine
 		private static Stopwatch renderStopwatch;
 
 		// Auto
-		public static float GameTime => Engine.InFixedUpdate ? FixedGameTime : RenderGameTime;
-		public static float GlobalTime => Engine.InFixedUpdate ? FixedGlobalTime : RenderGlobalTime;
-		public static float DeltaTime => Engine.InFixedUpdate ? FixedDeltaTime : RenderDeltaTime; // It might be a bit weird that this isn't 2 'GameDeltaTime' and 'GlobalDeltaTime' properties.
+		public static float GameTime => GameEngine.InFixedUpdate ? FixedGameTime : RenderGameTime;
+		public static float GlobalTime => GameEngine.InFixedUpdate ? FixedGlobalTime : RenderGlobalTime;
+		public static float DeltaTime => GameEngine.InFixedUpdate ? FixedDeltaTime : RenderDeltaTime; // It might be a bit weird that this isn't 2 'GameDeltaTime' and 'GlobalDeltaTime' properties.
 		// Fixed Time
 		public static float FixedGameTime => fixedTime.Game;
 		public static float FixedGlobalTime => fixedTime.Global;
