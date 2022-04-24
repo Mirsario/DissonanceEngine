@@ -5,6 +5,7 @@ using static Dissonance.Engine.Audio.OpenALApi;
 namespace Dissonance.Engine.Audio
 {
 	[Callback<EndRenderUpdateCallback>]
+	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
 	public sealed class AudioListenerSystem : GameSystem
 	{
 		private EntitySet entities;
@@ -16,11 +17,6 @@ namespace Dissonance.Engine.Audio
 
 		protected unsafe override void Execute()
 		{
-			//TODO: Replace with an attribute-based way of culling system autoloading.
-			if (Game.Instance.Flags.HasFlag(GameFlags.NoAudio)) {
-				return;
-			}
-
 			Entity entity = default;
 			bool hasEntity = false;
 
