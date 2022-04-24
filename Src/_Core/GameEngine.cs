@@ -1,6 +1,6 @@
 ﻿namespace Dissonance.Engine
 {
-	public static class Engine
+	public static class GameEngine
 	{
 		public static bool IsInitialized { get; private set; }
 		public static bool InFixedUpdate { get; private set; } // Stone age.

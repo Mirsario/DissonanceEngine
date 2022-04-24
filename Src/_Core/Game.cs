@@ -89,7 +89,7 @@ namespace Dissonance.Engine
 
 			PreInit();
 
-			Engine.Initialize();
+			GameEngine.Initialize();
 
 			Debug.Log($"Working directory is '{Directory.GetCurrentDirectory()}'.");
 
@@ -105,7 +105,7 @@ namespace Dissonance.Engine
 		{
 			OnDispose();
 
-			Engine.Terminate();
+			GameEngine.Terminate();
 
 			if (instance == this) {
 				instance = null;
@@ -169,14 +169,14 @@ namespace Dissonance.Engine
 		{
 			fixedUpdate = true;
 
-			Engine.FixedUpdate();
+			GameEngine.FixedUpdate();
 		}
 
 		internal void RenderUpdateInternal()
 		{
 			fixedUpdate = false;
 
-			Engine.RenderUpdate();
+			GameEngine.RenderUpdate();
 		}
 
 		internal void ApplicationQuit(object sender, EventArgs e)

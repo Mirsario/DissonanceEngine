@@ -23,8 +23,8 @@ namespace Dissonance.Engine.Input
 		// Keyboard
 		public static string InputString => CurrentInput.InputString;
 
-		internal static InputVariables CurrentInput => Engine.InFixedUpdate ? fixedInput : renderInput;
-		internal static InputVariables PrevInput => Engine.InFixedUpdate ? prevFixedInput : prevRenderInput;
+		internal static InputVariables CurrentInput => GameEngine.InFixedUpdate ? fixedInput : renderInput;
+		internal static InputVariables PrevInput => GameEngine.InFixedUpdate ? prevFixedInput : prevRenderInput;
 
 		protected override void Init()
 		{
