@@ -6,13 +6,20 @@
 		public static bool InFixedUpdate { get; private set; } // Stone age.
 		public static bool InRenderUpdate { get; private set; }
 
-		public static void Initialize()
+		/// <summary>
+		/// The <see cref="GameFlags"/> the engine was ran with.
+		/// </summary>
+		public static GameFlags Flags { get; private set; }
+
+		public static void Initialize(GameFlags flags = GameFlags.None)
 		{
 			if (IsInitialized) {
 				return;
 			}
 
 			Debug.Log("Loading engine...");
+
+			Flags = flags;
 
 			ModuleManagement.Initialize();
 

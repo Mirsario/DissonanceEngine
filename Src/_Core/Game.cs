@@ -37,15 +37,7 @@ namespace Dissonance.Engine
 		/// </summary>
 		public string DisplayName { get; set; } = "Untitled Game";
 
-		/// <summary>
-		/// The <see cref="GameFlags"/> the game was ran with.
-		/// </summary>
-		public GameFlags Flags { get; private set; }
 		public IReadOnlyList<string> StartArguments { get; private set; }
-
-		internal bool NoWindow { get; private set; }
-		internal bool NoGraphics { get; private set; }
-		internal bool NoAudio { get; private set; }
 
 		/// <summary>
 		/// Called before the game is initialized. Use <see cref="Rendering.SetRenderingPipeline{T}"/> here.
@@ -79,11 +71,7 @@ namespace Dissonance.Engine
 
 			instance = this;
 			MainThread = Thread.CurrentThread;
-			Flags = flags;
 			StartArguments = Array.AsReadOnly(args ?? Array.Empty<string>());
-			NoWindow = Flags.HasFlag(GameFlags.NoWindow);
-			NoGraphics = Flags.HasFlag(GameFlags.NoGraphics);
-			NoAudio = Flags.HasFlag(GameFlags.NoAudio);
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;
 
@@ -97,7 +85,7 @@ namespace Dissonance.Engine
 
 			Init();
 
-			if (!Flags.HasFlag(GameFlags.ManualUpdate)) {
+			if (!GameEngine.Flags.HasFlag(GameFlags.ManualUpdate)) {
 				UpdateLoop();
 				Dispose();
 			}
@@ -125,7 +113,7 @@ namespace Dissonance.Engine
 			}
 
 			while (numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
-				if (!NoWindow) {
+				if (!GameEngine.Flags.HasFlag(GameFlags.NoWindow)) {
 					GlfwApi.GLFW.PollEvents();
 				}
 
@@ -134,7 +122,7 @@ namespace Dissonance.Engine
 				numFixedUpdates++;
 			}
 
-			if (NoGraphics) {
+			if (GameEngine.Flags.HasFlag(GameFlags.NoGraphics)) {
 				Thread.Sleep(1);
 				return;
 			}
@@ -190,7 +178,7 @@ namespace Dissonance.Engine
 		{
 			ModuleManagement.TryGetModule(out Windowing windowing);
 
-			while (!shouldQuit && (NoWindow || windowing?.ShouldClose == false)) {
+			while (!shouldQuit && (GameEngine.Flags.HasFlag(GameFlags.NoWindow) || windowing?.ShouldClose == false)) {
 				Update();
 			}
 		}
@@ -208,15 +196,12 @@ namespace Dissonance.Engine
 			instance.shouldQuit = true;
 		}
 
-		private static void OnFocusChange(IntPtr _, int isFocused)
-			=> HasFocus = isFocused != 0;
-
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) // Move this somewhere
 		{
 #if WINDOWS
 			var exception = (Exception)e.ExceptionObject;
 
-			System.Windows.Forms.MessageBox.Show(exception.Message+"\n\n"+exception.StackTrace,"Error");
+			System.Windows.Forms.MessageBox.Show($"{exception.Message}\n\n{exception.StackTrace}", "Error");
 #endif
 
 			Quit();

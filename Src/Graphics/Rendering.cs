@@ -154,7 +154,7 @@ namespace Dissonance.Engine.Graphics
 		{
 			renderingPipelineType = typeof(T);
 
-			if (RenderingPipeline != null && Game.Instance?.NoGraphics == false) {
+			if (RenderingPipeline != null && !GameEngine.Flags.HasFlag(GameFlags.NoGraphics)) {
 				InstantiateRenderingPipeline();
 			}
 		}
