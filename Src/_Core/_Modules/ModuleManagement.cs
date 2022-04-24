@@ -181,6 +181,10 @@ namespace Dissonance.Engine
 				}
 			}
 
+			for (int i = 0; i < modules.Count; i++) {
+				modules[i].DependencyIndex = i;
+			}
+
 			modules.DependencySort(GetDirectDependencyIndices, true);
 
 			for (int i = 0; i < modules.Count; i++) {

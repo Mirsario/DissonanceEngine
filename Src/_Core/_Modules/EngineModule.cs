@@ -11,7 +11,8 @@ namespace Dissonance.Engine
 		private bool initialized;
 
 		public DependencyInfo[] Dependencies { get; internal set; }
-		public int DependencyIndex { get; internal set; }
+		
+		internal int DependencyIndex { get; set; }
 
 		public Game Game => Game.Instance;
 
