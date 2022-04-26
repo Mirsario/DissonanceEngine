@@ -1,8 +1,9 @@
-﻿using Silk.NET.GLFW;
+﻿using Silk.NET.Core.Contexts;
+using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Graphics
 {
-	public abstract class Windowing : EngineModule
+	public abstract class Windowing : EngineModule, IGLContextSource
 	{
 		public delegate void KeyCallback(Keys key, int scanCode, InputAction action, KeyModifiers mods);
 		public delegate void CharCallback(uint codePoint);
@@ -19,6 +20,7 @@ namespace Dissonance.Engine.Graphics
 		public abstract event KeyCallback OnKeyCallback;
 		public abstract event CharCallback OnCharCallback;
 
+		public abstract IGLContext GLContext { get; }
 		public abstract Vector2Int WindowSize { get; }
 		public abstract Vector2Int WindowLocation { get; }
 		public abstract Vector2Int FramebufferSize { get; }

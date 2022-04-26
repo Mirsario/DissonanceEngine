@@ -1,4 +1,5 @@
 ﻿using System;
+using Silk.NET.Core.Contexts;
 using Silk.NET.GLFW;
 using static Dissonance.Engine.Graphics.GlfwApi;
 
@@ -11,17 +12,16 @@ namespace Dissonance.Engine.Graphics
 		private static readonly Vector2Int MinWindowSize = new Vector2Int(320, 240);
 		private static readonly Version DefaultOpenGLVersion = new(3, 2);
 
-		private static readonly object GlfwLock = new();
-
 		private Vector2Int windowSize;
 		private Vector2Int windowLocation;
 		private Vector2Int framebufferSize;
 		private CursorState cursorState;
 		private Version openGLVersion = DefaultOpenGLVersion;
 		private bool isInitialized;
+		private GlfwContext glfwContext;
 
 		public WindowHandle* WindowHandle { get; private set; }
-		
+
 		public Version OpenGLVersion {
 			get => openGLVersion;
 			set {
@@ -33,6 +33,7 @@ namespace Dissonance.Engine.Graphics
 			}
 		}
 
+		public override GlfwContext GLContext => glfwContext;
 		public override Vector2Int WindowSize => windowSize;
 		public override Vector2Int WindowLocation => windowLocation;
 		public override Vector2Int FramebufferSize => framebufferSize;
@@ -81,39 +82,39 @@ namespace Dissonance.Engine.Graphics
 
 		protected override void Init()
 		{
-			lock (GlfwLock) {
-				GLFW.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
-					ErrorCode.VersionUnavailable => throw new GraphicsException(description),
-					_ => $"GLFW Error {code}: {description}"
-				}));
+			GLFW.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
+				ErrorCode.VersionUnavailable => throw new GraphicsException(description),
+				_ => $"GLFW Error {code}: {description}"
+			}));
 
-				if (!GLFW.Init()) {
-					throw new Exception("Unable to initialize GLFW!");
-				}
-
-				GLFW.WindowHint(WindowHintInt.ContextVersionMajor, OpenGLVersion.Major); // Targeted major version
-				GLFW.WindowHint(WindowHintInt.ContextVersionMinor, OpenGLVersion.Minor); // Targeted minor version
-				GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
-				GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
-
-				int resolutionWidth = 800;
-				int resolutionHeight = 600;
-
-				WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
-
-				if (WindowHandle == default) {
-					throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {OpenGLVersion}, and try updating your graphics card drivers.");
-				}
-
-				GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
-				GLFW.MakeContextCurrent(WindowHandle);
-				GLFW.SwapInterval(1);
-
-				InitCallbacks();
-				UpdateValues();
-			
-				isInitialized = true;
+			if (!GLFW.Init()) {
+				throw new Exception("Unable to initialize GLFW!");
 			}
+
+			GLFW.WindowHint(WindowHintInt.ContextVersionMajor, OpenGLVersion.Major); // Targeted major version
+			GLFW.WindowHint(WindowHintInt.ContextVersionMinor, OpenGLVersion.Minor); // Targeted minor version
+			GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
+			GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+
+			int resolutionWidth = 800;
+			int resolutionHeight = 600;
+
+			WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
+
+			if (WindowHandle == null) {
+				throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {OpenGLVersion}, and try updating your graphics card drivers.");
+			}
+
+			glfwContext = new GlfwContext(GLFW, WindowHandle);
+
+			GLFW.SetWindowSizeLimits(WindowHandle, MinWindowSize.X, MinWindowSize.Y, -1, -1);
+			GLFW.MakeContextCurrent(WindowHandle);
+			GLFW.SwapInterval(1);
+
+			InitCallbacks();
+			UpdateValues();
+			
+			isInitialized = true;
 		}
 
 		protected override void OnDispose()
