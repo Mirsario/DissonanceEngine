@@ -32,7 +32,7 @@ namespace Dissonance.Engine.IO
 		private static readonly Dictionary<string, AssetFileEntry> assetFiles = new();
 		//private static readonly Dictionary<Type, IDictionary<string, Asset>> assets = new();
 
-		internal static bool IsMainThread => Thread.CurrentThread == Game.MainThread;
+		internal static bool IsMainThread => Thread.CurrentThread == GameEngine.MainThread;
 
 		protected override void Init()
 		{

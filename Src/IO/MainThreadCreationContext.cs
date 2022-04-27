@@ -9,7 +9,7 @@ namespace Dissonance.Engine.IO
 	{
 		internal ContinuationScheduler ContinuationScheduler { private get; init; }
 
-		public bool IsCompleted => Thread.CurrentThread == Game.MainThread;
+		public bool IsCompleted => Thread.CurrentThread == GameEngine.MainThread;
 		public MainThreadCreationContext GetAwaiter() => this;
 
 		internal MainThreadCreationContext(ContinuationScheduler continuationScheduler)
