@@ -13,7 +13,6 @@ namespace Dissonance.Engine
 		private static volatile Game instance;
 
 		public static bool HasFocus { get; internal set; } = true;
-		public static Thread MainThread { get; private set; }
 
 		/// <summary>
 		/// The current running game instance. Will be null before <see cref="Run(GameFlags, string[])"/> is called.
@@ -70,7 +69,6 @@ namespace Dissonance.Engine
 			}
 
 			instance = this;
-			MainThread = Thread.CurrentThread;
 			StartArguments = Array.AsReadOnly(args ?? Array.Empty<string>());
 
 			AppDomain.CurrentDomain.ProcessExit += ApplicationQuit;

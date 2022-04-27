@@ -1,10 +1,13 @@
-﻿namespace Dissonance.Engine
+﻿using System.Threading;
+
+namespace Dissonance.Engine
 {
 	public static class GameEngine
 	{
 		public static bool IsInitialized { get; private set; }
 		public static bool InFixedUpdate { get; private set; } // Stone age.
 		public static bool InRenderUpdate { get; private set; }
+		public static Thread MainThread { get; private set; }
 
 		/// <summary>
 		/// The <see cref="GameFlags"/> the engine was ran with.
@@ -17,13 +20,16 @@
 				return;
 			}
 
-			Debug.Log("Loading engine...");
+			Debug.Log("Initializing engine...");
 
 			Flags = flags;
+			MainThread = Thread.CurrentThread;
 
 			ModuleManagement.Initialize();
 
 			IsInitialized = true;
+
+			Debug.Log("Engine initialized.");
 		}
 
 		public static void Terminate()
