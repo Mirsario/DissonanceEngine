@@ -28,7 +28,7 @@ namespace Dissonance.Engine.IO
 		internal static readonly HashSet<Type> ReaderAssetTypes = new();
 		internal static readonly ConcurrentQueue<Action> AssetTransferQueue = new();
 
-		private static readonly HashSet<AssetSource> sources = new();
+		private static readonly HashSet<IAssetSource> sources = new();
 		private static readonly Dictionary<string, AssetFileEntry> assetFiles = new();
 		//private static readonly Dictionary<Type, IDictionary<string, Asset>> assets = new();
 
@@ -223,7 +223,7 @@ namespace Dissonance.Engine.IO
 		/// 
 		/// </summary>
 		/// <param name="assetSource"> </param>
-		public static void AddAssetSource(AssetSource assetSource)
+		public static void AddAssetSource(IAssetSource assetSource)
 		{
 			sources.Add(assetSource);
 		}

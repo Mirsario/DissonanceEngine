@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Dissonance.Engine.IO
 {
-	public sealed class AssemblyResourcesAssetSource : AssetSource
+	public sealed class AssemblyResourcesAssetSource : IAssetSource
 	{
 		private readonly string basePath;
 		private readonly Assembly assembly;
@@ -18,11 +18,14 @@ namespace Dissonance.Engine.IO
 			RecalculatePathsCache();
 		}
 
-		public override IEnumerable<string> EnumerateAssets() => assetPathToManifestPath.Keys;
+		public IEnumerable<string> EnumerateAssets()
+			=> assetPathToManifestPath.Keys;
 
-		public override bool HasAsset(string path) => assetPathToManifestPath.ContainsKey(path);
+		public bool HasAsset(string path)
+			=> assetPathToManifestPath.ContainsKey(path);
 
-		public override Stream OpenStream(string path) => assembly.GetManifestResourceStream(assetPathToManifestPath[path]);
+		public Stream OpenStream(string path)
+			=> assembly.GetManifestResourceStream(assetPathToManifestPath[path]);
 
 		private void RecalculatePathsCache()
 		{
