@@ -5,9 +5,9 @@ namespace Dissonance.Engine.IO
 	public class AssetFileEntry
 	{
 		public readonly string Path;
-		public readonly AssetSource Source;
+		public readonly IAssetSource Source;
 
-		public AssetFileEntry(string path, AssetSource source)
+		public AssetFileEntry(string path, IAssetSource source)
 		{
 			Path = path;
 			Source = source;

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Dissonance.Engine.IO
 {
-	public sealed class FileSystemAssetSource : AssetSource
+	public sealed class FileSystemAssetSource : IAssetSource
 	{
 		private readonly string basePath;
 		private readonly Dictionary<string, string> assetPathToFullPath = new();
@@ -14,12 +14,15 @@ namespace Dissonance.Engine.IO
 
 			RecalculatePathsCache();
 		}
+		
+		public IEnumerable<string> EnumerateAssets()
+			=> assetPathToFullPath.Keys;
 
-		public override IEnumerable<string> EnumerateAssets() => assetPathToFullPath.Keys;
+		public bool HasAsset(string path)
+			=> assetPathToFullPath.ContainsKey(path);
 
-		public override bool HasAsset(string path) => assetPathToFullPath.ContainsKey(path);
-
-		public override Stream OpenStream(string path) => File.OpenRead(assetPathToFullPath[path]);
+		public Stream OpenStream(string path)
+			=> File.OpenRead(assetPathToFullPath[path]);
 
 		public void RecalculatePathsCache()
 		{
