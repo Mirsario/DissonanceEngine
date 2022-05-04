@@ -5,9 +5,9 @@ namespace Dissonance.Engine.Graphics
 {
 	[Autoload(DisablingGameFlags = GameFlags.NoGraphics)]
 	[ModuleDependency<Windowing>]
-	public sealed class OpenGLApi : EngineModule
+	public class OpenGLApi : EngineModule
 	{
-		public static GL OpenGL { get; private set; }
+		public static GL OpenGL { get; protected set; }
 
 		protected unsafe override void Init()
 		{
