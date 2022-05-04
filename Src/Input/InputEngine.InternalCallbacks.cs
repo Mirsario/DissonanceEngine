@@ -11,7 +11,14 @@ namespace Dissonance.Engine.Input
 	{
 		internal static void CursorPositionCallback(double x, double y)
 		{
-			var value = new Vector2((float)x, (float)y) * (Screen.Size / Screen.WindowSize);
+			var framebufferSize = Screen.Size;
+			var windowSize = Screen.WindowSize;
+
+			if (windowSize == Vector2.Zero) {
+				return;
+			}
+
+			var value = new Vector2((float)x, (float)y) * (framebufferSize / windowSize);
 
 			fixedInput.MousePosition = value;
 			renderInput.MousePosition = value;
