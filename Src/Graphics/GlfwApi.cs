@@ -2,9 +2,10 @@
 
 namespace Dissonance.Engine.Graphics
 {
-	public sealed class GlfwApi : EngineModule
+	[Autoload(DisablingGameFlags = GameFlags.NoWindow)]
+	public class GlfwApi : EngineModule
 	{
-		public static Glfw GLFW { get; private set; }
+		public static Glfw GLFW { get; protected set; }
 
 		protected override void Init()
 		{
