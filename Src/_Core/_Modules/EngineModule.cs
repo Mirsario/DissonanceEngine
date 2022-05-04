@@ -14,8 +14,6 @@ namespace Dissonance.Engine
 		
 		internal int DependencyIndex { get; set; }
 
-		public Game Game => Game.Instance;
-
 		public EngineModule()
 		{
 			Dependencies = GetType()

@@ -99,7 +99,7 @@ namespace Dissonance.Engine.Graphics
 			int resolutionWidth = 800;
 			int resolutionHeight = 600;
 
-			WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.DisplayName, null, null);
+			WindowHandle = GLFW.CreateWindow(resolutionWidth, resolutionHeight, Game.Instance.DisplayName, null, null);
 
 			if (WindowHandle == null) {
 				throw new GraphicsException($"Unable to create a window! Make sure that your computer supports OpenGL {OpenGLVersion}, and try updating your graphics card drivers.");
