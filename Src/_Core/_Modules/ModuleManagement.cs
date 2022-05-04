@@ -16,9 +16,60 @@ namespace Dissonance.Engine
 		private static readonly List<EngineModule> modules = new();
 		private static readonly Dictionary<Type, List<EngineModule>> modulesByExactOrDerivingType = new();
 		
-		private static bool modulesReady;
 		private static bool modulesPreInitialized;
-		private static bool modulesInitialized;
+		private static bool initialized;
+		private static bool preInitialized;
+
+		public static void PreInitialize()
+		{
+			if (preInitialized) {
+				return;
+			}
+
+			AssemblyManagement.AddAssemblyCallback(OnAssemblyRegistered);
+
+			preInitialized = true;
+		}
+
+		public static void Initialize()
+		{
+			if (initialized) {
+				return;
+			}
+
+			PreInitialize();
+
+			RefreshModules();
+
+			foreach (var module in modules) {
+				module.InvokePreInitialize();
+			}
+
+			modulesPreInitialized = true;
+
+			foreach (var assembly in AssemblyManagement.EnumerateAssemblies()) {
+				foreach (var module in modules) {
+					module.InvokeInitializeForAssembly(assembly);
+				}
+			}
+
+			foreach (var module in modules) {
+				module.InvokeInitialize();
+			}
+
+			initialized = true;
+		}
+
+		public static void Unload()
+		{
+			if (modules != null) {
+				for (int i = 0; i < modules.Count; i++) {
+					modules[i]?.Dispose();
+				}
+
+				modules.Clear();
+			}
+		}
 
 		public static void AddModule(EngineModule module)
 		{
@@ -32,17 +83,28 @@ namespace Dissonance.Engine
 				list.Add(module);
 			}
 
-			if (modulesReady) {
-				RefreshModules();
-			}
-
 			if (modulesPreInitialized) {
+				RefreshModules();
+
 				module.InvokePreInitialize();
 			}
 
-			if (modulesInitialized) {
+			if (initialized) {
 				module.InvokeInitialize();
 			}
+		}
+
+		public static bool RemoveModule(EngineModule module)
+		{
+			if (!modules.Remove(module)) {
+				return false;
+			}
+
+			foreach (var pair in modulesByExactOrDerivingType) {
+				pair.Value.Remove(module);
+			}
+
+			return true;
 		}
 
 		public static bool TryGetModule<T>([NotNullWhen(returnValue: true)] out T? result) where T : EngineModule
@@ -62,7 +124,7 @@ namespace Dissonance.Engine
 
 		public static bool TryGetModule(Type type, [NotNullWhen(returnValue: true)] out EngineModule? result)
 		{
-			if (modulesByExactOrDerivingType == null || !modulesByExactOrDerivingType.TryGetValue(type, out var list)) {
+			if (modulesByExactOrDerivingType == null || !modulesByExactOrDerivingType.TryGetValue(type, out var list) || list.Count == 0) {
 				result = null;
 
 				return false;
@@ -91,44 +153,6 @@ namespace Dissonance.Engine
 			throw new ArgumentException($"The current {nameof(Game)} instance does not contain a '{type.Name}' engine module.");
 		}
 
-		internal static void Initialize()
-		{
-			AssemblyManagement.OnAssemblyRegistered += OnAssemblyRegistered;
-
-			AssemblyManagement.Initialize();
-
-			modulesReady = true;
-
-			foreach (var module in modules) {
-				module.InvokePreInitialize();
-			}
-
-			modulesPreInitialized = true;
-
-			foreach (var assembly in AssemblyManagement.EnumerateAssemblies()) {
-				foreach (var module in modules) {
-					module.InvokeInitializeForAssembly(assembly);
-				}
-			}
-
-			foreach (var module in modules) {
-				module.InvokeInitialize();
-			}
-
-			modulesInitialized = true;
-		}
-
-		internal static void Unload()
-		{
-			if (modules != null) {
-				for (int i = 0; i < modules.Count; i++) {
-					modules[i]?.Dispose();
-				}
-
-				modules.Clear();
-			}
-		}
-
 		internal static List<EngineModule> AutoloadModules(Assembly assembly)
 		{
 			var newModules = new List<EngineModule>();
@@ -149,7 +173,9 @@ namespace Dissonance.Engine
 				newModules.Add(module);
 			}
 
-			RefreshModules();
+			if (initialized) {
+				RefreshModules();
+			}
 
 			return newModules;
 		}
