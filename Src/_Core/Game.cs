@@ -111,10 +111,6 @@ namespace Dissonance.Engine
 			}
 
 			while (numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
-				if (!GameEngine.Flags.HasFlag(GameFlags.NoWindow)) {
-					GlfwApi.GLFW.PollEvents();
-				}
-
 				FixedUpdateInternal();
 
 				numFixedUpdates++;
