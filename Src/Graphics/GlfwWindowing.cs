@@ -128,7 +128,16 @@ namespace Dissonance.Engine.Graphics
 		}
 
 		protected override void PreRenderUpdate()
-			=> UpdateValues();
+			=> Update();
+		
+		protected override void PreFixedUpdate()
+			=> Update();
+
+		private void Update()
+		{
+			GLFW.PollEvents();
+			UpdateValues();
+		}
 
 		private void UpdateValues()
 		{
