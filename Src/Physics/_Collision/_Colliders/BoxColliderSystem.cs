@@ -6,23 +6,23 @@ namespace Dissonance.Engine.Physics;
 public sealed partial class BoxColliderSystem : GameSystem
 {
 	[MessageSubsystem]
-	partial void DisposeColliders(in ComponentRemovedMessage<BoxCollider> message)
+	partial void DisposeColliders(in ComponentRemovedMessage<BoxCollider> message, World world)
 	{
 		// Unregister colliders when their component is removed
 		if (message.Value.boxShape != null) {
-			SendMessage(new RemoveCollisionShapeMessage(message.Entity, message.Value.boxShape));
+			world.SendMessage(new RemoveCollisionShapeMessage(message.Entity, message.Value.boxShape));
 			message.Value.boxShape.Dispose();
 		}
 	}
 
 	[EntitySubsystem]
-	partial void Update(Entity entity, ref BoxCollider collider)
+	partial void Update(World world, Entity entity, ref BoxCollider collider)
 	{
 		bool noShape = collider.boxShape == null;
 
 		if (noShape || collider.needsUpdate) {
 			if (!noShape) {
-				SendMessage(new RemoveCollisionShapeMessage(entity, collider.boxShape));
+				world.SendMessage(new RemoveCollisionShapeMessage(entity, collider.boxShape));
 
 				collider.boxShape.Dispose();
 			}
@@ -30,7 +30,7 @@ public sealed partial class BoxColliderSystem : GameSystem
 			collider.boxShape = new BoxShape(collider.Size * 0.5f);
 			collider.needsUpdate = false;
 
-			SendMessage(new AddCollisionShapeMessage(entity, collider.boxShape));
+			world.SendMessage(new AddCollisionShapeMessage(entity, collider.boxShape));
 		}
 	}
 }

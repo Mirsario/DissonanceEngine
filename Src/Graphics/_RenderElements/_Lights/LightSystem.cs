@@ -5,12 +5,12 @@ public sealed class LightSystem : GameSystem
 {
 	private EntitySet entities;
 
-	protected override void Initialize()
+	protected override void Initialize(World world)
 	{
-		entities = World.GetEntitySet(e => e.Has<Light>() && e.Has<Transform>());
+		entities = world.GetEntitySet(e => e.Has<Light>() && e.Has<Transform>());
 	}
 
-	protected override void Execute()
+	protected override void Execute(World world)
 	{
 		ref var lightingPassData = ref Global.Get<LightingPassData>();
 

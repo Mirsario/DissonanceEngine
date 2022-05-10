@@ -6,9 +6,9 @@ namespace Dissonance.Engine.Physics;
 public sealed partial class PhysicsInitializationSystem : GameSystem
 {
 	[Subsystem]
-	partial void InitPhysics()
+	partial void InitPhysics(World world)
 	{
-		var physics = World.Has<WorldPhysics>() ? World.Get<WorldPhysics>() : WorldPhysics.Default;
+		var physics = world.Has<WorldPhysics>() ? world.Get<WorldPhysics>() : WorldPhysics.Default;
 
 		physics.CollisionConfiguration ??= new DefaultCollisionConfiguration();
 		physics.Broadphase ??= new DbvtBroadphase();
@@ -17,7 +17,7 @@ public sealed partial class PhysicsInitializationSystem : GameSystem
 			Gravity = physics.Gravity
 		};
 
-		World.Set(physics);
+		world.Set(physics);
 	}
 
 	[MessageSubsystem]

@@ -25,13 +25,13 @@ public sealed class SpriteSystem : GameSystem
 	private EntitySet entities;
 	private Dictionary<ulong, BatchData> batches;
 
-	protected override void Initialize()
+	protected override void Initialize(World world)
 	{
-		entities = World.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
+		entities = world.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
 		batches = new();
 	}
 
-	protected override void Execute()
+	protected override void Execute(World world)
 	{
 		var entitiesSpan = entities.ReadEntities();
 		ref var geometryPassData = ref Global.Get<GeometryPassData>();

@@ -31,7 +31,7 @@ public sealed class MessageSubsystemWriter : BaseSubsystemWriter
 		var messageParameterData = data.Parameters[0];
 		string argumentsCode = string.Join(", ", data.Parameters.Select(p => p.ArgumentCode.ToString()));
 
-		data.InvocationCode.AppendLine($"foreach (var message in ReadMessages<{messageParameterData.Parameter.Type.ToDisplayString()}>()) {{");
+		data.InvocationCode.AppendLine($"foreach (var message in world.ReadMessages<{messageParameterData.Parameter.Type.ToDisplayString()}>()) {{");
 		data.InvocationCode.Indent();
 
 		foreach (string predicate in data.ExecutionPredicates) {

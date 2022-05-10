@@ -140,8 +140,6 @@ public class SystemManager : EngineModule
 			worldData.SystemsByType[systemType] = systemsOfThisType = new();
 		}
 
-		system.World = world;
-
 		// Subscribe this system to its type' callbacks
 		foreach (var callbackType in system.TypeData.Callbacks) {
 			if (!worldData.SystemsByType.TryGetValue(callbackType, out var callbacksOfThisType)) {
@@ -196,7 +194,7 @@ public class SystemManager : EngineModule
 
 		if (worldData.SystemsByType.TryGetValue(typeof(T), out var callbacks)) {
 			for (int i = 0; i < callbacks.Count; i++) {
-				callbacks[i].Update();
+				callbacks[i].Update(world);
 			}
 		}
 	}

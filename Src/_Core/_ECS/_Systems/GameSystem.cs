@@ -4,8 +4,6 @@ public abstract class GameSystem
 {
 	private bool initialized;
 
-	public World World { get; internal set; }
-
 	protected internal SystemTypeData TypeData { get; }
 
 	protected GameSystem()
@@ -13,27 +11,21 @@ public abstract class GameSystem
 		TypeData = SystemManager.GetSystemTypeData(GetType());
 	}
 
-	protected virtual void Initialize() { }
+	protected virtual void Initialize(World world) { }
 
-	protected virtual void Execute() { }
+	protected virtual void Execute(World world) { }
 
 	/// <summary>
 	/// Initializes (if needed) and executes this system.
 	/// </summary>
-	public void Update()
+	public void Update(World world)
 	{
 		if (!initialized) {
-			Initialize();
+			Initialize(world);
 
 			initialized = true;
 		}
 
-		Execute();
+		Execute(world);
 	}
-
-	protected void SendMessage<T>(in T message) where T : struct
-		=> World.SendMessage(message);
-
-	protected MessageEnumerator<T> ReadMessages<T>() where T : struct
-		=> World.ReadMessages<T>();
 }

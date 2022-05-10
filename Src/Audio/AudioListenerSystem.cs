@@ -10,12 +10,12 @@ public sealed class AudioListenerSystem : GameSystem
 {
 	private EntitySet entities;
 
-	protected override void Initialize()
+	protected override void Initialize(World world)
 	{
-		entities = World.GetEntitySet(e => e.Has<AudioListener>());
+		entities = world.GetEntitySet(e => e.Has<AudioListener>());
 	}
 
-	protected unsafe override void Execute()
+	protected unsafe override void Execute(World world)
 	{
 		Entity entity = default;
 		bool hasEntity = false;

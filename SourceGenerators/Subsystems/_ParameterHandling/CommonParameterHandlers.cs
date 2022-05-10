@@ -31,7 +31,7 @@ public static class CommonParameterHandlers
 		var parameter = parameterData.Parameter;
 
 		if (parameter.Type.GetFullName() == "Dissonance.Engine.World") {
-			parameterData.ArgumentCode.Append("World");
+			parameterData.ArgumentCode.Append("world");
 
 			handled = true;
 		}
@@ -54,8 +54,8 @@ public static class CommonParameterHandlers
 		var parameter = parameterData.Parameter;
 
 		if (parameter.GetAttributes().Any(a => a.AttributeClass?.GetFullName() == "Dissonance.Engine.FromWorldAttribute")) {
-			parameterData.SubsystemData.ExecutionPredicates.Add($"World.Has<{parameter.Type.ToDisplayString()}>()");
-			parameterData.ArgumentCode.Append($"World.Get<{parameter.Type.ToDisplayString()}>()");
+			parameterData.SubsystemData.ExecutionPredicates.Add($"world.Has<{parameter.Type.ToDisplayString()}>()");
+			parameterData.ArgumentCode.Append($"world.Get<{parameter.Type.ToDisplayString()}>()");
 
 			handled = true;
 		}

@@ -10,24 +10,24 @@ public sealed class RigidbodySystem : GameSystem
 {
 	private EntitySet entities;
 
-	protected override void Initialize()
+	protected override void Initialize(World world)
 	{
-		entities = World.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
+		entities = world.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
 	}
 
-	protected override void Execute()
+	protected override void Execute(World world)
 	{
-		var physics = World.Get<WorldPhysics>();
+		var physics = world.Get<WorldPhysics>();
 
 		// Set UpdateShapes to true whenever collision shapes have been modified.
 
-		foreach (var message in ReadMessages<RemoveCollisionShapeMessage>()) {
+		foreach (var message in world.ReadMessages<RemoveCollisionShapeMessage>()) {
 			if (message.Entity.Has<Rigidbody>()) {
 				message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 			}
 		}
 
-		foreach (var message in ReadMessages<AddCollisionShapeMessage>()) {
+		foreach (var message in world.ReadMessages<AddCollisionShapeMessage>()) {
 			if (message.Entity.Has<Rigidbody>()) {
 				message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
 			}
@@ -64,7 +64,7 @@ public sealed class RigidbodySystem : GameSystem
 				rb.pendingAngularFactor = null;
 
 				UpdateCollisionFlags(ref rb);
-				UpdateShapes(entity, ref rb, collisionShapeData);
+				UpdateShapes(world, entity, ref rb, collisionShapeData);
 
 				physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 			}
@@ -86,7 +86,7 @@ public sealed class RigidbodySystem : GameSystem
 			if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
 				physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
 
-				UpdateShapes(entity, ref rb, collisionShapeData);
+				UpdateShapes(world, entity, ref rb, collisionShapeData);
 
 				physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 			}
@@ -94,14 +94,14 @@ public sealed class RigidbodySystem : GameSystem
 
 		// Force-activate rigidbodies on demand
 
-		foreach (var message in ReadMessages<ActivateRigidbodyMessage>()) {
+		foreach (var message in world.ReadMessages<ActivateRigidbodyMessage>()) {
 			if (message.Entity.Has<Rigidbody>()) {
 				message.Entity.Get<Rigidbody>().bulletRigidbody.Activate();
 			}
 		}
 	}
 
-	private void UpdateShapes(in Entity entity, ref Rigidbody rb, ReadOnlySpan<CollisionShape> collisionShapes)
+	private void UpdateShapes(World world, in Entity entity, ref Rigidbody rb, ReadOnlySpan<CollisionShape> collisionShapes)
 	{
 		var previousShape = rb.bulletRigidbody.CollisionShape;
 
@@ -130,7 +130,7 @@ public sealed class RigidbodySystem : GameSystem
 		rb.updateFlags &= ~Rigidbody.UpdateFlags.CollisionShapes;
 		rb.ownsCollisionShape = true;
 
-		SendMessage(new ActivateRigidbodyMessage(entity));
+		world.SendMessage(new ActivateRigidbodyMessage(entity));
 	}
 
 	private static void UpdateCollisionFlags(ref Rigidbody rb)

@@ -7,12 +7,12 @@ public sealed class CameraUpdateSystem : GameSystem
 {
 	private EntitySet entities;
 
-	protected override void Initialize()
+	protected override void Initialize(World world)
 	{
-		entities = World.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
+		entities = world.GetEntitySet(e => e.Has<Camera>() && e.Has<Transform>());
 	}
 
-	protected override void Execute()
+	protected override void Execute(World world)
 	{
 		// Calculate view and projection matrices, culling frustums
 		foreach (var entity in entities.ReadEntities()) {

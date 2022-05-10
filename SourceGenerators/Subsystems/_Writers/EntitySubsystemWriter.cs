@@ -30,11 +30,11 @@ public sealed class EntitySubsystemWriter : BaseSubsystemWriter
 
 			data.SystemData.Members.Add(($"private EntitySet {entitySetName};", MemberFlag.Field | MemberFlag.Private));
 
-			data.SystemData.InitCode.Append($"{entitySetName} = World.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+			data.SystemData.InitCode.Append($"{entitySetName} = world.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
 
 			readEntitiesCall = $"{entitySetName}.ReadEntities()";
 		} else {
-			readEntitiesCall = "World.ReadEntities()";
+			readEntitiesCall = "world.ReadEntities()";
 		}
 
 		// Write update code
