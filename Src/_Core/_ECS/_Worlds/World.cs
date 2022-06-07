@@ -22,25 +22,11 @@ public sealed class World
 	public Entity CreateEntity(bool activate = true)
 		=> EntityManager.CreateEntity(Id, activate);
 
-	public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
-		=> EntityManager.GetEntitySet(Id, expression);
+	public EntitySet GetEntitySet(ComponentSet componentSet)
+		=> EntityManager.GetEntitySet(Id, componentSet);
 
 	public EntityEnumerator ReadEntities(bool? active = true)
 		=> EntityManager.ReadEntities(Id, active);
-
-	// Systems
-
-	public void AddSystem<T>() where T : GameSystem
-		=> SystemManager.AddSystemToWorld<T>(this);
-
-	public T GetSystem<T>() where T : GameSystem
-		=> SystemManager.GetWorldSystem<T>(this);
-
-	public bool TryGetSystem<T>(out T result) where T : GameSystem
-		=> SystemManager.TryGetWorldSystem<T>(this, out result);
-
-	public void ExecuteCallbacks<T>() where T : CallbackSystem
-		=> SystemManager.ExecuteCallbacks<T>(this);
 
 	// Components
 

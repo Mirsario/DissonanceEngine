@@ -144,9 +144,9 @@ public sealed partial class SubsystemGenerator : ISourceGenerator
 			// Initialize()
 			bool hasInitCode = system.InitCode.StringBuilder.Length > 0;
 
-			code.AppendLine($"protected sealed override void Initialize(World world) {(hasInitCode ? null : " { }")}");
-
 			if (hasInitCode) {
+				code.AppendLine($"protected sealed override void Initialize()");
+				
 				code.AppendLine($"{{");
 				code.Indent();
 
@@ -159,7 +159,7 @@ public sealed partial class SubsystemGenerator : ISourceGenerator
 			code.AppendLine();
 
 			// Execute()
-			code.AppendLine($"protected sealed override void Execute(World world)");
+			code.AppendLine($"protected sealed override void Execute()");
 			code.AppendLine($"{{");
 			code.Indent();
 

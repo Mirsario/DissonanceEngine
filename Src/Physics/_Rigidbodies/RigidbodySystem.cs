@@ -6,98 +6,92 @@ namespace Dissonance.Engine.Physics;
 [Callback<PhysicsUpdateGroup>]
 [ExecuteAfter<ColliderUpdateGroup>]
 [ExecuteAfter<CollisionShapesInfoSystem>]
-public sealed class RigidbodySystem : GameSystem
+public sealed partial class RigidbodySystem : GameSystem
 {
-	private EntitySet entities;
+	// Set UpdateShapes to true whenever collision shapes have been modified.
 
-	protected override void Initialize(World world)
+	[MessageSubsystem]
+	partial void ReadCollisionShapeRemovalMessages(in RemoveCollisionShapeMessage message)
 	{
-		entities = world.GetEntitySet(e => e.Has<Rigidbody>() && e.Has<Transform>());
+		if (message.Entity.Has<Rigidbody>()) {
+			message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
+		}
 	}
 
-	protected override void Execute(World world)
+	[MessageSubsystem]
+	partial void ReadCollisionShapeAdditionMessages(in RemoveCollisionShapeMessage message)
 	{
-		var physics = world.Get<WorldPhysics>();
+		if (message.Entity.Has<Rigidbody>()) {
+			message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
+		}
+	}
 
-		// Set UpdateShapes to true whenever collision shapes have been modified.
+	// Update rigidbodies
 
-		foreach (var message in world.ReadMessages<RemoveCollisionShapeMessage>()) {
-			if (message.Entity.Has<Rigidbody>()) {
-				message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
-			}
+	[EntitySubsystem]
+	partial void UpdateRigidbodies(World world, Entity entity, ref Rigidbody rb, ref Transform transform, [FromWorld] ref WorldPhysics physics)
+	{
+		var collisionShapeData = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
+
+		if (rb.bulletRigidbody == null) {
+			var collisionShape = new EmptyShape();
+
+			using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
+				LinearSleepingThreshold = 0.1f,
+				AngularSleepingThreshold = 1f,
+				Friction = rb.Friction,
+				RollingFriction = 0f,
+				Restitution = 0.1f,
+			};
+
+			rb.bulletRigidbody = new RigidBody(rbInfo) {
+				UserObject = entity,
+				CollisionFlags = CollisionFlags.None,
+				LinearVelocity = rb.pendingVelocity ?? default,
+				AngularVelocity = rb.pendingAngularVelocity ?? default,
+				AngularFactor = rb.pendingAngularFactor ?? Vector3.One,
+			};
+
+			rb.pendingVelocity = null;
+			rb.pendingAngularVelocity = null;
+			rb.pendingAngularFactor = null;
+
+			UpdateCollisionFlags(ref rb);
+			UpdateShapes(world, entity, ref rb, collisionShapeData);
+
+			physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 		}
 
-		foreach (var message in world.ReadMessages<AddCollisionShapeMessage>()) {
-			if (message.Entity.Has<Rigidbody>()) {
-				message.Entity.Get<Rigidbody>().updateFlags |= Rigidbody.UpdateFlags.Mass;
-			}
+		rb.bulletRigidbody.WorldTransform = transform.WorldMatrix;
+
+		if (rb.updateFlags == 0) {
+			return;
 		}
 
-		// Update rigidbodies
-
-		foreach (var entity in entities.ReadEntities()) {
-			ref var rb = ref entity.Get<Rigidbody>();
-			ref var transform = ref entity.Get<Transform>();
-			var collisionShapeData = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
-
-			if (rb.bulletRigidbody == null) {
-				var collisionShape = new EmptyShape();
-
-				using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
-					LinearSleepingThreshold = 0.1f,
-					AngularSleepingThreshold = 1f,
-					Friction = rb.Friction,
-					RollingFriction = 0f,
-					Restitution = 0.1f,
-				};
-
-				rb.bulletRigidbody = new RigidBody(rbInfo) {
-					UserObject = entity,
-					CollisionFlags = CollisionFlags.None,
-					LinearVelocity = rb.pendingVelocity ?? default,
-					AngularVelocity = rb.pendingAngularVelocity ?? default,
-					AngularFactor = rb.pendingAngularFactor ?? Vector3.One,
-				};
-
-				rb.pendingVelocity = null;
-				rb.pendingAngularVelocity = null;
-				rb.pendingAngularFactor = null;
-
-				UpdateCollisionFlags(ref rb);
-				UpdateShapes(world, entity, ref rb, collisionShapeData);
-
-				physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
-			}
-
-			rb.bulletRigidbody.WorldTransform = transform.WorldMatrix;
-
-			if (rb.updateFlags == 0) {
-				continue;
-			}
-
-			if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionFlags) != 0) {
-				UpdateCollisionFlags(ref rb);
-			}
-
-			if ((rb.updateFlags & Rigidbody.UpdateFlags.Mass) != 0) {
-				UpdateMass(ref rb);
-			}
-
-			if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
-				physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
-
-				UpdateShapes(world, entity, ref rb, collisionShapeData);
-
-				physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
-			}
+		if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionFlags) != 0) {
+			UpdateCollisionFlags(ref rb);
 		}
 
-		// Force-activate rigidbodies on demand
+		if ((rb.updateFlags & Rigidbody.UpdateFlags.Mass) != 0) {
+			UpdateMass(ref rb);
+		}
 
-		foreach (var message in world.ReadMessages<ActivateRigidbodyMessage>()) {
-			if (message.Entity.Has<Rigidbody>()) {
-				message.Entity.Get<Rigidbody>().bulletRigidbody.Activate();
-			}
+		if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
+			physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
+
+			UpdateShapes(world, entity, ref rb, collisionShapeData);
+
+			physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
+		}
+	}
+
+	// Force-activate rigidbodies on demand
+	
+	[MessageSubsystem]
+	partial void ActivateRigidbodies(in ActivateRigidbodyMessage message)
+	{
+		if (message.Entity.Has<Rigidbody>()) {
+			message.Entity.Get<Rigidbody>().bulletRigidbody.Activate();
 		}
 	}
 

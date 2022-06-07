@@ -5,8 +5,7 @@ using Silk.NET.OpenGL;
 namespace Dissonance.Engine.Graphics;
 
 [Callback<RenderingCallback>]
-[ExecuteBefore<GeometrySortingSystem>]
-public sealed class SpriteSystem : GameSystem
+public sealed partial class SpriteSystem : GameSystem
 {
 	private class BatchData : IDisposable
 	{
@@ -22,18 +21,17 @@ public sealed class SpriteSystem : GameSystem
 		}
 	}
 
-	private EntitySet entities;
+	private static readonly ComponentSet entitiesComponentSet = new ComponentSet().Include<Sprite>().Include<Transform>();
+
 	private Dictionary<ulong, BatchData> batches;
 
-	protected override void Initialize(World world)
+	[WorldSubsystem]
+	partial void Update(World world)
 	{
-		entities = world.GetEntitySet(e => e.Has<Sprite>() && e.Has<Transform>());
-		batches = new();
-	}
+		batches ??= new();
 
-	protected override void Execute(World world)
-	{
-		var entitiesSpan = entities.ReadEntities();
+		var entitySet = world.GetEntitySet(entitiesComponentSet);
+		var entitiesSpan = entitySet.ReadEntities();
 		ref var geometryPassData = ref Global.Get<GeometryPassData>();
 
 		static ulong GetBatchIndex(uint materialId, uint layerId)

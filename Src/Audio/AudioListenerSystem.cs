@@ -6,19 +6,16 @@ namespace Dissonance.Engine.Audio;
 
 [Callback<EndRenderUpdateCallback>]
 [Autoload(DisablingGameFlags = GameFlags.NoAudio)]
-public sealed class AudioListenerSystem : GameSystem
+public unsafe sealed partial class AudioListenerSystem : GameSystem
 {
-	private EntitySet entities;
+	private static readonly ComponentSet entitiesComponentSet = new ComponentSet().Include<AudioListener>();
 
-	protected override void Initialize(World world)
-	{
-		entities = world.GetEntitySet(e => e.Has<AudioListener>());
-	}
-
-	protected unsafe override void Execute(World world)
+	[WorldSubsystem]
+	partial void UpdateListeners(World world)
 	{
 		Entity entity = default;
 		bool hasEntity = false;
+		var entities = world.GetEntitySet(entitiesComponentSet);
 
 		foreach (var e in entities.ReadEntities()) {
 			if (!hasEntity) {

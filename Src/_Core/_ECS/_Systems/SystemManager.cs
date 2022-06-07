@@ -12,12 +12,12 @@ public class SystemManager : EngineModule
 	private class WorldData
 	{
 		public readonly List<GameSystem> Systems = new();
-		public readonly Dictionary<Type, List<GameSystem>> SystemsByType = new();
+		public readonly Dictionary<Type, GameSystem> SystemsByType = new();
 	}
 
-	private static readonly Dictionary<Type, SystemTypeData> SystemTypeInfo = new();
-
-	private static readonly List<Type> SystemTypes = new();
+	private static readonly List<GameSystem> systems = new();
+	private static readonly Dictionary<Type, GameSystem> systemsByType = new();
+	private static readonly Dictionary<Type, SystemTypeData> systemTypeInfo = new();
 
 	private static WorldData[] worldDataById = Array.Empty<WorldData>();
 
@@ -30,7 +30,7 @@ public class SystemManager : EngineModule
 
 			worldDataById[world.Id] = new();
 
-			AddDefaultSystemsToWorld(world, options.AddDefaultSystems, options.AddDefaultCallbacks);
+			//AddDefaultSystemsToWorld(world, options.AddDefaultSystems, options.AddDefaultCallbacks);
 		};
 
 		WorldManager.OnWorldDestroyed += world => {
@@ -38,6 +38,32 @@ public class SystemManager : EngineModule
 
 			ArrayUtils.TryShrinking(ref worldDataById);
 		};
+	}
+
+	protected override void Init()
+	{
+		for (int i = 0; i < systems.Count; i++) {
+			var system = systems[i];
+			var systemType = system.GetType();
+
+			// Subscribe this system to its type's callbacks
+			foreach (var callbackType in system.TypeData.Callbacks) {
+				if (systemsByType.TryGetValue(callbackType, out var callback)) {
+					((CallbackSystem)callback).AddSystem(system);
+				}
+			}
+
+			// Subscribe systems to this one if they have it specified in its TypeData
+			/*
+			if (system is CallbackSystem callbackSystem) {
+				foreach (var otherSystem in systems) {
+					if (otherSystem.TypeData.Callbacks.Contains(systemType)) {
+						callbackSystem.AddSystem(otherSystem);
+					}
+				}
+			}
+			*/
+		}
 	}
 
 	protected override void InitializeForAssembly(Assembly assembly)
@@ -51,34 +77,36 @@ public class SystemManager : EngineModule
 				continue;
 			}
 
-			SystemTypes.Add(type);
+			var system = (GameSystem)Activator.CreateInstance(type);
+
+			systems.Add(system);
+			systemsByType.Add(type, system);
 		}
 	}
 
 	protected override void FixedUpdate()
 	{
-		var worlds = WorldManager.ReadWorlds();
-
-		ExecuteCallbackOnWorlds<BeginFixedUpdateCallback>(worlds);
-		ExecuteCallbackOnWorlds<FixedUpdateCallback>(worlds);
-		ExecuteCallbackOnWorlds<EndFixedUpdateCallback>(worlds);
+		//ExecuteCallback<RootFixedUpdateCallback>();
+		ExecuteCallback<BeginFixedUpdateCallback>();
+		ExecuteCallback<FixedUpdateCallback>();
+		ExecuteCallback<EndFixedUpdateCallback>();
 	}
 
 	protected override void RenderUpdate()
 	{
-		var worlds = WorldManager.ReadWorlds();
-
-		ExecuteCallbackOnWorlds<BeginRenderUpdateCallback>(worlds);
-		ExecuteCallbackOnWorlds<RenderUpdateCallback>(worlds);
-		ExecuteCallbackOnWorlds<EndRenderUpdateCallback>(worlds);
+		///ExecuteCallback<RootRenderUpdateCallback>();
+		ExecuteCallback<BeginRenderUpdateCallback>();
+		ExecuteCallback<RenderUpdateCallback>();
+		ExecuteCallback<EndRenderUpdateCallback>();
 	}
 
 	/// <summary>
 	/// Prints a tree of subscribers of the default callback systems on the provided world to the console.
 	/// </summary>
 	/// <param name="world"> The world to get default callback instances from. </param>
-	public static void LogDefaultSystemCallbacksTree(World world)
+	public static void LogDefaultSystemCallbacksTree(/*World world*/)
 	{
+		/*
 		Debug.Log($"Configuration of world {world.Id}:");
 
 		var array = new CallbackSystem[] {
@@ -88,6 +116,17 @@ public class SystemManager : EngineModule
 			world.GetSystem<BeginRenderUpdateCallback>(),
 			world.GetSystem<RenderUpdateCallback>(),
 			world.GetSystem<EndRenderUpdateCallback>(),
+		};
+		*/
+		
+		var array = new CallbackSystem[] {
+			GetSystem<BeginFixedUpdateCallback>(),
+			GetSystem<FixedUpdateCallback>(),
+			GetSystem<EndFixedUpdateCallback>(),
+			GetSystem<BeginRenderUpdateCallback>(),
+			GetSystem<RenderUpdateCallback>(),
+			GetSystem<EndRenderUpdateCallback>(),
+			GetSystem<Graphics.RenderingCallback>(),
 		};
 
 		array = array.Where(s => s != null).ToArray();
@@ -112,115 +151,46 @@ public class SystemManager : EngineModule
 		}
 	}
 
+	public static IEnumerable<SystemTypeData> EnumerateSystemTypes()
+	{
+		return systemTypeInfo.Values;
+	}
+
+	public static T GetSystem<T>() where T : GameSystem
+		=> TryGetSystem<T>(out var result) ? result : throw new InvalidOperationException($"No system of type {typeof(T).Name} exists.");
+
+	public static bool TryGetSystem<T>(out T result) where T : GameSystem
+	{
+		if (systemsByType.TryGetValue(typeof(T), out var system)) {
+			result = (T)system;
+
+			return true;
+		}
+
+		result = default;
+
+		return false;
+	}
+
 	internal static SystemTypeData GetSystemTypeData<T>() where T : GameSystem
 		=> GetSystemTypeData(typeof(T));
 
 	internal static SystemTypeData GetSystemTypeData(Type type)
 	{
-		if (!SystemTypeInfo.TryGetValue(type, out var typeData)) {
-			SystemTypeInfo[type] = typeData = new(type);
+		if (!systemTypeInfo.TryGetValue(type, out var typeData)) {
+			systemTypeInfo[type] = typeData = new(type);
 		}
 
 		return typeData;
 	}
 
-	internal static void AddSystemToWorld<T>(World world) where T : GameSystem
+	internal static void ExecuteCallback<T>() where T : CallbackSystem
 	{
-		var system = Activator.CreateInstance<T>();
-
-		AddSystemToWorld(world, system);
-	}
-
-	internal static void AddSystemToWorld(World world, GameSystem system)
-	{
-		var worldData = worldDataById[world.Id];
-		var systemType = system.GetType();
-
-		if (!worldData.SystemsByType.TryGetValue(systemType, out var systemsOfThisType)) {
-			worldData.SystemsByType[systemType] = systemsOfThisType = new();
+		if (!TryGetSystem(out T callbackSystem)) {
+			throw new InvalidOperationException($"Unable to execute callbacks of type {typeof(T).Name} because it is not registered.");
 		}
 
-		// Subscribe this system to its type' callbacks
-		foreach (var callbackType in system.TypeData.Callbacks) {
-			if (!worldData.SystemsByType.TryGetValue(callbackType, out var callbacksOfThisType)) {
-				continue;
-			}
-
-			foreach (CallbackSystem callback in callbacksOfThisType) {
-				callback.AddSystem(system);
-			}
-		}
-
-		// Subscribe systems to this one if have it specified in its TypeData
-		if (system is CallbackSystem callbackSystem) {
-			foreach (var otherSystem in worldData.Systems) {
-				if (otherSystem.TypeData.Callbacks.Contains(systemType)) {
-					callbackSystem.AddSystem(otherSystem);
-				}
-			}
-		}
-
-		worldData.Systems.Add(system);
-		systemsOfThisType.Add(system);
-	}
-
-	internal static T GetWorldSystem<T>(World world) where T : GameSystem
-	{
-		if (TryGetWorldSystem<T>(world, out var result)) {
-			return result;
-		}
-
-		throw new KeyNotFoundException($"Unable to find any systems of type {typeof(T).Name} on the provided world.");
-	}
-
-	internal static bool TryGetWorldSystem<T>(World world, out T result) where T : GameSystem
-	{
-		var worldData = worldDataById[world.Id];
-
-		if (worldData.SystemsByType.TryGetValue(typeof(T), out var systems) && systems.Count > 0) {
-			result = (T)systems[0];
-
-			return true;
-		}
-
-		result = null;
-
-		return false;
-	}
-
-	internal static void ExecuteCallbacks<T>(World world) where T : CallbackSystem
-	{
-		var worldData = worldDataById[world.Id];
-
-		if (worldData.SystemsByType.TryGetValue(typeof(T), out var callbacks)) {
-			for (int i = 0; i < callbacks.Count; i++) {
-				callbacks[i].Update(world);
-			}
-		}
-	}
-
-	private static void AddDefaultSystemsToWorld(World world, bool addSystems = true, bool addCallbacks = true)
-	{
-		if (!addCallbacks && !addSystems) {
-			return;
-		}
-
-		for (int i = 0; i < SystemTypes.Count; i++) {
-			var type = SystemTypes[i];
-			bool isCallback = typeof(CallbackSystem).IsAssignableFrom(type);
-
-			if (!(isCallback ? addCallbacks : addSystems)) {
-				continue;
-			}
-
-			if (!AutoloadAttribute.TypeNeedsAutoloading(type)) {
-				continue;
-			}
-
-			var system = (GameSystem)Activator.CreateInstance(type);
-
-			AddSystemToWorld(world, system);
-		}
+		callbackSystem.Update();
 	}
 
 	private static void LogSystemCallbacksTree(GameSystem system, string indent, bool last)
@@ -264,13 +234,6 @@ public class SystemManager : EngineModule
 				}
 				while (hasEntries);
 			}
-		}
-	}
-
-	private static void ExecuteCallbackOnWorlds<T>(ReadOnlySpan<World> worlds) where T : CallbackSystem
-	{
-		foreach (var world in worlds) {
-			world.ExecuteCallbacks<T>();
 		}
 	}
 }

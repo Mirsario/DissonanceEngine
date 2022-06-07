@@ -18,12 +18,12 @@ public abstract class CallbackSystem : GameSystem
 		}
 	}
 
-	protected sealed override void Execute(World world)
+	protected sealed override void Execute()
 	{
 		SortSystemsIfNeeded();
 
 		foreach (var subscriber in invocationList) {
-			subscriber.Update(world);
+			subscriber.Update();
 		}
 	}
 

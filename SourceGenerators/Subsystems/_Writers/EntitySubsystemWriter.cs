@@ -3,36 +3,54 @@ using SourceGenerators.Utilities;
 
 namespace SourceGenerators.Subsystems;
 
-public sealed class EntitySubsystemWriter : BaseSubsystemWriter
+public sealed class EntitySubsystemWriter : ISubsystemWriter
 {
-	private struct WriterData
+	public class WriterData
 	{
 		public List<string> RequiredComponentTypes = new();
-
-		public WriterData() { }
 	}
 
-	private WriterData writerData;
+	public string AttributeName { get; } = "Dissonance.Engine.EntitySubsystemAttribute";
 
-	public override string AttributeName { get; } = "Dissonance.Engine.EntitySubsystemAttribute";
-
-	public override void WriteData(SubsystemData data, ref bool hasErrors)
+	public void WriteData(SubsystemData data, ref bool hasErrors)
 	{
-		writerData = new();
+		var writerData = new WriterData();
 
-		base.WriteData(data, ref hasErrors);
+		IEnumerable<SubsystemParameterHandler> GetParameterHandlers()
+		{
+			yield return CommonParameterHandlers.RefKindHandler;
+			yield return CommonParameterHandlers.WorldParameterHandler;
+			yield return EntityParameterHandler;
+			yield return CommonParameterHandlers.GlobalComponentParameterHandler;
+			yield return CommonParameterHandlers.WorldComponentParameterHandler;
+			yield return (ParameterData parameterData, ref bool hasErrors, ref bool handled) => EntityComponentParameterHandler(parameterData, writerData, ref hasErrors, ref handled);
+		}
 
+		SubsystemWriter.WriteParameters(data, ref hasErrors, GetParameterHandlers());
+
+		WorldSubsystemWriter.WriteWorldEnumerationWrap(data, () => {
+			WriteEntityEnumerationWrap(data, writerData, () => {
+				SubsystemWriter.WritePredicatesWrap(data, () => {
+					SubsystemWriter.WriteInvocation(data);
+				});
+			});
+		});
+	}
+
+	public static void WriteEntityEnumerationWrap(SubsystemData data, WriterData writerData, Action innerCall)
+	{
 		string readEntitiesCall;
 
 		if (writerData.RequiredComponentTypes.Count != 0) {
 			// Create an entity set
-			string entitySetName = $"entities{data.Method.Symbol.Name}";
+			string componentSetName = $"componentSet{data.Method.Symbol.Name}";
+			string inclusions = $"{string.Join(string.Empty, writerData.RequiredComponentTypes.Select(componentType => $"\r\n\t.Include<{componentType}>()"))}";
 
-			data.SystemData.Members.Add(($"private EntitySet {entitySetName};", MemberFlag.Field | MemberFlag.Private));
+			data.SystemData.Members.Add(($"private static readonly ComponentSet {componentSetName} = new ComponentSet(){inclusions};", MemberFlag.Field | MemberFlag.Private | MemberFlag.ReadOnly));
 
-			data.SystemData.InitCode.Append($"{entitySetName} = world.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+			//data.SystemData.InitCode.Append($"{componentSetName} = world.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
 
-			readEntitiesCall = $"{entitySetName}.ReadEntities()";
+			readEntitiesCall = $"world.GetEntitySet({componentSetName}).ReadEntities()";
 		} else {
 			readEntitiesCall = "world.ReadEntities()";
 		}
@@ -43,33 +61,14 @@ public sealed class EntitySubsystemWriter : BaseSubsystemWriter
 
 		data.InvocationCode.AppendLine($"foreach (var entity in {readEntitiesCall}) {{");
 		data.InvocationCode.Indent();
-
-		foreach (string predicate in data.ExecutionPredicates) {
-			data.InvocationCode.AppendLine($"if (!({predicate})) {{");
-			data.InvocationCode.Indent();
-			data.InvocationCode.AppendLine("continue;");
-			data.InvocationCode.Unindent();
-			data.InvocationCode.AppendLine("}");
-			data.InvocationCode.AppendLine();
-		}
-
-		data.InvocationCode.AppendLine($"{data.Method.Symbol.Name}({argumentsCode});");
+		
+		innerCall();
 
 		data.InvocationCode.Unindent();
 		data.InvocationCode.AppendLine("}");
 	}
 
-	public override IEnumerable<SubsystemParameterHandler> GetParameterHandlers()
-	{
-		yield return CommonParameterHandlers.RefKindHandler;
-		yield return CommonParameterHandlers.WorldParameterHandler;
-		yield return EntityParameterHandler;
-		yield return CommonParameterHandlers.GlobalComponentParameterHandler;
-		yield return CommonParameterHandlers.WorldComponentParameterHandler;
-		yield return EntityComponentParameterHandler;
-	}
-
-	private void EntityComponentParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
+	public static void EntityComponentParameterHandler(ParameterData parameterData, WriterData writerData, ref bool hasErrors, ref bool handled)
 	{
 		var parameter = parameterData.Parameter;
 
@@ -84,7 +83,7 @@ public sealed class EntitySubsystemWriter : BaseSubsystemWriter
 		}
 	}
 
-	private static void EntityParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
+	public static void EntityParameterHandler(ParameterData parameterData, ref bool hasErrors, ref bool handled)
 	{
 		var parameter = parameterData.Parameter;
 

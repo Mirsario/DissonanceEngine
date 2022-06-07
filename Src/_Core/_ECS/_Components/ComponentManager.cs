@@ -35,11 +35,17 @@ public unsafe sealed class ComponentManager : EngineModule
 
 			var typeData = new ComponentTypeData(
 				typeof(T),
+				&Has,
 				&Remove,
 				&Copy
 			);
 
 			ComponentTypeDataById.Add(typeData);
+		}
+
+		public static bool Has(int worldId, int entityId)
+		{
+			return HasComponent<T>(worldId, entityId);
 		}
 
 		public static void Remove(int worldId, int entityId)
@@ -56,12 +62,14 @@ public unsafe sealed class ComponentManager : EngineModule
 	private readonly struct ComponentTypeData
 	{
 		public readonly Type Type;
+		public readonly delegate*<int, int, bool> Has;
 		public readonly delegate*<int, int, void> Remove;
 		public readonly delegate*<int, int, int, int, void> Copy;
 
-		public ComponentTypeData(Type type, delegate*<int, int, void> remove, delegate*<int, int, int, int, void> copy)
+		public ComponentTypeData(Type type, delegate*<int, int, bool> has, delegate*<int, int, void> remove, delegate*<int, int, int, int, void> copy)
 		{
 			Type = type;
+			Has = has;
 			Remove = remove;
 			Copy = copy;
 		}
@@ -71,6 +79,8 @@ public unsafe sealed class ComponentManager : EngineModule
 
 	private static readonly List<ComponentTypeData> ComponentTypeDataById = new();
 	private static readonly Dictionary<string, Type> StructureTypesByName = new();
+
+	public static int ComponentTypeCount => ComponentTypeDataById.Count;
 
 	protected override void InitializeForAssembly(Assembly assembly)
 	{
@@ -98,10 +108,7 @@ public unsafe sealed class ComponentManager : EngineModule
 				//TODO: Use minimal unique paths.
 				StructureTypesByName[name] = null;
 				StructureTypesByName[type.FullName] = type;
-
-				if (existingType != null) {
-					StructureTypesByName[existingType.FullName] = existingType;
-				}
+				StructureTypesByName[existingType.FullName] = existingType;
 			}
 		}
 	}
@@ -124,8 +131,11 @@ public unsafe sealed class ComponentManager : EngineModule
 		return StructureTypesByName.TryGetValue(name, out type) && type != null;
 	}
 
-	internal static int GetComponentId<T>() where T : struct
+	public static int GetComponentId<T>() where T : struct
 		=> ComponentData<T>.TypeId;
+
+	internal static bool HasComponent(int componentTypeId, int worldId, int entityId)
+		=> ComponentTypeDataById[componentTypeId].Has(worldId, entityId);
 
 	internal static void CopyComponent(int componentTypeId, int sourceWorldId, int sourceEntityId, int destinationWorldId, int destinationEntityId)
 		=> ComponentTypeDataById[componentTypeId].Copy(sourceWorldId, sourceEntityId, destinationWorldId, destinationEntityId);
@@ -161,6 +171,7 @@ public unsafe sealed class ComponentManager : EngineModule
 
 	internal static ref T GetComponent<T>(int worldId, int entityId) where T : struct
 	{
+		int typeId = GetComponentId<T>();
 		ref var worldData = ref ComponentData<T>.DataByWorld[worldId];
 
 		return ref worldData.Data[worldData.IndicesByEntity[entityId]];

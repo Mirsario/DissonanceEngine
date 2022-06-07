@@ -7,7 +7,7 @@ namespace Dissonance.Engine.Physics;
 [ExecuteAfter<RigidbodySystem>]
 public sealed partial class PhysicsSimulationSystem : GameSystem
 {
-	[Subsystem]
+	[WorldSubsystem]
 	partial void StepSimulation([FromWorld] ref WorldPhysics physics)
 	{
 		physics.PhysicsWorld.Gravity = physics.Gravity;
@@ -22,7 +22,7 @@ public sealed partial class PhysicsSimulationSystem : GameSystem
 		rigidbody.collisions?.Clear(); //TODO: Optimize, avoid reallocations every frame...
 	}
 
-	[Subsystem]
+	[WorldSubsystem]
 	partial void UpdateCollisions([FromWorld] ref WorldPhysics physics)
 	{
 		var collisionDispatcher = physics.CollisionDispatcher;

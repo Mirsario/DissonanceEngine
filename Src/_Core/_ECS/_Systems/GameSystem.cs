@@ -11,21 +11,18 @@ public abstract class GameSystem
 		TypeData = SystemManager.GetSystemTypeData(GetType());
 	}
 
-	protected virtual void Initialize(World world) { }
+	protected virtual void Initialize() { }
 
-	protected virtual void Execute(World world) { }
+	protected virtual void Execute() { }
 
-	/// <summary>
-	/// Initializes (if needed) and executes this system.
-	/// </summary>
-	public void Update(World world)
+	public void Update()
 	{
 		if (!initialized) {
-			Initialize(world);
+			Initialize();
 
 			initialized = true;
 		}
 
-		Execute(world);
+		Execute();
 	}
 }

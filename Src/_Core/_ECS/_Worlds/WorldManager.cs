@@ -59,7 +59,7 @@ public sealed class WorldManager : EngineModule
 		return false;
 	}
 
-	internal static ReadOnlySpan<World> ReadWorlds()
+	public static ReadOnlySpan<World> ReadWorlds()
 	{
 		return CollectionsMarshal.AsSpan(Worlds).Slice(1);
 	}

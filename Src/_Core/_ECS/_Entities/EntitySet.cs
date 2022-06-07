@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Dissonance.Engine;
 
@@ -7,12 +6,12 @@ public sealed class EntitySet
 {
 	private readonly List<Entity> Entities = new();
 
-	internal readonly Predicate<Entity> Predicate;
+	internal readonly ComponentSet ComponentSet;
 	internal readonly bool? EntityIsActiveFilter;
 
-	internal EntitySet(Predicate<Entity> predicate, bool? entityIsActiveFilter = true)
+	internal EntitySet(ComponentSet componentSet, bool? entityIsActiveFilter = true)
 	{
-		Predicate = predicate;
+		ComponentSet = componentSet;
 		EntityIsActiveFilter = entityIsActiveFilter;
 	}
 
@@ -25,7 +24,7 @@ public sealed class EntitySet
 	{
 		int index = Entities.IndexOf(entity);
 		bool contains = index != -1;
-		bool shouldContain = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && Predicate(entity);
+		bool shouldContain = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && ComponentSet.Matches(entity);
 
 		if (contains != shouldContain) {
 			if (shouldContain) {
