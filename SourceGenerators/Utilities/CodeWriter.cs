@@ -6,13 +6,14 @@ namespace SourceGenerators.Utilities
 {
 	public sealed class CodeWriter
 	{
-		private static readonly Regex lineStartRegex = new(@"(^|\r\n|\n\r|\r|\n)", RegexOptions.Compiled);
+		private static readonly Regex lineBreakRegex = new(@"(\r\n|\n\r|\r|\n)", RegexOptions.Compiled);
 
 		public readonly StringBuilder StringBuilder;
 
 		private int numTabs;
 		private string tabs;
 		private string tabsReplacement;
+		private bool skipTabs;
 
 		public CodeWriter() : this(new StringBuilder()) { }
 
@@ -42,13 +43,22 @@ namespace SourceGenerators.Utilities
 		}
 
 		public void Append(string text)
-			=> StringBuilder.Append(lineStartRegex.Replace(text, tabsReplacement));
+		{
+			AppendTabs(false);
+			StringBuilder.Append(lineBreakRegex.Replace(text, tabsReplacement));
+		}
 
 		public void AppendLine()
-			=> StringBuilder.AppendLine(tabs);
+		{
+			AppendTabs(true);
+			StringBuilder.AppendLine();
+		}
 
 		public void AppendLine(string text)
-			=> StringBuilder.AppendLine(lineStartRegex.Replace(text, tabsReplacement));
+		{
+			AppendTabs(true);
+			StringBuilder.AppendLine(lineBreakRegex.Replace(text, tabsReplacement));
+		}
 
 		public void AppendCode(CodeWriter code, bool omitEndLineBreak = true)
 		{
@@ -63,6 +73,15 @@ namespace SourceGenerators.Utilities
 			}
 
 			AppendLine(text);
+		}
+
+		private void AppendTabs(bool resetTabs)
+		{
+			if (!skipTabs) {
+				StringBuilder.Append(tabs);
+			}
+
+			skipTabs = !resetTabs;
 		}
 	}
 }
