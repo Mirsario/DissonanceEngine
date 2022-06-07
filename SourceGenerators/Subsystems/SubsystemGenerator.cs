@@ -14,6 +14,8 @@ namespace SourceGenerators.Subsystems
 
 		static SubsystemGenerator()
 		{
+			ErrorLogging.Activate();
+
 			foreach (var type in Assembly.GetExecutingAssembly().GetTypes()) {
 				if (type.IsAbstract || !typeof(ISubsystemWriter).IsAssignableFrom(type)) {
 					continue;
