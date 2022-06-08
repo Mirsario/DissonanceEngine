@@ -1,20 +1,18 @@
-﻿using System;
-using System.Linq.Expressions;
-
-namespace Dissonance.Engine;
+﻿namespace Dissonance.Engine;
 
 public sealed class World
 {
 	internal readonly int Id;
 
-	internal Entity WorldEntity;
-
 	/// <summary> Whether or not this is a default engine-provided world. Default worlds cannot be removed. </summary>
 	public bool IsDefault => Id == WorldManager.DefaultWorldId || Id == WorldManager.PrefabWorldId;
 
-	internal World(int id)
+	public readonly WorldCreationOptions Options; 
+
+	internal World(int id, WorldCreationOptions options)
 	{
 		Id = id;
+		Options = options;
 	}
 
 	// Entities
@@ -29,15 +27,15 @@ public sealed class World
 		=> EntityManager.ReadEntities(Id, active);
 
 	// Components
-
+	
 	public bool Has<T>() where T : struct
-		=> WorldEntity.Has<T>();
+		=> ComponentManager.HasComponent<T>(Id);
 
 	public ref T Get<T>() where T : struct
-		=> ref WorldEntity.Get<T>();
+		=> ref ComponentManager.GetComponent<T>(Id);
 
 	public void Set<T>(T value) where T : struct
-		=> WorldEntity.Set(value);
+		=> ComponentManager.SetComponent(Id, value);
 
 	// Messages
 
@@ -46,11 +44,4 @@ public sealed class World
 
 	public void SendMessage<T>(in T message) where T : struct
 		=> MessageManager.SendMessage(Id, message);
-
-	// Etc
-
-	internal void Init()
-	{
-		WorldEntity = CreateEntity();
-	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Dissonance.Engine;
 
@@ -13,10 +12,13 @@ public sealed class WorldManager : EngineModule
 	public static World DefaultWorld { get; private set; }
 	public static World PrefabWorld { get; private set; }
 
-	internal static event Action<World, WorldCreationOptions> OnWorldCreated;
-	internal static event Action<World> OnWorldDestroyed; //TODO: Call this.
+	internal static readonly List<WorldSet> worldSets = new();
+	internal static readonly Dictionary<ComponentSet, WorldSet> worldSetsByComponentSets = new();
 
 	private static readonly List<World> Worlds = new() { null };
+
+	internal static event Action<World, WorldCreationOptions> OnWorldCreated;
+	internal static event Action<World> OnWorldDestroyed; //TODO: Call this.
 
 	protected override void Init()
 	{
@@ -31,14 +33,12 @@ public sealed class WorldManager : EngineModule
 
 	public static World CreateWorld(WorldCreationOptions? options = null)
 	{
-		var world = new World(Worlds.Count);
 		var usedOptions = options ?? new();
+		var world = new World(Worlds.Count, usedOptions);
 
 		Worlds.Add(world);
 
 		OnWorldCreated?.Invoke(world, usedOptions);
-
-		world.Init();
 
 		return world;
 	}
@@ -59,8 +59,27 @@ public sealed class WorldManager : EngineModule
 		return false;
 	}
 
-	public static ReadOnlySpan<World> ReadWorlds()
+	public static WorldEnumerator ReadWorlds()
 	{
-		return CollectionsMarshal.AsSpan(Worlds).Slice(1);
+		return new WorldEnumerator(Worlds, 1);
+	}
+
+	public static WorldSet GetWorldSet(ComponentSet componentSet)
+	{
+		if (worldSetsByComponentSets.TryGetValue(componentSet, out var result)) {
+			return result;
+		}
+
+		var worldSet = new WorldSet(componentSet);
+
+		foreach (var world in ReadWorlds()) {
+			worldSet.OnWorldUpdated(world);
+		}
+
+		worldSetsByComponentSets[componentSet] = worldSet;
+
+		worldSets.Add(worldSet);
+
+		return worldSet;
 	}
 }

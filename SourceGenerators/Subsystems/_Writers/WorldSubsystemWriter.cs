@@ -25,7 +25,16 @@ public sealed class WorldSubsystemWriter : ISubsystemWriter
 
 	public static void WriteWorldEnumerationWrap(SubsystemData data, Action innerCall)
 	{
-		data.InvocationCode.AppendLine("foreach (var world in WorldManager.ReadWorlds()) {");
+		// Create an entity set
+		string worldComponentSetName = $"worldComponentSet{data.Method.Symbol.Name}";
+
+		data.SystemData.Members.Add(($"private static readonly ComponentSet {worldComponentSetName} = new ComponentSet();", MemberFlag.Field | MemberFlag.Private | MemberFlag.ReadOnly));
+
+		//data.SystemData.InitCode.Append($"{componentSetName} = world.GetEntitySet(e => {string.Join(" && ", writerData.RequiredComponentTypes.Select(t => $"e.Has<{t}>()"))});");
+
+		string readWorldsCall = $"WorldManager.GetWorldSet({worldComponentSetName}).ReadWorlds()";
+
+		data.InvocationCode.AppendLine($"foreach (var world in {readWorldsCall}) {{");
 		data.InvocationCode.Indent();
 
 		innerCall();

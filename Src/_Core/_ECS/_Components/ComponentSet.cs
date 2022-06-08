@@ -145,6 +145,32 @@ public unsafe class ComponentSet
 		return true;
 	}
 
+	public bool Matches(World world)
+	{
+		int arrayLength = bits.Length;
+		int componentId = 0;
+		int worldId = world.Id;
+
+		fixed (EntryType* ptr = bits) {
+			for (int i = 0; i < arrayLength; i++) {
+				EntryType entry = ptr[i];
+				int bitsLength = i == arrayLength - 1 ? (i == 0 ? Length : Length - i * EntrySizeInBits) : EntrySizeInBits;
+
+				for (int j = 0; j < bitsLength; j++) {
+					if ((entry & ((EntryType)1 << j)) != 0) {
+						if (!ComponentManager.HasComponent(componentId, worldId)) {
+							return false;
+						}
+					}
+
+					componentId++;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	private void UpdateSize()
 	{
 		int expectedLength = ExpectedLength;
