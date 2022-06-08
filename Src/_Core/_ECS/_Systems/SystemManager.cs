@@ -47,6 +47,10 @@ public class SystemManager : EngineModule
 				continue;
 			}
 
+			if (!AutoloadAttribute.TypeNeedsAutoloading(type)) {
+				continue;
+			}
+
 			SystemTypes.Add(type);
 		}
 	}
