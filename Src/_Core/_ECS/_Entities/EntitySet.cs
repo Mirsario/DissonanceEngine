@@ -23,13 +23,15 @@ namespace Dissonance.Engine
 
 		internal void OnEntityUpdated(in Entity entity)
 		{
-			bool result = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && Predicate(entity);
+			int index = Entities.IndexOf(entity);
+			bool contains = index != -1;
+			bool shouldContain = (!EntityIsActiveFilter.HasValue || EntityIsActiveFilter.Value == entity.IsActive) && Predicate(entity);
 
-			if (Entities.Contains(entity) != result) {
-				if (result) {
+			if (contains != shouldContain) {
+				if (shouldContain) {
 					Entities.Add(entity);
 				} else {
-					Entities.Remove(entity);
+					Entities.RemoveAt(index);
 				}
 			}
 		}
