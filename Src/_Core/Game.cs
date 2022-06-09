@@ -110,9 +110,15 @@ namespace Dissonance.Engine
 				updateStopwatch.Start();
 			}
 
-			while (numFixedUpdates == 0 || numFixedUpdates < (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency)) {
-				FixedUpdateInternal();
+			while (true) {
+				ulong expectedUpdates = (ulong)Math.Floor(updateStopwatch.Elapsed.TotalSeconds * Time.TargetUpdateFrequency);
 
+				if (numFixedUpdates != 0 && numFixedUpdates >= expectedUpdates) {
+					break;
+				}
+
+				FixedUpdateInternal();
+				
 				numFixedUpdates++;
 			}
 
