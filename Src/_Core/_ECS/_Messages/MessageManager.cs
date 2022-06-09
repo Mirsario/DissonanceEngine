@@ -25,13 +25,13 @@ namespace Dissonance.Engine
 		private static event Action ClearLists;
 
 		[HookPosition(1000)]
-		protected override void FixedUpdate()
+		protected override void PostFixedUpdate()
 		{
 			ClearMessages();
 		}
 
 		[HookPosition(1000)]
-		protected override void RenderUpdate()
+		protected override void PostRenderUpdate()
 		{
 			ClearMessages();
 		}
