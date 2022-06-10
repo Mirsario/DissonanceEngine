@@ -16,7 +16,7 @@ internal static class ErrorLogging
 
 		logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{Assembly.GetExecutingAssembly().GetName().Name}.log");
 
-		Log($"Current directory: '{Path.GetFullPath(".")}'.");
+		//Log($"Current directory: '{Path.GetFullPath(".")}'.");
 
 		AppDomain.CurrentDomain.FirstChanceException += FirstChanceException;
 		
