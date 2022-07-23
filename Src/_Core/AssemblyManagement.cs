@@ -37,7 +37,7 @@ public static class AssemblyManagement
 		onAssemblyRegistered += callback;
 
 		foreach (var assembly in EnumerateAssemblies()) {
-			onAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
+			callback(assembly, assembly.GetTypes());
 		}
 	}
 
