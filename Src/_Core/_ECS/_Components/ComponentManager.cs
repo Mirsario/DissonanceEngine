@@ -76,15 +76,27 @@ public unsafe sealed class ComponentManager : EngineModule
 	{
 		// By-name type lookups are used in prefab parsing.
 		foreach (var type in assembly.GetTypes()) {
-			if (!type.IsValueType || type.IsAbstract || type.IsNested || type.IsByRefLike || type.IsGenericTypeDefinition) {
+			if (!type.IsValueType || type.IsAbstract || type.IsByRefLike || type.IsGenericTypeDefinition) {
 				continue;
 			}
 
+			string name = type.Name;
+
+			if (type.IsNested) {
+				Type declaringType = type.DeclaringType;
+
+				while (declaringType != null) {
+					name = $"{declaringType.Name}.{name}";
+
+					declaringType = declaringType.DeclaringType;
+				}
+			}
+
 			if (!StructureTypesByName.TryGetValue(type.Name, out var existingType)) {
-				StructureTypesByName[type.Name] = type;
+				StructureTypesByName[name] = type;
 			} else {
 				//TODO: Use minimal unique paths.
-				StructureTypesByName[type.Name] = null;
+				StructureTypesByName[name] = null;
 				StructureTypesByName[type.FullName] = type;
 
 				if (existingType != null) {
