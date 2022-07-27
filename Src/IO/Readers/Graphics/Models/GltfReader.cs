@@ -6,262 +6,261 @@ using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 using Newtonsoft.Json;
 
-namespace Dissonance.Engine.IO
+namespace Dissonance.Engine.IO;
+
+public partial class GltfReader : IAssetReader<PackedScene>
 {
-	public partial class GltfReader : IAssetReader<PackedScene>
+	public const uint FormatHeader = 0x46546C67;
+
+	private const uint ChunkJson = 0x4E4F534A;
+	private const uint ChunkBinary = 0x004E4942;
+
+	public static readonly Dictionary<ComponentType, uint> ComponentTypeSizes = new() {
+		{ ComponentType.SByte,  1 },
+		{ ComponentType.Byte,   1 },
+		{ ComponentType.Short,  2 },
+		{ ComponentType.UShort, 2 },
+		{ ComponentType.UInt,   4 },
+		{ ComponentType.Float,  4 },
+	};
+	public static readonly Dictionary<string, uint> AccessorTypeSizes = new(StringComparer.InvariantCultureIgnoreCase) {
+		{ "SCALAR", 1 },
+		{ "VEC2",   2 },
+		{ "VEC3",   3 },
+		{ "VEC4",   4 },
+		{ "MAT2",   4 },
+		{ "MAT3",   9 },
+		{ "MAT4",   16 },
+	};
+	public static readonly Dictionary<string, Type> AttributeToType = new(StringComparer.InvariantCultureIgnoreCase) {
+		{ "POSITION",       typeof(VertexAttribute) },
+		{ "NORMAL",         typeof(NormalAttribute) },
+		{ "TANGENT",        typeof(TangentAttribute) },
+		{ "TEXCOORD_0",     typeof(Uv0Attribute) },
+		// { "TEXCOORD_1",	typeof(Uv1Attribute) },
+		{ "COLOR_0",        typeof(ColorAttribute) },
+		// { "JOINTS_0",		typeof(BoneIndicesAttribute) },
+		// { "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
+	};
+
+	public string[] Extensions { get; } = { ".gltf", ".glb" };
+
+	public async ValueTask<PackedScene> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 	{
-		public const uint FormatHeader = 0x46546C67;
+		string assetPath = assetFile.Path;
+		var info = new GltfInfo(assetPath);
 
-		private const uint ChunkJson = 0x4E4F534A;
-		private const uint ChunkBinary = 0x004E4942;
+		using var stream = assetFile.OpenStream();
 
-		public static readonly Dictionary<ComponentType, uint> ComponentTypeSizes = new() {
-			{ ComponentType.SByte,  1 },
-			{ ComponentType.Byte,   1 },
-			{ ComponentType.Short,  2 },
-			{ ComponentType.UShort, 2 },
-			{ ComponentType.UInt,   4 },
-			{ ComponentType.Float,  4 },
-		};
-		public static readonly Dictionary<string, uint> AccessorTypeSizes = new(StringComparer.InvariantCultureIgnoreCase) {
-			{ "SCALAR", 1 },
-			{ "VEC2",   2 },
-			{ "VEC3",   3 },
-			{ "VEC4",   4 },
-			{ "MAT2",   4 },
-			{ "MAT3",   9 },
-			{ "MAT4",   16 },
-		};
-		public static readonly Dictionary<string, Type> AttributeToType = new(StringComparer.InvariantCultureIgnoreCase) {
-			{ "POSITION",       typeof(VertexAttribute) },
-			{ "NORMAL",         typeof(NormalAttribute) },
-			{ "TANGENT",        typeof(TangentAttribute) },
-			{ "TEXCOORD_0",     typeof(Uv0Attribute) },
-			// { "TEXCOORD_1",	typeof(Uv1Attribute) },
-			{ "COLOR_0",        typeof(ColorAttribute) },
-			// { "JOINTS_0",		typeof(BoneIndicesAttribute) },
-			// { "WEIGHTS_0",	typeof(BoneWeightsAttribute) },
-		};
+		if (assetPath.EndsWith(".gltf")) {
+			byte[] textBytes = new byte[stream.Length - stream.Position];
 
-		public string[] Extensions { get; } = { ".gltf", ".glb" };
+			stream.Read(textBytes, 0, textBytes.Length);
 
-		public async ValueTask<PackedScene> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
-		{
-			string assetPath = assetFile.Path;
-			var info = new GltfInfo(assetPath);
-
-			using var stream = assetFile.OpenStream();
-
-			if (assetPath.EndsWith(".gltf")) {
-				byte[] textBytes = new byte[stream.Length - stream.Position];
-
-				stream.Read(textBytes, 0, textBytes.Length);
-
-				HandleGltf(info, textBytes);
-			} else {
-				HandleGlb(info, stream);
-			}
-
-			//TODO: Add extension support.
-			if (info.json.extensionsRequired != null) {
-				foreach (string requiredExtension in info.json.extensionsRequired) {
-					string message = $"glTF Error: Required extension '{requiredExtension}' is not supported.";
-
-					Debug.Log(message); //throw new FileLoadException(message);
-				}
-			}
-
-			await switchToMainThread;
-
-			LoadMeshes(info);
-
-			return info.Scene;
+			HandleGltf(info, textBytes);
+		} else {
+			HandleGlb(info, stream);
 		}
 
-		protected static void HandleGltf(GltfInfo info, byte[] textBytes)
-		{
-			info.json = JsonConvert.DeserializeObject<GltfJson>(Encoding.UTF8.GetString(textBytes));
+		//TODO: Add extension support.
+		if (info.json.extensionsRequired != null) {
+			foreach (string requiredExtension in info.json.extensionsRequired) {
+				string message = $"glTF Error: Required extension '{requiredExtension}' is not supported.";
+
+				Debug.Log(message); //throw new FileLoadException(message);
+			}
+		}
+
+		await switchToMainThread;
+
+		LoadMeshes(info);
+
+		return info.Scene;
+	}
+
+	protected static void HandleGltf(GltfInfo info, byte[] textBytes)
+	{
+		info.json = JsonConvert.DeserializeObject<GltfJson>(Encoding.UTF8.GetString(textBytes));
 
 #if DEBUG
-			Directory.CreateDirectory("DebugInfo");
-			File.WriteAllText(
-				Path.Combine("DebugInfo", "Gltf.json"),
-				JsonConvert.SerializeObject(info.json, Formatting.Indented, new JsonSerializerSettings() {
-					DefaultValueHandling = DefaultValueHandling.Ignore
-				})
-			);
+		Directory.CreateDirectory("DebugInfo");
+		File.WriteAllText(
+			Path.Combine("DebugInfo", "Gltf.json"),
+			JsonConvert.SerializeObject(info.json, Formatting.Indented, new JsonSerializerSettings() {
+				DefaultValueHandling = DefaultValueHandling.Ignore
+			})
+		);
 #endif
-		}
-		protected static void HandleGlb(GltfInfo info, Stream stream)
-		{
-			using var reader = new BinaryReader(stream);
+	}
+	protected static void HandleGlb(GltfInfo info, Stream stream)
+	{
+		using var reader = new BinaryReader(stream);
 
-			ReadHeader(reader, out _, out uint length);
+		ReadHeader(reader, out _, out uint length);
 
-			int chunkId = 0;
+		int chunkId = 0;
 
-			while (reader.BaseStream.Position < length) {
-				// Read Chunk
-				uint chunkLength = reader.ReadUInt32();
-				uint chunkType = reader.ReadUInt32();
-				byte[] chunkData = reader.ReadBytes((int)chunkLength);
+		while (reader.BaseStream.Position < length) {
+			// Read Chunk
+			uint chunkLength = reader.ReadUInt32();
+			uint chunkType = reader.ReadUInt32();
+			byte[] chunkData = reader.ReadBytes((int)chunkLength);
 
-				if (chunkId == 0 && chunkType != ChunkJson) {
-					static string ToAscii(uint value) => Encoding.ASCII.GetString(BitConverter.GetBytes(value));
+			if (chunkId == 0 && chunkType != ChunkJson) {
+				static string ToAscii(uint value) => Encoding.ASCII.GetString(BitConverter.GetBytes(value));
 
-					throw new FileLoadException($"glTF Error: First chunk was expected to be '{ToAscii(ChunkJson)}', but is '{ToAscii(chunkType)}'.");
-				}
-
-				switch (chunkType) {
-					case ChunkJson:
-						HandleGltf(info, chunkData);
-						break;
-					case ChunkBinary:
-						info.blobStream = new MemoryStream(chunkData);
-						break;
-				}
-
-				chunkId++;
-			}
-		}
-
-		protected static void ReadHeader(BinaryReader reader, out uint version, out uint length)
-		{
-			uint magic = reader.ReadUInt32();
-
-			if (magic != FormatHeader) {
-				throw new FileLoadException("glTF Error: File is not of 'Binary glTF' format.");
+				throw new FileLoadException($"glTF Error: First chunk was expected to be '{ToAscii(ChunkJson)}', but is '{ToAscii(chunkType)}'.");
 			}
 
-			version = reader.ReadUInt32();
-			length = reader.ReadUInt32();
+			switch (chunkType) {
+				case ChunkJson:
+					HandleGltf(info, chunkData);
+					break;
+				case ChunkBinary:
+					info.blobStream = new MemoryStream(chunkData);
+					break;
+			}
+
+			chunkId++;
+		}
+	}
+
+	protected static void ReadHeader(BinaryReader reader, out uint version, out uint length)
+	{
+		uint magic = reader.ReadUInt32();
+
+		if (magic != FormatHeader) {
+			throw new FileLoadException("glTF Error: File is not of 'Binary glTF' format.");
 		}
 
-		protected static byte[] GetAccessorData(GltfInfo info, GltfJson.Accessor accessor)
-		{
-			var json = info.json;
-			var bufferView = accessor.bufferView.HasValue ? json.bufferViews[accessor.bufferView.Value] : null;
+		version = reader.ReadUInt32();
+		length = reader.ReadUInt32();
+	}
 
-			int elementSize = (int)AccessorTypeSizes[accessor.type];
-			int packSize = (int)(elementSize * ComponentTypeSizes[accessor.componentType]);
-			int fullSize = (int)(bufferView?.byteLength ?? accessor.count * packSize);
+	protected static byte[] GetAccessorData(GltfInfo info, GltfJson.Accessor accessor)
+	{
+		var json = info.json;
+		var bufferView = accessor.bufferView.HasValue ? json.bufferViews[accessor.bufferView.Value] : null;
 
-			byte[] data = new byte[fullSize];
+		int elementSize = (int)AccessorTypeSizes[accessor.type];
+		int packSize = (int)(elementSize * ComponentTypeSizes[accessor.componentType]);
+		int fullSize = (int)(bufferView?.byteLength ?? accessor.count * packSize);
 
-			if (bufferView != null) {
-				uint bufferId = bufferView.buffer;
-				var buffer = json.buffers[bufferId];
+		byte[] data = new byte[fullSize];
 
-				Stream stream;
+		if (bufferView != null) {
+			uint bufferId = bufferView.buffer;
+			var buffer = json.buffers[bufferId];
 
-				if (buffer.uri == null) {
-					// Read from blob.
+			Stream stream;
 
-					if (info.blobStream == null) {
-						throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property, with no binary buffer present.");
-					}
+			if (buffer.uri == null) {
+				// Read from blob.
 
-					if (bufferId != 0) {
-						throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property. Only the first buffer in a .glb file is allowed to not have one.");
-					}
-
-					stream = info.blobStream;
-				} else {
-					// Read from uri.
-
-					string path = buffer.uri;
-
-					// If uri/path is not absolute, we make it relative to the .gltf file's location.
-					if (!buffer.uri.Contains(":/") && !buffer.uri.Contains(":\\") && !buffer.uri.StartsWith("/")) {
-						path = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.GetDirectoryName(info.FilePath)) + Path.DirectorySeparatorChar + buffer.uri;
-					}
-
-					stream = File.OpenRead(path);
+				if (info.blobStream == null) {
+					throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property, with no binary buffer present.");
 				}
 
-				if (!stream.CanSeek) {
-					throw new FileLoadException("glTF Error: Stream is not seekable. This shouldn't happen.");
+				if (bufferId != 0) {
+					throw new FileLoadException($"glTF Error: Buffer {bufferId} is missing 'uri' property. Only the first buffer in a .glb file is allowed to not have one.");
 				}
 
-				stream.Seek(bufferView.byteOffset + accessor.byteOffset, SeekOrigin.Begin);
+				stream = info.blobStream;
+			} else {
+				// Read from uri.
 
-				// if (bufferView.byteStride==0) {
-				stream.Read(data, 0, (int)bufferView.byteLength);
-				// } else {
-				//	int bytesRead = 0;
-				//
-				//	while (bytesRead<bufferView.byteLength) {
-				//		stream.Read(data,bytesRead,elementSize);
-				//
-				//		bytesRead += elementSize;
-				//
-				//		stream.Seek(bufferView.byteStride,SeekOrigin.Current);
-				//	}
-				// }
+				string path = buffer.uri;
+
+				// If uri/path is not absolute, we make it relative to the .gltf file's location.
+				if (!buffer.uri.Contains(":/") && !buffer.uri.Contains(":\\") && !buffer.uri.StartsWith("/")) {
+					path = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.GetDirectoryName(info.FilePath)) + Path.DirectorySeparatorChar + buffer.uri;
+				}
+
+				stream = File.OpenRead(path);
 			}
 
-			return data;
+			if (!stream.CanSeek) {
+				throw new FileLoadException("glTF Error: Stream is not seekable. This shouldn't happen.");
+			}
+
+			stream.Seek(bufferView.byteOffset + accessor.byteOffset, SeekOrigin.Begin);
+
+			// if (bufferView.byteStride==0) {
+			stream.Read(data, 0, (int)bufferView.byteLength);
+			// } else {
+			//	int bytesRead = 0;
+			//
+			//	while (bytesRead<bufferView.byteLength) {
+			//		stream.Read(data,bytesRead,elementSize);
+			//
+			//		bytesRead += elementSize;
+			//
+			//		stream.Seek(bufferView.byteStride,SeekOrigin.Current);
+			//	}
+			// }
 		}
 
-		private static void LoadMeshes(GltfInfo info)
-		{
-			var json = info.json;
+		return data;
+	}
 
-			if (json.meshes == null || json.meshes.Length == 0) {
-				return;
-			}
+	private static void LoadMeshes(GltfInfo info)
+	{
+		var json = info.json;
 
-			foreach (var jsonMesh in json.meshes) {
-				var meshes = new List<Asset<Mesh>>();
+		if (json.meshes == null || json.meshes.Length == 0) {
+			return;
+		}
 
-				foreach (var jsonPrimitive in jsonMesh.primitives) {
-					var mesh = new Mesh();
+		foreach (var jsonMesh in json.meshes) {
+			var meshes = new List<Asset<Mesh>>();
 
-					if (jsonPrimitive.mode.HasValue) {
-						mesh.PrimitiveType = jsonPrimitive.mode.Value;
-					}
+			foreach (var jsonPrimitive in jsonMesh.primitives) {
+				var mesh = new Mesh();
 
-					if (jsonPrimitive.indices.HasValue) {
-						var jsonAccessor = json.accessors[jsonPrimitive.indices.Value];
-
-						byte[] data = GetAccessorData(info, jsonAccessor);
-
-						mesh.IndexBuffer.SetData<ushort>(data, value => value);
-					}
-
-					foreach (var pair in jsonPrimitive.attributes) {
-						string attributeName = pair.Key;
-						var jsonAccessor = json.accessors[pair.Value];
-
-						if (!AttributeToType.TryGetValue(attributeName, out var attributeType)) {
-							continue;
-						}
-
-						var attribute = VertexAttributes.GetInstance(attributeType);
-						var buffer = mesh.GetBuffer(attribute.BufferType);
-
-						byte[] data = GetAccessorData(info, jsonAccessor);
-
-						buffer.SetData(data);
-					}
-
-					mesh.Apply();
-
-					meshes.Add(Assets.CreateUntracked(mesh.Name ?? "Unnamed", mesh));
+				if (jsonPrimitive.mode.HasValue) {
+					mesh.PrimitiveType = jsonPrimitive.mode.Value;
 				}
 
-				//TODO: Add proper material support, remove this hardcode.
-				var material = Assets.CreateUntracked("DefaultMaterial", new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader));
+				if (jsonPrimitive.indices.HasValue) {
+					var jsonAccessor = json.accessors[jsonPrimitive.indices.Value];
 
-				for (int i = 0; i < meshes.Count; i++) {
-					var entity = info.Scene.CreateEntity();
+					byte[] data = GetAccessorData(info, jsonAccessor);
 
-					entity.SetComponent(new Transform(Vector3.Zero));
-					entity.SetComponent(new MeshRenderer(meshes[i], material));
+					mesh.IndexBuffer.SetData<ushort>(data, value => value);
 				}
 
-				// info.result.Add(model, jsonMesh.name);
+				foreach (var pair in jsonPrimitive.attributes) {
+					string attributeName = pair.Key;
+					var jsonAccessor = json.accessors[pair.Value];
+
+					if (!AttributeToType.TryGetValue(attributeName, out var attributeType)) {
+						continue;
+					}
+
+					var attribute = VertexAttributes.GetInstance(attributeType);
+					var buffer = mesh.GetBuffer(attribute.BufferType);
+
+					byte[] data = GetAccessorData(info, jsonAccessor);
+
+					buffer.SetData(data);
+				}
+
+				mesh.Apply();
+
+				meshes.Add(Assets.CreateUntracked(mesh.Name ?? "Unnamed", mesh));
 			}
+
+			//TODO: Add proper material support, remove this hardcode.
+			var material = Assets.CreateUntracked("DefaultMaterial", new Material("DefaultMaterial", Rendering.RenderingPipeline.DefaultGeometryShader));
+
+			for (int i = 0; i < meshes.Count; i++) {
+				var entity = info.Scene.CreateEntity();
+
+				entity.SetComponent(new Transform(Vector3.Zero));
+				entity.SetComponent(new MeshRenderer(meshes[i], material));
+			}
+
+			// info.result.Add(model, jsonMesh.name);
 		}
 	}
 }

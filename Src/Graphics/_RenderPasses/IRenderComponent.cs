@@ -1,7 +1,6 @@
-﻿namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics;
+
+public interface IRenderComponent
 {
-	public interface IRenderComponent
-	{
-		void Reset();
-	}
+	void Reset();
 }

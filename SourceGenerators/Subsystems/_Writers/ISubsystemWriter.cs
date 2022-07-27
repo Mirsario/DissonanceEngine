@@ -1,9 +1,8 @@
-﻿namespace SourceGenerators.Subsystems
-{
-	public interface ISubsystemWriter
-	{
-		string AttributeName { get; }
+﻿namespace SourceGenerators.Subsystems;
 
-		void WriteData(SubsystemData subsystemData, ref bool hasErrors);
-	}
+public interface ISubsystemWriter
+{
+	string AttributeName { get; }
+
+	void WriteData(SubsystemData subsystemData, ref bool hasErrors);
 }

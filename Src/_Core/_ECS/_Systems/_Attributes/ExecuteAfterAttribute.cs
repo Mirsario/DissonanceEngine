@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+public sealed class ExecuteAfterAttribute<T> : SystemTypeDataAttribute
+	where T : GameSystem
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-	public sealed class ExecuteAfterAttribute<T> : SystemTypeDataAttribute
-		where T : GameSystem
+	public override void ModifySystemTypeData(SystemTypeData systemTypeData)
 	{
-		public override void ModifySystemTypeData(SystemTypeData systemTypeData)
-		{
-			systemTypeData.SortingDependencies.Add(typeof(T));
-		}
+		systemTypeData.SortingDependencies.Add(typeof(T));
 	}
 }

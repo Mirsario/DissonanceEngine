@@ -1,10 +1,9 @@
-﻿namespace Dissonance.Engine.Physics
+﻿namespace Dissonance.Engine.Physics;
+
+public enum RigidbodyType
 {
-	public enum RigidbodyType
-	{
-		Dynamic,
-		Static,
-		Kinematic
-	}
+	Dynamic,
+	Static,
+	Kinematic
 }
 

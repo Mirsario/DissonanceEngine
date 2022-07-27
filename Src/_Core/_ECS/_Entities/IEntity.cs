@@ -1,11 +1,10 @@
-﻿namespace Dissonance.Engine
+﻿namespace Dissonance.Engine;
+
+public interface IEntity
 {
-	public interface IEntity
-	{
-		public bool Has<T>() where T : struct;
+	public bool Has<T>() where T : struct;
 
-		public ref T Get<T>() where T : struct;
+	public ref T Get<T>() where T : struct;
 
-		public ref T Set<T>(in T value) where T : struct;
-	}
+	public ref T Set<T>(in T value) where T : struct;
 }

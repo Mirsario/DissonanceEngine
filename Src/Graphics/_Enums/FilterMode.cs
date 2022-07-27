@@ -1,9 +1,8 @@
-﻿namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics;
+
+public enum FilterMode
 {
-	public enum FilterMode
-	{
-		Point,
-		Bilinear,
-		Trilinear
-	}
+	Point,
+	Bilinear,
+	Trilinear
 }

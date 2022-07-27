@@ -1,9 +1,8 @@
-﻿namespace Dissonance.Engine.Graphics
+﻿namespace Dissonance.Engine.Graphics;
+
+public enum CursorState
 {
-	public enum CursorState
-	{
-		Normal,
-		Hidden,
-		Disabled,
-	}
+	Normal,
+	Hidden,
+	Disabled,
 }

@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+public sealed class CallbackAttribute<T> : SystemTypeDataAttribute
+	where T : CallbackSystem
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-	public sealed class CallbackAttribute<T> : SystemTypeDataAttribute
-		where T : CallbackSystem
+	public override void ModifySystemTypeData(SystemTypeData systemTypeData)
 	{
-		public override void ModifySystemTypeData(SystemTypeData systemTypeData)
-		{
-			systemTypeData.Callbacks.Add(typeof(T));
-		}
+		systemTypeData.Callbacks.Add(typeof(T));
 	}
 }

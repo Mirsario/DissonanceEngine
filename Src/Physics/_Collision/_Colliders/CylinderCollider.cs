@@ -1,9 +1,8 @@
 using BulletSharp;
 
-namespace Dissonance.Engine.Physics
-{
-	public struct CylinderCollider
-	{
+namespace Dissonance.Engine.Physics;
 
-	}
+public struct CylinderCollider
+{
+
 }

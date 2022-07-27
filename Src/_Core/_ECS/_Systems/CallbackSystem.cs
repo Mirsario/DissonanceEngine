@@ -2,80 +2,79 @@
 using System.Linq;
 using Dissonance.Engine.Utilities;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public abstract class CallbackSystem : GameSystem
 {
-	public abstract class CallbackSystem : GameSystem
-	{
-		private readonly LinkedList<GameSystem> invocationList = new();
+	private readonly LinkedList<GameSystem> invocationList = new();
 
-		private bool needsSorting;
+	private bool needsSorting;
 
-		public IEnumerable<GameSystem> InvocationList {
-			get {
-				SortSystemsIfNeeded();
-
-				return invocationList;
-			}
-		}
-
-		protected sealed override void Execute()
-		{
+	public IEnumerable<GameSystem> InvocationList {
+		get {
 			SortSystemsIfNeeded();
 
-			foreach (var subscriber in invocationList) {
-				subscriber.Update();
-			}
+			return invocationList;
 		}
+	}
 
-		internal void AddSystem(GameSystem system)
-		{
-			invocationList.AddLast(system);
+	protected sealed override void Execute()
+	{
+		SortSystemsIfNeeded();
 
-			needsSorting = true;
+		foreach (var subscriber in invocationList) {
+			subscriber.Update();
 		}
+	}
 
-		private void SortSystemsIfNeeded()
-		{
-			if (needsSorting) {
-				SortSystems();
+	internal void AddSystem(GameSystem system)
+	{
+		invocationList.AddLast(system);
 
-				needsSorting = false;
-			}
+		needsSorting = true;
+	}
+
+	private void SortSystemsIfNeeded()
+	{
+		if (needsSorting) {
+			SortSystems();
+
+			needsSorting = false;
 		}
+	}
 
-		private void SortSystems()
+	private void SortSystems()
+	{
+		IEnumerable<int> GetDependencyIndices(GameSystem system)
 		{
-			IEnumerable<int> GetDependencyIndices(GameSystem system)
-			{
-				foreach (var systemType in system.TypeData.SortingDependencies) {
-					int index = 0;
-
-					foreach (var invokedSystem in invocationList) {
-						if (invokedSystem.GetType() == systemType) {
-							yield return index;
-						}
-
-						index++;
-					}
-				}
-			}
-
-			lock (invocationList) {
-				// Performance could've been better.
-				var sortedArray = new GameSystem[invocationList.Count];
+			foreach (var systemType in system.TypeData.SortingDependencies) {
 				int index = 0;
 
-				foreach (var system in invocationList) {
-					sortedArray[index++] = system;
+				foreach (var invokedSystem in invocationList) {
+					if (invokedSystem.GetType() == systemType) {
+						yield return index;
+					}
+
+					index++;
 				}
+			}
+		}
 
-				sortedArray.DependencySort(GetDependencyIndices, throwOnRecursion: true);
+		lock (invocationList) {
+			// Performance could've been better.
+			var sortedArray = new GameSystem[invocationList.Count];
+			int index = 0;
 
-				invocationList.Clear();
+			foreach (var system in invocationList) {
+				sortedArray[index++] = system;
+			}
 
-				for (int i = 0; i < sortedArray.Length; i++) {
-					invocationList.AddLast(sortedArray[i]);
-				}
+			sortedArray.DependencySort(GetDependencyIndices, throwOnRecursion: true);
+
+			invocationList.Clear();
+
+			for (int i = 0; i < sortedArray.Length; i++) {
+				invocationList.AddLast(sortedArray[i]);
 			}
 		}
 	}

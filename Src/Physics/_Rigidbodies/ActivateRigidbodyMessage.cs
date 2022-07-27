@@ -1,12 +1,11 @@
-﻿namespace Dissonance.Engine.Physics
-{
-	public readonly struct ActivateRigidbodyMessage
-	{
-		public readonly Entity Entity;
+﻿namespace Dissonance.Engine.Physics;
 
-		public ActivateRigidbodyMessage(Entity entity)
-		{
-			Entity = entity;
-		}
+public readonly struct ActivateRigidbodyMessage
+{
+	public readonly Entity Entity;
+
+	public ActivateRigidbodyMessage(Entity entity)
+	{
+		Entity = entity;
 	}
 }

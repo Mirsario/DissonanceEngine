@@ -1,27 +1,26 @@
 using static Dissonance.Engine.Graphics.OpenGLApi;
 
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics;
+
+partial class Shader
 {
-	partial class Shader
+	//TODO: Finish this
+
+	public void SetFloat(string uniformName, float value)
 	{
-		//TODO: Finish this
+		SetShader(this);
 
-		public void SetFloat(string uniformName, float value)
-		{
-			SetShader(this);
-
-			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				OpenGL.Uniform1(uniform.Location, value);
-			}
+		if (uniforms.TryGetValue(uniformName, out var uniform)) {
+			OpenGL.Uniform1(uniform.Location, value);
 		}
+	}
 
-		public void SetVector2(string uniformName, Vector2 value)
-		{
-			SetShader(this);
+	public void SetVector2(string uniformName, Vector2 value)
+	{
+		SetShader(this);
 
-			if (uniforms.TryGetValue(uniformName, out var uniform)) {
-				OpenGL.Uniform2(uniform.Location, value.X, value.Y);
-			}
+		if (uniforms.TryGetValue(uniformName, out var uniform)) {
+			OpenGL.Uniform2(uniform.Location, value.X, value.Y);
 		}
 	}
 }

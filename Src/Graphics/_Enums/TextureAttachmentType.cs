@@ -1,10 +1,9 @@
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics;
+
+public enum TextureAttachmentType
 {
-	public enum TextureAttachmentType
-	{
-		Color,
-		Depth,
-		DepthStencil,
-		Stencil
-	}
+	Color,
+	Depth,
+	DepthStencil,
+	Stencil
 }

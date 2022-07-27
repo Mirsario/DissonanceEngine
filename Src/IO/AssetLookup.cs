@@ -2,71 +2,70 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.IO
-{
-	internal static class AssetLookup
-	{
-		public static event Action OnClear;
+namespace Dissonance.Engine.IO;
 
-		public static void Clear() => OnClear?.Invoke();
+internal static class AssetLookup
+{
+	public static event Action OnClear;
+
+	public static void Clear() => OnClear?.Invoke();
+}
+
+internal static class AssetLookup<T>
+{
+	private static readonly ConcurrentDictionary<string, (string assetPath, Asset<T> asset)> lookup = new();
+
+	public static int Count => lookup.Count;
+
+	static AssetLookup()
+	{
+		AssetLookup.OnClear += () => {
+			lookup.Clear();
+		};
 	}
 
-	internal static class AssetLookup<T>
+	public static void Register(string name, string path, Asset<T> asset)
 	{
-		private static readonly ConcurrentDictionary<string, (string assetPath, Asset<T> asset)> lookup = new();
+		if (lookup.TryGetValue(name, out var existingTuple) && existingTuple.assetPath != path) {
+			lookup[name] = (null, null); // This marks the registry as ambiguous.
+		} else {
+			lookup[name] = (path, asset);
+		}
+	}
 
-		public static int Count => lookup.Count;
+	public static Asset<T> Get(string fullName, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+	{
+		var tuple = lookup[fullName];
 
-		static AssetLookup()
-		{
-			AssetLookup.OnClear += () => {
-				lookup.Clear();
-			};
+		if (tuple.assetPath == null && tuple.asset == null) {
+			throw new ArgumentException($"Key '{fullName}' is ambiguous.");
 		}
 
-		public static void Register(string name, string path, Asset<T> asset)
-		{
-			if (lookup.TryGetValue(name, out var existingTuple) && existingTuple.assetPath != path) {
-				lookup[name] = (null, null); // This marks the registry as ambiguous.
-			} else {
-				lookup[name] = (path, asset);
-			}
+		if (tuple.asset == null) {
+			tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
+			lookup[fullName] = tuple;
 		}
 
-		public static Asset<T> Get(string fullName, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
-		{
-			var tuple = lookup[fullName];
+		return tuple.asset;
+	}
 
-			if (tuple.assetPath == null && tuple.asset == null) {
-				throw new ArgumentException($"Key '{fullName}' is ambiguous.");
-			}
+	public static bool TryGet(string fullName, out Asset<T> result, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
+	{
+		var tuple = lookup[fullName];
 
-			if (tuple.asset == null) {
-				tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
-				lookup[fullName] = tuple;
-			}
+		if (tuple.assetPath == null && tuple.asset == null) {
+			result = null;
 
-			return tuple.asset;
+			return false;
 		}
 
-		public static bool TryGet(string fullName, out Asset<T> result, AssetRequestMode mode = AssetRequestMode.DoNotLoad)
-		{
-			var tuple = lookup[fullName];
-
-			if (tuple.assetPath == null && tuple.asset == null) {
-				result = null;
-
-				return false;
-			}
-
-			if (tuple.asset == null) {
-				tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
-				lookup[fullName] = tuple;
-			}
-
-			result = tuple.asset;
-
-			return true;
+		if (tuple.asset == null) {
+			tuple.asset = Assets.Get<T>(tuple.assetPath, mode);
+			lookup[fullName] = tuple;
 		}
+
+		result = tuple.asset;
+
+		return true;
 	}
 }

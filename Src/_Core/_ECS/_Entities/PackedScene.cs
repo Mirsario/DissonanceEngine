@@ -2,31 +2,30 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public sealed class PackedScene
 {
-	public sealed class PackedScene
+	private readonly List<PackedEntity> Entities = new();
+
+	public PackedEntity CreateEntity()
 	{
-		private readonly List<PackedEntity> Entities = new();
+		var entity = new PackedEntity();
 
-		public PackedEntity CreateEntity()
-		{
-			var entity = new PackedEntity();
+		Entities.Add(entity);
 
-			Entities.Add(entity);
+		return entity;
+	}
 
-			return entity;
-		}
+	public ReadOnlySpan<PackedEntity> ReadEntities()
+	{
+		return CollectionsMarshal.AsSpan(Entities);
+	}
 
-		public ReadOnlySpan<PackedEntity> ReadEntities()
-		{
-			return CollectionsMarshal.AsSpan(Entities);
-		}
-
-		public IEnumerable<Entity> Unpack(World world)
-		{
-			foreach (var entity in Entities) {
-				yield return entity.Unpack(world);
-			}
+	public IEnumerable<Entity> Unpack(World world)
+	{
+		foreach (var entity in Entities) {
+			yield return entity.Unpack(world);
 		}
 	}
 }

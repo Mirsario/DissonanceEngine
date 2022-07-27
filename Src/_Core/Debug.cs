@@ -5,84 +5,83 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public static partial class Debug
 {
-	public static partial class Debug
+	public static readonly object LoggingLock = Console.Out;
+	public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new();
+
+	public static bool LogCurrentThread { get; set; }
+	public static bool LogAssembly { get; set; } = true;
+
+	public static void Log(object message, bool showTrace = false, int stackframeOffset = 1)
 	{
-		public static readonly object LoggingLock = Console.Out;
-		public static readonly Dictionary<string, ConsoleColor> ThreadNameToColor = new();
+		var stackTrace = new StackTrace(true);
+		var stackFrames = stackTrace.GetFrames();
+		var stackFrame = stackFrames[stackframeOffset];
+		string fileName = Path.GetFileName(stackFrame.GetFileName());
+		int lineNumber = stackFrames[stackframeOffset].GetFileLineNumber();
+		var stackFrameMethod = stackFrame.GetMethod();
 
-		public static bool LogCurrentThread { get; set; }
-		public static bool LogAssembly { get; set; } = true;
+		lock(LoggingLock) {
+			string threadName = Thread.CurrentThread.Name;
+			bool logThread = LogCurrentThread && threadName != null;
 
-		public static void Log(object message, bool showTrace = false, int stackframeOffset = 1)
-		{
-			var stackTrace = new StackTrace(true);
-			var stackFrames = stackTrace.GetFrames();
-			var stackFrame = stackFrames[stackframeOffset];
-			string fileName = Path.GetFileName(stackFrame.GetFileName());
-			int lineNumber = stackFrames[stackframeOffset].GetFileLineNumber();
-			var stackFrameMethod = stackFrame.GetMethod();
+			lock(ThreadNameToColor) {
+				Console.ForegroundColor = logThread && ThreadNameToColor.TryGetValue(threadName, out var consoleColor) ? consoleColor : ConsoleColor.DarkGray;
+			}
 
-			lock(LoggingLock) {
-				string threadName = Thread.CurrentThread.Name;
-				bool logThread = LogCurrentThread && threadName != null;
+			Console.Write("[");
 
-				lock(ThreadNameToColor) {
-					Console.ForegroundColor = logThread && ThreadNameToColor.TryGetValue(threadName, out var consoleColor) ? consoleColor : ConsoleColor.DarkGray;
-				}
+			if (logThread) {
+				Console.Write($"{Thread.CurrentThread.Name} - ");
+			}
 
-				Console.Write("[");
+			if (LogAssembly) {
+				Console.Write($"{(stackFrameMethod != null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
+			}
 
-				if (logThread) {
-					Console.Write($"{Thread.CurrentThread.Name} - ");
-				}
+			Console.Write($"{fileName}, line {lineNumber}] ");
 
-				if (LogAssembly) {
-					Console.Write($"{(stackFrameMethod != null ? stackFrameMethod.DeclaringType.Assembly.GetName().Name : "Unknown")} - ");
-				}
+			Console.ForegroundColor = ConsoleColor.Gray;
 
-				Console.Write($"{fileName}, line {lineNumber}] ");
+			Console.WriteLine(message);
 
-				Console.ForegroundColor = ConsoleColor.Gray;
+			if (showTrace) {
+				var stringBuilder = new StringBuilder();
 
-				Console.WriteLine(message);
-
-				if (showTrace) {
-					var stringBuilder = new StringBuilder();
-
-					for (int i = 1; i < stackFrames.Length; i++) {
-						if (stackFrames[i].GetFileName() == null) {
-							break;
-						}
-
-						var method = stackFrames[i].GetMethod();
-						var parameters = method.GetParameters();
-
-						stringBuilder.Append($"  {Path.GetFileName(stackFrames[i].GetFileName())}:{method.Name}(");
-
-						for (int j = 0; j < parameters.Length; j++) {
-							stringBuilder.Append($"{(j > 0 ? "," : "")}{parameters[j].ParameterType.Name}");
-						}
-
-						stringBuilder.Append($") at line {stackFrames[i].GetFileLineNumber()}");
+				for (int i = 1; i < stackFrames.Length; i++) {
+					if (stackFrames[i].GetFileName() == null) {
+						break;
 					}
 
-					Console.Write(stringBuilder);
+					var method = stackFrames[i].GetMethod();
+					var parameters = method.GetParameters();
+
+					stringBuilder.Append($"  {Path.GetFileName(stackFrames[i].GetFileName())}:{method.Name}(");
+
+					for (int j = 0; j < parameters.Length; j++) {
+						stringBuilder.Append($"{(j > 0 ? "," : "")}{parameters[j].ParameterType.Name}");
+					}
+
+					stringBuilder.Append($") at line {stackFrames[i].GetFileLineNumber()}");
 				}
+
+				Console.Write(stringBuilder);
 			}
 		}
+	}
 
-		public static void RemoveLine(int line)
-		{
-			int currentLine = Console.CursorTop - 1;
+	public static void RemoveLine(int line)
+	{
+		int currentLine = Console.CursorTop - 1;
 
-			Console.SetCursorPosition(0, line);
+		Console.SetCursorPosition(0, line);
 
-			Console.Write(new string(' ', Console.WindowWidth));
+		Console.Write(new string(' ', Console.WindowWidth));
 
-			Console.SetCursorPosition(0, currentLine);
-		}
+		Console.SetCursorPosition(0, currentLine);
 	}
 }
 

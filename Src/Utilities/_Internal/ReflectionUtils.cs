@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dissonance.Engine.Utilities
+namespace Dissonance.Engine.Utilities;
+
+internal static class ReflectionUtils
 {
-	internal static class ReflectionUtils
+	public static IEnumerable<Type> EnumerateBaseTypes(Type type, bool includingOriginal = false, Type stopAt = null)
 	{
-		public static IEnumerable<Type> EnumerateBaseTypes(Type type, bool includingOriginal = false, Type stopAt = null)
-		{
-			if (!includingOriginal) {
-				type = type.BaseType;
-			}
+		if (!includingOriginal) {
+			type = type.BaseType;
+		}
 
-			while (type != stopAt) {
-				yield return type;
+		while (type != stopAt) {
+			yield return type;
 
-				type = type.BaseType;
-			}
+			type = type.BaseType;
 		}
 	}
 }

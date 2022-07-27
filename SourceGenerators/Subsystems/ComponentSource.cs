@@ -1,9 +1,8 @@
-﻿namespace SourceGenerators.Subsystems
+﻿namespace SourceGenerators.Subsystems;
+
+public enum ComponentSource
 {
-	public enum ComponentSource
-	{
-		Entity,
-		World,
-		Global
-	}
+	Entity,
+	World,
+	Global
 }

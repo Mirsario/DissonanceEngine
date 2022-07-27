@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Dissonance.Engine.IO
+namespace Dissonance.Engine.IO;
+
+public interface IAssetSource
 {
-	public interface IAssetSource
-	{
-		IEnumerable<string> EnumerateAssets();
+	IEnumerable<string> EnumerateAssets();
 
-		bool HasAsset(string path);
+	bool HasAsset(string path);
 
-		Stream OpenStream(string path);
-	}
+	Stream OpenStream(string path);
 }

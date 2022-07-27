@@ -1,9 +1,8 @@
-﻿namespace Dissonance.Engine.IO
+﻿namespace Dissonance.Engine.IO;
+
+public enum AssetState
 {
-	public enum AssetState
-	{
-		NotLoaded,
-		Loading,
-		Loaded,
-	}
+	NotLoaded,
+	Loading,
+	Loaded,
 }

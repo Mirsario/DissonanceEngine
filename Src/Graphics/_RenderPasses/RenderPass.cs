@@ -1,77 +1,76 @@
 using System;
 
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics;
+
+public abstract class RenderPass : IDisposable
 {
-	public abstract class RenderPass : IDisposable
-	{
-		private RenderTexture[] passedTextures;
+	private RenderTexture[] passedTextures;
 
-		public string Name { get; set; }
-		public bool Enabled { get; set; } = true;
-		public Framebuffer Framebuffer { get; set; }
-		public Renderbuffer[] Renderbuffers { get; set; }
+	public string Name { get; set; }
+	public bool Enabled { get; set; } = true;
+	public Framebuffer Framebuffer { get; set; }
+	public Renderbuffer[] Renderbuffers { get; set; }
 
-		public RenderTexture[] PassedTextures {
-			get => passedTextures;
-			set {
-				if (value == null || value.Length == 0) {
-					passedTextures = null;
-					return;
-				}
-
-				int length = value.Length;
-
-				if (passedTextures == null || passedTextures.Length != length) {
-					passedTextures = new RenderTexture[length];
-				}
-
-				Array.Copy(value, passedTextures, length);
+	public RenderTexture[] PassedTextures {
+		get => passedTextures;
+		set {
+			if (value == null || value.Length == 0) {
+				passedTextures = null;
+				return;
 			}
+
+			int length = value.Length;
+
+			if (passedTextures == null || passedTextures.Length != length) {
+				passedTextures = new RenderTexture[length];
+			}
+
+			Array.Copy(value, passedTextures, length);
 		}
+	}
 
-		protected RenderPass() { }
+	protected RenderPass() { }
 
-		public abstract void Render();
+	public abstract void Render();
 
-		protected virtual void OnInit() { }
+	protected virtual void OnInit() { }
 
-		protected virtual void OnDispose() { }
+	protected virtual void OnDispose() { }
 
-		public void Dispose()
-		{
-			OnDispose();
-			GC.SuppressFinalize(this);
-		}
+	public void Dispose()
+	{
+		OnDispose();
+		GC.SuppressFinalize(this);
+	}
 
-		public ref T GlobalGet<T>() where T : struct
-			=> ref ComponentManager.GetComponent<T>();
+	public ref T GlobalGet<T>() where T : struct
+		=> ref ComponentManager.GetComponent<T>();
 
-		public void GlobalSet<T>(T value) where T : struct
-			=> ComponentManager.SetComponent(value);
+	public void GlobalSet<T>(T value) where T : struct
+		=> ComponentManager.SetComponent(value);
 
-		public static T Create<T>(string name, Action<T> initializer = null) where T : RenderPass, new()
-		{
-			var pass = new T {
-				Name = name
-			};
+	public static T Create<T>(string name, Action<T> initializer = null) where T : RenderPass, new()
+	{
+		var pass = new T {
+			Name = name
+		};
 
-			initializer?.Invoke(pass);
+		initializer?.Invoke(pass);
 
-			pass.OnInit();
+		pass.OnInit();
 
-			return pass;
-		}
+		return pass;
+	}
 
-		public static RenderPass Create(Type type, string name, Action<RenderPass> initializer = null)
-		{
-			var pass = (RenderPass)Activator.CreateInstance(type, true);
+	public static RenderPass Create(Type type, string name, Action<RenderPass> initializer = null)
+	{
+		var pass = (RenderPass)Activator.CreateInstance(type, true);
 
-			pass.Name = name;
-			pass.Enabled = true;
+		pass.Name = name;
+		pass.Enabled = true;
 
-			initializer?.Invoke(pass);
+		initializer?.Invoke(pass);
 
-			return pass;
-		}
+		return pass;
 	}
 }
