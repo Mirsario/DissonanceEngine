@@ -1,37 +1,36 @@
 ﻿using BulletSharp;
 using Dissonance.Engine.Graphics;
 
-namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics;
+
+// Concave shapes should only be used for static meshes or kinematic rigidbodies
+public class ConcaveCollisionMesh : CollisionMesh
 {
-	// Concave shapes should only be used for static meshes or kinematic rigidbodies
-	public class ConcaveCollisionMesh : CollisionMesh
+	public override void SetupFromMesh(Mesh mesh)
 	{
-		public override void SetupFromMesh(Mesh mesh)
-		{
-			var triMesh = new TriangleMesh();
+		var triMesh = new TriangleMesh();
 
-			int i = 0;
+		int i = 0;
 
-			var vertices = mesh.Vertices;
+		var vertices = mesh.Vertices;
 
-			while (i < mesh.Indices.Length) {
-				triMesh.AddTriangle(
-					vertices[mesh.Indices[i++]],
-					vertices[mesh.Indices[i++]],
-					vertices[mesh.Indices[i++]]
-				);
-			}
-
-			CollisionShape = new BvhTriangleMeshShape(triMesh, true);
+		while (i < mesh.Indices.Length) {
+			triMesh.AddTriangle(
+				vertices[mesh.Indices[i++]],
+				vertices[mesh.Indices[i++]],
+				vertices[mesh.Indices[i++]]
+			);
 		}
 
-		public static explicit operator ConcaveCollisionMesh(Mesh mesh)
-		{
-			var collisionMesh = new ConcaveCollisionMesh();
+		CollisionShape = new BvhTriangleMeshShape(triMesh, true);
+	}
 
-			collisionMesh.SetupFromMesh(mesh);
+	public static explicit operator ConcaveCollisionMesh(Mesh mesh)
+	{
+		var collisionMesh = new ConcaveCollisionMesh();
 
-			return collisionMesh;
-		}
+		collisionMesh.SetupFromMesh(mesh);
+
+		return collisionMesh;
 	}
 }

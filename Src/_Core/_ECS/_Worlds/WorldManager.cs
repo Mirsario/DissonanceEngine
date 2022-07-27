@@ -2,66 +2,65 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public sealed class WorldManager : EngineModule
 {
-	public sealed class WorldManager : EngineModule
+	internal const int InvalidWorldId = 0;
+	internal const int PrefabWorldId = 1;
+	internal const int DefaultWorldId = 2;
+
+	public static World DefaultWorld { get; private set; }
+	public static World PrefabWorld { get; private set; }
+
+	internal static event Action<World, WorldCreationOptions> OnWorldCreated;
+	internal static event Action<World> OnWorldDestroyed; //TODO: Call this.
+
+	private static readonly List<World> Worlds = new() { null };
+
+	protected override void Init()
 	{
-		internal const int InvalidWorldId = 0;
-		internal const int PrefabWorldId = 1;
-		internal const int DefaultWorldId = 2;
+		PrefabWorld = CreateWorld(new WorldCreationOptions { AddDefaultSystems = false });
+		DefaultWorld = CreateWorld();
 
-		public static World DefaultWorld { get; private set; }
-		public static World PrefabWorld { get; private set; }
+		// Sanity check
+		if (DefaultWorld.Id != DefaultWorldId) {
+			throw new InvalidOperationException($"Default world ID equals {DefaultWorld.Id}, but {DefaultWorldId} was expected. Are we all insane here?");
+		}
+	}
 
-		internal static event Action<World, WorldCreationOptions> OnWorldCreated;
-		internal static event Action<World> OnWorldDestroyed; //TODO: Call this.
+	public static World CreateWorld(WorldCreationOptions? options = null)
+	{
+		var world = new World(Worlds.Count);
+		var usedOptions = options ?? new();
 
-		private static readonly List<World> Worlds = new() { null };
+		Worlds.Add(world);
 
-		protected override void Init()
-		{
-			PrefabWorld = CreateWorld(new WorldCreationOptions { AddDefaultSystems = false });
-			DefaultWorld = CreateWorld();
+		OnWorldCreated?.Invoke(world, usedOptions);
 
-			// Sanity check
-			if (DefaultWorld.Id != DefaultWorldId) {
-				throw new InvalidOperationException($"Default world ID equals {DefaultWorld.Id}, but {DefaultWorldId} was expected. Are we all insane here?");
-			}
+		world.Init();
+
+		return world;
+	}
+
+	public static World GetWorld(int id)
+		=> Worlds[id] ?? throw new ArgumentException($"No world with id '{id}'.");
+
+	public static bool TryGetWorld(int id, out World result)
+	{
+		if (id >= 0 && id < Worlds.Count) {
+			result = Worlds[id];
+
+			return result != null;
 		}
 
-		public static World CreateWorld(WorldCreationOptions? options = null)
-		{
-			var world = new World(Worlds.Count);
-			var usedOptions = options ?? new();
+		result = null;
 
-			Worlds.Add(world);
+		return false;
+	}
 
-			OnWorldCreated?.Invoke(world, usedOptions);
-
-			world.Init();
-
-			return world;
-		}
-
-		public static World GetWorld(int id)
-			=> Worlds[id] ?? throw new ArgumentException($"No world with id '{id}'.");
-
-		public static bool TryGetWorld(int id, out World result)
-		{
-			if (id >= 0 && id < Worlds.Count) {
-				result = Worlds[id];
-
-				return result != null;
-			}
-
-			result = null;
-
-			return false;
-		}
-
-		internal static ReadOnlySpan<World> ReadWorlds()
-		{
-			return CollectionsMarshal.AsSpan(Worlds).Slice(1);
-		}
+	internal static ReadOnlySpan<World> ReadWorlds()
+	{
+		return CollectionsMarshal.AsSpan(Worlds).Slice(1);
 	}
 }

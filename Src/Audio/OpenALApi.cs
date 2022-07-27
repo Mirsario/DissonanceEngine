@@ -1,41 +1,40 @@
 ﻿using Silk.NET.OpenAL;
 
-namespace Dissonance.Engine.Audio
+namespace Dissonance.Engine.Audio;
+
+[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
+public sealed class OpenALApi : EngineModule
 {
-	[Autoload(DisablingGameFlags = GameFlags.NoAudio)]
-	public sealed class OpenALApi : EngineModule
+	public static AL OpenAL { get; private set; }
+	public static ALContext OpenALContext { get; private set; }
+
+	public readonly bool SoftwareAL;
+
+	private OpenALApi() : this(true) { }
+
+	public OpenALApi(bool softwareAL)
 	{
-		public static AL OpenAL { get; private set; }
-		public static ALContext OpenALContext { get; private set; }
+		SoftwareAL = softwareAL;
+	}
 
-		public readonly bool SoftwareAL;
+	protected override void Init()
+	{
+		OpenAL = AL.GetApi(soft: SoftwareAL);
+		OpenALContext = ALContext.GetApi(soft: SoftwareAL);
+	}
 
-		private OpenALApi() : this(true) { }
+	protected override void OnDispose()
+	{
+		if (OpenAL != null) {
+			OpenAL.Dispose();
 
-		public OpenALApi(bool softwareAL)
-		{
-			SoftwareAL = softwareAL;
+			OpenAL = null;
 		}
 
-		protected override void Init()
-		{
-			OpenAL = AL.GetApi(soft: SoftwareAL);
-			OpenALContext = ALContext.GetApi(soft: SoftwareAL);
-		}
+		if (OpenALContext != null) {
+			OpenALContext.Dispose();
 
-		protected override void OnDispose()
-		{
-			if (OpenAL != null) {
-				OpenAL.Dispose();
-
-				OpenAL = null;
-			}
-
-			if (OpenALContext != null) {
-				OpenALContext.Dispose();
-
-				OpenALContext = null;
-			}
+			OpenALContext = null;
 		}
 	}
 }

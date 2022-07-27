@@ -4,53 +4,52 @@ using System.Threading.Tasks;
 using Dissonance.Engine.Graphics;
 using Newtonsoft.Json.Linq;
 
-namespace Dissonance.Engine.IO
+namespace Dissonance.Engine.IO;
+
+public partial class ShaderReader : IAssetReader<Asset<Shader>[]>
 {
-	public partial class ShaderReader : IAssetReader<Asset<Shader>[]>
+	public string[] Extensions { get; } = { ".program" };
+
+	public bool AutoloadAssets => !GameEngine.Flags.HasFlag(GameFlags.NoGraphics);
+
+	public async ValueTask<Asset<Shader>[]> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
 	{
-		public string[] Extensions { get; } = { ".program" };
+		string assetPath = assetFile.Path;
+		string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
 
-		public bool AutoloadAssets => !GameEngine.Flags.HasFlag(GameFlags.NoGraphics);
+		using var stream = assetFile.OpenStream();
+		using var reader = new StreamReader(stream);
 
-		public async ValueTask<Asset<Shader>[]> ReadAsset(AssetFileEntry assetFile, MainThreadCreationContext switchToMainThread)
-		{
-			string assetPath = assetFile.Path;
-			string directory = Assets.FilterPath(Path.GetDirectoryName(assetPath));
+		string jsonText = reader.ReadToEnd();
+		var shaders = new List<Asset<Shader>>();
 
-			using var stream = assetFile.OpenStream();
-			using var reader = new StreamReader(stream);
+		var jsonShaders = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<Dictionary<string, JsonShaderProgram>>();
 
-			string jsonText = reader.ReadToEnd();
-			var shaders = new List<Asset<Shader>>();
+		await switchToMainThread;
 
-			var jsonShaders = Assets.Get<JObject>(assetPath, AssetRequestMode.ImmediateLoad).Value.ToObject<Dictionary<string, JsonShaderProgram>>();
+		foreach (var pair in jsonShaders) {
+			string name = pair.Key;
+			var jsonShader = pair.Value;
 
-			await switchToMainThread;
+			string vertexCode = Assets.Get<string>(jsonShader.VertexShader, directory, AssetRequestMode.ImmediateLoad).Value;
+			string fragmentCode = Assets.Get<string>(jsonShader.FragmentShader, directory, AssetRequestMode.ImmediateLoad).Value;
+			string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.GeometryShader) ? Assets.Get<string>(jsonShader.GeometryShader, directory, AssetRequestMode.ImmediateLoad).Value : null;
 
-			foreach (var pair in jsonShaders) {
-				string name = pair.Key;
-				var jsonShader = pair.Value;
+			var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.ShaderDefines);
 
-				string vertexCode = Assets.Get<string>(jsonShader.VertexShader, directory, AssetRequestMode.ImmediateLoad).Value;
-				string fragmentCode = Assets.Get<string>(jsonShader.FragmentShader, directory, AssetRequestMode.ImmediateLoad).Value;
-				string geometryCode = !string.IsNullOrWhiteSpace(jsonShader.GeometryShader) ? Assets.Get<string>(jsonShader.GeometryShader, directory, AssetRequestMode.ImmediateLoad).Value : null;
+			shader.Priority = jsonShader.Queue;
+			shader.CullMode = jsonShader.CullMode;
+			shader.PolygonMode = jsonShader.PolygonMode;
+			shader.BlendFactorSrc = jsonShader.BlendFactorSrc;
+			shader.BlendFactorDst = jsonShader.BlendFactorDst;
+			shader.DepthTest = jsonShader.DepthTest;
+			shader.DepthWrite = jsonShader.DepthWrite;
 
-				var shader = Shader.FromCode(name, vertexCode, fragmentCode, geometryCode, jsonShader.ShaderDefines);
+			var shaderAsset = Assets.CreateLoaded(name, shader);
 
-				shader.Priority = jsonShader.Queue;
-				shader.CullMode = jsonShader.CullMode;
-				shader.PolygonMode = jsonShader.PolygonMode;
-				shader.BlendFactorSrc = jsonShader.BlendFactorSrc;
-				shader.BlendFactorDst = jsonShader.BlendFactorDst;
-				shader.DepthTest = jsonShader.DepthTest;
-				shader.DepthWrite = jsonShader.DepthWrite;
-
-				var shaderAsset = Assets.CreateLoaded(name, shader);
-
-				shaders.Add(shaderAsset);
-			}
-
-			return shaders.ToArray();
+			shaders.Add(shaderAsset);
 		}
+
+		return shaders.ToArray();
 	}
 }

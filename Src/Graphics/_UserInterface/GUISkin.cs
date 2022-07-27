@@ -1,17 +1,16 @@
-﻿namespace Dissonance.Engine.Graphics
-{
-	public class GUISkin
-	{
-		public GUIStyle BoxStyle { get; set; }
-		public GUIStyle ButtonStyle { get; set; }
+﻿namespace Dissonance.Engine.Graphics;
 
-		public GUISkin()
-		{
-			BoxStyle = new GUIStyle();
-			ButtonStyle = new GUIStyle {
-				TextAlignment = TextAlignment.MiddleCenter
-			};
-		}
+public class GUISkin
+{
+	public GUIStyle BoxStyle { get; set; }
+	public GUIStyle ButtonStyle { get; set; }
+
+	public GUISkin()
+	{
+		BoxStyle = new GUIStyle();
+		ButtonStyle = new GUIStyle {
+			TextAlignment = TextAlignment.MiddleCenter
+		};
 	}
 }
 

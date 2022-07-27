@@ -1,42 +1,41 @@
 ﻿using BulletSharp;
 using Dissonance.Engine.Graphics;
 
-namespace Dissonance.Engine.Physics
+namespace Dissonance.Engine.Physics;
+
+// Convex shapes can be used for anything
+public class ConvexCollisionMesh : CollisionMesh
 {
-	// Convex shapes can be used for anything
-	public class ConvexCollisionMesh : CollisionMesh
+	public override void SetupFromMesh(Mesh mesh)
 	{
-		public override void SetupFromMesh(Mesh mesh)
-		{
-			var triMesh = new TriangleMesh();
+		var triMesh = new TriangleMesh();
 
-			int i = 0;
+		int i = 0;
 
-			var vertices = mesh.Vertices;
+		var vertices = mesh.Vertices;
 
-			while (i < mesh.Indices.Length) {
-				triMesh.AddTriangle(
-					vertices[mesh.Indices[i++]],
-					vertices[mesh.Indices[i++]],
-					vertices[mesh.Indices[i++]]
-				);
-			}
-
-			var tempShape = new ConvexTriangleMeshShape(triMesh);
-			using var tempHull = new ShapeHull(tempShape);
-
-			tempHull.BuildHull(tempShape.Margin);
-
-			CollisionShape = new ConvexHullShape(tempHull.Vertices);
+		while (i < mesh.Indices.Length) {
+			triMesh.AddTriangle(
+				vertices[mesh.Indices[i++]],
+				vertices[mesh.Indices[i++]],
+				vertices[mesh.Indices[i++]]
+			);
 		}
 
-		public static explicit operator ConvexCollisionMesh(Mesh mesh)
-		{
-			var collisionMesh = new ConvexCollisionMesh();
+		var tempShape = new ConvexTriangleMeshShape(triMesh);
+		using var tempHull = new ShapeHull(tempShape);
 
-			collisionMesh.SetupFromMesh(mesh);
+		tempHull.BuildHull(tempShape.Margin);
 
-			return collisionMesh;
-		}
+		CollisionShape = new ConvexHullShape(tempHull.Vertices);
+	}
+
+	public static explicit operator ConvexCollisionMesh(Mesh mesh)
+	{
+		var collisionMesh = new ConvexCollisionMesh();
+
+		collisionMesh.SetupFromMesh(mesh);
+
+		return collisionMesh;
 	}
 }

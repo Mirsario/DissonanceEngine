@@ -4,65 +4,64 @@ using System.Reflection;
 
 #nullable enable
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public static class AssemblyManagement
 {
-	public static class AssemblyManagement
+	public delegate void AssemblyRegistrationCallback(Assembly assembly, Type[] types);
+
+	private static readonly List<WeakReference<Assembly>> assemblies = new();
+
+	private static AssemblyRegistrationCallback? onAssemblyRegistered;
+	
+	static AssemblyManagement()
 	{
-		public delegate void AssemblyRegistrationCallback(Assembly assembly, Type[] types);
+		RegisterAssembly(typeof(AssemblyManagement).Assembly);
+	}
 
-		private static readonly List<WeakReference<Assembly>> assemblies = new();
+	public static void RegisterAssembly(Assembly assembly)
+	{
+		lock (assemblies) {
+			onAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
 
-		private static AssemblyRegistrationCallback? onAssemblyRegistered;
-		
-		static AssemblyManagement()
-		{
-			RegisterAssembly(typeof(AssemblyManagement).Assembly);
+			assemblies.Add(new WeakReference<Assembly>(assembly));
 		}
+	}
 
-		public static void RegisterAssembly(Assembly assembly)
-		{
-			lock (assemblies) {
-				onAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
+	/// <summary>
+	/// Registers a callback to be invoked for every future registered assembly, and also every assembly that has already been registered.
+	/// </summary>
+	/// <param name="callback"> The callback to execute for every assembly that will be or has been registered. </param>
+	public static void AddAssemblyCallback(AssemblyRegistrationCallback callback)
+	{
+		onAssemblyRegistered += callback;
 
-				assemblies.Add(new WeakReference<Assembly>(assembly));
-			}
+		foreach (var assembly in EnumerateAssemblies()) {
+			onAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
 		}
+	}
 
-		/// <summary>
-		/// Registers a callback to be invoked for every future registered assembly, and also every assembly that has already been registered.
-		/// </summary>
-		/// <param name="callback"> The callback to execute for every assembly that will be or has been registered. </param>
-		public static void AddAssemblyCallback(AssemblyRegistrationCallback callback)
-		{
-			onAssemblyRegistered += callback;
+	/// <summary>
+	/// Unregisters a
+	/// </summary>
+	/// <param name="callback"></param>
+	public static void RemoveAssemblyCallback(AssemblyRegistrationCallback callback)
+	{
+		onAssemblyRegistered -= callback;
+	}
 
-			foreach (var assembly in EnumerateAssemblies()) {
-				onAssemblyRegistered?.Invoke(assembly, assembly.GetTypes());
-			}
-		}
+	public static IEnumerable<Assembly> EnumerateAssemblies()
+	{
+		lock (assemblies) {
+			for (int i = 0; i < assemblies.Count; i++) {
+				var weakRef = assemblies[i];
 
-		/// <summary>
-		/// Unregisters a
-		/// </summary>
-		/// <param name="callback"></param>
-		public static void RemoveAssemblyCallback(AssemblyRegistrationCallback callback)
-		{
-			onAssemblyRegistered -= callback;
-		}
-
-		public static IEnumerable<Assembly> EnumerateAssemblies()
-		{
-			lock (assemblies) {
-				for (int i = 0; i < assemblies.Count; i++) {
-					var weakRef = assemblies[i];
-
-					if (!weakRef.TryGetTarget(out var assembly)) {
-						assemblies.RemoveAt(i--);
-						continue;
-					}
-
-					yield return assembly;
+				if (!weakRef.TryGetTarget(out var assembly)) {
+					assemblies.RemoveAt(i--);
+					continue;
 				}
+
+				yield return assembly;
 			}
 		}
 	}

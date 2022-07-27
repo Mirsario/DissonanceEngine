@@ -1,10 +1,9 @@
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics;
+
+public enum CullMode
 {
-	public enum CullMode
-	{
-		Off,
-		Front = 1028,
-		Back = 1029,
-		Both = 1032
-	}
+	Off,
+	Front = 1028,
+	Back = 1029,
+	Both = 1032
 }

@@ -1,7 +1,6 @@
-namespace Dissonance.Engine.Physics
-{
-	public struct SphereCollider
-	{
+namespace Dissonance.Engine.Physics;
 
-	}
+public struct SphereCollider
+{
+
 }

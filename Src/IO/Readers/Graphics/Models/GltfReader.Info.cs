@@ -1,22 +1,21 @@
 using System.IO;
 
-namespace Dissonance.Engine.IO
+namespace Dissonance.Engine.IO;
+
+partial class GltfReader
 {
-	partial class GltfReader
+	protected class GltfInfo
 	{
-		protected class GltfInfo
+		public readonly string FilePath;
+		public readonly PackedScene Scene;
+
+		public GltfJson json;
+		public Stream blobStream;
+
+		public GltfInfo(string filePath)
 		{
-			public readonly string FilePath;
-			public readonly PackedScene Scene;
-
-			public GltfJson json;
-			public Stream blobStream;
-
-			public GltfInfo(string filePath)
-			{
-				FilePath = filePath;
-				Scene = new PackedScene();
-			}
+			FilePath = filePath;
+			Scene = new PackedScene();
 		}
 	}
 }

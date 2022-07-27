@@ -1,19 +1,18 @@
-﻿namespace Dissonance.Engine
+﻿namespace Dissonance.Engine;
+
+[ExecuteBefore<FixedUpdateCallback>]
+public sealed class BeginFixedUpdateCallback : CallbackSystem
 {
-	[ExecuteBefore<FixedUpdateCallback>]
-	public sealed class BeginFixedUpdateCallback : CallbackSystem
-	{
 
-	}
+}
 
-	public sealed class FixedUpdateCallback : CallbackSystem
-	{
+public sealed class FixedUpdateCallback : CallbackSystem
+{
 
-	}
+}
 
-	[ExecuteAfter<FixedUpdateCallback>]
-	public sealed class EndFixedUpdateCallback : CallbackSystem
-	{
+[ExecuteAfter<FixedUpdateCallback>]
+public sealed class EndFixedUpdateCallback : CallbackSystem
+{
 
-	}
 }

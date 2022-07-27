@@ -1,23 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+[EditorBrowsable(EditorBrowsableState.Never)] // Hide in autocompletion when possible.
+public abstract class ModuleDependencyAttribute : Attribute
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	[EditorBrowsable(EditorBrowsableState.Never)] // Hide in autocompletion when possible.
-	public abstract class ModuleDependencyAttribute : Attribute
-	{
-		public readonly DependencyInfo Info;
+	public readonly DependencyInfo Info;
 
-		internal ModuleDependencyAttribute(Type type, bool isOptional)
-		{
-			Info = new DependencyInfo(type, isOptional);
-		}
-	}
-
-	public class ModuleDependencyAttribute<T> : ModuleDependencyAttribute
-		where T : EngineModule
+	internal ModuleDependencyAttribute(Type type, bool isOptional)
 	{
-		public ModuleDependencyAttribute(bool isOptional = false) : base(typeof(T), isOptional) { }
+		Info = new DependencyInfo(type, isOptional);
 	}
+}
+
+public class ModuleDependencyAttribute<T> : ModuleDependencyAttribute
+	where T : EngineModule
+{
+	public ModuleDependencyAttribute(bool isOptional = false) : base(typeof(T), isOptional) { }
 }

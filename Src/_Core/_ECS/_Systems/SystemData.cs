@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public sealed class SystemData
 {
-	public sealed class SystemData
-	{
-		public Action<World> Action;
-	}
+	public Action<World> Action;
 }

@@ -1,17 +1,16 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SourceGenerators.Utilities
-{
-	public readonly struct MethodPair
-	{
-		public readonly MethodDeclarationSyntax Syntax;
-		public readonly IMethodSymbol Symbol;
+namespace SourceGenerators.Utilities;
 
-		public MethodPair(MethodDeclarationSyntax syntax, IMethodSymbol symbol)
-		{
-			Syntax = syntax;
-			Symbol = symbol;
-		}
+public readonly struct MethodPair
+{
+	public readonly MethodDeclarationSyntax Syntax;
+	public readonly IMethodSymbol Symbol;
+
+	public MethodPair(MethodDeclarationSyntax syntax, IMethodSymbol symbol)
+	{
+		Syntax = syntax;
+		Symbol = symbol;
 	}
 }

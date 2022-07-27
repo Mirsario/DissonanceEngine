@@ -1,71 +1,70 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+public sealed class World
 {
-	public sealed class World
+	internal readonly int Id;
+
+	internal Entity WorldEntity;
+
+	/// <summary> Whether or not this is a default engine-provided world. Default worlds cannot be removed. </summary>
+	public bool IsDefault => Id == WorldManager.DefaultWorldId || Id == WorldManager.PrefabWorldId;
+
+	internal World(int id)
 	{
-		internal readonly int Id;
+		Id = id;
+	}
 
-		internal Entity WorldEntity;
+	// Entities
 
-		/// <summary> Whether or not this is a default engine-provided world. Default worlds cannot be removed. </summary>
-		public bool IsDefault => Id == WorldManager.DefaultWorldId || Id == WorldManager.PrefabWorldId;
+	public Entity CreateEntity(bool activate = true)
+		=> EntityManager.CreateEntity(Id, activate);
 
-		internal World(int id)
-		{
-			Id = id;
-		}
+	public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
+		=> EntityManager.GetEntitySet(Id, expression);
 
-		// Entities
+	public EntityEnumerator ReadEntities(bool? active = true)
+		=> EntityManager.ReadEntities(Id, active);
 
-		public Entity CreateEntity(bool activate = true)
-			=> EntityManager.CreateEntity(Id, activate);
+	// Systems
 
-		public EntitySet GetEntitySet(Expression<Predicate<Entity>> expression)
-			=> EntityManager.GetEntitySet(Id, expression);
+	public void AddSystem<T>() where T : GameSystem
+		=> SystemManager.AddSystemToWorld<T>(this);
 
-		public EntityEnumerator ReadEntities(bool? active = true)
-			=> EntityManager.ReadEntities(Id, active);
+	public T GetSystem<T>() where T : GameSystem
+		=> SystemManager.GetWorldSystem<T>(this);
 
-		// Systems
+	public bool TryGetSystem<T>(out T result) where T : GameSystem
+		=> SystemManager.TryGetWorldSystem<T>(this, out result);
 
-		public void AddSystem<T>() where T : GameSystem
-			=> SystemManager.AddSystemToWorld<T>(this);
+	public void ExecuteCallbacks<T>() where T : CallbackSystem
+		=> SystemManager.ExecuteCallbacks<T>(this);
 
-		public T GetSystem<T>() where T : GameSystem
-			=> SystemManager.GetWorldSystem<T>(this);
+	// Components
 
-		public bool TryGetSystem<T>(out T result) where T : GameSystem
-			=> SystemManager.TryGetWorldSystem<T>(this, out result);
+	public bool Has<T>() where T : struct
+		=> WorldEntity.Has<T>();
 
-		public void ExecuteCallbacks<T>() where T : CallbackSystem
-			=> SystemManager.ExecuteCallbacks<T>(this);
+	public ref T Get<T>() where T : struct
+		=> ref WorldEntity.Get<T>();
 
-		// Components
+	public void Set<T>(T value) where T : struct
+		=> WorldEntity.Set(value);
 
-		public bool Has<T>() where T : struct
-			=> WorldEntity.Has<T>();
+	// Messages
 
-		public ref T Get<T>() where T : struct
-			=> ref WorldEntity.Get<T>();
+	public MessageEnumerator<T> ReadMessages<T>() where T : struct
+		=> MessageManager.ReadMessages<T>(Id);
 
-		public void Set<T>(T value) where T : struct
-			=> WorldEntity.Set(value);
+	public void SendMessage<T>(in T message) where T : struct
+		=> MessageManager.SendMessage(Id, message);
 
-		// Messages
+	// Etc
 
-		public MessageEnumerator<T> ReadMessages<T>() where T : struct
-			=> MessageManager.ReadMessages<T>(Id);
-
-		public void SendMessage<T>(in T message) where T : struct
-			=> MessageManager.SendMessage(Id, message);
-
-		// Etc
-
-		internal void Init()
-		{
-			WorldEntity = CreateEntity();
-		}
+	internal void Init()
+	{
+		WorldEntity = CreateEntity();
 	}
 }

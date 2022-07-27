@@ -1,8 +1,7 @@
-namespace Dissonance.Engine.Audio
+namespace Dissonance.Engine.Audio;
+
+public struct AudioListener
 {
-	public struct AudioListener
-	{
-		
-	}
+	
 }
 

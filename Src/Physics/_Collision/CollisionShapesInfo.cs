@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using BulletSharp;
 
-namespace Dissonance.Engine.Physics
-{
-	public struct CollisionShapesInfo
-	{
-		internal List<CollisionShape> collisionShapes;
+namespace Dissonance.Engine.Physics;
 
-		public ReadOnlySpan<CollisionShape> CollisionShapes => CollectionsMarshal.AsSpan(collisionShapes);
-	}
+public struct CollisionShapesInfo
+{
+	internal List<CollisionShape> collisionShapes;
+
+	public ReadOnlySpan<CollisionShape> CollisionShapes => CollectionsMarshal.AsSpan(collisionShapes);
 }

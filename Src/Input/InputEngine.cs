@@ -1,99 +1,98 @@
 using System.Reflection;
 using Dissonance.Engine.Graphics;
 
-namespace Dissonance.Engine.Input
+namespace Dissonance.Engine.Input;
+
+[ModuleDependency<Windowing>(isOptional: true)]
+public sealed partial class InputEngine : EngineModule
 {
-	[ModuleDependency<Windowing>(isOptional: true)]
-	public sealed partial class InputEngine : EngineModule
+	public const int MaxMouseButtons = 12;
+	public const int MaxGamepads = 4;
+
+	internal static InputVariables fixedInput;
+	internal static InputVariables renderInput;
+	internal static InputVariables prevFixedInput;
+	internal static InputVariables prevRenderInput;
+
+	private static Windowing windowing;
+
+	// Mouse
+	public static Vector2 MouseDelta => PrevInput.MousePosition - CurrentInput.MousePosition;
+	public static Vector2 MousePosition => CurrentInput.MousePosition;
+	public static int MouseWheel => CurrentInput.MouseWheel;
+	// Keyboard
+	public static string InputString => CurrentInput.InputString;
+
+	internal static InputVariables CurrentInput => GameEngine.InFixedUpdate ? fixedInput : renderInput;
+	internal static InputVariables PrevInput => GameEngine.InFixedUpdate ? prevFixedInput : prevRenderInput;
+
+	protected override void Init()
 	{
-		public const int MaxMouseButtons = 12;
-		public const int MaxGamepads = 4;
+		ModuleManagement.TryGetModule(out windowing);
 
-		internal static InputVariables fixedInput;
-		internal static InputVariables renderInput;
-		internal static InputVariables prevFixedInput;
-		internal static InputVariables prevRenderInput;
+		fixedInput = new InputVariables();
+		renderInput = new InputVariables();
+		prevFixedInput = new InputVariables();
+		prevRenderInput = new InputVariables();
 
-		private static Windowing windowing;
+		InitSignals();
+		InitTriggers();
+		InitCallbacks();
+	}
 
-		// Mouse
-		public static Vector2 MouseDelta => PrevInput.MousePosition - CurrentInput.MousePosition;
-		public static Vector2 MousePosition => CurrentInput.MousePosition;
-		public static int MouseWheel => CurrentInput.MouseWheel;
-		// Keyboard
-		public static string InputString => CurrentInput.InputString;
+	protected override void InitializeForAssembly(Assembly assembly)
+		=> InitTriggersForAssembly(assembly);
 
-		internal static InputVariables CurrentInput => GameEngine.InFixedUpdate ? fixedInput : renderInput;
-		internal static InputVariables PrevInput => GameEngine.InFixedUpdate ? prevFixedInput : prevRenderInput;
+	protected override void PreFixedUpdate()
+		=> PreUpdate();
 
-		protected override void Init()
-		{
-			ModuleManagement.TryGetModule(out windowing);
+	protected override void PostFixedUpdate()
+		=> PostUpdate();
 
-			fixedInput = new InputVariables();
-			renderInput = new InputVariables();
-			prevFixedInput = new InputVariables();
-			prevRenderInput = new InputVariables();
+	protected override void PreRenderUpdate()
+		=> PreUpdate();
 
-			InitSignals();
-			InitTriggers();
-			InitCallbacks();
+	protected override void PostRenderUpdate()
+		=> PostUpdate();
+
+	protected override void OnDispose()
+	{
+		windowing = null;
+	}
+
+	private void PreUpdate()
+	{
+		if (windowing == null) {
+			return;
 		}
 
-		protected override void InitializeForAssembly(Assembly assembly)
-			=> InitTriggersForAssembly(assembly);
+		CurrentInput.Update();
 
-		protected override void PreFixedUpdate()
-			=> PreUpdate();
+		UpdateTriggers();
 
-		protected override void PostFixedUpdate()
-			=> PostUpdate();
+		CheckSpecialCombinations();
+	}
 
-		protected override void PreRenderUpdate()
-			=> PreUpdate();
-
-		protected override void PostRenderUpdate()
-			=> PostUpdate();
-
-		protected override void OnDispose()
-		{
-			windowing = null;
+	private void PostUpdate()
+	{
+		if (windowing == null) {
+			return;
 		}
 
-		private void PreUpdate()
-		{
-			if (windowing == null) {
-				return;
-			}
+		CurrentInput.InputString = string.Empty;
+		CurrentInput.MouseWheel = 0;
 
-			CurrentInput.Update();
+		CurrentInput.CopyTo(PrevInput);
+	}
 
-			UpdateTriggers();
-
-			CheckSpecialCombinations();
+	private static void CheckSpecialCombinations()
+	{
+		if (GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
+			Game.Quit();
 		}
 
-		private void PostUpdate()
-		{
-			if (windowing == null) {
-				return;
-			}
-
-			CurrentInput.InputString = string.Empty;
-			CurrentInput.MouseWheel = 0;
-
-			CurrentInput.CopyTo(PrevInput);
-		}
-
-		private static void CheckSpecialCombinations()
-		{
-			if (GetKeyDown(Keys.F4) && (GetKey(Keys.LeftAlt) || GetKey(Keys.RightAlt))) {
-				Game.Quit();
-			}
-
-			/*if (GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
-				Screen.Fullscreen = !Screen.Fullscreen;
-			}*/
-		}
+		/*if (GetKeyDown(Keys.Enter) && (GetKey(Keys.LAlt) || GetKey(Keys.RAlt))) {
+			Screen.Fullscreen = !Screen.Fullscreen;
+		}*/
 	}
 }

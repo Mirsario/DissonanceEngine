@@ -4,193 +4,192 @@ using Dissonance.Engine.Utilities;
 using Silk.NET.OpenGL;
 using static Dissonance.Engine.Graphics.OpenGLApi;
 
-namespace Dissonance.Engine.Graphics
+namespace Dissonance.Engine.Graphics;
+
+//TODO: WIP
+//TODO: Some fields shouldn't be public
+public class Framebuffer : IDisposable
 {
-	//TODO: WIP
-	//TODO: Some fields shouldn't be public
-	public class Framebuffer : IDisposable
+	public static Framebuffer DefaultFramebuffer { get; set; }
+
+	public static Framebuffer ActiveBuffer { get; private set; }
+
+	public readonly string Name;
+	public readonly uint Id;
+
+	private readonly Dictionary<RenderTexture, FramebufferAttachment> textureToAttachment;
+
+	public List<RenderTexture> renderTextures;
+	public Renderbuffer[] renderbuffers;
+
+	private DrawBufferMode[] drawBuffers;
+
+	internal FramebufferAttachment nextDefaultAttachment = FramebufferAttachment.ColorAttachment0;
+	internal int maxTextureWidth;
+	internal int maxTextureHeight;
+
+	protected Framebuffer(string name)
 	{
-		public static Framebuffer DefaultFramebuffer { get; set; }
+		Name = name;
+		Id = OpenGL.GenFramebuffer();
 
-		public static Framebuffer ActiveBuffer { get; private set; }
+		renderTextures = new List<RenderTexture>();
 
-		public readonly string Name;
-		public readonly uint Id;
+		textureToAttachment = new Dictionary<RenderTexture, FramebufferAttachment>();
+	}
 
-		private readonly Dictionary<RenderTexture, FramebufferAttachment> textureToAttachment;
+	public void AttachRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
+	{
+		Rendering.CheckGLErrors($"At the start of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
 
-		public List<RenderTexture> renderTextures;
-		public Renderbuffer[] renderbuffers;
+		Bind(this);
 
-		private DrawBufferMode[] drawBuffers;
+		var attachment = attachmentType ?? nextDefaultAttachment++;
 
-		internal FramebufferAttachment nextDefaultAttachment = FramebufferAttachment.ColorAttachment0;
-		internal int maxTextureWidth;
-		internal int maxTextureHeight;
+		OpenGL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture.Id, 0);
 
-		protected Framebuffer(string name)
-		{
-			Name = name;
-			Id = OpenGL.GenFramebuffer();
+		renderTextures.Add(texture);
 
-			renderTextures = new List<RenderTexture>();
+		textureToAttachment[texture] = attachment;
 
-			textureToAttachment = new Dictionary<RenderTexture, FramebufferAttachment>();
+		var drawBuffersEnum = (DrawBufferMode)attachment;
+
+		if (Enum.IsDefined(typeof(DrawBufferMode), drawBuffersEnum)) {
+			ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
 		}
 
-		public void AttachRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
-		{
-			Rendering.CheckGLErrors($"At the start of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
+		maxTextureWidth = Math.Max(maxTextureWidth, texture.Width);
+		maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
 
-			Bind(this);
+		Rendering.CheckFramebufferStatus();
 
-			var attachment = attachmentType ?? nextDefaultAttachment++;
+		Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
+	}
 
-			OpenGL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, TextureTarget.Texture2D, texture.Id, 0);
+	public void AttachRenderTextures(params RenderTexture[] textures)
+		=> AttachRenderTextures((IEnumerable<RenderTexture>)textures);
 
-			renderTextures.Add(texture);
+	public void AttachRenderTextures(IEnumerable<RenderTexture> textures)
+	{
+		foreach (var texture in textures) {
+			AttachRenderTexture(texture);
+		}
+	}
 
-			textureToAttachment[texture] = attachment;
+	public void AttachRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
+	{
+		Bind(this);
 
-			var drawBuffersEnum = (DrawBufferMode)attachment;
+		var attachment = attachmentType ?? nextDefaultAttachment++;
 
-			if (Enum.IsDefined(typeof(DrawBufferMode), drawBuffersEnum)) {
-				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
-			}
+		OpenGL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, attachment, RenderbufferTarget.Renderbuffer, Id);
 
-			maxTextureWidth = Math.Max(maxTextureWidth, texture.Width);
-			maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
+		Rendering.CheckFramebufferStatus();
 
-			Rendering.CheckFramebufferStatus();
+		ArrayUtils.Add(ref renderbuffers, renderbuffer);
 
-			Rendering.CheckGLErrors($"At the end of '{nameof(Framebuffer)}.{nameof(AttachRenderTexture)}'.");
+		var drawBuffersEnum = (DrawBufferMode)attachment;
+
+		if (Enum.IsDefined(drawBuffersEnum)) {
+			ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
+		}
+	}
+
+	public void DetachRenderTexture(RenderTexture texture)
+	{
+		if (!textureToAttachment.TryGetValue(texture, out var attachment)) {
+			return;
 		}
 
-		public void AttachRenderTextures(params RenderTexture[] textures)
-			=> AttachRenderTextures((IEnumerable<RenderTexture>)textures);
+		Bind(this);
 
-		public void AttachRenderTextures(IEnumerable<RenderTexture> textures)
-		{
-			foreach (var texture in textures) {
-				AttachRenderTexture(texture);
-			}
-		}
+		OpenGL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, 0, 0);
 
-		public void AttachRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
-		{
-			Bind(this);
+		renderTextures.Remove(texture);
+		textureToAttachment.Remove(texture);
 
-			var attachment = attachmentType ?? nextDefaultAttachment++;
+		var drawBuffersEnum = (DrawBufferMode)attachment;
 
-			OpenGL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, attachment, RenderbufferTarget.Renderbuffer, Id);
+		if (Enum.IsDefined(drawBuffersEnum)) {
+			int index = Array.IndexOf(drawBuffers, drawBuffersEnum);
 
-			Rendering.CheckFramebufferStatus();
-
-			ArrayUtils.Add(ref renderbuffers, renderbuffer);
-
-			var drawBuffersEnum = (DrawBufferMode)attachment;
-
-			if (Enum.IsDefined(drawBuffersEnum)) {
-				ArrayUtils.Add(ref drawBuffers, drawBuffersEnum);
-			}
-		}
-
-		public void DetachRenderTexture(RenderTexture texture)
-		{
-			if (!textureToAttachment.TryGetValue(texture, out var attachment)) {
-				return;
-			}
-
-			Bind(this);
-
-			OpenGL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, 0, 0);
-
-			renderTextures.Remove(texture);
-			textureToAttachment.Remove(texture);
-
-			var drawBuffersEnum = (DrawBufferMode)attachment;
-
-			if (Enum.IsDefined(drawBuffersEnum)) {
-				int index = Array.IndexOf(drawBuffers, drawBuffersEnum);
-
-				if (index >= 0) {
-					ArrayUtils.Remove(ref drawBuffers, index);
-				}
-			}
-
-			nextDefaultAttachment--;
-
-			Bind(null);
-		}
-
-		public void PrepareAttachments()
-		{
-			if (renderTextures != null) {
-				for (int i = 0; i < renderTextures.Count; i++) {
-					renderTextures[i].UpdateSize();
-				}
+			if (index >= 0) {
+				ArrayUtils.Remove(ref drawBuffers, index);
 			}
 		}
 
-		public Framebuffer WithRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
-		{
-			AttachRenderTexture(texture, attachmentType);
+		nextDefaultAttachment--;
 
-			return this;
-		}
+		Bind(null);
+	}
 
-		public Framebuffer WithRenderTextures(params RenderTexture[] textures)
-		{
-			AttachRenderTextures(textures);
-
-			return this;
-		}
-
-		public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
-		{
-			AttachRenderbuffer(renderbuffer, attachmentType);
-
-			return this;
-		}
-
-		public void Dispose()
-		{
-			OpenGL.DeleteFramebuffer(Id);
-
-			renderTextures = null;
-			renderbuffers = null;
-			drawBuffers = null;
-
-			GC.SuppressFinalize(this);
-		}
-
-		public static Framebuffer Create(string name, Action<Framebuffer> initializer = null)
-		{
-			var fb = new Framebuffer(name);
-
-			initializer?.Invoke(fb);
-
-			return fb;
-		}
-
-		public static void Bind(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
-		{
-			fb ??= DefaultFramebuffer;
-
-			OpenGL.BindFramebuffer(target, fb?.Id ?? 0);
-
-			if (target == FramebufferTarget.Framebuffer) {
-				ActiveBuffer = fb;
+	public void PrepareAttachments()
+	{
+		if (renderTextures != null) {
+			for (int i = 0; i < renderTextures.Count; i++) {
+				renderTextures[i].UpdateSize();
 			}
 		}
+	}
 
-		public static void BindWithDrawBuffers(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
-		{
-			Bind(fb, target);
+	public Framebuffer WithRenderTexture(RenderTexture texture, FramebufferAttachment? attachmentType = null)
+	{
+		AttachRenderTexture(texture, attachmentType);
 
-			if (fb != null) {
-				OpenGL.DrawBuffers((uint)fb.drawBuffers.Length, fb.drawBuffers);
-			}
+		return this;
+	}
+
+	public Framebuffer WithRenderTextures(params RenderTexture[] textures)
+	{
+		AttachRenderTextures(textures);
+
+		return this;
+	}
+
+	public Framebuffer WithRenderbuffer(Renderbuffer renderbuffer, FramebufferAttachment? attachmentType = null)
+	{
+		AttachRenderbuffer(renderbuffer, attachmentType);
+
+		return this;
+	}
+
+	public void Dispose()
+	{
+		OpenGL.DeleteFramebuffer(Id);
+
+		renderTextures = null;
+		renderbuffers = null;
+		drawBuffers = null;
+
+		GC.SuppressFinalize(this);
+	}
+
+	public static Framebuffer Create(string name, Action<Framebuffer> initializer = null)
+	{
+		var fb = new Framebuffer(name);
+
+		initializer?.Invoke(fb);
+
+		return fb;
+	}
+
+	public static void Bind(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
+	{
+		fb ??= DefaultFramebuffer;
+
+		OpenGL.BindFramebuffer(target, fb?.Id ?? 0);
+
+		if (target == FramebufferTarget.Framebuffer) {
+			ActiveBuffer = fb;
+		}
+	}
+
+	public static void BindWithDrawBuffers(Framebuffer fb, FramebufferTarget target = FramebufferTarget.Framebuffer)
+	{
+		Bind(fb, target);
+
+		if (fb != null) {
+			OpenGL.DrawBuffers((uint)fb.drawBuffers.Length, fb.drawBuffers);
 		}
 	}
 }

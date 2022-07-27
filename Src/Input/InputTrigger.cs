@@ -1,81 +1,80 @@
 ﻿using System;
 
-namespace Dissonance.Engine.Input
+namespace Dissonance.Engine.Input;
+
+public class InputTrigger
 {
-	public class InputTrigger
+	internal struct SummInput
 	{
-		internal struct SummInput
-		{
-			public bool IsPressed;
-			public bool WasPressed;
-			public float AnalogInput;
-			public float PrevAnalogInput;
+		public bool IsPressed;
+		public bool WasPressed;
+		public float AnalogInput;
+		public float PrevAnalogInput;
+	}
+
+	public const float DefaultMinValue = float.NegativeInfinity;
+	public const float DefaultMaxValue = float.PositiveInfinity;
+
+	public static int Count { get; internal set; }
+
+	internal int bindingCount;
+	internal InputBinding[] bindings;
+	internal SummInput fixedInput;
+	internal SummInput renderInput;
+
+	public string Name { get; set; } = "InputTrigger";
+	public float MinValue { get; set; } = DefaultMinValue;
+	public float MaxValue { get; set; } = DefaultMaxValue;
+	public int Id { get; internal set; }
+
+	public bool IsPressed => CurrentInput.IsPressed;
+	public bool WasPressed => CurrentInput.WasPressed;
+	public bool JustPressed => CurrentInput.IsPressed && !CurrentInput.WasPressed;
+	public bool JustReleased => CurrentInput.WasPressed && !CurrentInput.IsPressed;
+
+	public float Value {
+		get => CurrentInput.AnalogInput;
+		internal set {
+			CurrentInput.AnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
+			CurrentInput.IsPressed = value != 0f;
 		}
+	}
 
-		public const float DefaultMinValue = float.NegativeInfinity;
-		public const float DefaultMaxValue = float.PositiveInfinity;
+	public float PreviousValue {
+		get => CurrentInput.PrevAnalogInput;
+		internal set {
+			CurrentInput.PrevAnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
+			CurrentInput.WasPressed = value != 0f;
+		}
+	}
 
-		public static int Count { get; internal set; }
+	public InputBinding[] Bindings {
+		set {
+			if (value == null) {
+				throw new ArgumentNullException(nameof(value));
+			}
 
-		internal int bindingCount;
-		internal InputBinding[] bindings;
-		internal SummInput fixedInput;
-		internal SummInput renderInput;
+			bindingCount = value.Length;
+			bindings = new InputBinding[bindingCount];
 
-		public string Name { get; set; } = "InputTrigger";
-		public float MinValue { get; set; } = DefaultMinValue;
-		public float MaxValue { get; set; } = DefaultMaxValue;
-		public int Id { get; internal set; }
-
-		public bool IsPressed => CurrentInput.IsPressed;
-		public bool WasPressed => CurrentInput.WasPressed;
-		public bool JustPressed => CurrentInput.IsPressed && !CurrentInput.WasPressed;
-		public bool JustReleased => CurrentInput.WasPressed && !CurrentInput.IsPressed;
-
-		public float Value {
-			get => CurrentInput.AnalogInput;
-			internal set {
-				CurrentInput.AnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
-				CurrentInput.IsPressed = value != 0f;
+			for (int i = 0; i < bindingCount; i++) {
+				bindings[i] = value[i];
 			}
 		}
+	}
 
-		public float PreviousValue {
-			get => CurrentInput.PrevAnalogInput;
-			internal set {
-				CurrentInput.PrevAnalogInput = MathHelper.Clamp(value, MinValue, MaxValue);
-				CurrentInput.WasPressed = value != 0f;
-			}
-		}
+	internal ref SummInput CurrentInput => ref (GameEngine.InFixedUpdate ? ref fixedInput : ref renderInput);
 
-		public InputBinding[] Bindings {
-			set {
-				if (value == null) {
-					throw new ArgumentNullException(nameof(value));
-				}
+	internal InputTrigger() { }
 
-				bindingCount = value.Length;
-				bindings = new InputBinding[bindingCount];
+	internal virtual void Init(int id, string name, InputBinding[] bindings, float minValue, float maxValue)
+	{
+		Id = id;
 
-				for (int i = 0; i < bindingCount; i++) {
-					bindings[i] = value[i];
-				}
-			}
-		}
+		Name = name;
+		MinValue = minValue;
+		MaxValue = maxValue;
 
-		internal ref SummInput CurrentInput => ref (GameEngine.InFixedUpdate ? ref fixedInput : ref renderInput);
-
-		internal InputTrigger() { }
-
-		internal virtual void Init(int id, string name, InputBinding[] bindings, float minValue, float maxValue)
-		{
-			Id = id;
-
-			Name = name;
-			MinValue = minValue;
-			MaxValue = maxValue;
-
-			Bindings = bindings;
-		}
+		Bindings = bindings;
 	}
 }

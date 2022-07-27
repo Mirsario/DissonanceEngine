@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Dissonance.Engine
+namespace Dissonance.Engine;
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+public sealed class SubsystemAttribute : Attribute
 {
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-	public sealed class SubsystemAttribute : Attribute
-	{
-		
-	}
+	
 }
