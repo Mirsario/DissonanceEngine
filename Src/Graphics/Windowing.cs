@@ -29,4 +29,5 @@ public abstract class Windowing : EngineModule, IGLContextSource
 
 	public abstract void SwapBuffers();
 	public abstract bool SetVideoMode(int width, int height);
+	public abstract Vector2 GetCursorPosition();
 }

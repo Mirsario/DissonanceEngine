@@ -18,6 +18,7 @@ public unsafe class GlfwWindowing : Windowing
 	private CursorState cursorState;
 	private Version openGLVersion = DefaultOpenGLVersion;
 	private bool isInitialized;
+	private bool rawMouseInputSupported;
 	private GlfwContext glfwContext;
 
 	public WindowHandle* WindowHandle { get; private set; }
@@ -55,6 +56,10 @@ public unsafe class GlfwWindowing : Windowing
 
 			GLFW.SetInputMode(WindowHandle, CursorStateAttribute.Cursor, glfwCursorState);
 
+			if (rawMouseInputSupported) {
+				GLFW.SetInputMode(WindowHandle, CursorStateAttribute.RawMouseMotion, value == CursorState.Disabled);
+			}
+
 			cursorState = value;
 		}
 	}
@@ -80,6 +85,13 @@ public unsafe class GlfwWindowing : Windowing
 		return true;
 	}
 
+	public override Vector2 GetCursorPosition()
+	{
+		GLFW.GetCursorPos(WindowHandle, out double xPos, out double yPos);
+
+		return new Vector2((float)xPos, (float)yPos);
+	}
+
 	protected override void Init()
 	{
 		GLFW.SetErrorCallback((ErrorCode code, string description) => Debug.Log(code switch {
@@ -95,6 +107,8 @@ public unsafe class GlfwWindowing : Windowing
 		GLFW.WindowHint(WindowHintInt.ContextVersionMinor, OpenGLVersion.Minor); // Targeted minor version
 		GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
 		GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+
+		rawMouseInputSupported = GLFW.RawMouseMotionSupported();
 
 		int resolutionWidth = 800;
 		int resolutionHeight = 600;
