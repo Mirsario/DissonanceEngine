@@ -5,6 +5,7 @@ using Silk.NET.OpenGL;
 namespace Dissonance.Engine.Graphics;
 
 [Callback<RenderingCallback>]
+[ExecuteBefore<GeometrySortingSystem>]
 public sealed class SpriteSystem : GameSystem
 {
 	private class BatchData : IDisposable
