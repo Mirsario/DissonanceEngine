@@ -66,7 +66,7 @@ public sealed partial class InputEngine : EngineModule
 			return;
 		}
 
-		CurrentInput.Update();
+		CurrentInput.Update(windowing.GetCursorPosition());
 
 		UpdateTriggers();
 

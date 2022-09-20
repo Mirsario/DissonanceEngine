@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dissonance.Engine.Graphics;
 using Silk.NET.GLFW;
 
 namespace Dissonance.Engine.Input;
@@ -18,8 +19,10 @@ internal class InputVariables
 	// Gamepads
 	// public GamePadState[] gamepadStates = new GamePadState[Input.MaxGamepads];
 
-	public void Update()
+	public void Update(Vector2 mousePosition)
 	{
+		MousePosition = mousePosition; 
+
 		var pairs = PressedKeys.ToArray();
 
 		foreach (var pair in pairs) {

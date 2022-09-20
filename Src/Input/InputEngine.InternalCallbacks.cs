@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Dissonance.Engine.Graphics;
 using Silk.NET.GLFW;
 using GlfwKeys = Silk.NET.GLFW.Keys;
 using GlfwMouseButton = Silk.NET.GLFW.MouseButton;
@@ -9,21 +8,6 @@ namespace Dissonance.Engine.Input;
 
 partial class InputEngine
 {
-	internal static void CursorPositionCallback(double x, double y)
-	{
-		var framebufferSize = Screen.Size;
-		var windowSize = Screen.WindowSize;
-
-		if (windowSize == Vector2.Zero) {
-			return;
-		}
-
-		var value = new Vector2((float)x, (float)y) * (framebufferSize / windowSize);
-
-		fixedInput.MousePosition = value;
-		renderInput.MousePosition = value;
-	}
-
 	private static void MouseButtonCallback(GlfwMouseButton button, InputAction action, KeyModifiers mods)
 	{
 		bool value = action == InputAction.Press;
@@ -82,22 +66,9 @@ partial class InputEngine
 			return;
 		}
 
-		windowing.OnCursorPositionCallback += CursorPositionCallback;
 		windowing.OnMouseButtonCallback += MouseButtonCallback;
 		windowing.OnScrollCallback += ScrollCallback;
 		windowing.OnKeyCallback += KeyCallback;
 		windowing.OnCharCallback += CharCallback;
-
-		/*var windowHandle = windowing.WindowHandle;
-
-		if (windowHandle == IntPtr.Zero) {
-			return;
-		}
-
-		Glfw.Api.SetCursorPosCallback(windowHandle, MousePositionCallback);
-		Glfw.Api.SetMouseButtonCallback(windowHandle, MouseButtonCallback);
-		Glfw.Api.SetScrollCallback(windowHandle, MouseScrollCallback);
-		Glfw.Api.SetKeyCallback(windowHandle, KeyCallback);
-		Glfw.Api.SetCharCallback(windowHandle, KeyStringCallback);*/
 	}
 }
