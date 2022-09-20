@@ -1,6 +1,7 @@
 ﻿namespace Dissonance.Engine.Graphics;
 
 [Callback<RenderingCallback>]
+[ExecuteBefore<GeometrySortingSystem>]
 public sealed class MeshRendererSystem : GameSystem
 {
 	private EntitySet entities;
