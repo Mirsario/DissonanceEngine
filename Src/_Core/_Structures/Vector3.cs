@@ -338,11 +338,5 @@ public struct Vector3
 	public static implicit operator Vector3(System.Numerics.Vector3 value) => new(value.X, value.Y, value.Z);
 
 	public static implicit operator System.Numerics.Vector3(Vector3 value) => new(value.X, value.Y, value.Z);
-
-	// BulletSharp.Math.Vector3
-
-	public static implicit operator BulletSharp.Math.Vector3(Vector3 value) => new(value.X, value.Y, value.Z);
-
-	public static implicit operator Vector3(BulletSharp.Math.Vector3 value) => new(value.X, value.Y, value.Z);
 }
 
