@@ -156,7 +156,7 @@ public sealed class RigidbodySystem : GameSystem
 	private static void UpdateMass(ref Rigidbody rb)
 	{
 		float realMass = rb.Type == RigidbodyType.Dynamic ? rb.Mass : 0f;
-		var localInertia = realMass > 0f ? rb.bulletRigidbody.CollisionShape.CalculateLocalInertia(rb.Mass) : BulletSharp.Math.Vector3.Zero;
+		var localInertia = realMass > 0f ? (Vector3)rb.bulletRigidbody.CollisionShape.CalculateLocalInertia(rb.Mass) : Vector3.Zero;
 
 		rb.bulletRigidbody.SetMassProps(realMass, localInertia);
 

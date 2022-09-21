@@ -62,31 +62,19 @@ partial struct Matrix4x4
 
 	// Casts
 
-	public static implicit operator Matrix4x4(BulletSharp.Math.Matrix v) => new(
+	public static implicit operator Matrix4x4(System.Numerics.Matrix4x4 v) => new(
 		v.M11, v.M12, v.M13, v.M14,
 		v.M21, v.M22, v.M23, v.M24,
 		v.M31, v.M32, v.M33, v.M34,
 		v.M41, v.M42, v.M43, v.M44
 	);
 
-	public static implicit operator BulletSharp.Math.Matrix(Matrix4x4 v) => new() {
-		M11 = v.m00,
-		M12 = v.m01,
-		M13 = v.m02,
-		M14 = v.m03,
-		M21 = v.m10,
-		M22 = v.m11,
-		M23 = v.m12,
-		M24 = v.m13,
-		M31 = v.m20,
-		M32 = v.m21,
-		M33 = v.m22,
-		M34 = v.m23,
-		M41 = v.m30,
-		M42 = v.m31,
-		M43 = v.m32,
-		M44 = v.m33
-	};
+	public static implicit operator System.Numerics.Matrix4x4(Matrix4x4 v) => new(
+		v.m00, v.m01, v.m02, v.m03,
+		v.m10, v.m11, v.m12, v.m13,
+		v.m20, v.m21, v.m22, v.m23,
+		v.m30, v.m31, v.m32, v.m33
+	);
 
 	public static implicit operator double[](Matrix4x4 value)
 	{
