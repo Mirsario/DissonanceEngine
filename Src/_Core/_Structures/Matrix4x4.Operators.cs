@@ -1,3 +1,5 @@
+using System;
+
 namespace Dissonance.Engine;
 
 partial struct Matrix4x4
@@ -62,28 +64,15 @@ partial struct Matrix4x4
 
 	// Casts
 
-	public static implicit operator Matrix4x4(System.Numerics.Matrix4x4 v) => new(
-		v.M11, v.M12, v.M13, v.M14,
-		v.M21, v.M22, v.M23, v.M24,
-		v.M31, v.M32, v.M33, v.M34,
-		v.M41, v.M42, v.M43, v.M44
-	);
+	public static unsafe implicit operator Matrix4x4(System.Numerics.Matrix4x4 v)
+		=> *(Matrix4x4*)(void*)&v;
 
-	public static implicit operator System.Numerics.Matrix4x4(Matrix4x4 v) => new(
-		v.m00, v.m01, v.m02, v.m03,
-		v.m10, v.m11, v.m12, v.m13,
-		v.m20, v.m21, v.m22, v.m23,
-		v.m30, v.m31, v.m32, v.m33
-	);
+	public static unsafe implicit operator System.Numerics.Matrix4x4(Matrix4x4 v)
+		=> *(System.Numerics.Matrix4x4*)(void*)&v;
 
-	public static implicit operator double[](Matrix4x4 value)
-	{
-		var output = new double[16];
+	public static unsafe implicit operator Span<float>(Matrix4x4 value)
+		=> new(&value, 16);
 
-		for (int i = 0; i < 16; i++) {
-			output[i] = value[i];
-		}
-
-		return output;
-	}
+	public static unsafe implicit operator ReadOnlySpan<float>(Matrix4x4 value)
+		=> new(&value, 16);
 }
