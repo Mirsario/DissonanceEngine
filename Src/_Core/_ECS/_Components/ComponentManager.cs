@@ -86,7 +86,10 @@ public unsafe sealed class ComponentManager : EngineModule
 				//TODO: Use minimal unique paths.
 				StructureTypesByName[type.Name] = null;
 				StructureTypesByName[type.FullName] = type;
-				StructureTypesByName[existingType.FullName] = existingType;
+
+				if (existingType != null) {
+					StructureTypesByName[existingType.FullName] = existingType;
+				}
 			}
 		}
 	}
