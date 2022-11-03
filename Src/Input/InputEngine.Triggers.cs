@@ -30,7 +30,7 @@ partial class InputEngine
 				continue;
 			}
 
-			var trigger = RegisterTrigger(type, type.Name, null);
+			var trigger = RegisterTrigger(type, type.Name, Array.Empty<InputBinding>());
 
 			typeof(SingletonTriggerIds<>).MakeGenericType(type)
 				.GetField(nameof(SingletonTriggerIds<SingletonInputTrigger>.Id), BindingFlags.Static | BindingFlags.Public)
