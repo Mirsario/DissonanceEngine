@@ -15,9 +15,8 @@ public sealed partial class PhysicsSimulationSystem : GameSystem
 		physics.PhysicsWorld.StepSimulation(Time.FixedDeltaTime);
 	}
 
-
 	[EntitySubsystem]
-	partial void UpdateRigidbodies(ref Rigidbody rigidbody)
+	partial void ClearRigidbodyCollisions(ref Rigidbody rigidbody)
 	{
 		rigidbody.collisions?.Clear(); //TODO: Optimize, avoid reallocations every frame...
 	}

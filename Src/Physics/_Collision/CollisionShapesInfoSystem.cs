@@ -22,17 +22,8 @@ public sealed partial class CollisionShapesInfoSystem : GameSystem
 	[MessageSubsystem]
 	partial void RegisterCollisionShapes(in AddCollisionShapeMessage message)
 	{
-		List<CollisionShape> shapes;
-
-		if (!message.Entity.Has<CollisionShapesInfo>()) {
-			shapes = new();
-
-			message.Entity.Set(new CollisionShapesInfo {
-				collisionShapes = shapes
-			});
-		} else {
-			shapes = message.Entity.Get<CollisionShapesInfo>().collisionShapes;
-		}
+		ref var collisionShapesInfo = ref message.Entity.GetOrSet(() => new CollisionShapesInfo());
+		var shapes = collisionShapesInfo.collisionShapes ??= new();
 
 		shapes.Add(message.CollisionShape);
 	}

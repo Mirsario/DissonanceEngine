@@ -31,33 +31,39 @@ public sealed partial class RigidbodySystem : GameSystem
 	[EntitySubsystem]
 	partial void UpdateRigidbodies(World world, Entity entity, ref Rigidbody rb, ref Transform transform, [FromWorld] ref WorldPhysics physics)
 	{
-		var collisionShapeData = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
+		var collisionShapes = entity.Has<CollisionShapesInfo>() ? entity.Get<CollisionShapesInfo>().CollisionShapes : null;
 
 		if (rb.bulletRigidbody == null) {
-			var collisionShape = new EmptyShape();
+			var collisionShape = GetOrCreateCollisionShape(collisionShapes, out rb.ownsCollisionShape);
 
-			using var rbInfo = new RigidBodyConstructionInfo(0f, null, collisionShape, Vector3.Zero) {
+			CalculateMassProperties(in rb, collisionShape, out float mass, out Vector3 localInertia);
+
+			var worldMatrix = transform.WorldMatrix;
+
+			worldMatrix.ClearScale();
+
+			using var rbInfo = new RigidBodyConstructionInfo(mass, null, collisionShape, localInertia) {
+				StartWorldTransform = (System.Numerics.Matrix4x4)worldMatrix,
+				Friction = rb.Friction,
 				LinearSleepingThreshold = 0.1f,
 				AngularSleepingThreshold = 1f,
-				Friction = rb.Friction,
 				RollingFriction = 0f,
 				Restitution = 0.1f,
 			};
 
 			rb.bulletRigidbody = new RigidBody(rbInfo) {
 				UserObject = entity,
-				CollisionFlags = CollisionFlags.None,
+				CollisionFlags = CollisionFlags.CustomMaterialCallback,
 				LinearVelocity = rb.pendingVelocity ?? default,
 				AngularVelocity = rb.pendingAngularVelocity ?? default,
 				AngularFactor = rb.pendingAngularFactor ?? Vector3.One,
 			};
 
+			UpdateCollisionFlags(ref rb);
+
 			rb.pendingVelocity = null;
 			rb.pendingAngularVelocity = null;
 			rb.pendingAngularFactor = null;
-
-			UpdateCollisionFlags(ref rb);
-			UpdateShapes(world, entity, ref rb, collisionShapeData);
 
 			physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 		}
@@ -79,14 +85,15 @@ public sealed partial class RigidbodySystem : GameSystem
 		if ((rb.updateFlags & Rigidbody.UpdateFlags.CollisionShapes) != 0) {
 			physics.PhysicsWorld.RemoveRigidBody(rb.bulletRigidbody);
 
-			UpdateShapes(world, entity, ref rb, collisionShapeData);
+			UpdateShapes(ref rb, collisionShapes);
 
 			physics.PhysicsWorld.AddRigidBody(rb.bulletRigidbody);
 		}
+
+		rb.bulletRigidbody.Activate();
 	}
 
 	// Force-activate rigidbodies on demand
-	
 	[MessageSubsystem]
 	partial void ActivateRigidbodies(in ActivateRigidbodyMessage message)
 	{
@@ -95,41 +102,49 @@ public sealed partial class RigidbodySystem : GameSystem
 		}
 	}
 
-	private void UpdateShapes(World world, in Entity entity, ref Rigidbody rb, ReadOnlySpan<CollisionShape> collisionShapes)
+	private static CollisionShape GetOrCreateCollisionShape(ReadOnlySpan<CollisionShape> collisionShapes, out bool ownsCollisionShape)
 	{
-		var previousShape = rb.bulletRigidbody.CollisionShape;
-
 		CollisionShape resultShape;
 
 		if (collisionShapes.Length == 0) {
 			// EmptyShape
 			resultShape = new EmptyShape();
+			ownsCollisionShape = true;
+		} else if (collisionShapes.Length == 1) {
+			resultShape = collisionShapes[0];
+			ownsCollisionShape = false;
 		} else {
 			// CompoundShape
 			var compoundShape = new CompoundShape();
 
 			for (int i = 0; i < collisionShapes.Length; i++) {
-				compoundShape.AddChildShape(Matrix4x4.Identity, collisionShapes[i]);
+				compoundShape.AddChildShape(System.Numerics.Matrix4x4.Identity, collisionShapes[i]);
 			}
 
 			resultShape = compoundShape;
+			ownsCollisionShape = true;
 		}
 
-		rb.bulletRigidbody.CollisionShape = resultShape;
+		return resultShape;
+	}
 
-		if (rb.ownsCollisionShape && previousShape != null) {
-			previousShape.Dispose();
+	private static void UpdateShapes(ref Rigidbody rb, ReadOnlySpan<CollisionShape> collisionShapes)
+	{
+		if (rb.ownsCollisionShape) {
+			rb.bulletRigidbody.CollisionShape?.Dispose();
 		}
+
+		rb.bulletRigidbody.CollisionShape = GetOrCreateCollisionShape(collisionShapes, out rb.ownsCollisionShape);
+
+		rb.bulletRigidbody.Activate();
 
 		rb.updateFlags &= ~Rigidbody.UpdateFlags.CollisionShapes;
-		rb.ownsCollisionShape = true;
-
-		world.SendMessage(new ActivateRigidbodyMessage(entity));
 	}
 
 	private static void UpdateCollisionFlags(ref Rigidbody rb)
 	{
 		var flags = rb.bulletRigidbody.CollisionFlags;
+		var flagsBackup = flags;
 
 		void SetFlag(CollisionFlags flag, bool value)
 		{
@@ -143,16 +158,24 @@ public sealed partial class RigidbodySystem : GameSystem
 		SetFlag(CollisionFlags.StaticObject, rb.Type == RigidbodyType.Static);
 		SetFlag(CollisionFlags.KinematicObject, rb.Type == RigidbodyType.Kinematic);
 
-		rb.bulletRigidbody.CollisionFlags = flags;
+		if (flags != flagsBackup) {
+			rb.bulletRigidbody.CollisionFlags = flags;
+		}
+
 		rb.updateFlags &= ~Rigidbody.UpdateFlags.CollisionFlags;
+	}
+
+	private static void CalculateMassProperties(in Rigidbody rb, CollisionShape collisionShape, out float mass, out Vector3 localInertia)
+	{
+		mass = rb.Type == RigidbodyType.Dynamic ? rb.Mass : 0f;
+		localInertia = mass > 0f ? (Vector3)collisionShape.CalculateLocalInertia(rb.Mass) : Vector3.Zero;
 	}
 
 	private static void UpdateMass(ref Rigidbody rb)
 	{
-		float realMass = rb.Type == RigidbodyType.Dynamic ? rb.Mass : 0f;
-		var localInertia = realMass > 0f ? (Vector3)rb.bulletRigidbody.CollisionShape.CalculateLocalInertia(rb.Mass) : Vector3.Zero;
+		CalculateMassProperties(in rb, rb.bulletRigidbody.CollisionShape, out float mass, out Vector3 localInertia);
 
-		rb.bulletRigidbody.SetMassProps(realMass, localInertia);
+		rb.bulletRigidbody.SetMassProps(mass, localInertia);
 
 		rb.updateFlags &= ~Rigidbody.UpdateFlags.Mass;
 	}
