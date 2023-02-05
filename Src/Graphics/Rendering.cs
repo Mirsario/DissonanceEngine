@@ -110,7 +110,7 @@ public sealed unsafe partial class Rendering : EngineModule
 
 		// Execute rendering systems
 
-		SystemManager.ExecuteCallback<RootRenderingCallback>();
+		Callbacks.Execute<Render>();
 
 		// RenderPasses
 		var pipeline = RenderingPipeline;

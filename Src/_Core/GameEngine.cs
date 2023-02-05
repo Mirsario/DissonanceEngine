@@ -26,6 +26,7 @@ public static class GameEngine
 		MainThread = Thread.CurrentThread;
 
 		ModuleManagement.Initialize();
+		Callbacks.Execute<EngineInitialization>();
 
 		IsInitialized = true;
 
@@ -56,6 +57,7 @@ public static class GameEngine
 
 		hooks.PreFixedUpdate?.Invoke();
 		hooks.FixedUpdate?.Invoke();
+		Callbacks.Execute<FixedUpdate>();
 		hooks.PostFixedUpdate?.Invoke();
 
 		InFixedUpdate = false;
@@ -70,6 +72,7 @@ public static class GameEngine
 		
 		hooks.PreRenderUpdate?.Invoke();
 		hooks.RenderUpdate?.Invoke();
+		Callbacks.Execute<RenderUpdate>();
 		hooks.PostRenderUpdate?.Invoke();
 
 		InRenderUpdate = false;

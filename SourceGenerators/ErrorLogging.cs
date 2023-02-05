@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 
 namespace SourceGenerators;
@@ -36,7 +38,7 @@ internal static class ErrorLogging
 		}
 	}
 
-	private static void Log(string message)
+	public static void Log(string message)
 	{
 		lock (Console.Out) {
 			File.AppendAllText(logFilePath, message + "\r\n");

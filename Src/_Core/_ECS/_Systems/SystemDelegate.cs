@@ -1,3 +1,3 @@
 ﻿namespace Dissonance.Engine;
 
-internal delegate void SystemDelegate(int worldId);
+public delegate SystemResult SystemDelegate();
