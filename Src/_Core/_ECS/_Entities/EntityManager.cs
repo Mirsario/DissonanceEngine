@@ -28,7 +28,7 @@ public sealed class EntityManager : EngineModule
 		public int NextEntityIndex;
 		// Entity Sets
 		public readonly List<EntitySet> EntitySets = new();
-		public readonly Dictionary<Expression<Predicate<Entity>>, EntitySet> EntitySetByExpression = new();
+		public readonly Dictionary<ComponentSet, EntitySet> EntitySetByComponentSet = new();
 	}
 
 	private static readonly object lockObject = new();
@@ -169,24 +169,23 @@ public sealed class EntityManager : EngineModule
 		return new EntityEnumerator(worldId, entityIds);
 	}
 
-	internal static EntitySet GetEntitySet(int worldId, Expression<Predicate<Entity>> predicate)
+	internal static EntitySet GetEntitySet(int worldId, ComponentSet componentSet)
 	{
 		var worldData = worldDataById[worldId];
-		var entitySetByExpression = worldData.EntitySetByExpression;
+		var entitySetByComponentSet = worldData.EntitySetByComponentSet;
 
-		//TODO: When this fails, check if there are other expressions which are basically the same
-		if (entitySetByExpression.TryGetValue(predicate, out var result)) {
+		if (entitySetByComponentSet.TryGetValue(componentSet, out var result)) {
 			return result;
 		}
 
-		var entitySet = new EntitySet(predicate.Compile());
-
-		//TODO: Be smarter about this. Deconstruct expressions, enumerate only entities that contain the least-common component.
+		var entitySet = new EntitySet(componentSet);
+		
+		//TODO: Be smarter about this. Enumerate only entities that contain the least-common component.
 		foreach (int entityId in worldData.AllEntityIds) {
 			entitySet.OnEntityUpdated(new Entity(entityId, worldId));
 		}
 
-		entitySetByExpression[predicate] = entitySet;
+		entitySetByComponentSet[componentSet] = entitySet;
 
 		worldData.EntitySets.Add(entitySet);
 

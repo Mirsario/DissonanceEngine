@@ -20,4 +20,9 @@ public static class Global
 	/// <typeparam name="T"> The component type. </typeparam>
 	public static void Set<T>(T value) where T : struct
 		=> ComponentManager.SetComponent(value);
+
+	/// <summary> Removes global context's <typeparamref name="T"/> component, if present. </summary>
+	/// <typeparam name="T"> The component type. </typeparam>
+	public static void Remove<T>() where T : struct
+		=> ComponentManager.RemoveComponent<T>();
 }

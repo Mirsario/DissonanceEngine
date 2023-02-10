@@ -162,7 +162,7 @@ public static unsafe class ModuleManagement
 				continue;
 			}
 
-			if (!AutoloadAttribute.TypeNeedsAutoloading(type)) {
+			if (!AutoloadAttribute.MemberNeedsAutoloading(type, true)) {
 				continue;
 			}
 

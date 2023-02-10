@@ -110,9 +110,7 @@ public sealed unsafe partial class Rendering : EngineModule
 
 		// Execute rendering systems
 
-		foreach (var world in WorldManager.ReadWorlds()) {
-			world.ExecuteCallbacks<RootRenderingCallback>();
-		}
+		Callbacks.Execute<Render>();
 
 		// RenderPasses
 		var pipeline = RenderingPipeline;

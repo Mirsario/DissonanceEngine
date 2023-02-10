@@ -150,6 +150,7 @@ public partial class Game : IDisposable
 
 		Debug.Log("Loading game...");
 
+		Callbacks.Execute<GameInitialization>();
 		Start();
 
 		Debug.Log("Game started.");
